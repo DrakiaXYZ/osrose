@@ -31,6 +31,12 @@ CREATE TABLE `npc_data` (
 	`aggresive` int(11) NOT NULL default '0',
 	`shp` int(11) NOT NULL default '0',
 	`dialog` int(11) NOT NULL default '0',
+  `eventid` int(11) NOT NULL default '0',	
+  `askills` varchar(20) NOT NULL default '0|0|0|0',
+  `bskills` varchar(20) NOT NULL default '0|0|0|0',
+  `dskills` varchar(20) NOT NULL default '0|0|0|0',
+  `sigskill` int(11) NOT NULL default '0',
+  `delayskill` int(11) NOT NULL default '0',	
 	  PRIMARY KEY  (`id`)
 	) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
