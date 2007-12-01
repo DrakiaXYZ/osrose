@@ -90,6 +90,9 @@ bool CPlayer::loaddata( )
     //End of test
     
     time_t etime=time(NULL);
+    if(bonusxp<=0)
+         bonusxp=1;
+    
     if(bonusxp>1&&(etime>=timerxp))
     {
       bonusxp=1;

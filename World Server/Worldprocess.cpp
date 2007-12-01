@@ -111,7 +111,9 @@ bool CWorldServer::GiveExp( CMonster* thismon, UINT special_lvl, UINT special_ex
              //20070621-211100
             //mod for CF
             //Adding bonusxp (mileage)
+            UINT prev_xp=thisclient->CharInfo->Exp;
             thisclient->CharInfo->Exp +=  thisclient->bonusxp*GetColorExp( thisclient->Stats->Level, thismon->thisnpc->level + special_lvl, exp );
+            //Log(MSG_INFO,"Bonus XP %i, previous XP, %i, new: %i",thisclient->bonusxp,prev_xp,thisclient->CharInfo->Exp);            
             //LMA END
             
             BEGINPACKET( pak, 0x79b );
