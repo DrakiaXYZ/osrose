@@ -397,65 +397,73 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
         int x = 0;
         int y = 0;
         int map = 0;
-        if(loc == 1)
+        if(loc == 1) // Adventure Plains
         {
             map = 22;
             x = 5098;
             y = 5322;
         }
-        else if(loc == 2)
+        else if(loc == 2) // Canyon City of Zant
         {
             map = 1;
             x = 5240;
             y = 5192;
         }
-        else if (loc == 3)
+        else if (loc == 3) // Junon Polis
         {
             map = 2;
             x = 5516;
             y = 5236;
         }
-        else if (loc == 4)
+        else if (loc == 4) // Magic City of Eucar - Luna
         {
             map = 51;
             x = 5357;
             y = 5013;
         }
-        else if (loc == 5)
+        else if (loc == 5) // Xita Refuge - Eldeon
         {
             map = 61;
             x = 5434;
             y = 4569;
         }
-        else if (loc == 6)
+        else if (loc == 6) // Training Grounds
         {
             map = 6;
             x = 5243;
             y = 5240;
         }
-        else if (loc == 7)
+        else if (loc == 7) // Lions Plains
         {
-            map = 24;
-            x = 5379;
-            y = 5329;
+            map = 8;
+            x = 5160;
+            y = 5080;
         }
-        else if (loc == 8)
+        else if (loc == 8) // Luna Clan Field
         {
-            map = 31;
-            x = 5516;
-            y = 5437;
+             if (thisclient->Stats->Level<100)
+             {
+             SendPM(thisclient, "You need to be a least Level 100 to visit Luna Clan Field!");
+             return true;
+             }
+
+        {
+            map = 59;
+            x = 5102;
+            y = 5132;
         }
-        else if (loc == 9)
+      }
+        else if (loc == 9) // Desert of the Dead
         {
             map = 29;
             x = 5093;
             y = 5144;
         }
-else if (loc == 10)
+else if (loc == 10) // Sikuku Underground Prison
         {
              if (thisclient->Stats->Level<160) // by Terr0risT
              {
-             SendPM(thisclient, "You need to be a least Level 160 to visit Sikuku Prison Underground!");
+             SendPM(thisclient, "You need to be a least Level 160 to visit Sikuku Underground Prison!");
              return true;
              }
              else
@@ -468,14 +476,14 @@ else if (loc == 10)
         else
         {
             SendPM(thisclient, "Please input a number after the go command, below is a list of places and their appropriate number");
-            SendPM(thisclient, "1 = Adventurers plains");
-            SendPM(thisclient, "2 = The city of Zant");
+            SendPM(thisclient, "1 = Adventurers Plains");
+            SendPM(thisclient, "2 = The City of Zant");
             SendPM(thisclient, "3 = Junon Polis");
-            SendPM(thisclient, "4 = The city of Eucar");
+            SendPM(thisclient, "4 = Magic City of Eucar");
             SendPM(thisclient, "5 = Xita Refuge");
             SendPM(thisclient, "6 = Training grounds");
-            SendPM(thisclient, "7 = El Verloon Desert");
-            SendPM(thisclient, "8 = Goblin Cave (B1)");
+            SendPM(thisclient, "7 = Lions Plains");
+            SendPM(thisclient, "8 = Luna Clan Field");
             SendPM(thisclient, "9 = Desert of the Dead");
             SendPM(thisclient, "10 = Sikuku Underground Prison");
             SendPM(thisclient, "Example; /go 3");
