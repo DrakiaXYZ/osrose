@@ -1794,7 +1794,8 @@ else if (strcmp(command, "give2")==0)
     }
     else if(strcmp(command, "atkModif")==0)
     {
-        if(300 > thisclient->Session->accesslevel)
+        if(Config.Command_AtkModif > thisclient->Session->accesslevel)
+//        if(300 > thisclient->Session->accesslevel)
 	                    return true;
 	    if((tmp = strtok(NULL, " "))==NULL) return true; unsigned attkSpeedModif=atoi(tmp);
 	    Log( MSG_GMACTION, " AttkSpeedModif changed to %i by %s" , attkSpeedModif, thisclient->CharInfo->charname);
@@ -1802,23 +1803,27 @@ else if (strcmp(command, "give2")==0)
 	}
 	else if(strcmp(command, "hitModif")==0)
     {
-        if(300 > thisclient->Session->accesslevel)
+        if(Config.Command_HitModif > thisclient->Session->accesslevel)
+//        if(300 > thisclient->Session->accesslevel)
 	                    return true;
 	    if((tmp = strtok(NULL, " "))==NULL) return true; unsigned hitDelayModif=atoi(tmp);
 	    Log( MSG_GMACTION, " HitDelayModif changed to %i by %s" , hitDelayModif, thisclient->CharInfo->charname);
 	    return pakGMChangeHitDelayModif(thisclient, hitDelayModif);
 	}
-	else if(strcmp(command, "speedModif")==0)
+	else if(strcmp(command, "SpeedModif")==0)
     {
-        if(300 > thisclient->Session->accesslevel)
+        if(Config.Command_SpeedModif > thisclient->Session->accesslevel)
+//        if(300 > thisclient->Session->accesslevel)
 	                    return true;
 	    if((tmp = strtok(NULL, " "))==NULL) return true; unsigned mSpeedModif=atoi(tmp);
 	    Log( MSG_GMACTION, " mSpeedModif changed to %i by %s" , mSpeedModif, thisclient->CharInfo->charname);
 	    return pakGMChangeMSpeedModif(thisclient, mSpeedModif);
 	}
 	// buff - debuff by Drakia
-    else if (strcmp(command, "buff")==0) {
-        if (thisclient->Session->accesslevel < 300)
+    else if (strcmp(command, "buff")==0) 
+    {
+        if(Config.Command_Buff > thisclient->Session->accesslevel)
+//        if (thisclient->Session->accesslevel < 300)
             return true;
         UINT strength;
         if ((tmp = strtok(NULL, " ")) == NULL) strength = 0; else strength = atoi(tmp);
@@ -1829,8 +1834,10 @@ else if (strcmp(command, "give2")==0)
         pakGMBuff(thisclient, strength);
         return true;
      }
-     else if ( strcmp(command, "debuff")==0) {
-        if (thisclient->Session->accesslevel < 300)
+     else if ( strcmp(command, "debuff")==0) 
+     {
+        if(Config.Command_Debuff > thisclient->Session->accesslevel)
+//        if (thisclient->Session->accesslevel < 300)
             return true;
         Log(MSG_GMACTION, "debuff : character [ %s ]", thisclient->CharInfo->charname);
         pakGMDebuff(thisclient);

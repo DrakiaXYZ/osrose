@@ -644,47 +644,59 @@ void CWorldServer::LoadConfigurations( char* file )
 // Load commands from commands.ini [by Paul_T]
 void CWorldServer::LoadCommandLevels( void )
 {
+    Config.Command_AllSkill = ConfigGetInt ( "commands.ini", "allskill", 299 );
     Config.Command_Ani = ConfigGetInt    ( "commands.ini", "ani", 299 );
     Config.Command_Ann = ConfigGetInt    ( "commands.ini", "ann", 299 );
+    Config.Command_AtkModif = ConfigGetInt    ( "commands.ini", "atkmodif", 299 );
     Config.Command_Ban = ConfigGetInt    ( "commands.ini", "ban", 299 );
+    Config.Command_BonusXp = ConfigGetInt    ( "commands.ini", "bonusxp", 299 );  //LMA: bonusxp
+    Config.Command_Broadcast = ConfigGetInt    ( "commands.ini", "broadcast", 299 );
+    Config.Command_Buff = ConfigGetInt    ( "commands.ini", "buff", 299 );
+    Config.Command_Cfmode = ConfigGetInt    ( "commands.ini", "cfmode", 299 ); 
     Config.Command_Cha = ConfigGetInt    ( "commands.ini", "cha", 299 );
     Config.Command_ChangeFairyWait = ConfigGetInt    ( "commands.ini", "changefairywait", 299 );
     Config.Command_ChangeFairyStay = ConfigGetInt    ( "commands.ini", "changefairystay", 299 );
     Config.Command_ChangeFairyTestMode = ConfigGetInt    ( "commands.ini", "changefairytestmode", 299 );
     Config.Command_Class = ConfigGetInt    ( "commands.ini", "class", 299 );
     Config.Command_Convert = ConfigGetInt    ( "commands.ini", "convert", 299 );
-    Config.Command_Cfmode = ConfigGetInt    ( "commands.ini", "cfmode", 299 ); 
+    Config.Command_Debuff = ConfigGetInt    ( "commands.ini", "debuff", 299 );
+    Config.Command_DelSkills = ConfigGetInt ( "commands.ini", "delskills", 299 );
     Config.Command_DelSpawn = ConfigGetInt    ( "commands.ini", "delspawn", 299 );
     Config.Command_DQuest = ConfigGetInt    ( "commands.ini", "dquest", 299 );
     Config.Command_Drop = ConfigGetInt    ( "commands.ini", "drop", 299 );
     Config.Command_DSpawn = ConfigGetInt    ( "commands.ini", "dspawn", 299 );
     Config.Command_ESpawn = ConfigGetInt    ( "commands.ini", "espawn", 299 );
+    Config.Command_Event = ConfigGetInt    ( "commands.ini", "event", 299 );     //Event
     Config.Command_Exp = ConfigGetInt    ( "commands.ini", "exp", 299 );
     Config.Command_Face = ConfigGetInt    ( "commands.ini", "face", 299 );
+    Config.Command_fskill = ConfigGetInt    ( "commands.ini", "fskill", 299 );     //LMA: Force a skill for a monster.
     Config.Command_Give2 = ConfigGetInt    ( "commands.ini", "give2", 299 );
     Config.Command_GiveClanRp = ConfigGetInt    ( "commands.ini", "giveclanrp", 299 );       //Reward points
     Config.Command_GiveFairy = ConfigGetInt    ( "commands.ini", "givefairy", 299 );
     Config.Command_GiveZuly = ConfigGetInt    ( "commands.ini", "givezuly", 299 );
+    Config.Command_GlobalTime  = ConfigGetInt    ( "commands.ini", "globaldelay", 30 );
+    Config.Command_GlobalPrefix = ConfigGetString    ( "commands.ini", "globalprefix", "[Broadcast]" );
     Config.Command_GmList = ConfigGetInt ( "commands.ini", "gmlist", 299 );
     Config.Command_Go = ConfigGetInt    ( "commands.ini", "go", 299 );
     Config.Command_Goto = ConfigGetInt    ( "commands.ini", "goto", 299 );
     Config.Command_GoToMap = ConfigGetInt    ( "commands.ini", "gotomap", 299 );
+    Config.Command_grid = ConfigGetInt    ( "commands.ini", "grid", 299 );   //LMA: maps grids.  
     Config.Command_Hair = ConfigGetInt    ( "commands.ini", "hair", 299 );
     Config.Command_Heal = ConfigGetInt    ( "commands.ini", "heal", 299 );
     Config.Command_Here = ConfigGetInt    ( "commands.ini", "here", 299 );
     Config.Command_Hide = ConfigGetInt    ( "commands.ini", "hide", 299 );
+    Config.Command_HitModif = ConfigGetInt    ( "commands.ini", "hitmodif", 299 );
+    Config.Command_HurtHim = ConfigGetInt    ( "commands.ini", "hurthim", 299 );
     Config.Command_Info = ConfigGetInt    ( "commands.ini", "info", 299 );
     Config.Command_IQuest = ConfigGetInt    ( "commands.ini", "iquest", 299 );
     Config.Command_Item = ConfigGetInt    ( "commands.ini", "item", 299 );
-    Config.Command_AllSkill = ConfigGetInt ( "commands.ini", "allskill", 299 );
-    Config.Command_DelSkills = ConfigGetInt ( "commands.ini", "delskills", 299 );
     Config.Command_Job = ConfigGetInt    ( "commands.ini", "job", 299 );
     Config.Command_Kick = ConfigGetInt    ( "commands.ini", "kick", 299 );
     Config.Command_KillInRange = ConfigGetInt    ( "commands.ini", "killinrange", 299 );
     Config.Command_Level = ConfigGetInt    ( "commands.ini", "level", 299 );
     Config.Command_LevelUp = ConfigGetInt    ( "commands.ini", "levelup", 299 );
     Config.Command_ManageFairy = ConfigGetInt    ( "commands.ini", "managefairy", 299 );
-    Config.Command_HurtHim = ConfigGetInt    ( "commands.ini", "hurthim", 299 );
+    Config.Command_MaxStats     = ConfigGetInt    ( "commands.ini", "maxstats", 299 );     //MaxStats
     Config.Command_Mdmg = ConfigGetInt    ( "commands.ini", "mdmg", 299 );
     Config.Command_Mon = ConfigGetInt    ( "commands.ini", "mon", 299 );
     Config.Command_Mon2 = ConfigGetInt    ( "commands.ini", "mon2", 299 );
@@ -692,14 +704,13 @@ void CWorldServer::LoadCommandLevels( void )
     Config.Command_Move = ConfigGetInt    ( "commands.ini", "move", 299 );
     Config.Command_Moveto = ConfigGetInt    ( "commands.ini", "moveto", 299 );
     Config.Command_Mute = ConfigGetInt    ( "commands.ini", "mute", 299 );
-    Config.Command_Event = ConfigGetInt    ( "commands.ini", "event", 299 );     //Event
     Config.Command_Npc = ConfigGetInt    ( "commands.ini", "npc", 299 );
     Config.Command_Pak = ConfigGetInt    ( "commands.ini", "pak", 299 );
     Config.Command_Pak2 = ConfigGetInt    ( "commands.ini", "pak2", 299 );
     Config.Command_Pakm = ConfigGetInt    ( "commands.ini", "pakm", 299 );
     Config.Command_Partylvl = ConfigGetInt      ( "commands.ini", "partylvl", 299);
-    Config.Command_PlayerInfo = ConfigGetInt    ( "commands.ini", "playerinfo", 299 );
     Config.Command_Pdmg = ConfigGetInt    ( "commands.ini", "pdmg", 299 );
+    Config.Command_PlayerInfo = ConfigGetInt    ( "commands.ini", "playerinfo", 299 );
     Config.Command_Pvp = ConfigGetInt    ( "commands.ini", "pvp", 299 );
     Config.Command_Rate = ConfigGetInt    ( "commands.ini", "rate", 299 );
     Config.Command_Reborn = ConfigGetInt    ( "commands.ini", "reborn", 299 );  //Reborn by core
@@ -711,8 +722,8 @@ void CWorldServer::LoadCommandLevels( void )
     Config.Command_Set = ConfigGetInt    ( "commands.ini", "set", 299 );
     Config.Command_Settime = ConfigGetInt    ( "commands.ini", "settime", 299 );
     Config.Command_ShopType = ConfigGetInt    ( "commands.ini", "shoptype", 299 );
-    Config.Command_BonusXp = ConfigGetInt    ( "commands.ini", "bonusxp", 299 );  //LMA: bonusxp
     Config.Command_Shutdown = ConfigGetInt    ( "commands.ini", "shutdown", 299 );
+    Config.Command_SpeedModif = ConfigGetInt    ( "commands.ini", "speedmodif", 299 );
     Config.Command_SSpawn = ConfigGetInt    ( "commands.ini", "sspawn", 299 );
     Config.Command_Stat = ConfigGetInt    ( "commands.ini", "stat", 299 );
     Config.Command_Summon = ConfigGetInt    ( "commands.ini", "summon", 299 );
@@ -720,14 +731,8 @@ void CWorldServer::LoadCommandLevels( void )
     Config.Command_Tele = ConfigGetInt    ( "commands.ini", "tele", 299 );
     Config.Command_TeleToMe = ConfigGetInt    ( "commands.ini", "teletome", 299 );
     Config.Command_Transx = ConfigGetInt    ( "commands.ini", "transx", 299 );
-    Config.Command_grid = ConfigGetInt    ( "commands.ini", "grid", 299 );   //LMA: maps grids.  
     Config.Command_Who = ConfigGetInt    ( "commands.ini", "who", 299 );
     Config.Command_Who2 = ConfigGetInt    ( "commands.ini", "who2", 299 );
-    Config.Command_Broadcast = ConfigGetInt    ( "commands.ini", "broadcast", 299 );
-    Config.Command_GlobalTime  = ConfigGetInt    ( "commands.ini", "globaldelay", 30 );
-    Config.Command_GlobalPrefix = ConfigGetString    ( "commands.ini", "globalprefix", "[Broadcast]" );
-    Config.Command_MaxStats     = ConfigGetInt    ( "commands.ini", "maxstats", 299 );     //MaxStats
-    Config.Command_fskill     = ConfigGetInt    ( "commands.ini", "fskill", 299 );     //LMA: Force a skill for a monster.
 }
 // Incoming packet
 bool CWorldServer::OnReceivePacket( CClientSocket* thisclient, CPacket *P )

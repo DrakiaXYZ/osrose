@@ -186,90 +186,95 @@ struct CROSEServerConfig
     int jrose; //LMA: for handling jRose (163)
     
     // COMMAND LEVELS
-    int Command_Go;
-    int Command_Who;
-    int Command_Who2;
-    int Command_GmList;    
-    int Command_Broadcast;
-    int Command_Mute;
-    int Command_Event;    //event
-    int Command_Tele;
-    int Command_Level;
     int Command_AllSkill; // by crashinside
-    int Command_DelSkills; // by rl2171
-    int Command_Reborn;  //reborn by Core
-    int Command_LevelUp;
-    int Command_TeleToMe;
-    int Command_Save;
-    int Command_Reload;
+    int Command_Ani;
     int Command_Ann;
-    int Command_SSpawn;
-    int Command_Set;
-    int Command_ESpawn;
-    int Command_DSpawn;
-    int Command_DelSpawn;
-    int Command_Pak;
-    int Command_Pak2;
-    int Command_Pakm;
-    int Command_Info;
-    int Command_Exp;
-    int Command_Mon;
-    int Command_Mon2;
-    int Command_Kick;
-    int Command_Job;
+    int Command_AtkModif;
+    int Command_Ban;
+    int Command_BonusXp; //LMA: gives a bonusxp to a player
+    int Command_Broadcast;
+    int Command_Buff;
+    int Command_Cfmode;
     int Command_Cha;
-    int Command_Item;
-    int Command_Drop;
-    int Command_GiveZuly;
-    int Command_Npc;
-    int Command_GiveFairy;
-    int Command_ManageFairy;
     int Command_ChangeFairyWait;
     int Command_ChangeFairyStay;
     int Command_ChangeFairyTestMode;
-    int Command_HurtHim;            //LMA: let's hurt someone :)
-    int Command_Move;
-    int Command_Goto;
-    int Command_grid;               //LMA: maps grid test
-    int Command_PlayerInfo;
+    int Command_Class;
+    int Command_Convert;  
+    int Command_Debuff;
+    int Command_DelSpawn;
+    int Command_DelSkills; // by rl2171
+    int Command_DQuest;
+    int Command_Drop;
+    int Command_DSpawn;
+    int Command_ESpawn;
+    int Command_Event;    //event
+    int Command_Exp;
+    int Command_Face;  
+    int Command_fskill;    //LMA: force a skill for a monster
     int Command_Give2;
     int Command_GiveClanRp;
-    int Command_Ban;
-    int Command_Ani;
-    int Command_fskill;    //LMA: force a skill for a monster
-    int Command_Summon;
-    int Command_ReloadQuest;
-    int Command_Shutdown;
-    int Command_DQuest;
-    int Command_IQuest;
-    int Command_ShopType;
-    int Command_BonusXp; //LMA: gives a bonusxp to a player
-    int Command_Stat;
-    int Command_KillInRange;
-    int Command_GoToMap;
-    int Command_Heal;
-    int Command_ServerInfo;
-    int Command_TargetInfo;
-    int Command_Hide;
-    int Command_Class;
-    int Command_Monster;
+    int Command_GiveFairy;
+    int Command_GiveZuly;
     int Command_GlobalTime;
-    int Command_Here;  
-    int Command_Face;  
+    int Command_GmList;    
+    int Command_Go;
+    int Command_go;
+    int Command_Goto;
+    int Command_GoToMap;
+    int Command_grid;       //LMA: maps grid test
     int Command_Hair;  
-    int Command_Pvp;  
-    int Command_go;  
-    int Command_Convert;  
-    int Command_Rate;  
+    int Command_Heal;
+    int Command_Here;  
+    int Command_Hide;
+    int Command_HitModif;
+    int Command_HurtHim;    //LMA: let's hurt someone :)
+    int Command_Info;
+    int Command_IQuest;
+    int Command_Item;
+    int Command_Job;
+    int Command_Kick;
+    int Command_KillInRange;
+    int Command_Level;
+    int Command_LevelUp;
+    int Command_ManageFairy;
+    int Command_MaxStats;
+    int Command_Mdmg;
+    int Command_Mon;
+    int Command_Mon2;
+    int Command_Monster;
+    int Command_Move;
     int Command_Moveto;  
-    int Command_Settime;  
-    int Command_Transx;  
+    int Command_Mute;
+    int Command_Npc;
+    int Command_Pak;
+    int Command_Pak2;
+    int Command_Pakm;
     int Command_Partylvl;
     int Command_Pdmg;
-    int Command_Mdmg;
+    int Command_PlayerInfo;
+    int Command_Pvp;  
+    int Command_Rate;  
+    int Command_Reborn;  //reborn by Core
+    int Command_Reload;
+    int Command_ReloadQuest;
     int Command_Rules;
-    int Command_Cfmode;
-    int Command_MaxStats;
+    int Command_Save;
+    int Command_ServerInfo;
+    int Command_Set;
+    int Command_Settime;  
+    int Command_ShopType;
+    int Command_Shutdown;
+    int Command_SpeedModif;
+    int Command_SSpawn;
+    int Command_Stat;
+    int Command_Summon;
+    int Command_TargetInfo;
+    int Command_Tele;
+    int Command_TeleToMe;
+    int Command_Transx;  
+    int Command_Who;
+    int Command_Who2;
     
     char* Command_GlobalPrefix;        
     
