@@ -399,3 +399,35 @@ bool CMonster::WormDragon(CMonster* monster,CMap* map)
      
      return true;
 }
+
+//LMA: added by rl2171 Handling Cursed Ant Vagabond :)
+bool CMonster::AntVagabond(CMonster* monster,CMap* map)
+{
+     if (monster->hitcount>=monster->maxhitcount)
+        return true;
+     
+     if(Stats->HP>(Stats->MaxHP*0.50))
+         return true;
+         
+     CPlayer* player = NULL;
+     int nb_destroyers =0;
+     nb_destroyers=GServer->RandNumber(1,2);
+     
+      Log(MSG_INFO,"case 0 for the Cursed Ant Vagabond (%i)",nb_destroyers);
+      for(unsigned char i=0;i<nb_destroyers;i++)
+      {
+          fPoint position = GServer->RandInCircle( monster->Position->current, 5 );
+          CMonster* monster2=map->AddMonster( 1567, position, 0, NULL, NULL, 0, true );
+
+          if(i==0)
+             player = monster2->GetNearPlayer(20);    //getting near player.
+
+         if(player!=NULL)
+             monster2->StartAction( (CCharacter*)player, NORMAL_ATTACK, 0 );         
+      }
+      
+      monster->hitcount=monster->maxhitcount;
+     
+     
+     return true;
+}

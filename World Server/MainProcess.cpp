@@ -376,6 +376,8 @@ PVOID MapProcess( PVOID TS )
                         monster->MoonChild(monster,map);      //LMA: Moonchild under attack
                     if((monster->montype==201)&&(monster->hitcount<monster->maxhitcount))
                         monster->WormDragon(monster,map);      //LMA: Worm Dragon under attack
+                    if((monster->montype==1572)&&(monster->hitcount<monster->maxhitcount))
+                        monster->AntVagabond(monster,map);      //rl2171: Cursed Ant Vagabond under attack (LMA)
                 }
                 monster->RefreshBuff( );
                 if(monster->IsDead( ))

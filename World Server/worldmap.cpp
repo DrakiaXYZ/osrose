@@ -157,6 +157,11 @@ CMonster* CMap::AddMonster( UINT montype, fPoint position, UINT owner, CMDrops* 
        monster->maxhitcount=1;   //LMA: Worm dragon
     }
     
+    if(monster->thisnpc->id==1572)
+    {
+       monster->maxhitcount=1;   //rl2171: Cursed Ant Vagabond
+    }
+    
     //Sunrise, Sunset and Dusk Crystal in Junon Cartel
     if (monster->thisnpc->id>=431&&monster->thisnpc->id<=433)
        monster->stay_still=true;    
