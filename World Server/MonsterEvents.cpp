@@ -431,3 +431,101 @@ bool CMonster::AntVagabond(CMonster* monster,CMap* map)
      
      return true;
 }
+
+//LMA: added by rl2171 Handling 1st Turak :)
+bool CMonster::Turak1(CMonster* monster,CMap* map)
+{
+     if (monster->hitcount>=monster->maxhitcount)
+        return true;
+     
+     if(Stats->HP>(Stats->MaxHP*0.00))
+         return true;
+         
+     CPlayer* player = NULL;
+     int nb_turak1 =0;
+     nb_turak1=GServer->RandNumber(1,1);
+     
+      Log(MSG_INFO,"case 0 for the 1st Turak (%i)",nb_turak1);
+      for(unsigned char i=0;i<nb_turak1;i++)
+      {
+          fPoint position = GServer->RandInCircle( monster->Position->current, 5 );
+          CMonster* monster2=map->AddMonster( 559, position, 0, NULL, NULL, 0, true );
+
+          if(i==0)
+             player = monster2->GetNearPlayer(20);    //getting near player.
+
+         if(player!=NULL)
+             monster2->StartAction( (CCharacter*)player, NORMAL_ATTACK, 0 );         
+      }
+      
+      monster->hitcount=monster->maxhitcount;
+     
+     
+     return true;
+}
+
+//LMA: added by rl2171 Handling 2nd Turak :)
+bool CMonster::Turak2(CMonster* monster,CMap* map)
+{
+     if (monster->hitcount>=monster->maxhitcount)
+        return true;
+     
+     if(Stats->HP>(Stats->MaxHP*0.00))
+         return true;
+         
+     CPlayer* player = NULL;
+     int nb_turak2 =0;
+     nb_turak2=GServer->RandNumber(1,1);
+     
+      Log(MSG_INFO,"case 0 for the 2nd Turak (%i)",nb_turak2);
+      for(unsigned char i=0;i<nb_turak2;i++)
+      {
+          fPoint position = GServer->RandInCircle( monster->Position->current, 5 );
+          CMonster* monster2=map->AddMonster( 560, position, 0, NULL, NULL, 0, true );
+
+          if(i==0)
+             player = monster2->GetNearPlayer(20);    //getting near player.
+
+         if(player!=NULL)
+             monster2->StartAction( (CCharacter*)player, NORMAL_ATTACK, 0 );         
+      }
+      
+      monster->hitcount=monster->maxhitcount;
+     
+     
+     return true;
+}
+/*
+//LMA: added by rl2171 Handling 3rd Turak :)
+bool CMonster::Turak3(CMonster* monster,CMap* map)
+{
+     if (monster->hitcount>=monster->maxhitcount)
+        return true;
+     
+     if(Stats->HP>(Stats->MaxHP*0.50))
+         return true;
+         
+     CPlayer* player = NULL;
+     int nb_turak3 =0;
+     nb_turak3=GServer->RandNumber(1,1);
+     
+      Log(MSG_INFO,"case 0 for the 3rd Turak (%i)",nb_turak3);
+      for(unsigned char i=0;i<nb_turak3;i++)
+      {
+          fPoint position = GServer->RandInCircle( monster->Position->current, 5 );
+          CMonster* monster2=map->AddMonster( 559, position, 0, NULL, NULL, 0, true );
+
+          if(i==0)
+             player = monster2->GetNearPlayer(20);    //getting near player.
+
+         if(player!=NULL)
+             monster2->StartAction( (CCharacter*)player, NORMAL_ATTACK, 0 );         
+      }
+      
+      monster->hitcount=monster->maxhitcount;
+     
+     
+     return true;
+}
+
+*/

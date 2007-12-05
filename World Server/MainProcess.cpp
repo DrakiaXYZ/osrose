@@ -378,6 +378,13 @@ PVOID MapProcess( PVOID TS )
                         monster->WormDragon(monster,map);      //LMA: Worm Dragon under attack
                     if((monster->montype==1572)&&(monster->hitcount<monster->maxhitcount))
                         monster->AntVagabond(monster,map);      //rl2171: Cursed Ant Vagabond under attack (LMA)
+                    if((monster->montype==558)&&(monster->hitcount<monster->maxhitcount))
+                        monster->Turak1(monster,map);      //rl2171: 1st Turak under attack (LMA)
+                    if((monster->montype==559)&&(monster->hitcount<monster->maxhitcount))
+                        monster->Turak2(monster,map);      //rl2171: 2nd Turak under attack (LMA)
+/*                    if((monster->montype==560)&&(monster->hitcount<monster->maxhitcount))
+                        monster->Turak3(monster,map);      //rl2171: 3rd Turak under attack (LMA)
+*/
                 }
                 monster->RefreshBuff( );
                 if(monster->IsDead( ))

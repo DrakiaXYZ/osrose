@@ -161,7 +161,22 @@ CMonster* CMap::AddMonster( UINT montype, fPoint position, UINT owner, CMDrops* 
     {
        monster->maxhitcount=1;   //rl2171: Cursed Ant Vagabond
     }
-    
+
+     if(monster->thisnpc->id==558)
+    {
+       monster->maxhitcount=1;   //rl2171: 1st Turak
+    }
+
+     if(monster->thisnpc->id==559)
+    {
+       monster->maxhitcount=1;   //rl2171: 2nd Turak
+    }
+
+/*     if(monster->thisnpc->id==560)
+    {
+       monster->maxhitcount=1;   //rl2171: 3rd Turak
+    }
+*/   
     //Sunrise, Sunset and Dusk Crystal in Junon Cartel
     if (monster->thisnpc->id>=431&&monster->thisnpc->id<=433)
        monster->stay_still=true;    
