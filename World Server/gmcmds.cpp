@@ -2952,6 +2952,21 @@ bool CWorldServer::GMShowTargetInfo( CPlayer* thisclient )
     ADDSTRING  ( pak, buffer );
 	ADDBYTE( pak, 0 );         
     thisclient->client->SendPacket( &pak );           
+// added Database & Monster ID by rl2171 with help from lmame
+    sprintf( buffer, "Target Database ID: %i", monster->Position->respawn );
+    RESETPACKET( pak, 0x784 );
+    ADDSTRING  ( pak, "[SYS]TargetInfo" );
+    ADDBYTE    ( pak, 0 );
+    ADDSTRING  ( pak, buffer );
+    ADDBYTE( pak, 0 );
+    thisclient->client->SendPacket( &pak ); 
+    sprintf( buffer, "Target Monster ID: %i", monster->montype );
+    RESETPACKET( pak, 0x784 );
+    ADDSTRING  ( pak, "[SYS]TargetInfo" );
+    ADDBYTE    ( pak, 0 );
+    ADDSTRING  ( pak, buffer );
+    ADDBYTE( pak, 0 );
+    thisclient->client->SendPacket( &pak );
     return true;
 }
 
