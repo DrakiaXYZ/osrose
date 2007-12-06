@@ -1971,7 +1971,8 @@ bool CWorldServer::pakGMItem( CPlayer* thisclient, UINT itemid, UINT itemtype, U
     item.stats            = itemstats;
     item.socketed        = itemsocket;
     item.appraised        = 1;
-    item.gem = 0;          
+    item.gem = 0;
+    item.sp_value=0;
     unsigned newslot = thisclient->GetNewItemSlot( item );
     if (newslot != 0xffff) 
     {
@@ -2896,7 +2897,7 @@ bool CWorldServer::GMShowTargetInfo( CPlayer* thisclient )
     CMonster* monster = GetMonsterByID( thisclient->Battle->target, thisclient->Position->Map );
     if(monster==NULL) return true;
     float dist = distance( thisclient->Position->current, monster->Position->current );
-    sprintf( buffer, "Target Position: %.4f, %.4f", monster->Position->current.x, monster->Position->current.y );    
+    sprintf( buffer, "Target Position: %.4f, %.4f", monster->Position->current.x, monster->Position->current.y ); 
     BEGINPACKET( pak, 0x784 );
     ADDSTRING  ( pak, "[SYS]TargetInfo" );
     ADDBYTE    ( pak, 0 );

@@ -929,6 +929,11 @@ void CPlayer::CalculateSignature( int slot )
          items[slot].last_sp_value=items[slot].sp_value;
      }
 
+     if(items[slot].last_sp_value>1000)
+     {
+        Log(MSG_INFO,"ERROR sp_value, Previous value %i",items[slot].last_sp_value);
+        items[slot].last_sp_value=1000;
+     }
      
      return;
 }

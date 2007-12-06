@@ -964,8 +964,10 @@ void CPlayer::TakeFuel(int add_fuel)
     
     if (current_fuel<0)
        current_fuel=0;
+    if (current_fuel>100)
+       current_fuel=100;              
     save_fuel=(int) (current_fuel*10);
-    items[136].lifespan=(int) current_fuel;
+    items[136].lifespan=(int) current_fuel;    
     items[136].sp_value=save_fuel;
     Log(MSG_INFO,"New lifespan %i, saved value %i",items[136].lifespan,save_fuel);
     
