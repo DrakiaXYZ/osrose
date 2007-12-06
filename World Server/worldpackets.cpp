@@ -1135,12 +1135,12 @@ bool CWorldServer::pakChangeCart( CPlayer* thisclient, CPacket* P )
 	BEGINPACKET( pak, 0x7ca );     
 	ADDWORD    ( pak, thisclient->clientid );
 	ADDWORD    ( pak, cartslot);							
-	//ADDWORD    ( pak, thisclient->items[srcslot].itemnum);
-	//ADDWORD    ( pak, BuildItemRefine( thisclient->items[srcslot] ) );
+	ADDWORD    ( pak, thisclient->items[srcslot].itemnum);
+	ADDWORD    ( pak, BuildItemRefine( thisclient->items[srcslot] ) );
 	//ADDWORD    ( pak, thisclient->Stats->Move_Speed );
 
-	ADDWORD    ( pak, tmpitm.itemnum);
-	ADDWORD    ( pak, BuildItemRefine( tmpitm ) );	
+	//ADDWORD    ( pak, tmpitm.itemnum);
+	//ADDWORD    ( pak, BuildItemRefine( tmpitm ) );	
 	ADDWORD    ( pak, lma_speed );
 	SendToVisible( &pak, thisclient );
 
