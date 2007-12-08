@@ -4318,7 +4318,7 @@ bool CWorldServer::pakItemMall( CPlayer* thisclient, CPacket* P )
                  //takes one item to itemmall to player's inventory
                  WORD mal_qty=GETWORD( (*P), 0x01);
                  BYTE mall_slot=GETBYTE((*P), 0x03);
-                 Log(MSG_INFO,"%s Trying to get %i from slot %i in itemmall",thisclient->CharInfo->charname,mal_qty,mall_slot);
+                 Log(MSG_INFO,"%s Trying to get %i from slot %i in mileage",thisclient->CharInfo->charname,mal_qty,mall_slot);
                  //Handle this...
                  TakeItemMallList(thisclient,mal_qty,mall_slot);                 
                  return true;

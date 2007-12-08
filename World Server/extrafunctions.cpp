@@ -1326,14 +1326,14 @@ bool CWorldServer::SaveSlotMall( CPlayer* thisclient,UINT slotnum)
     
     if (thisclient->itemmallitems[i].count > 0) 
     {
-        GServer->DB->QExecute("INSERT INTO itemmall (owner,slotnum,itemnum,itemtype,refine,durability,lifespan,count,stats,socketed,appraised,gem) VALUES(%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i) ON DUPLICATE KEY UPDATE owner=VALUES(owner),slotnum=VALUES(slotnum),itemnum=VALUES(itemnum),itemtype=VALUES(itemtype),refine=VALUES(refine),durability=VALUES(durability),lifespan=VALUES(lifespan),count=VALUES(count),stats=VALUES(stats),socketed=VALUES(socketed),appraised=VALUES(appraised),gem=VALUES(gem)",
+        GServer->DB->QExecute("INSERT INTO mileage (owner,slotnum,itemnum,itemtype,refine,durability,lifespan,count,stats,socketed,appraised,gem) VALUES(%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i) ON DUPLICATE KEY UPDATE owner=VALUES(owner),slotnum=VALUES(slotnum),itemnum=VALUES(itemnum),itemtype=VALUES(itemtype),refine=VALUES(refine),durability=VALUES(durability),lifespan=VALUES(lifespan),count=VALUES(count),stats=VALUES(stats),socketed=VALUES(socketed),appraised=VALUES(appraised),gem=VALUES(gem)",
     						thisclient->Session->userid, i, thisclient->itemmallitems[i].itemnum, thisclient->itemmallitems[i].itemtype,thisclient->itemmallitems[i].refine, thisclient->itemmallitems[i].durability, 
     						thisclient->itemmallitems[i].lifespan, thisclient->itemmallitems[i].count, thisclient->itemmallitems[i].stats, (thisclient->itemmallitems[i].socketed?1:0), 
                             (thisclient->itemmallitems[i].appraised?1:0), thisclient->itemmallitems[i].gem );
     }
     else
     {
-        GServer->DB->QExecute("DELETE FROM itemmall WHERE owner=%i AND slotnum=%i", thisclient->Session->userid,i);
+        GServer->DB->QExecute("DELETE FROM mileage WHERE owner=%i AND slotnum=%i", thisclient->Session->userid,i);
     }    
         
 
@@ -1489,16 +1489,16 @@ void CWorldServer::ReturnItemMallList(CPlayer* thisclient)
 void CWorldServer::TakeItemMallList(CPlayer* thisclient,int qty,int slot)
 {
  	MYSQL_ROW row;
-	MYSQL_RES *result = GServer->DB->QStore("SELECT itemnum,itemtype,refine,durability,lifespan,slotnum,count,stats,socketed,appraised,gem FROM itemmall WHERE owner=%i AND slotnum=%i", thisclient->Session->userid,slot);
+	MYSQL_RES *result = GServer->DB->QStore("SELECT itemnum,itemtype,refine,durability,lifespan,slotnum,count,stats,socketed,appraised,gem FROM mileage WHERE owner=%i AND slotnum=%i", thisclient->Session->userid,slot);
 	if(result==NULL)
     {
-       Log(MSG_HACK,"%s tried to get %i items from slot %i from itemmall and there is nothing there !",thisclient->CharInfo->charname, qty, slot);
+       Log(MSG_HACK,"%s tried to get %i items from slot %i from mileage and there is nothing there !",thisclient->CharInfo->charname, qty, slot);
        return;
     }
  
     if(mysql_num_rows(result)!=1)
     {
-      Log(MSG_HACK,"%s tried to get %i items from slot %i from itemmall and there is nothing there !",thisclient->CharInfo->charname, qty, slot);
+      Log(MSG_HACK,"%s tried to get %i items from slot %i from mileage and there is nothing there !",thisclient->CharInfo->charname, qty, slot);
       return;
     }
     
@@ -1520,7 +1520,7 @@ void CWorldServer::TakeItemMallList(CPlayer* thisclient,int qty,int slot)
     GServer->DB->QFree( );
     if(qty>thisclient->itemmallitems[slot].count)
     {
-       Log(MSG_HACK,"%s tried to get %i items from slot %i from itemmall, had only %i !",thisclient->CharInfo->charname, qty, slot,thisclient->itemmallitems[slot].count);
+       Log(MSG_HACK,"%s tried to get %i items from slot %i from mileage, had only %i !",thisclient->CharInfo->charname, qty, slot,thisclient->itemmallitems[slot].count);
        return;
     }
     

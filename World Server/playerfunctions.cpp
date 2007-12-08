@@ -1160,7 +1160,7 @@ void CPlayer::RebuildItemMall()
     }
      
 	MYSQL_ROW row;
-	MYSQL_RES *result = GServer->DB->QStore("SELECT itemnum,itemtype,refine,durability,lifespan,slotnum,count,stats,socketed,appraised,gem FROM itemmall WHERE owner=%i", Session->userid);
+	MYSQL_RES *result = GServer->DB->QStore("SELECT itemnum,itemtype,refine,durability,lifespan,slotnum,count,stats,socketed,appraised,gem FROM mileage WHERE owner=%i", Session->userid);
 	if(result==NULL)
     {
        nsitemmallitems=0;
@@ -1174,7 +1174,7 @@ void CPlayer::RebuildItemMall()
     {
         if(!GServer->IsValidItem( atoi(row[1]), atoi(row[0]) ) || atoi(row[6])==0)
         {
-            Log(MSG_WARNING, "char %s have a invalid or empty item in ItemMall: %i%i [%i], this item will be deleted", CharInfo->charname, atoi(row[1]), atoi(row[0]), atoi(row[6]) );
+            Log(MSG_WARNING, "char %s have a invalid or empty item in mileage: %i%i [%i], this item will be deleted", CharInfo->charname, atoi(row[1]), atoi(row[0]), atoi(row[6]) );
             continue;
         }        
         
@@ -1201,12 +1201,12 @@ void CPlayer::RebuildItemMall()
        return;
        
     //We have to do the table again...
-    GServer->DB->QExecute("DELETE FROM itemmall WHERE owner=%i", Session->userid);
+    GServer->DB->QExecute("DELETE FROM mileage WHERE owner=%i", Session->userid);
     for(int i=0;i<MAX_ITEMMALL;i++)
     {
       if(itemmallitems[i].itemnum==0)
         continue;
-      if(!GServer->DB->QExecute("INSERT INTO itemmall (owner,slotnum,itemnum,itemtype,refine,durability,lifespan,count,stats,socketed,appraised,gem) VALUES(%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i) ON DUPLICATE KEY UPDATE owner=VALUES(owner),slotnum=VALUES(slotnum),itemnum=VALUES(itemnum),itemtype=VALUES(itemtype),refine=VALUES(refine),durability=VALUES(durability),lifespan=VALUES(lifespan),count=VALUES(count),stats=VALUES(stats),socketed=VALUES(socketed),appraised=VALUES(appraised),gem=VALUES(gem)",
+      if(!GServer->DB->QExecute("INSERT INTO mileage (owner,slotnum,itemnum,itemtype,refine,durability,lifespan,count,stats,socketed,appraised,gem) VALUES(%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i) ON DUPLICATE KEY UPDATE owner=VALUES(owner),slotnum=VALUES(slotnum),itemnum=VALUES(itemnum),itemtype=VALUES(itemtype),refine=VALUES(refine),durability=VALUES(durability),lifespan=VALUES(lifespan),count=VALUES(count),stats=VALUES(stats),socketed=VALUES(socketed),appraised=VALUES(appraised),gem=VALUES(gem)",
     						Session->userid, i, itemmallitems[i].itemnum, itemmallitems[i].itemtype,itemmallitems[i].refine, itemmallitems[i].durability, 
     						itemmallitems[i].lifespan, itemmallitems[i].count, itemmallitems[i].stats, (itemmallitems[i].socketed?1:0), 
                             (itemmallitems[i].appraised?1:0), itemmallitems[i].gem ))

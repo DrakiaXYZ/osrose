@@ -1,7 +1,7 @@
 -- ----------------------------
--- Table structure for itemmall
+-- Table structure for mileage
 -- ----------------------------
-CREATE TABLE `itemmall` (
+CREATE TABLE `mileage` (
   `owner` int(11) NOT NULL default '0',
   `itemnum` int(11) NOT NULL default '0',
   `itemtype` int(11) NOT NULL default '0',
