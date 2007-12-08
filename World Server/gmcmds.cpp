@@ -648,8 +648,12 @@ else if (loc == 10) // Sikuku Underground Prison
              return true; 
         int id=atoi(tmp);    
         DB->QExecute("DELETE from list_spawnareas where id=%i",id);
-		BEGINPACKET( pak, 0x702 );
-		ADDSTRING( pak, "DELETESPAWN" );
+//		BEGINPACKET( pak, 0x702 );
+        char buffer[200];
+        sprintf( buffer, "DELETESPAWN %i", id);
+        BEGINPACKET ( pak, 0x702 );
+        ADDSTRING( pak, buffer );		
+//		ADDSTRING( pak, "DELETESPAWN" );
 		ADDBYTE( pak, 0 );             
         thisclient->client->SendPacket(&pak);  
         CSpawnArea* thisspawn = GetSpawnArea( id );  
