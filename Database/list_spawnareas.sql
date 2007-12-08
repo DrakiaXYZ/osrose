@@ -4,7 +4,7 @@ Source Host: 192.168.1.100
 Source Database: osrose
 Target Host: 192.168.1.100
 Target Database: osrose
-Date: 12/8/2007 8:36:33 AM
+Date: 12/8/2007 11:22:48 AM
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -3686,3 +3686,19 @@ INSERT INTO `list_spawnareas` VALUES ('12018', '41', '961', '0', '1', '60', '8|5
 INSERT INTO `list_spawnareas` VALUES ('12019', '41', '962', '0', '1', '60', '9|5065,5234|5064,5187|5012,5188|5011,5199|5007,5207|5006,5243|5052,5246|5055,5236|5064,5235', '3', '0', '0', '');
 INSERT INTO `list_spawnareas` VALUES ('12020', '41', '963', '0', '1', '60', '8|5053,5246|5005,5245|5007,5290|5018,5304|5063,5304|5065,5258|5055,5257|5054,5246', '3', '0', '0', '');
 INSERT INTO `list_spawnareas` VALUES ('40429', '63', '1572', '0', '1', '400', '8|5402,4501|5398,4468|5377,4459|5366,4464|5361,4486|5376,4488|5382,4502|5403,4503', '3', '0', '0', 'Cursed Ant Vagabond');
+INSERT INTO `list_spawnareas` VALUES ('13000', '23', '1298', '0', '1', '300', '5|5466,5432|5472,5435|5478,5431|5473,5426|5469,5430', '3', '7', '75', 'Pomic Office > Giant Pomic');
+INSERT INTO `list_spawnareas` VALUES ('13001', '25', '1321', '0', '1', '300', '5|5334,5286|5339,5276|5334,5266|5329,5272|5335,5277', '3', '7', '213', 'Aqua Guardian > Giant Aqua');
+INSERT INTO `list_spawnareas` VALUES ('13002', '25', '1326', '0', '1', '300', '5|5667,4874|5679,4874|5687,4865|5679,4864|5670,4871', '3', '7', '1327', 'Grunter Guardian > Giant Grunter');
+INSERT INTO `list_spawnareas` VALUES ('13003', '26', '1338', '0', '1', '300', '5|5127,5034|5115,5046|5115,5054|5122,5052|5123,5042', '3', '7', '208', 'Giant Smouly > Guardian Tree');
+INSERT INTO `list_spawnareas` VALUES ('13004', '26', '1342', '0', '1', '300', '5|5696,4902|5701,4889|5696,4879|5690,4887|5695,4900', '3', '7', '1343', 'Clown Swordsman > Wise Clown');
+INSERT INTO `list_spawnareas` VALUES ('13005', '27', '1353', '0', '1', '300', '6|5014,5247|5018,5237|5012,5232|5008,5237|5011,5243|5014,5245', '3', '7', '1355', 'Doonga Swordsman > Giant Doonga');
+INSERT INTO `list_spawnareas` VALUES ('13006', '27', '1361', '0', '1', '300', '5|5706,5095|5713,5084|5708,5078|5701,5083|5706,5093', '3', '7', '1362', 'Krawfy Captain > Giant Krawfy');
+INSERT INTO `list_spawnareas` VALUES ('13007', '27', '145', '0', '1', '300', '5|5831,5302|5828,5291|5817,5289|5820,5301|5830,5297', '3', '7', '1369', 'Kaiman Hunter > Giant Kaiman Ranger');
+INSERT INTO `list_spawnareas` VALUES ('13008', '28', '1381', '0', '1', '300', '6|5063,5492|5056,5501|5063,5505|5067,5500|5067,5491|5061,5489', '3', '7', '1385', 'Stone Golem > Giant Stone Golem');
+INSERT INTO `list_spawnareas` VALUES ('13009', '32', '278', '0', '1', '300', '5|5126,5480|5123,5473|5117,5472|5117,5479|5127,5481', '3', '7', '1409', 'Goblin Warrior > Giant Goblin Wizard');
+INSERT INTO `list_spawnareas` VALUES ('13010', '33', '284', '0', '1', '300', '5|5292,5042|5294,5051|5301,5049|5301,5039|5294,5041', '3', '7', '1409', 'Goblin Leader > Giant Goblin Wizard');
+INSERT INTO `list_spawnareas` VALUES ('13011', '58', '1541', '0', '1', '300', '5|5149,4799|5137,4798|5131,4809|5144,4812|5152,4797', '3', '7', '1543', 'Mt. Bebeg Leader > Mt Bebeg');
+INSERT INTO `list_spawnareas` VALUES ('13012', '55', '1425', '0', '1', '300', '5|5707,4513|5715,4498|5700,4481|5692,4498|5702,4504', '3', '7', '1036', 'Little Wolverine > Wolf King');
+INSERT INTO `list_spawnareas` VALUES ('13013', '54', '384', '0', '1', '300', '5|5649,4315|5666,4316|5667,4302|5654,4302|5650,4316', '3', '7', '380', 'Illusion Ghost > Rubrum');
+INSERT INTO `list_spawnareas` VALUES ('13014', '52', '384', '0', '1', '300', '5|5049,4978|5051,4988|5059,4987|5057,4981|5047,4980', '3', '7', '383', 'Illusion Ghost > Nigrum');
+INSERT INTO `list_spawnareas` VALUES ('13015', '52', '1467', '0', '1', '300', '5|5726,5001|5714,5012|5710,5022|5721,5020|5724,5005', '3', '7', '1468', 'Frozen Drake > Mega Drake');
