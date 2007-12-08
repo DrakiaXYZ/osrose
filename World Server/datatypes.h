@@ -663,6 +663,11 @@ struct CSpawnArea
 	CNPCData* thisnpc;	
 	CMDrops* mobdrop;
 	CMDrops* mapdrop;
+	UINT nb_trigger; //nb of spawn to get the boss spawned.
+	UINT cu_trigger; //current killed.
+	UINT bossid;    //boss ID.
+	UINT bossdropID;    //boss drop ID.
+	CMDrops* bossdrop;	//boss drop.
 };
 
 struct CUseInfo

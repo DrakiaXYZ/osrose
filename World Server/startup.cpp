@@ -514,7 +514,7 @@ bool CWorldServer::LoadMonsterSpawn( )
 {
 	Log( MSG_LOAD, "SpawnZones data      " );    
 	MYSQL_ROW row;
-	MYSQL_RES *result = DB->QStore("SELECT id,map,montype,min,max,respawntime,points FROM list_spawnareas");
+	MYSQL_RES *result = DB->QStore("SELECT id,map,montype,min,max,respawntime,points,triggeramount,bossid FROM list_spawnareas");
 	if(result==NULL) return false;
 	while(row = mysql_fetch_row(result))
     {
@@ -532,7 +532,27 @@ bool CWorldServer::LoadMonsterSpawn( )
 		thisspawn->montype=atoi(row[2]);
 		thisspawn->min=atoi(row[3]);
 		thisspawn->max=atoi(row[4]);
-		thisspawn->respawntime=atoi(row[5]);
+		thisspawn->respawntime=atoi(row[5]);		
+		
+		//LMA: Adding support for spawn 'boss' (by Rob)
+		thisspawn->nb_trigger=atoi(row[7]);
+		thisspawn->bossid=atoi(row[8]);
+		thisspawn->cu_trigger=0;
+		thisspawn->bossdropID=0;
+		
+		if (thisspawn->nb_trigger==0||thisspawn->bossid==0)
+		{
+    		thisspawn->nb_trigger=0;
+    		thisspawn->bossid=0; 
+        }
+        else
+        {
+            CNPCData* tempnpc;
+            tempnpc=GetNPCDataByID( thisspawn->bossid );
+            thisspawn->bossdropID=tempnpc->dropid;
+            delete tempnpc;
+        }
+	
 		thisspawn->amon = 0;
 		char* points;
 		points = row[6];
@@ -721,7 +741,22 @@ bool CWorldServer::LoadMonsters( )
         {
             CSpawnArea* thisspawn = thismap->MonsterSpawnList.at(j);
     		thisspawn->mapdrop = GetDropData( thisspawn->map );
-            thisspawn->mobdrop = GetDropData( thisspawn->thisnpc->dropid );                                     
+            thisspawn->mobdrop = GetDropData( thisspawn->thisnpc->dropid );
+            
+            //LMA: Adding boss spawn handling
+            if (thisspawn->bossid>0)
+            {
+               if (thisspawn->bossdropID>0)
+               {
+                  thisspawn->bossdrop=GetDropData( thisspawn->bossdropID);                         
+               }
+               else
+               {
+                   thisspawn->bossdrop=NULL;
+               }
+               
+            }
+                                                 
             for(UINT k=0;k<thisspawn->max;k++)
             {
                 fPoint position = RandInPoly( thisspawn->points, thisspawn->pcount );

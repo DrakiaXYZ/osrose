@@ -295,6 +295,7 @@ bool CPlayer::VisiblityList( )
     nb_hp=bon_nb_hp;	
 	sp_hp=bon_sp_hp;
     sp_mp=bon_sp_mp;
+    //Log(MSG_INFO,"SIP %i,%i,%i,%i",nb_mp,nb_hp,sp_hp,sp_mp);
 	   
 	
 	// Drops
@@ -548,6 +549,8 @@ bool CPlayer::Regeneration()
         if(bonus_hp!=0)
            nb_sec_stance=nb_sec_stance/((float)bonus_hp);    //LMA: salamender-bonfire?
         //Log(MSG_INFO,"HP info: sp_hp=%i, nb_hp=%i, bonus=%i, nb_bonus=%i, nb_sec=%.2f",sp_hp,nb_hp,bonus_sitted,bonus_hp,nb_sec_stance);
+        
+        //Log(MSG_INFO,"SIP2 %i,%i,%i,%i",nb_mp,nb_hp,sp_hp,sp_mp);
         
     	clock_t etime = clock() - lastRegenTime_hp;
         if( etime >= nb_sec_stance * CLOCKS_PER_SEC && Stats->HP > 0 )

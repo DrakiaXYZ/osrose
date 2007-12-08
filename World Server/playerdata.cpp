@@ -78,6 +78,12 @@ bool CPlayer::loaddata( )
     Shop->ShopType=atoi(row[37]);
     Shop->mil_shop_time=atoi(row[38]);
     
+    //resetting some values:
+    sp_hp=0;
+    sp_mp=0;
+    nb_hp=0;
+    nb_mp=0;
+    
     //TEST
     time_t rawtime;
     struct tm * timeinfo;

@@ -248,9 +248,27 @@ void CMap::RespawnMonster( )
         clock_t rtime = clock() - thisspawn->lastRespawnTime;
         if((rtime > thisspawn->respawntime*CLOCKS_PER_SEC && thisspawn->amon<thisspawn->max) || thisspawn->amon<thisspawn->min )
         {         
+            //LMA: handling spawns of some bosses according to some spawn kills.
+            if (thisspawn->nb_trigger>0)
+            {
+               thisspawn->cu_trigger++;
+               Log(MSG_INFO,"Trigger update to %i/%i for Spawn ID %i",thisspawn->cu_trigger,thisspawn->nb_trigger,thisspawn->id);
+               if (thisspawn->cu_trigger>=thisspawn->nb_trigger&&thisspawn->bossid>0)
+               {
+                  Log(MSG_INFO,"Should spawn monster ID %i with drop ID %i",thisspawn->bossid,thisspawn->bossdropID);
+                  fPoint position = GServer->RandInPoly( thisspawn->points, thisspawn->pcount );
+                  AddMonster( thisspawn->bossid, position, 0, thisspawn->bossdrop, thisspawn->mapdrop, thisspawn->id);
+                  thisspawn->cu_trigger=0;
+                  
+                  //We jump (boss counts for one monster).
+                  continue;
+               }
+               
+            } 
+            
             fPoint position = GServer->RandInPoly( thisspawn->points, thisspawn->pcount );
             AddMonster( thisspawn->montype, position, 0, thisspawn->mobdrop, thisspawn->mapdrop, thisspawn->id );
-            thisspawn->lastRespawnTime = clock();
+            thisspawn->lastRespawnTime = clock();                                  
         }
     }                  
 }
