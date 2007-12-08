@@ -550,7 +550,7 @@ bool CWorldServer::LoadMonsterSpawn( )
             CNPCData* tempnpc;
             tempnpc=GetNPCDataByID( thisspawn->bossid );
             thisspawn->bossdropID=tempnpc->dropid;
-            delete tempnpc;
+//            delete tempnpc;
         }
 	
 		thisspawn->amon = 0;
