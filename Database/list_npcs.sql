@@ -4,7 +4,7 @@ Source Host: 192.168.1.100
 Source Database: osrose
 Target Host: 192.168.1.100
 Target Database: osrose
-Date: 11/29/2007 4:05:23 PM
+Date: 12/9/2007 9:54:16 AM
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -164,8 +164,8 @@ INSERT INTO `list_npcs` VALUES ('117', '[Arumic Researcher] Catherine Clara', '1
 INSERT INTO `list_npcs` VALUES ('118', '[Raknu Warrior] Jeffrey Lloyd', '1221', '61', '180', '5436', '4593');
 INSERT INTO `list_npcs` VALUES ('119', '[Smith] Nel Eldora', '1223', '61', '45', '5395', '4617');
 INSERT INTO `list_npcs` VALUES ('120', '[Righteous Crusader] Harold Evan', '1211', '61', '90', '5367', '4577');
-INSERT INTO `list_npcs` VALUES ('121', '[Raknu Warrior] Guanu', '1230', '61', '125', '5421', '4673');
-INSERT INTO `list_npcs` VALUES ('122', '[Raknu Warrior] Toanu', '1229', '61', '210', '5438', '4674');
+INSERT INTO `list_npcs` VALUES ('121', '[Raknu Warrior] Guanu', '1230', '61', '125', '5424', '4671');
+INSERT INTO `list_npcs` VALUES ('122', '[Raknu Warrior] Toanu', '1229', '61', '210', '5434', '4671');
 INSERT INTO `list_npcs` VALUES ('123', '[Sikuku Resident] Martie', '1258', '62', '45', '5638', '5127');
 INSERT INTO `list_npcs` VALUES ('124', '[Sikuku Warrior] Kilie', '1257', '62', '315', '5647', '5126');
 INSERT INTO `list_npcs` VALUES ('125', '[Sikuku Resident] Carl', '1259', '62', '100', '5714', '5122');
