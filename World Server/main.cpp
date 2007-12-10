@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
     srand( rand()*time(NULL) );         
     
     //LMA: TEST DEACTIVATING ERROR TRAPPING
-    //StartSignal( );
+    StartSignal( );
     
 	LOG_THISSERVER = LOG_WORLD_SERVER;
     InitWinSocket( );
