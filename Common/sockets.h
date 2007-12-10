@@ -195,6 +195,7 @@ struct CROSEServerConfig
     int Command_Broadcast;
     int Command_Buff;
     int Command_Cfmode;
+    int Command_cg;
     int Command_Cha;
     int Command_ChangeFairyWait;
     int Command_ChangeFairyStay;

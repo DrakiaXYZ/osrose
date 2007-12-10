@@ -653,6 +653,7 @@ void CWorldServer::LoadCommandLevels( void )
     Config.Command_Broadcast = ConfigGetInt    ( "commands.ini", "broadcast", 299 );
     Config.Command_Buff = ConfigGetInt    ( "commands.ini", "buff", 299 );
     Config.Command_Cfmode = ConfigGetInt    ( "commands.ini", "cfmode", 299 ); 
+    Config.Command_cg = ConfigGetInt    ( "commands.ini", "castlegear", 299 ); //get all CastleGear Parts
     Config.Command_Cha = ConfigGetInt    ( "commands.ini", "cha", 299 );
     Config.Command_ChangeFairyWait = ConfigGetInt    ( "commands.ini", "changefairywait", 299 );
     Config.Command_ChangeFairyStay = ConfigGetInt    ( "commands.ini", "changefairystay", 299 );
