@@ -1,10 +1,10 @@
 /*
 MySQL Data Transfer
-Source Host: 192.168.1.100
+Source Host: localhost
 Source Database: osrose
-Target Host: 192.168.1.100
+Target Host: localhost
 Target Database: osrose
-Date: 12/9/2007 9:54:08 AM
+Date: 12/11/2007 11:44:45 AM
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -19,7 +19,7 @@ CREATE TABLE `list_respawnzones` (
   `radius` float NOT NULL default '10',
   `type` int(11) NOT NULL default '2',
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=91 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=92 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records 
@@ -110,3 +110,4 @@ INSERT INTO `list_respawnzones` VALUES ('87', '101', '5284', '5038', '10', '2');
 INSERT INTO `list_respawnzones` VALUES ('88', '74', '5161', '5302', '10', '2');
 INSERT INTO `list_respawnzones` VALUES ('89', '70', '5301', '5039', '10', '2');
 INSERT INTO `list_respawnzones` VALUES ('90', '6', '5200', '5501', '10', '2');
+INSERT INTO `list_respawnzones` VALUES ('91', '25', '5510', '4900', '10', '2');
