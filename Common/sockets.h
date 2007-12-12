@@ -194,6 +194,7 @@ struct CROSEServerConfig
     int Command_BonusXp; //LMA: gives a bonusxp to a player
     int Command_Broadcast;
     int Command_Buff;
+    int Command_cart;
     int Command_Cfmode;
     int Command_cg;
     int Command_Cha;

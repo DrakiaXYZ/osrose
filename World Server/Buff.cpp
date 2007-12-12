@@ -583,6 +583,7 @@ bool CWorldServer::CheckDBuffs( CSkills* thisskill, CCharacter* character, int E
             }
         }
         break;
+        
         case A_MUTE:
         {
              printf("Player used mute skill\n");
@@ -591,20 +592,23 @@ bool CWorldServer::CheckDBuffs( CSkills* thisskill, CCharacter* character, int E
                                               character->Status->Mute,
                                               0, false, true);
             unsigned tmp=RandNumber(1,100);
-            if(BuffValue.NewValue!=0 && (tmp < (Evalue+200)/7) )
-            {         
-               printf("mute skill is a success\n");                                        
+ 
+            //if(BuffValue.NewValue!=0 && (tmp < (Evalue+200)/7) )
+            if(BuffValue.NewValue!=0 && (RandNumber(1,100) < thisskill->success))
+            {
+               printf("mute skill is a success\n");
                UINT j = BuffValue.Position;
                character->Status->Mute = j;
                character->MagicStatus[j].Buff = thisskill->buff[i];
                character->MagicStatus[j].BuffTime = clock();
-               character->MagicStatus[j].Duration = thisskill->duration;  
-               character->MagicStatus[j].Value = BuffValue.Value;                  
+               character->MagicStatus[j].Duration = thisskill->duration;
+               character->MagicStatus[j].Value = BuffValue.Value;
                bflag = true;
             }
             else printf("muting failed: BuffValue.NewValue= %i, rand= %i, (Evalue+200)/700= %i \n", BuffValue.NewValue, tmp, (Evalue+200)/700);
         }
         break;
+
         case A_FLAME:
         {
              printf("User used flame skill\n");

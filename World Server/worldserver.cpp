@@ -652,6 +652,7 @@ void CWorldServer::LoadCommandLevels( void )
     Config.Command_BonusXp = ConfigGetInt    ( "commands.ini", "bonusxp", 299 );  //LMA: bonusxp
     Config.Command_Broadcast = ConfigGetInt    ( "commands.ini", "broadcast", 299 );
     Config.Command_Buff = ConfigGetInt    ( "commands.ini", "buff", 299 );
+    Config.Command_cart = ConfigGetInt    ( "commands.ini", "cart", 299 );  // all Cart Parts
     Config.Command_Cfmode = ConfigGetInt    ( "commands.ini", "cfmode", 299 ); 
     Config.Command_cg = ConfigGetInt    ( "commands.ini", "castlegear", 299 ); //get all CastleGear Parts
     Config.Command_Cha = ConfigGetInt    ( "commands.ini", "cha", 299 );
