@@ -1,10 +1,10 @@
 /*
 MySQL Data Transfer
-Source Host: localhost
+Source Host: 192.168.1.100
 Source Database: osrose
-Target Host: localhost
+Target Host: 192.168.1.100
 Target Database: osrose
-Date: 9/25/2007 12:04:01 PM
+Date: 12/21/2007 6:52:51 AM
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -18,7 +18,7 @@ CREATE TABLE `chest_data` (
   `rewardtype` varchar(255) NOT NULL,
   `prob` varchar(255) NOT NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records 
@@ -54,3 +54,13 @@ INSERT INTO `chest_data` VALUES ('29', '1028', '87|77|581|481|481|481|681|581|58
 INSERT INTO `chest_data` VALUES ('30', '70', '153|153|153|142|147|146|149|150', '2|3|5|10|10|10|10|10', '800|800|800|900|900|900|900|900');
 INSERT INTO `chest_data` VALUES ('31', '71', '153|153|153|142|147|146|149|150', '2|3|5|10|10|10|10|10', '800|800|800|900|900|900|900|900');
 INSERT INTO `chest_data` VALUES ('32', '72', '153|153|153|142|147|146|149|150', '2|3|5|10|10|10|10|10', '800|800|800|900|900|900|900|900');
+INSERT INTO `chest_data` VALUES ('33', '247', '240|241|242|243|244|245|246|496|913|177|174|177|174|37', '10|10|10|10|10|10|10|10|10|3|2|5|4|9', '500|500|500|500|500|500|500|700|700|900|900|900|900|1000');
+INSERT INTO `chest_data` VALUES ('34', '248', '240|241|242|243|244|245|246|496|913|177|174|177|174|37', '10|10|10|10|10|10|10|10|10|3|2|5|4|9', '500|500|500|500|500|500|500|700|700|900|900|900|900|1000');
+INSERT INTO `chest_data` VALUES ('35', '249', '240|241|242|243|244|245|246|496|913|177|174|177|174|37', '10|10|10|10|10|10|10|10|10|3|2|5|4|9', '500|500|500|500|500|500|500|700|700|900|900|900|900|1000');
+INSERT INTO `chest_data` VALUES ('36', '75', '13', '10', '500');
+INSERT INTO `chest_data` VALUES ('37', '76', '13', '10', '500');
+INSERT INTO `chest_data` VALUES ('38', '905', '13', '10', '500');
+INSERT INTO `chest_data` VALUES ('39', '906', '13', '10', '500');
+INSERT INTO `chest_data` VALUES ('40', '907', '13', '10', '500');
+INSERT INTO `chest_data` VALUES ('41', '912', '13', '10', '500');
+INSERT INTO `chest_data` VALUES ('42', '946', '13', '10', '500');

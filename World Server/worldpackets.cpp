@@ -116,9 +116,9 @@ void CWorldServer::pakPlayer( CPlayer *thisclient )
 	
     
     //TEST !!
-    //for(int i=0; i<260; i++)  ADDWORD( pak, 0 );
-    ADDWORD( pak, 5000 ); //Driving skill
-    for(int i=0; i<259; i++)  ADDWORD( pak, 0 );
+    for(int i=0; i<260; i++)  ADDWORD( pak, 0 );
+    //ADDWORD( pak, 5000 ); //Driving skill
+    //for(int i=0; i<259; i++)  ADDWORD( pak, 0 );
     
     
 	for(int i=0; i<42; i++)       // Basic Skills

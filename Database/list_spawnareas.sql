@@ -4,7 +4,7 @@ Source Host: 192.168.1.100
 Source Database: osrose
 Target Host: 192.168.1.100
 Target Database: osrose
-Date: 12/15/2007 11:46:28 AM
+Date: 12/21/2007 6:53:06 AM
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -3216,7 +3216,7 @@ INSERT INTO `list_spawnareas` VALUES ('13001', '25', '1321', '0', '1', '300', '5
 INSERT INTO `list_spawnareas` VALUES ('13002', '25', '1326', '0', '1', '300', '5|5667,4874|5679,4874|5687,4865|5679,4864|5670,4871', '3', '7', '1327', 'Grunter Guardian > Giant Grunter');
 INSERT INTO `list_spawnareas` VALUES ('13003', '26', '1338', '0', '1', '300', '5|5127,5034|5115,5046|5115,5054|5122,5052|5123,5042', '3', '7', '208', 'Giant Smouly > Guardian Tree');
 INSERT INTO `list_spawnareas` VALUES ('13004', '26', '1342', '0', '1', '300', '5|5696,4902|5701,4889|5696,4879|5690,4887|5695,4900', '3', '7', '1343', 'Clown Swordsman > Wise Clown');
-INSERT INTO `list_spawnareas` VALUES ('13005', '27', '1353', '0', '1', '300', '6|5014,5247|5018,5237|5012,5232|5008,5237|5011,5243|5014,5245', '3', '7', '1355', 'Doonga Swordsman > Giant Doonga');
+INSERT INTO `list_spawnareas` VALUES ('13005', '27', '1353', '0', '1', '300', '6|5014,5247|5018,5237|5012,5232|5008,5237|5011,5243|5014,5245', '3', '7', '1335', 'Doonga Swordsman > Grand Master Doonga');
 INSERT INTO `list_spawnareas` VALUES ('13006', '27', '1361', '0', '1', '300', '5|5706,5095|5713,5084|5708,5078|5701,5083|5706,5093', '3', '7', '1362', 'Krawfy Captain > Giant Krawfy');
 INSERT INTO `list_spawnareas` VALUES ('13007', '27', '145', '0', '1', '300', '5|5831,5302|5828,5291|5817,5289|5820,5301|5830,5297', '3', '7', '1369', 'Kaiman Hunter > Giant Kaiman Ranger');
 INSERT INTO `list_spawnareas` VALUES ('13008', '28', '1381', '0', '1', '300', '6|5063,5492|5056,5501|5063,5505|5067,5500|5067,5491|5061,5489', '3', '7', '1385', 'Stone Golem > Giant Stone Golem');
