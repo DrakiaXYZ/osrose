@@ -298,6 +298,8 @@ CDrop* CWorldServer::GetDrop( CMonster* thismon )
 // Build Drop the PY way
 CDrop* CWorldServer::GetPYDrop( CMonster* thismon, UINT droptype )
 {   //if droptype = 1 then it is a normal drop. if it is 2 then it is a potential side drop.
+    Log(MSG_INFO,"GetPYDrop, monster %i, droptype %i",thismon->montype,droptype);
+
     if(droptype == 2) // monster is still alive
     {
         // kicks it straight back if the monster is not dead
@@ -317,6 +319,7 @@ CDrop* CWorldServer::GetPYDrop( CMonster* thismon, UINT droptype )
             return NULL;  //No drop this time
         }
     }
+
     CDrop* newdrop = new (nothrow) CDrop;
     if(newdrop==NULL)
     {
@@ -339,11 +342,21 @@ CDrop* CWorldServer::GetPYDrop( CMonster* thismon, UINT droptype )
     float leveldif = (float)thismon->thisnpc->level - (float)thisclient->Stats->Level;
     float droprate = (float)GServer->Config.DROP_RATE + charm;  //basic server rate + extra for player charm
     float dropchance = (droprate + (droprate * 0.01 * leveldif));
+    Log(MSG_INFO,"charm %.2f, leveldif %.2f, droprate %.2f, dropchance %.2f",charm,leveldif,droprate,dropchance);
     if(dropchance < 10) dropchance = 10; //always a small chance of a drop even when the mob is more than 20 levels beneath your own
+    Log(MSG_INFO,"dropchance %.2f",dropchance);
     if(thismon->thisnpc->level == 1)
         dropchance = 80;
-    if (GServer->RandNumber(0, 100)> dropchance)
+    Log(MSG_INFO,"dropchance %.2f",dropchance);
+    UINT lma_save_rand=0;
+    lma_save_rand=GServer->RandNumber(0, 100);
+    if (lma_save_rand>dropchance)
+    {
+        Log(MSG_INFO,"no drop, %i > %.2f",lma_save_rand,dropchance);
         return NULL; // no drop here. not this time anyway.
+    }
+
+    Log(MSG_INFO,"drop possible, %i <= %.2f",lma_save_rand,dropchance);
 
     CItemType prob[MDropList.size()];
     bool isdrop = false;
@@ -401,13 +414,14 @@ CDrop* CWorldServer::GetPYDrop( CMonster* thismon, UINT droptype )
         {
             newdrop->type = 1; //Drop Zuly
             newdrop->amount = thismon->thisnpc->level * 5 * Config.ZULY_RATE + RandNumber( 1, 10 );
+            Log(MSG_INFO,"zuly drop %i",newdrop->amount);
             return  newdrop;
         }
         // Stuff to do if the mob isn't a ghost
 
         int randomdrop = GServer->RandNumber(1, 100);
         //enable the next line for debug purposes if you want to confirm a drop is working.
-        //Log(MSG_INFO, "Mob type %i. Map = %i. Level = %i", thismon->montype, thismon->Position->Map,thismon->thisnpc->level);
+        Log(MSG_INFO, "Mob type %i. Map = %i. Level = %i", thismon->montype, thismon->Position->Map,thismon->thisnpc->level);
 
         for(int i=0; i<MDropList.size( ); i++)
         {
@@ -584,6 +598,8 @@ CDrop* CWorldServer::GetPYDrop( CMonster* thismon, UINT droptype )
             newdrop->item.stats = rand()%300;
     }
     newdrop->item.gem = 0;
+
+    Log(MSG_INFO,"drop %i* (%i:%i)",newdrop->amount,newdrop->type,newdrop->item);
     return newdrop;
 }
 
