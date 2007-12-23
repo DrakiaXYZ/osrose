@@ -1,22 +1,22 @@
 /*
     Rose Online Server Emulator
     Copyright (C) 2006,2007 OSRose Team http://osroseon.to.md
-    
+
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
     as published by the Free Software Foundation; either version 2
     of the License, or (at your option) any later version.
-    
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-    
+
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-    depeloped with Main erose/hrose source server + some change from the original eich source        
+    depeloped with Main erose/hrose source server + some change from the original eich source
 */
 #ifndef __ROSE_SOCKETS__
 #define __ROSE_SOCKETS__
@@ -41,7 +41,7 @@
     #define PVOID void *
     #define ioctlsocket ioctl
     #define SOCKADDR struct sockaddr
-    #define closesocket close    
+    #define closesocket close
 #endif
 #include <mysql/mysql.h>
 #include <cstdio>
@@ -63,7 +63,7 @@
 #include "database/database.h"
 // Just some defs for easier use
 typedef char SBYTE;
-typedef unsigned char BYTE; 
+typedef unsigned char BYTE;
 typedef short SWORD;
 typedef unsigned short WORD;
 typedef long SDWORD;
@@ -115,7 +115,7 @@ struct CROSEServerConfigSQL
 	char*		pcServer;								// IP
 	char*		pcDatabase;								// Database
 	char*		pcUserName;								// UserName
-	char*		pcPassword;								// Password	
+	char*		pcPassword;								// Password
 	int         pcPort;                    // port
 };
 
@@ -130,7 +130,7 @@ struct CROSEServerConfig
     unsigned	MaxConnections;           // Max connections
     unsigned	UserPerThread;	          // User per thread
     bool		AllowMultipleConnections; // Allow multiple connection from same ip?
-    bool		StayInServerLoop;         // Server actived?    
+    bool		StayInServerLoop;         // Server actived?
     char*       LanSubnet;                //lansubnet
     char*       LanIP;                    //ip to send with lansubnet
     UINT        ServerID;                 //id from this server
@@ -138,37 +138,37 @@ struct CROSEServerConfig
     char*       ServerName;               //Server name
     UINT        ServerType;               //0 login - 1 server(char) - 2 channel(world)
     BYTE        Connection;
-    
-	// LOGINSERVER	
-	unsigned int MinimumAccessLevel; // Minimum access level   
+
+	// LOGINSERVER
+	unsigned int MinimumAccessLevel; // Minimum access level
     char*        LoginIP;            // LoginIP [external]
-    unsigned int LoginPort;          // Login port      
-    unsigned int LoginPass;    
-    bool CreateLoginAccount;         // Create account in login if not exist?             
+    unsigned int LoginPort;          // Login port
+    unsigned int LoginPass;
+    bool CreateLoginAccount;         // Create account in login if not exist?
     bool checkGameGuard;             // Should we check if the user has gameguard?
-	
+
 	// CHARSEVER
 	unsigned long int DeleteTime;    // Delete time
 	char*        CharIP;             // CharIP
 	unsigned int CharPort;           // Char port
-    unsigned int CharPass;	
-	
+    unsigned int CharPass;
+
 	// WORLDSERVER
 	char*        WorldIP;
 	unsigned int WorldPort;
-    unsigned int WorldPass;     	
+    unsigned int WorldPass;
 	bool AutoSave;                   // Autosave actived?
-	UINT SaveTime;                   // Autosave time          									
+	UINT SaveTime;                   // Autosave time
     UINT EXP_RATE;
     UINT DROP_RATE;
     UINT ZULY_RATE;
     UINT AUTOSAVE;
     UINT SAVETIME;
-    UINT MapDelay;  
+    UINT MapDelay;
     UINT VisualDelay;
-    UINT WorldDelay;     
+    UINT WorldDelay;
     char* WELCOME_MSG;
-    UINT DROP_TYPE;    
+    UINT DROP_TYPE;
     int MaxStat;
     int Partygap;
     int FairyMode;
@@ -178,13 +178,17 @@ struct CROSEServerConfig
     int FairyTestMode;
     int PlayerDmg;
     int MonsterDmg;
+    int BlueChance; //hidden
+    int StatChance; //hidden
+    int SlotChance; //hidden
+    int RefineChance; //hidden
     int Cfmode;
     int EventType; //Event
     int EventNPC;  //Event
     int osRoseVer ; //Revision of server
     int testgrid; //LMA: maps, testing grids...
     int jrose; //LMA: for handling jRose (163)
-    
+
     // COMMAND LEVELS
     int Command_AllSkill; // by crashinside
     int Command_Ani;
@@ -202,7 +206,7 @@ struct CROSEServerConfig
     int Command_ChangeFairyStay;
     int Command_ChangeFairyTestMode;
     int Command_Class;
-    int Command_Convert;  
+    int Command_Convert;
     int Command_Debuff;
     int Command_DelSpawn;
     int Command_DelSkills; // by rl2171
@@ -212,22 +216,22 @@ struct CROSEServerConfig
     int Command_ESpawn;
     int Command_Event;    //event
     int Command_Exp;
-    int Command_Face;  
+    int Command_Face;
     int Command_fskill;    //LMA: force a skill for a monster
     int Command_Give2;
     int Command_GiveClanRp;
     int Command_GiveFairy;
     int Command_GiveZuly;
     int Command_GlobalTime;
-    int Command_GmList;    
+    int Command_GmList;
     int Command_Go;
     int Command_go;
     int Command_Goto;
     int Command_GoToMap;
     int Command_grid;       //LMA: maps grid test
-    int Command_Hair;  
+    int Command_Hair;
     int Command_Heal;
-    int Command_Here;  
+    int Command_Here;
     int Command_Hide;
     int Command_HitModif;
     int Command_HurtHim;    //LMA: let's hurt someone :)
@@ -246,7 +250,7 @@ struct CROSEServerConfig
     int Command_Mon2;
     int Command_Monster;
     int Command_Move;
-    int Command_Moveto;  
+    int Command_Moveto;
     int Command_Mute;
     int Command_Npc;
     int Command_Pak;
@@ -255,8 +259,8 @@ struct CROSEServerConfig
     int Command_Partylvl;
     int Command_Pdmg;
     int Command_PlayerInfo;
-    int Command_Pvp;  
-    int Command_Rate;  
+    int Command_Pvp;
+    int Command_Rate;
     int Command_Reborn;  //reborn by Core
     int Command_Reload;
     int Command_ReloadQuest;
@@ -264,7 +268,7 @@ struct CROSEServerConfig
     int Command_Save;
     int Command_ServerInfo;
     int Command_Set;
-    int Command_Settime;  
+    int Command_Settime;
     int Command_ShopType;
     int Command_Shutdown;
     int Command_SpeedModif;
@@ -274,18 +278,18 @@ struct CROSEServerConfig
     int Command_TargetInfo;
     int Command_Tele;
     int Command_TeleToMe;
-    int Command_Transx;  
+    int Command_Transx;
     int Command_Who;
     int Command_Who2;
-    
-    char* Command_GlobalPrefix;        
-    
+
+    char* Command_GlobalPrefix;
+
 };
 
 
 // Classes
 // Base class
-class CBaseSocket 
+class CBaseSocket
 {
     public:
     	CBaseSocket( );						// Constructor
@@ -298,9 +302,9 @@ class CBaseSocket
     	char            ClientSubNet[12];   // Lan Subnet
 };
 // Client class
-class CClientSocket : public CBaseSocket 
+class CClientSocket : public CBaseSocket
 {
-    public:     
+    public:
     	CClientSocket( );					// Client Constructor
     	~CClientSocket( );				    // Client Destructor
     	bool ReceiveData( );                // Receive packet
@@ -315,7 +319,7 @@ class CClientSocket : public CBaseSocket
 };
 
 // Server class
-class CServerSocket : public CBaseSocket 
+class CServerSocket : public CBaseSocket
 {
     public:
     	CServerSocket( );					 // Constructor
@@ -328,26 +332,26 @@ class CServerSocket : public CBaseSocket
     	void DisconnectClient( CClientSocket* thisclient );   // Disconnect Client
 
         // Virtual Functions
-       	virtual void ServerLoop( );                  // Main Loop         
-        virtual CClientSocket* CreateClientSocket( ); // Create a client 
+       	virtual void ServerLoop( );                  // Main Loop
+        virtual CClientSocket* CreateClientSocket( ); // Create a client
     	virtual void DeleteClientSocket( CClientSocket* thisclient ); // Delete client
     	virtual bool OnServerReady( );       // Executed with server is ready
     	virtual void OnServerStep( );        // Executed
     	virtual void OnServerDie( );
     	virtual bool OnReceivePacket( CClientSocket* thisclient, CPacket* P );
     	virtual bool OnClientConnect( CClientSocket* thisclient );
-    	virtual void OnClientDisconnect( CClientSocket* thisclient );  
-                
+    	virtual void OnClientDisconnect( CClientSocket* thisclient );
+
     	//LMA BEGIN
     	//20070623, 224500
     	virtual bool Ping();             //MySQL Ping
     	//LMA END
-    	
+
         // Variables
         CROSEServerConfig	Config;	          // Hold server configuration
         int  maxfd;
-        vector<CClientSocket*>      ClientList;    
-        UINT                        ConnectedClients;	
+        vector<CClientSocket*>      ClientList;
+        UINT                        ConnectedClients;
     	unsigned short				port;
     	pthread_t                   threads[65535];
 };

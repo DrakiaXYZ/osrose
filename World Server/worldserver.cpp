@@ -1,22 +1,22 @@
 /*
     Rose Online Server Emulator
     Copyright (C) 2006,2007 OSRose Team http://www.osrose.net
-    
+
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
     as published by the Free Software Foundation; either version 2
     of the License, or (at your option) any later version.
-    
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-    
+
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-    depeloped with Main erose/hrose source server + some change from the original eich source        
+    depeloped with Main erose/hrose source server + some change from the original eich source
 */
 #include "worldserver.h"
 
@@ -24,17 +24,17 @@
 CWorldServer::CWorldServer( string fn )
 {
     filename = fn;
-    LoadConfigurations( (char*)fn.c_str() );       	             
-	for(unsigned i=0; i<0xffff; i++) 
+    LoadConfigurations( (char*)fn.c_str() );
+	for(unsigned i=0; i<0xffff; i++)
         ClientIDList[i] = 1;
     //Clear or Vector list
-    PartyList.clear();    
+    PartyList.clear();
     MDropList.clear();
     SkillList.clear();
     QuestList.clear();
     FairyList.clear();
     TeleGateList.clear();
-    // 
+    //
     CEquip* nullequip = new CEquip;
     nullequip->id = 0;
     nullequip->equiptype = 0;
@@ -62,14 +62,14 @@ CWorldServer::CWorldServer( string fn )
     {
         nullequip->stat1[i] = 0;
         nullequip->stat2[i] = 0;
-    }      
+    }
     for(int i=0;i<10;i++)
     {
         EquipList[i].nullequip = nullequip;
         for(UINT j=0;j<5000;j++)
             EquipList[i].Index[j] = nullequip;
     }
-    CNaturalData* nullnatural = new CNaturalData; 
+    CNaturalData* nullnatural = new CNaturalData;
     nullnatural->id = 0;
     nullnatural->type = 0;
     nullnatural->price = 0;
@@ -92,7 +92,7 @@ CWorldServer::CWorldServer( string fn )
     nullpat->speed = 0;
     nullpat->attackdistance = 0;
     nullpat->attackpower = 0;
-    nullpat->attackspeed = 0;   
+    nullpat->attackspeed = 0;
     PatList.nullpat = nullpat;
     CCSellData* nullsell = new CCSellData;
     nullsell->id = 0;
@@ -103,11 +103,11 @@ CWorldServer::CWorldServer( string fn )
     {
         NaturalList.Index[i] = nullnatural;
         PatList.Index[i] = nullpat;
-        SellList.Index[i] = nullsell;                       
-    }    
+        SellList.Index[i] = nullsell;
+    }
     CMap* nullzone = new CMap( );
     nullzone->id =0;
-    nullzone->dayperiod = 1;     
+    nullzone->dayperiod = 1;
     nullzone->morningtime = 0;
     nullzone->daytime = 0;
     nullzone->eveningtime = 0;
@@ -116,9 +116,9 @@ CWorldServer::CWorldServer( string fn )
     nullzone->allowpat = 0;
     nullzone->MapTime = 0;
     nullzone->LastUpdate = 0;
-    nullzone->CurrentTime = 0;    
+    nullzone->CurrentTime = 0;
     for(UINT i=0;i<300;i++)
-        MapList.Index[i] = nullzone;  
+        MapList.Index[i] = nullzone;
     MapList.nullzone = nullzone;
     CUseData* nulluse = new CUseData;
     nulluse->id = 0;
@@ -128,24 +128,24 @@ CWorldServer::CWorldServer( string fn )
     nulluse->pricerate = 0;
     nulluse->weight = 0;
     nulluse->quality = 0;
-    nulluse->pricevalue = 0;          
+    nulluse->pricevalue = 0;
     for(int i=0;i<2;i++)
     {
         nulluse->usecondition[i] = 0;
-        nulluse->useeffect[i] = 0;    
+        nulluse->useeffect[i] = 0;
     }
-    UseList.nulluse = nulluse;    
+    UseList.nulluse = nulluse;
     CProductData* nullproduct = new CProductData;
     nullproduct->id = 0;
     for(UINT i=0;i<50;i++)
     {
         nullproduct->item[i];
-        nullproduct->amount[i];    
+        nullproduct->amount[i];
     }
-    ProductList.nullproduct = nullproduct;    
-    for(UINT i=0;i<2000;i++)    
+    ProductList.nullproduct = nullproduct;
+    for(UINT i=0;i<2000;i++)
     {
-        UseList.Index[i] = nulluse;     
+        UseList.Index[i] = nulluse;
         ProductList.Index[i] = nullproduct;
     }
     CJemData* nulljem = new CJemData;
@@ -159,7 +159,7 @@ CWorldServer::CWorldServer( string fn )
     for(int i=0;i<2;i++)
     {
         nulljem->stat1[i] = 0;
-        nulljem->stat2[i] = 0;    
+        nulljem->stat2[i] = 0;
     }
     JemList.nulljem = nulljem ;
     for(UINT i=0;i<4000;i++)
@@ -167,54 +167,54 @@ CWorldServer::CWorldServer( string fn )
     for(UINT i=0;i<500;i++)
     {
         StatsList[i].stat[0] = 0;
-        StatsList[i].stat[1] = 0;        
+        StatsList[i].stat[1] = 0;
         StatsList[i].value[0] = 0;
-        StatsList[i].value[1] = 0;                
+        StatsList[i].value[1] = 0;
     }
     MapMutex = PTHREAD_MUTEX_INITIALIZER; //fast mutex
     SQLMutex = PTHREAD_MUTEX_INITIALIZER;
     PlayerMutex = PTHREAD_MUTEX_INITIALIZER;
 }
-	
+
 // Destructor
 CWorldServer::~CWorldServer( )
 {
     // free memory
-    for(UINT i=0;i<FairyList.size();i++) 
+    for(UINT i=0;i<FairyList.size();i++)
         delete FairyList.at(i);
-    for(UINT i=0;i<PartyList.size();i++) 
+    for(UINT i=0;i<PartyList.size();i++)
         delete PartyList.at(i);
-    for(UINT i=0;i<TeleGateList.size();i++) 
+    for(UINT i=0;i<TeleGateList.size();i++)
         delete TeleGateList.at(i);
-    for(UINT i=0;i<QuestList.size();i++) 
+    for(UINT i=0;i<QuestList.size();i++)
         delete QuestList.at(i);
-    for(UINT i=0;i<SkillList.size();i++) 
+    for(UINT i=0;i<SkillList.size();i++)
         delete SkillList.at(i);
-    for(UINT i=0;i<MDropList.size();i++) 
+    for(UINT i=0;i<MDropList.size();i++)
         delete MDropList.at(i);
-    for(UINT i=0;i<NPCData.size();i++) 
+    for(UINT i=0;i<NPCData.size();i++)
         delete NPCData.at(i);
-    for(UINT i=0;i<JemList.Data.size();i++) 
+    for(UINT i=0;i<JemList.Data.size();i++)
         delete JemList.Data.at(i);
-    for(UINT i=0;i<NaturalList.Data.size();i++) 
-        delete NaturalList.Data.at(i);    
-    for(UINT i=0;i<PatList.Data.size();i++) 
-        delete PatList.Data.at(i);        
-    for(UINT i=0;i<ProductList.Data.size();i++) 
-        delete ProductList.Data.at(i);            
-    for(UINT i=0;i<SellList.Data.size();i++)    
-        delete SellList.Data.at(i);                
-    for(UINT i=0;i<UseList.Data.size();i++) 
-        delete UseList.Data.at(i);                    
-    for(UINT i=0;i<MapList.Map.size();i++) 
-        delete MapList.Map.at(i); 
+    for(UINT i=0;i<NaturalList.Data.size();i++)
+        delete NaturalList.Data.at(i);
+    for(UINT i=0;i<PatList.Data.size();i++)
+        delete PatList.Data.at(i);
+    for(UINT i=0;i<ProductList.Data.size();i++)
+        delete ProductList.Data.at(i);
+    for(UINT i=0;i<SellList.Data.size();i++)
+        delete SellList.Data.at(i);
+    for(UINT i=0;i<UseList.Data.size();i++)
+        delete UseList.Data.at(i);
+    for(UINT i=0;i<MapList.Map.size();i++)
+        delete MapList.Map.at(i);
     for(UINT i=0;i<10;i++)
         for(UINT j=0;j<EquipList[i].Data.size();j++)
-            delete EquipList[i].Data.at(j);        
+            delete EquipList[i].Data.at(j);
     for(UINT i=0;i<ClientList.size();i++)
     {
-        delete (CPlayer*)ClientList.at(i)->player;        
-        delete ClientList.at(i);  
+        delete (CPlayer*)ClientList.at(i)->player;
+        delete ClientList.at(i);
     }
     delete EquipList[0].nullequip;
     delete JemList.nulljem;
@@ -223,8 +223,8 @@ CWorldServer::~CWorldServer( )
     delete ProductList.nullproduct;
     delete SellList.nullsell;
     delete UseList.nulluse;
-    delete MapList.nullzone;   
-    delete DB;   
+    delete MapList.nullzone;
+    delete DB;
 }
 
 //LMA BEGIN
@@ -241,28 +241,28 @@ bool CWorldServer::Ping()
             Log( MSG_INFO, "MySQL Ping Time Ok on port %u",DB->Port);
             DB->QFree( );
         }
-        
+
      return true;
 }
 //LMA END
 
 // This cleans up our clients mess :P
 void CWorldServer::OnClientDisconnect( CClientSocket* thisclient )
-{    
+{
     if(thisclient->player==NULL) return;
 	CPlayer* player = (CPlayer*)thisclient->player;
 	if(!player->Session->isLoggedIn) return;
     if(!player->Saved)
-    {	                      
+    {
     	player->savedata();
         player->Session->isLoggedIn = false;
         //send packet to change messenger status (offline)
     	BEGINPACKET( pak, 0x7e1 );
-    	ADDBYTE    ( pak, 0xfa ); 
+    	ADDBYTE    ( pak, 0xfa );
     	ADDWORD    ( pak, player->CharInfo->charid );
     	ADDBYTE    ( pak, 0x00 );
     	cryptPacket( (char*)&pak, NULL );
-    	send( csock, (char*)&pak, pak.Size, 0 );  
+    	send( csock, (char*)&pak, pak.Size, 0 );
     }
     if ( player->Fairy ){
         GServer->FairyList.at(player->FairyListIndex)->assigned = false;
@@ -278,13 +278,13 @@ void CWorldServer::OnClientDisconnect( CClientSocket* thisclient )
 	    if( oldFairyMax > GServer->Config.FairyMax ){
             GServer->FairyList.erase( GServer->FairyList.begin() + GServer->FairyList.size() );
         }
-    }  
+    }
     if(player->Party->party!=NULL)
     {
-        CParty* party = player->Party->party; 
+        CParty* party = player->Party->party;
         BEGINPACKET( pak, 0x7d2 );
         ADDWORD    ( pak, 0xff00 );
-        ADDDWORD   ( pak, player->CharInfo->charid );                        
+        ADDDWORD   ( pak, player->CharInfo->charid );
         bool pflag = false;
         party->RemovePlayer( player );
         if(party->Members.size()>1)
@@ -297,7 +297,7 @@ void CWorldServer::OnClientDisconnect( CClientSocket* thisclient )
                     ADDDWORD( pak, othermember->CharInfo->charid );
                     if(player->Party->IsMaster)
                         othermember->Party->IsMaster = true;
-                    pflag = true; 
+                    pflag = true;
                 }
                 othermember->client->SendPacket( &pak );
             }
@@ -310,16 +310,16 @@ void CWorldServer::OnClientDisconnect( CClientSocket* thisclient )
                 BEGINPACKET( pak, 0x7d1 );
                 ADDBYTE    ( pak, 0x05 );
                 ADDWORD    ( pak, 0x0000 );
-                ADDWORD    ( pak, 0x0000 );         
-                othermember->client->SendPacket( &pak );  
+                ADDWORD    ( pak, 0x0000 );
+                othermember->client->SendPacket( &pak );
                 othermember->Party->party = NULL;
-                othermember->Party->IsMaster = true;                      
-            }  
-            RemoveParty( party );              
+                othermember->Party->IsMaster = true;
+            }
+            RemoveParty( party );
             delete party;
             party = NULL;
-        }                      
-    }     
+        }
+    }
     DB->QExecute("UPDATE accounts SET online=false where id=%u", player->Session->userid );
 }
 
@@ -334,18 +334,18 @@ void CWorldServer::ServerLoop( )
 	timeval		timeout;
 	maxfd = sock;
 	OnServerStep();
-	
+
 	//LMA BEGIN
 	//MySQL Ping (every hour)
 	//20070623, 221000
 	UINT time_last_ping=clock();
 	UINT delay_ping=3600000;
-	
+
 	//LMA END
-	
+
 	do
 	{
-          
+
         //LMA BEGIN
         //MySQL Ping
         //20070623, 221000
@@ -353,10 +353,10 @@ void CWorldServer::ServerLoop( )
         if(etime>=delay_ping)
         {
             time_last_ping=clock();
-            Ping();           
+            Ping();
         }
         //LMA END
-        
+
         timeout.tv_sec = 0;
         timeout.tv_usec = 1000;
         NewSocket = INVALID_SOCKET;
@@ -373,7 +373,7 @@ void CWorldServer::ServerLoop( )
         	Sleep(1);
         	#else
         	usleep(1);
-        	#endif            
+        	#endif
             continue;
         }
 		if ( activity < 0 && errno != EINTR )
@@ -473,7 +473,14 @@ bool CWorldServer::OnServerReady( )
     LoadItemStats( );
     LoadBreakList( );     // geo edit for disassemble // 22 oct 07
     LoadSkillData( );
-    LoadDropsData( );
+
+    //hidden
+    // LoadDropsData( );
+    // new drops routine load
+    LoadPYDropsData( );
+    LoadSkillBookDropsData( );
+    // end of new drops data
+
     LoadChestData( );
     LoadQuestData( );
     LoadNPCData( );
@@ -552,28 +559,28 @@ bool CWorldServer::OnServerReady( )
 
 // Send Levelup To charserver
 bool CWorldServer::SendLevelUPtoChar(CPlayer *thisclient)
-{        
+{
 	BEGINPACKET( pak, 0x79e );
 	ADDWORD( pak, thisclient->CharInfo->charid );
 	ADDWORD( pak, thisclient->Stats->Level );
 	cryptPacket( (char*)&pak, NULL );
-	send( csock, (char*)&pak, pak.Size, 0 );   
+	send( csock, (char*)&pak, pak.Size, 0 );
     return true;
 }
 
 // disconect all the clients
 void CWorldServer::DisconnectAll()
-{    
+{
     for(UINT i=0;i<ClientList.size();i++)
     {
         CPlayer* otherclient = (CPlayer*) ClientList.at(i)->player;
-		if(otherclient->Session->isLoggedIn) 
-		{            
+		if(otherclient->Session->isLoggedIn)
+		{
             otherclient->savedata( );
             otherclient->Saved = true;
             otherclient->client->isActive = false;
-        } 
-	}       
+        }
+	}
 }
 
 // Load Server configuration
@@ -582,63 +589,67 @@ void CWorldServer::LoadConfigurations( char* file )
     //Database
 	Config.SQLServer.pcServer   = ConfigGetString ( file, "mysql_host", "localhost" );
 	Config.SQLServer.pcDatabase = ConfigGetString ( file, "mysql_database", "roseon_beta" );
-    Config.SQLServer.pcUserName = ConfigGetString ( file, "mysql_user", "root" );    
+    Config.SQLServer.pcUserName = ConfigGetString ( file, "mysql_user", "root" );
 	Config.SQLServer.pcPassword = ConfigGetString ( file, "mysql_pass", "" );
-	Config.SQLServer.pcPort     = ConfigGetInt    ( file, "mysql_port", 3306 );		
-    //Server	
-	Config.ServerID             = ConfigGetInt    ( file, "serverid", 1 );    
-	Config.ServerType           = ConfigGetInt    ( file, "servertype", 2 );    
-	Config.WorldPort            = ConfigGetInt    ( file, "serverport", 29200 );	
-	Config.WorldIP              = ConfigGetString ( file, "serverip", "127.0.0.1" ); 	
+	Config.SQLServer.pcPort     = ConfigGetInt    ( file, "mysql_port", 3306 );
+    //Server
+	Config.ServerID             = ConfigGetInt    ( file, "serverid", 1 );
+	Config.ServerType           = ConfigGetInt    ( file, "servertype", 2 );
+	Config.WorldPort            = ConfigGetInt    ( file, "serverport", 29200 );
+	Config.WorldIP              = ConfigGetString ( file, "serverip", "127.0.0.1" );
 	Config.ParentID             = ConfigGetInt    ( file, "parentid", 1 );
 	Config.ServerName           = ConfigGetString ( file, "servername", "Channel" );
-    Config.MaxConnections       = ConfigGetInt    ( file, "maxconnections", 100 );    
-    Config.Connection           = ConfigGetInt    ( file, "connection", 0 );        
+    Config.MaxConnections       = ConfigGetInt    ( file, "maxconnections", 100 );
+    Config.Connection           = ConfigGetInt    ( file, "connection", 0 );
     Config.LanIP                = ConfigGetString ( file, "lanip", "192.168.0.1" );
     Config.LanSubnet            = ConfigGetString ( file, "lansubmask", "192.168.0" );
     //World
-    Config.MinimumAccessLevel   = ConfigGetInt    ( file, "minimal_access_level", 100 );    
+    Config.MinimumAccessLevel   = ConfigGetInt    ( file, "minimal_access_level", 100 );
 	Config.usethreads           = ConfigGetInt    ( file, "usethreads", 0 )==0?false:true;
 	Config.EXP_RATE             = ConfigGetInt    ( file, "exp_rate", 10 );
 	Config.DROP_RATE            = ConfigGetInt    ( file, "drop_rate", 1 );
-    Config.DROP_TYPE            = ConfigGetInt    ( file, "drop_type", 2 );  	
+    Config.DROP_TYPE            = ConfigGetInt    ( file, "drop_type", 2 );
 	Config.ZULY_RATE            = ConfigGetInt    ( file, "zuly_rate", 1 );
 	Config.WELCOME_MSG          = ConfigGetString ( file, "welcome_msg", "Welcome to Rose Online" );
-    Config.AUTOSAVE             = ConfigGetInt    ( file, "autosave", 0 );	
-	Config.SAVETIME             = ConfigGetInt    ( file, "savetime", 3600 );	    
-    Config.MapDelay             = ConfigGetInt    ( file, "mapdelay", 10 );  
-    Config.WorldDelay           = ConfigGetInt    ( file, "worlddelay", 200 );  
+    Config.AUTOSAVE             = ConfigGetInt    ( file, "autosave", 0 );
+	Config.SAVETIME             = ConfigGetInt    ( file, "savetime", 3600 );
+    Config.MapDelay             = ConfigGetInt    ( file, "mapdelay", 10 );
+    Config.WorldDelay           = ConfigGetInt    ( file, "worlddelay", 200 );
     Config.VisualDelay          = ConfigGetInt    ( file, "visualdelay", 500 );
-    Config.Partygap             = ConfigGetInt    ( file, "partygap", 10 ); 
-    Config.MaxStat              = ConfigGetInt    ( file, "maxstat", 254 ); 
+    Config.Partygap             = ConfigGetInt    ( file, "partygap", 10 );
+    Config.MaxStat              = ConfigGetInt    ( file, "maxstat", 254 );
     Config.FairyMode            = ConfigGetInt    ( file, "fairy", 1 );
-    Config.FairyStay            = ConfigGetInt    ( file, "fairystay", 20 ); 
-    Config.FairyWait            = ConfigGetInt    ( file, "fairywait", 15 );  
-    Config.FairyMax             = ConfigGetInt    ( file, "fairymax", 0); 
+    Config.FairyStay            = ConfigGetInt    ( file, "fairystay", 20 );
+    Config.FairyWait            = ConfigGetInt    ( file, "fairywait", 15 );
+    Config.FairyMax             = ConfigGetInt    ( file, "fairymax", 0);
     Config.FairyTestMode        = ConfigGetInt    ( file, "fairytestmode", 1);
-    Config.PlayerDmg            = ConfigGetInt    ( file, "playerdmg", 120);                 
+    Config.PlayerDmg            = ConfigGetInt    ( file, "playerdmg", 120);
+    Config.BlueChance           = ConfigGetInt    ( file, "bluechance", 5); //hidden
+    Config.StatChance           = ConfigGetInt    ( file, "statchance", 5); //hidden
+    Config.SlotChance           = ConfigGetInt    ( file, "slotchance", 5); //hidden
+    Config.RefineChance         = ConfigGetInt    ( file, "refinechance", 5); //hidden
     Config.MonsterDmg           = ConfigGetInt    ( file, "monsterdmg", 100);
     Config.Cfmode               = ConfigGetInt    ( file, "cfmode", 0);
     Config.osRoseVer             = ConfigGetInt    ( file, "osRoseVer", 79);
     Config.testgrid             = ConfigGetInt    ( file, "testgrid", 0); //LMA: maps tests grids (0=usual, 1=grid)
     Config.jrose             = ConfigGetInt    ( file, "jrose", 0); //LMA: Special code for jRose handling (163)
-        
+
     Log (MSG_INFO, "osRose Revision %i", Config.osRoseVer );
-    
-    //LMA: jRose.    
+
+    //LMA: jRose.
     if(Config.jrose==1)
        Log (MSG_INFO, "Handling ONLY jRose client.");
     else
-       Log (MSG_INFO, "Handling ONLY RoseNA client.");    
-        
+       Log (MSG_INFO, "Handling ONLY RoseNA client.");
+
     //Password
-	Config.LoginPass            = ConfigGetInt    ( file, "loginpass", 123456 );		
-	Config.CharPass             = ConfigGetInt    ( file, "charpass", 123456 );	
+	Config.LoginPass            = ConfigGetInt    ( file, "loginpass", 123456 );
+	Config.CharPass             = ConfigGetInt    ( file, "charpass", 123456 );
 	Config.WorldPass            = ConfigGetInt    ( file, "worldpass", 123456 );
     if(Config.AUTOSAVE==1)
-        Log( MSG_INFO, "Autosaving Every %i minutes", Config.SAVETIME/60 );	
+        Log( MSG_INFO, "Autosaving Every %i minutes", Config.SAVETIME/60 );
 
-    LoadCommandLevels();    
+    LoadCommandLevels();
 }
 
 // Load commands from commands.ini [by Paul_T]
@@ -653,7 +664,7 @@ void CWorldServer::LoadCommandLevels( void )
     Config.Command_Broadcast = ConfigGetInt    ( "commands.ini", "broadcast", 299 );
     Config.Command_Buff = ConfigGetInt    ( "commands.ini", "buff", 299 );
     Config.Command_cart = ConfigGetInt    ( "commands.ini", "cart", 299 );  // all Cart Parts
-    Config.Command_Cfmode = ConfigGetInt    ( "commands.ini", "cfmode", 299 ); 
+    Config.Command_Cfmode = ConfigGetInt    ( "commands.ini", "cfmode", 299 );
     Config.Command_cg = ConfigGetInt    ( "commands.ini", "castlegear", 299 ); //get all CastleGear Parts
     Config.Command_Cha = ConfigGetInt    ( "commands.ini", "cha", 299 );
     Config.Command_ChangeFairyWait = ConfigGetInt    ( "commands.ini", "changefairywait", 299 );
@@ -682,7 +693,7 @@ void CWorldServer::LoadCommandLevels( void )
     Config.Command_Go = ConfigGetInt    ( "commands.ini", "go", 299 );
     Config.Command_Goto = ConfigGetInt    ( "commands.ini", "goto", 299 );
     Config.Command_GoToMap = ConfigGetInt    ( "commands.ini", "gotomap", 299 );
-    Config.Command_grid = ConfigGetInt    ( "commands.ini", "grid", 299 );   //LMA: maps grids.  
+    Config.Command_grid = ConfigGetInt    ( "commands.ini", "grid", 299 );   //LMA: maps grids.
     Config.Command_Hair = ConfigGetInt    ( "commands.ini", "hair", 299 );
     Config.Command_Heal = ConfigGetInt    ( "commands.ini", "heal", 299 );
     Config.Command_Here = ConfigGetInt    ( "commands.ini", "here", 299 );
@@ -742,7 +753,7 @@ bool CWorldServer::OnReceivePacket( CClientSocket* thisclient, CPacket *P )
 	switch( P->Command )
 	{
         case 0x0500: return pakCSReady          ( (CPlayer*)thisclient->player, P );
-        case 0x0502: return pakCharDSClient     ( (CPlayer*)thisclient->player, P );        
+        case 0x0502: return pakCharDSClient     ( (CPlayer*)thisclient->player, P );
     	case 0x0505: return pakCSCharSelect     ( (CPlayer*)thisclient->player, P );
     	//case 0x0756: return true;//unknown
     	case 0x0756: return pakChangeRespawn ( (CPlayer*)thisclient->player, P );
@@ -773,11 +784,11 @@ bool CWorldServer::OnReceivePacket( CClientSocket* thisclient, CPacket *P )
     	case 0x07a9: return pakAddStats         ( (CPlayer*)thisclient->player, P );
     	case 0x07aa: return pakMoveSkill        ( (CPlayer*)thisclient->player, P );
     	case 0x07ab: return pakEquipABC         ( (CPlayer*)thisclient->player, P );
-    	case 0x07af: return pakCraft            ( (CPlayer*)thisclient->player, P );	    	
+    	case 0x07af: return pakCraft            ( (CPlayer*)thisclient->player, P );
         case 0x07b1: return pakLevelUpSkill     ( (CPlayer*)thisclient->player, P );
-        case 0x07b2: return pakSkillSelf        ( (CPlayer*)thisclient->player, P );	
+        case 0x07b2: return pakSkillSelf        ( (CPlayer*)thisclient->player, P );
     	case 0x07b3: return pakStartSkill       ( (CPlayer*)thisclient->player, P );
-    	case 0x07b4: return pakSkillAOE         ( (CPlayer*)thisclient->player, P );            	        
+    	case 0x07b4: return pakSkillAOE         ( (CPlayer*)thisclient->player, P );
     	case 0x07c0: return pakTradeAction      ( (CPlayer*)thisclient->player, P );
     	case 0x07c1: return pakTradeAdd         ( (CPlayer*)thisclient->player, P );
     	case 0x07ad: return pakStorage          ( (CPlayer*)thisclient->player, P );
@@ -785,24 +796,24 @@ bool CWorldServer::OnReceivePacket( CClientSocket* thisclient, CPacket *P )
     	case 0x07ba: return pakidentify         ( (CPlayer*)thisclient->player, P );
     	case 0x07bc: return pakModifiedItem     ( (CPlayer*)thisclient->player, P );
     	case 0x07bf: return true;//add to wishlist
-    	case 0x07c2: return pakOpenShop         ( (CPlayer*)thisclient->player, P );    	    	
-    	case 0x07c3: return pakCloseShop        ( (CPlayer*)thisclient->player, P );    	    	    	
-        case 0x07c4: return pakShowShop         ( (CPlayer*)thisclient->player, P );    	    	    	 	
+    	case 0x07c2: return pakOpenShop         ( (CPlayer*)thisclient->player, P );
+    	case 0x07c3: return pakCloseShop        ( (CPlayer*)thisclient->player, P );
+        case 0x07c4: return pakShowShop         ( (CPlayer*)thisclient->player, P );
         case 0x07c5: return pakBuyShop          ( (CPlayer*)thisclient->player, P );
-        case 0x07c6: return pakSellShop         ( (CPlayer*)thisclient->player, P );        
+        case 0x07c6: return pakSellShop         ( (CPlayer*)thisclient->player, P );
     	case 0x07ca: return pakChangeCart       ( (CPlayer*)thisclient->player, P );
     	//case 0x07cb: return pakRepairItem       ( (CPlayer*)thisclient->player, P );
-    	case 0x07cb: case 0x07cd: Log( MSG_WARNING, "(SID:%i) Received packet. Command:%04x Size:%04x", thisclient->sock, P->Command, P->Size ); return pakRepairItem       ( (CPlayer*)thisclient->player, P );    	
+    	case 0x07cb: case 0x07cd: Log( MSG_WARNING, "(SID:%i) Received packet. Command:%04x Size:%04x", thisclient->sock, P->Command, P->Size ); return pakRepairItem       ( (CPlayer*)thisclient->player, P );
     	case 0x07d0: return pakPartyActions     ( (CPlayer*)thisclient->player, P );
-    	case 0x07d1: return pakPartyManager     ( (CPlayer*)thisclient->player, P );    	
-    	case 0x07d7: return pakPartyOption      ( (CPlayer*)thisclient->player, P );    	
-    	case 0x07d8: return pakModifiedItemDone ( (CPlayer*)thisclient->player, P );    	
-        case 0x07d9: return pakItemMall         ( (CPlayer*)thisclient->player, P );    	
+    	case 0x07d1: return pakPartyManager     ( (CPlayer*)thisclient->player, P );
+    	case 0x07d7: return pakPartyOption      ( (CPlayer*)thisclient->player, P );
+    	case 0x07d8: return pakModifiedItemDone ( (CPlayer*)thisclient->player, P );
+        case 0x07d9: return pakItemMall         ( (CPlayer*)thisclient->player, P );
     	case 0x07da: return pakStoreZuly        ( (CPlayer*)thisclient->player, P );
     	case 0x07dd: return pakRideRequest      ( (CPlayer*)thisclient->player, P );
     	case 0x07e0: return pakCreateClan       ( (CPlayer*)thisclient->player, P );
     	case 0x07e1: return pakClanManager      ( (CPlayer*)thisclient->player, P );
-    	case 0x07eb: return pakPrintscreen      ( (CPlayer*)thisclient->player, P ); 
+    	case 0x07eb: return pakPrintscreen      ( (CPlayer*)thisclient->player, P );
     	case 0x0808: return pakGameGuard        ( (CPlayer*)thisclient->player, P );
     	case 0x0821: return pakExpTC        ( (CPlayer*)thisclient->player, P );  //LMA: Bonus Time Coupon
     	case 0x0796: return pakPvp796        ( (CPlayer*)thisclient->player, P );  //LMA: PVP?

@@ -66,6 +66,8 @@ bool CWorldServer::LoadNPCData( )
         newnpc->shp = atoi(row[26]);
         newnpc->dialogid = atoi(row[27]);
         newnpc->eventid = atoi(row[28]);
+        newnpc->side=0; //hidden
+        newnpc->sidechance=0;   //hidden
 
         //LMA: Various skills for monsters
         for(int i=0;i<4;i++)
@@ -741,6 +743,78 @@ bool CWorldServer::LoadDropsData( )
 	fclose(fh);
 	return true;
 }
+
+//hidden
+bool CWorldServer::LoadPYDropsData( )
+{
+    MDropList.clear();
+    MYSQL_ROW row;
+    MYSQL_RES *result = DB->QStore("SELECT id,type,min_level,max_level,prob,mob,map,alt FROM item_drops");
+    if(result==NULL)
+    {
+        DB->QFree( );
+        return false;
+    }
+    while(row = mysql_fetch_row(result))
+    {
+        CMDrops* newdrop = new (nothrow) CMDrops;
+        assert(newdrop);
+        newdrop->itemnum = atoi(row[0]);
+        newdrop->itemtype = atoi(row[1]);
+        newdrop->level_min = atoi(row[2]);
+        newdrop->level_max = atoi(row[3]);
+        newdrop->prob = atoi(row[4]);
+        newdrop->mob = atoi(row[5]);
+        newdrop->map = atoi(row[6]);
+        char *tmp;
+        if((tmp = strtok( row[7] , "|"))==NULL)
+            newdrop->alt[0]=0;
+        else
+            newdrop->alt[0]=atoi(tmp);
+        for(unsigned int i=1;i<8; i++)
+        {
+            if((tmp = strtok( NULL , "|"))==NULL)
+                newdrop->alt[i]=0;
+            else
+                newdrop->alt[i]=atoi(tmp);
+        }
+        MDropList.push_back( newdrop );
+    }
+    DB->QFree( );
+    Log( MSG_INFO, "PYDrops loaded" );
+    return true;
+}
+
+//hidden
+bool CWorldServer::LoadSkillBookDropsData( )
+{
+    //LogSkillbook data load
+    MYSQL_ROW row;
+    MYSQL_RES *result = DB->QStore("SELECT id,min,max,prob FROM list_skillbooks");
+    if(result==NULL)
+    {
+        DB->QFree( );
+        return false;
+    }
+    int c = 0;
+    while(row = mysql_fetch_row(result))
+    {
+
+        c++;
+        CMDrops* newdrop = new (nothrow) CMDrops;
+        assert(newdrop);
+        newdrop->itemnum = atoi(row[0]);
+        newdrop->itemtype = 10;
+        newdrop->level_min = atoi(row[1]);
+        newdrop->level_max = atoi(row[2]);
+        newdrop->prob = atoi(row[3]);
+        SkillbookList.push_back( newdrop );
+    }
+    DB->QFree( );
+    Log( MSG_INFO, "Skillbook Drops loaded" );
+    return true;
+}
+
 
 bool CWorldServer::LoadMonsters( )
 {

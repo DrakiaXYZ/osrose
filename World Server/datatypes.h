@@ -1,22 +1,22 @@
 /*
     Rose Online Server Emulator
     Copyright (C) 2006,2007 OSRose Team http://www.osrose.net
-    
+
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
     as published by the Free Software Foundation; either version 2
     of the License, or (at your option) any later version.
-    
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-    
+
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-    depeloped with Main erose/hrose source server + some change from the original eich source        
+    depeloped with Main erose/hrose source server + some change from the original eich source
 */
 #ifndef __ROSE_DATATYPES__
 #define __ROSE_DATATYPES__
@@ -68,7 +68,7 @@
 #define BOW_ATK_SPD 123
 #define GUN_ATK_SPD 124
 #define LAUNCHER_ATK_SPD 125
-#define KATAR_ATK_SPD 129 
+#define KATAR_ATK_SPD 129
 #define DUALSWORD_ATK_SPD 130
 
 //*status/condition
@@ -78,15 +78,15 @@
 #define A_CON 13
 #define A_CHA 14
 #define A_SEN 15
-#define A_HP 16 
+#define A_HP 16
 #define A_MP 17
-#define A_ATTACK 18 
+#define A_ATTACK 18
 #define A_DEFENSE 19
-#define A_ACCUR 20 
+#define A_ACCUR 20
 #define A_MRESIST 21
 #define A_DODGE 22
-#define A_DASH 23 
-#define A_HASTE 24 
+#define A_DASH 23
+#define A_HASTE 24
 #define A_INVENTORY_CAPACITY 25
 #define A_CRITICAL 26
 #define A_HP_REC_RATE 27
@@ -136,7 +136,7 @@
 #define INVISIBLE_2 0x04
 #define UNK3 0x08
 #define DAMAGE_UP 0x10
-#define SUMMON 0x20 
+#define SUMMON 0x20
 #define UNK4 0x40
 #define UNK5 0x80
 
@@ -221,7 +221,7 @@
 struct CPartyExp
 {
     class CParty* thisparty;
-    UINT exp;        
+    UINT exp;
     UINT num;
     UINT partymember[50];
     UINT maxlevel;
@@ -277,7 +277,7 @@ struct CNaturalData
     UINT pricerate;
     UINT weight;
     UINT quality;
-    UINT pricevalue; 
+    UINT pricevalue;
 };
 
 // pat data
@@ -296,7 +296,7 @@ struct CPatData
     UINT speed;
     UINT attackdistance;
     UINT attackpower;
-    UINT attackspeed;  
+    UINT attackspeed;
 };
 
 struct CProductData
@@ -327,7 +327,7 @@ struct CUseData
 };
 
 // List Mob Data
-struct CNPCData {  
+struct CNPCData {
     UINT id;
     UINT life;
     UINT wspeed;
@@ -345,7 +345,7 @@ struct CNPCData {
     float atkspeed;
     UINT AI;
     UINT exp;
-  	UINT dropid;    
+  	UINT dropid;
   	UINT money;
   	UINT item;
   	UINT tab1;
@@ -363,6 +363,8 @@ struct CNPCData {
     UINT sigskill;     //signature
     clock_t lastskill; //last skill time
     UINT delayskill;   //delay between two skills
+    UINT side;  //hidden
+    UINT sidechance;  //hidden
 };
 
 // Store the damage for monster to give exp
@@ -382,7 +384,7 @@ struct CDropInfo
 // For store the drops info
 struct CMDrops
 {
-    UINT id; 
+    UINT id;
     UINT zuly;
     UINT zulyprob;
     vector<CDropInfo*> Drops;
@@ -390,6 +392,12 @@ struct CMDrops
     UINT level_max;//for map drops
     UINT level_boss;//for map drops
     UINT probmax;
+    UINT prob;  //hidden
+    UINT map;   //hidden
+    UINT mob;   //hidden
+    UINT itemtype;   //hidden
+    UINT itemnum;   //hidden
+    UINT alt[8];   //hidden
 };
 
 // For store the Buff info
@@ -419,7 +427,7 @@ struct CBuffValue
 struct CPSkill
 {
     int buff[3];//Buff type
-    int value1[3];    
+    int value1[3];
     int value2[3];
 };
 
@@ -432,7 +440,7 @@ struct SClan
     int logo;
     int back;
     int grade;
-    int cp;  
+    int cp;
     char name[50];
     char slogan[100];
     char news[200];
@@ -455,7 +463,7 @@ struct CRespawnPoints
     int d;//flag to duplicate
     int b;//flag to store
     int n;//num points
-    int min;//mob min    
+    int min;//mob min
     int max;//mob max
     int map;//map
     int mobID;//mob id
@@ -507,7 +515,7 @@ struct CNPC {
 	unsigned npctype;
 	CNPCData* thisnpc;
 	unsigned dialog;
-	long int event;    	
+	long int event;
 };
 
 // Item data object
@@ -527,7 +535,7 @@ struct CSTBData {
 // -----------------------------------------------------------------------------------------
 // Skill Data
 // -----------------------------------------------------------------------------------------
-struct CSkills {        
+struct CSkills {
     UINT id;
     UINT level;
     UINT type;
@@ -583,12 +591,12 @@ struct CQuest
     unsigned long int itemid[10];
     UINT QVoffset; //LMA
     UINT QVvalue; //LMA
-    BYTE startItems[10];    
-    unsigned long int questid;  
+    BYTE startItems[10];
+    unsigned long int questid;
     int mobs[10];
-    int items[10];    
-    int numitems[10];    
-    int Itemreward[10];         
+    int items[10];
+    int numitems[10];
+    int Itemreward[10];
     int ItemType[10];
     int CountItem[10];
     int CItem[5];
@@ -660,7 +668,7 @@ struct CSpawnArea
 	UINT amon;
 	fPoint* points;
 	clock_t lastRespawnTime;
-	CNPCData* thisnpc;	
+	CNPCData* thisnpc;
 	CMDrops* mobdrop;
 	CMDrops* mapdrop;
 	UINT nb_trigger; //nb of spawn to get the boss spawned.
@@ -680,7 +688,7 @@ struct CUseInfo
     int use_buff;
 };
 
-struct CItemType             
+struct CItemType
 {
     int itemnum;
     int itemtype;
@@ -699,8 +707,8 @@ struct CBuying
 {
     CItem item;
     long int price;
-    UINT slot;    
-    UINT count;    
+    UINT slot;
+    UINT count;
 };
 
 // Selling List (Shop)
@@ -713,7 +721,7 @@ struct CSelling
 
 // MONSTER <---------------------------
 struct MPosition // Monster position
-{        
+{
     UINT Map;
     UINT SpawnID;
     fPoint Spos; // Start position
@@ -723,11 +731,11 @@ struct MPosition // Monster position
 
 struct MDrop    // monster drops
 {
-    bool drop; 
+    bool drop;
     unsigned int firsthit;
     unsigned int firstlevel;
 	CMDrops* mobdrop;
-	CMDrops* mapdrop;        
+	CMDrops* mapdrop;
 };
 
 struct CReward
@@ -736,7 +744,7 @@ struct CReward
     unsigned int type;
     unsigned int prob;
 };
- 
+
 struct CChest
 {
     unsigned int chestid;
@@ -776,7 +784,7 @@ struct CNaturalList
 
 struct CPatList
 {
-    CPatData *Index[1000];    
+    CPatData *Index[1000];
     vector<CPatData*> Data;
     CPatData* nullpat;
 };
@@ -812,15 +820,15 @@ struct CMapList
 struct CItemStas
 {
   UINT stat[2];
-  UINT value[2];  
+  UINT value[2];
 };
 
 struct CFairy
 {
     UINT ListIndex;
 	clock_t LastTime;
-    UINT WaitTime; 
-    bool assigned;      
+    UINT WaitTime;
+    bool assigned;
 };
 
 //LMA: for map grids:
@@ -831,7 +839,7 @@ struct CGridMap
     int width;       //Width of the map
     bool always_on;              //always display or not? (default 0).
     int org_x;                   //point of Origine (never 0,0 and sometimes not the same)...
-    int org_y;           
+    int org_y;
 };
 
 struct CListMap
@@ -855,7 +863,7 @@ struct CBreakList
     UINT numToGive;
     UINT total;
 };
- 
+
 
 
 #endif

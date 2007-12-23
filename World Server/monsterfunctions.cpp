@@ -1,29 +1,29 @@
 /*
     Rose Online Server Emulator
     Copyright (C) 2006,2007 OSRose Team http://www.osrose.net
-    
+
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
     as published by the Free Software Foundation; either version 2
     of the License, or (at your option) any later version.
-    
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-    
+
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-    depeloped with Main erose/hrose source server + some change from the original eich source        
+    depeloped with Main erose/hrose source server + some change from the original eich source
 */
 #include "worldmonster.h"
 
 // check is a player is in range
 bool CMonster::PlayerInRange()
 {
-    CMap* map = GServer->MapList.Index[Position->Map];    
+    CMap* map = GServer->MapList.Index[Position->Map];
     for(int i=0; i<map->PlayerList.size(); i++)
     {
         CPlayer* thisclient = map->PlayerList.at(i);
@@ -37,25 +37,25 @@ bool CMonster::PlayerInGrid()
 {
     int grid_id=0;
     UINT coords=0;
-    
-    
-    CMap* map = GServer->MapList.Index[Position->Map];        
+
+
+    CMap* map = GServer->MapList.Index[Position->Map];
     grid_id=GServer->allmaps[map->id].grid_id;
     //we don't handle this map (player shouldn't be here, monster neither, non existing map).
     //Or no players in map.
     if (map->PlayerList.size()==0||grid_id==-1)
         return false;
-    
-    //getting coordinates.    
+
+    //getting coordinates.
     coords=GServer->GetGridNumber((int) map->id,(int) Position->current.x,(int) Position->current.y);
-    
+
     //Is there anyone in the grids nearby?
     int nb_players=0;
     int col_offset=0;
     col_offset=GServer->allmaps[map->id].nb_col+2;
     nb_players=GServer->gridmaps[grid_id].coords[coords]+GServer->gridmaps[grid_id].coords[coords+1]+GServer->gridmaps[grid_id].coords[coords-1];
     nb_players+=GServer->gridmaps[grid_id].coords[coords+col_offset]+GServer->gridmaps[grid_id].coords[coords+col_offset+1]+GServer->gridmaps[grid_id].coords[coords+col_offset-1];
-    nb_players+=GServer->gridmaps[grid_id].coords[coords-col_offset]+GServer->gridmaps[grid_id].coords[coords-col_offset+1]+GServer->gridmaps[grid_id].coords[coords-col_offset-1];    
+    nb_players+=GServer->gridmaps[grid_id].coords[coords-col_offset]+GServer->gridmaps[grid_id].coords[coords-col_offset+1]+GServer->gridmaps[grid_id].coords[coords-col_offset-1];
     if (nb_players>0)
     {
         //Log(MSG_INFO,"[GRID-%i] Mob %i X(%.2f,%.2f)",coords,clientid,Position->current.x,Position->current.y);
@@ -80,14 +80,14 @@ bool CMonster::PlayerInGrid()
         }
         */
     }
-     
+
     //Still here? Special case for very little maps or special maps.
     if (map->PlayerList.size()>0&&GServer->allmaps[map->id].always_on==true)
     {
         Log(MSG_INFO,"monster in cell %i (AUTO)",coords);
         return true;
     }
-        
+
     return false;
 }
 
@@ -102,15 +102,15 @@ CPlayer* CMonster::GetNearPlayer( UINT mdist )
         float tempdist = GServer->distance( Position->current, thisclient->Position->current );
         if(tempdist<distance)
         {
-            thisplayer = thisclient;    
+            thisplayer = thisclient;
             distance = tempdist;
         }
     }
-    
+
     if(distance>mdist)
         return NULL; // near player is too far
-    
-    
+
+
     return thisplayer;
 }
 
@@ -212,7 +212,12 @@ void CMonster::AddDamage( CCharacter* enemy, long int hitpower)
     PlayersDamage.push_back( newplayer );
 }
 
+//hidden
 CDrop* CMonster::GetDrop( )
 {
-    GServer->GetDrop( this );
+    //added a new functionality to PYGetDrop.
+    //now requires an input value for droptype. A droptype of 1 is a normal drop while a droptype of 2 can be sent to generate a drop while the monster is still alive
+    //Code for these 'side drops' is still under development and will follow soon
+    //GServer->PYGetDrop( this, 1 );
+    GServer->GetPYDrop( this, 1 );
 }
