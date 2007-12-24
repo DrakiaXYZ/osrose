@@ -1,10 +1,10 @@
 /*
 MySQL Data Transfer
-Source Host: localhost
+Source Host: 192.168.1.100
 Source Database: osrose
-Target Host: localhost
+Target Host: 192.168.1.100
 Target Database: osrose
-Date: 12/11/2007 11:44:45 AM
+Date: 12/23/2007 10:39:09 AM
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -27,7 +27,7 @@ CREATE TABLE `list_respawnzones` (
 INSERT INTO `list_respawnzones` VALUES ('1', '22', '5098', '5322', '10', '1');
 INSERT INTO `list_respawnzones` VALUES ('2', '1', '5239', '5192', '10', '1');
 INSERT INTO `list_respawnzones` VALUES ('3', '24', '5537', '4966', '10', '1');
-INSERT INTO `list_respawnzones` VALUES ('4', '2', '5653', '5214', '10', '1');
+INSERT INTO `list_respawnzones` VALUES ('4', '2', '5650', '5212', '10', '1');
 INSERT INTO `list_respawnzones` VALUES ('5', '51', '5357', '5013', '10', '1');
 INSERT INTO `list_respawnzones` VALUES ('6', '22', '5026', '5522', '10', '2');
 INSERT INTO `list_respawnzones` VALUES ('7', '22', '5232', '5246', '10', '2');
@@ -46,7 +46,7 @@ INSERT INTO `list_respawnzones` VALUES ('22', '25', '5128', '5413', '10', '2');
 INSERT INTO `list_respawnzones` VALUES ('23', '25', '5489', '5357', '10', '2');
 INSERT INTO `list_respawnzones` VALUES ('24', '25', '5242', '5092', '10', '2');
 INSERT INTO `list_respawnzones` VALUES ('25', '25', '5555', '4970', '10', '2');
-INSERT INTO `list_respawnzones` VALUES ('27', '2', '5514', '5453', '10', '2');
+INSERT INTO `list_respawnzones` VALUES ('27', '2', '5516', '5449', '10', '2');
 INSERT INTO `list_respawnzones` VALUES ('28', '2', '5048', '5451', '10', '2');
 INSERT INTO `list_respawnzones` VALUES ('29', '29', '5159', '5165', '10', '2');
 INSERT INTO `list_respawnzones` VALUES ('30', '29', '5067', '5357', '10', '2');
