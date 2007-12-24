@@ -1243,6 +1243,15 @@ bool CWorldServer::pakGate( CPlayer* thisclient, CPacket* P )
 {
     thisclient->Session->inGame = false;
 	CTeleGate* thisgate = GetTeleGateByID( GETWORD((*P), 0x00) );
+
+	float tempx=0;
+	float tempy=0;
+    UINT tempmap=0;
+    tempmap=GETWORD((*P), 0x00);
+    tempx=GETFLOAT((*P), 0x02 )/100;
+    tempy=GETFLOAT((*P), 0x06 )/100;
+    Log(MSG_INFO,"Gate activated %i, (%.2f:%.2f)",tempmap,tempx,tempy);
+
     fPoint position;
     UINT map = 0;
 	if( thisgate==NULL )
@@ -1256,6 +1265,9 @@ bool CWorldServer::pakGate( CPlayer* thisclient, CPacket* P )
 		map = thisgate->destMap;
 		position = thisgate->dest;
 	}
+
+	Log(MSG_INFO,"Player warped to map %i (%.2f,%.2f)",map,position.x,position.y);
+
     MapList.Index[map]->TeleportPlayer( thisclient, position );
 	return true;
 }

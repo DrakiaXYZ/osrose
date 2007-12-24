@@ -1,19 +1,28 @@
--- ----------------------------------
--- Table structure for list_telegates
--- ----------------------------------
-DROP TABLE IF EXISTS `list_telegates`;
-CREATE TABLE `list_telegates` (
-	`id` int(11) NOT NULL,
-	`name` varchar(255) NOT NULL default '',
-	`map` int(11) NOT NULL,
-	`x` float NOT NULL,
-	`y` float NOT NULL,
-	  PRIMARY KEY  (`id`)
-	) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+/*
+MySQL Data Transfer
+Source Host: 192.168.1.100
+Source Database: osrose
+Target Host: 192.168.1.100
+Target Database: osrose
+Date: 12/24/2007 8:09:43 AM
+*/
 
--- -------------------------------
--- Records list_telegates / rl2171
--- -------------------------------
+SET FOREIGN_KEY_CHECKS=0;
+-- ----------------------------
+-- Table structure for list_telegates
+-- ----------------------------
+CREATE TABLE `list_telegates` (
+  `id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL default '',
+  `map` int(11) NOT NULL,
+  `x` float NOT NULL,
+  `y` float NOT NULL,
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+-- ----------------------------
+-- Records 
+-- ----------------------------
 INSERT INTO `list_telegates` VALUES ('17', 'Adventure Plains (NW) > Valley of Luxem Tower (SW)', '21', '5098', '5051');
 INSERT INTO `list_telegates` VALUES ('12', 'Valley of Luxem Tower (SW) > Adventure Plains (NW)', '22', '5846', '5539');
 INSERT INTO `list_telegates` VALUES ('19', 'Adventure Plains (NE) > Valley of Luxem Tower (SE)', '21', '5295', '5058');
@@ -89,3 +98,7 @@ INSERT INTO `list_telegates` VALUES ('132', 'Shady Jungle > Marsh of Ghosts', '6
 INSERT INTO `list_telegates` VALUES ('133', 'Marsh of Ghosts > Shady Jungle', '62', '6543', '5247');
 INSERT INTO `list_telegates` VALUES ('134', 'Forest of Wandering > Sikuku Underground Prison', '65', '5511', '5395');
 INSERT INTO `list_telegates` VALUES ('135', 'Sikuku Underground Prison > Forest of Wandering', '63', '5403', '4437');
+INSERT INTO `list_telegates` VALUES ('137', 'Pyramid F1 outside', '24', '5510', '5255');
+INSERT INTO `list_telegates` VALUES ('139', 'Pyramid F1 to Tombs', '42', '5165', '5207');
+INSERT INTO `list_telegates` VALUES ('140', 'Pyramid Tombs to F1', '41', '5165', '5207');
+INSERT INTO `list_telegates` VALUES ('138', 'Pyramid warp', '41', '5165', '5207');
