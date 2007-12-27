@@ -4,7 +4,7 @@ Source Host: 192.168.1.100
 Source Database: osrose
 Target Host: 192.168.1.100
 Target Database: osrose
-Date: 12/24/2007 9:59:40 AM
+Date: 12/27/2007 2:49:32 PM
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -23,7 +23,7 @@ CREATE TABLE `item_drops` (
   `alt` varchar(500) collate latin1_general_ci NOT NULL default '0|0|0|0|0|0|0',
   `description` varchar(100) collate latin1_general_ci NOT NULL,
   PRIMARY KEY  (`ref`)
-) ENGINE=MyISAM AUTO_INCREMENT=9516 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=9517 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- ----------------------------
 -- Records 
@@ -9488,58 +9488,7 @@ INSERT INTO `item_drops` VALUES ('9457', '177', '8', '0', '0', '75', '0', '659',
 INSERT INTO `item_drops` VALUES ('9458', '578', '5', '0', '0', '50', '0', '659', '0|0|0|0|0|0|0|0', '');
 INSERT INTO `item_drops` VALUES ('9459', '678', '5', '0', '0', '50', '0', '659', '0|0|0|0|0|0|0|0', '');
 INSERT INTO `item_drops` VALUES ('9460', '985', '8', '0', '0', '2', '0', '659', '0|0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('9461', '1', '0', '0', '0', '825', '0', '1711', '0|0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('9462', '6', '0', '0', '0', '825', '0', '1711', '0|0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('9463', '11', '0', '0', '0', '825', '0', '1711', '0|0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('9464', '14', '0', '0', '0', '12', '0', '1711', '0|0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('9465', '20', '0', '0', '0', '12', '0', '1711', '0|0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('9466', '2', '0', '0', '0', '825', '0', '1712', '0|0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('9467', '7', '0', '0', '0', '825', '0', '1712', '0|0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('9468', '12', '0', '0', '0', '825', '0', '1712', '0|0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('9469', '15', '0', '0', '0', '12', '0', '1712', '0|0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('9470', '21', '0', '0', '0', '12', '0', '1712', '0|0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('9471', '3', '0', '0', '0', '825', '0', '1713', '0|0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('9472', '8', '0', '0', '0', '825', '0', '1713', '0|0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('9473', '13', '0', '0', '0', '825', '0', '1713', '0|0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('9474', '16', '0', '0', '0', '12', '0', '1713', '0|0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('9475', '22', '0', '0', '0', '12', '0', '1713', '0|0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('9476', '4', '0', '0', '0', '825', '0', '1714', '0|0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('9477', '9', '0', '0', '0', '825', '0', '1714', '0|0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('9478', '1', '0', '0', '0', '825', '0', '1714', '0|0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('9479', '17', '0', '0', '0', '12', '0', '1714', '0|0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('9480', '23', '0', '0', '0', '12', '0', '1714', '0|0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('9481', '5', '0', '0', '0', '825', '0', '1715', '0|0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('9482', '10', '0', '0', '0', '825', '0', '1715', '0|0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('9483', '2', '0', '0', '0', '825', '0', '1715', '0|0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('9484', '18', '0', '0', '0', '12', '0', '1715', '0|0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('9485', '24', '0', '0', '0', '12', '0', '1715', '0|0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('9486', '6', '0', '0', '0', '825', '0', '1716', '0|0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('9487', '11', '0', '0', '0', '825', '0', '1716', '0|0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('9488', '3', '0', '0', '0', '825', '0', '1716', '0|0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('9489', '19', '0', '0', '0', '12', '0', '1716', '0|0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('9490', '25', '0', '0', '0', '12', '0', '1716', '0|0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('9491', '7', '0', '0', '0', '825', '0', '1717', '0|0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('9492', '12', '0', '0', '0', '825', '0', '1717', '0|0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('9493', '4', '0', '0', '0', '825', '0', '1717', '0|0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('9494', '26', '0', '0', '0', '12', '0', '1717', '0|0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('9495', '14', '0', '0', '0', '12', '0', '1717', '0|0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('9496', '8', '0', '0', '0', '825', '0', '1718', '0|0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('9497', '2', '0', '0', '0', '825', '0', '1718', '0|0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('9498', '5', '0', '0', '0', '825', '0', '1718', '0|0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('9499', '15', '0', '0', '0', '12', '0', '1718', '0|0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('9500', '23', '0', '0', '0', '12', '0', '1718', '0|0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('9501', '14', '0', '0', '0', '600', '0', '1719', '0|0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('9502', '22', '0', '0', '0', '600', '0', '1719', '0|0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('9503', '26', '0', '0', '0', '600', '0', '1719', '0|0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('9504', '23', '0', '0', '0', '600', '0', '1719', '0|0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('9505', '27', '0', '0', '0', '50', '0', '1719', '0|0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('9506', '28', '0', '0', '0', '50', '0', '1719', '0|0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('9507', '1', '0', '0', '0', '825', '0', '1721', '0|0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('9508', '2', '0', '0', '0', '825', '0', '1721', '0|0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('9509', '5', '0', '0', '0', '825', '0', '1721', '0|0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('9510', '19', '0', '0', '0', '12', '0', '1721', '0|0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('9511', '20', '0', '0', '0', '10', '0', '1721', '0|0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('9512', '27', '0', '0', '0', '2', '0', '1721', '0|0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('9513', '246', '10', '0', '0', '40', '0', '0', '0|0|0|0|0|0|0', 'Xmas Gift, all maps, all mobs');
-INSERT INTO `item_drops` VALUES ('9514', '247', '10', '0', '0', '40', '0', '0', '0|0|0|0|0|0|0', 'Xmas Gift, all maps, all mobs');
-INSERT INTO `item_drops` VALUES ('9515', '248', '10', '0', '0', '40', '0', '0', '0|0|0|0|0|0|0', 'Xmas Gift, all maps, all mobs');
+INSERT INTO `item_drops` VALUES ('9516', '403', '12', '0', '0', '500', '0', '303', '0|0|0|0|0|0|0', 'Santa Lottery');
+INSERT INTO `item_drops` VALUES ('9513', '247', '10', '1', '210', '850', '0', '0', '0|0|0|0|0|0|0', 'Xmas Gift, all maps, all mobs');
+INSERT INTO `item_drops` VALUES ('9514', '248', '10', '1', '210', '850', '0', '0', '0|0|0|0|0|0|0', 'Xmas Gift, all maps, all mobs');
+INSERT INTO `item_drops` VALUES ('9515', '249', '10', '1', '210', '850', '0', '0', '0|0|0|0|0|0|0', 'Xmas Gift, all maps, all mobs');
