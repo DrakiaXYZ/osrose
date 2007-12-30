@@ -98,6 +98,8 @@ class CMap
     vector<CPlayer*>            PlayerList;       // Client list in this map;  
     vector<CNPC*>               NPCList;          // NPC in this map
     vector<CTeleGate*>		    TeleGateList;	  // Telegates from this map
+    vector<CCustomGate*>        CustomGateList;   //Custom telegate list
+    vector<CCustomEvent*>       CustomEventList;  //Custom events list
     
     pthread_mutex_t MonsterMutex, DropMutex;
 };

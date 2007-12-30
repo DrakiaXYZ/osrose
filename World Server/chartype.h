@@ -194,6 +194,9 @@ struct INFO
     int StatPoints;
     int SkillPoints;
     unsigned int stamina;
+    // event tracking
+    bool ActiveEvent;
+    bool isGM; // GM Security
 };
 
 struct SESSION

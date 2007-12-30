@@ -4,7 +4,7 @@ Source Host: 192.168.1.100
 Source Database: osrose
 Target Host: 192.168.1.100
 Target Database: osrose
-Date: 12/23/2007 10:39:09 AM
+Date: 12/29/2007 2:52:20 PM
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -19,7 +19,7 @@ CREATE TABLE `list_respawnzones` (
   `radius` float NOT NULL default '10',
   `type` int(11) NOT NULL default '2',
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=92 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=107 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records 
@@ -105,9 +105,21 @@ INSERT INTO `list_respawnzones` VALUES ('82', '3', '5198', '5010', '10', '2');
 INSERT INTO `list_respawnzones` VALUES ('83', '5', '5201', '5277', '10', '2');
 INSERT INTO `list_respawnzones` VALUES ('84', '15', '5200', '5200', '10', '2');
 INSERT INTO `list_respawnzones` VALUES ('85', '40', '5184', '5211', '10', '2');
-INSERT INTO `list_respawnzones` VALUES ('86', '41', '5050', '5250', '10', '2');
+INSERT INTO `list_respawnzones` VALUES ('86', '41', '5165', '5207', '10', '2');
 INSERT INTO `list_respawnzones` VALUES ('87', '101', '5284', '5038', '10', '2');
 INSERT INTO `list_respawnzones` VALUES ('88', '74', '5161', '5302', '10', '2');
 INSERT INTO `list_respawnzones` VALUES ('89', '70', '5301', '5039', '10', '2');
 INSERT INTO `list_respawnzones` VALUES ('90', '6', '5200', '5501', '10', '2');
 INSERT INTO `list_respawnzones` VALUES ('91', '25', '5510', '4900', '10', '2');
+INSERT INTO `list_respawnzones` VALUES ('92', '42', '5165', '5207', '10', '2');
+INSERT INTO `list_respawnzones` VALUES ('93', '80', '5199', '5235', '10', '2');
+INSERT INTO `list_respawnzones` VALUES ('97', '15', '5360', '5200', '10', '2');
+INSERT INTO `list_respawnzones` VALUES ('98', '15', '5520', '5200', '10', '2');
+INSERT INTO `list_respawnzones` VALUES ('99', '15', '5199', '5040', '10', '2');
+INSERT INTO `list_respawnzones` VALUES ('100', '15', '5340', '5040', '10', '2');
+INSERT INTO `list_respawnzones` VALUES ('101', '15', '5520', '5040', '10', '2');
+INSERT INTO `list_respawnzones` VALUES ('102', '15', '5199', '4880', '10', '2');
+INSERT INTO `list_respawnzones` VALUES ('103', '15', '5340', '4880', '10', '2');
+INSERT INTO `list_respawnzones` VALUES ('104', '15', '5520', '4880', '10', '2');
+INSERT INTO `list_respawnzones` VALUES ('105', '8', '5039', '5354', '10', '2');
+INSERT INTO `list_respawnzones` VALUES ('106', '8', '5525', '4546', '10', '2');

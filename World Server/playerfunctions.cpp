@@ -1271,3 +1271,400 @@ bool CPlayer::CheckDoubleEquip()
     
     return true;        
 }
+
+ 
+bool CPlayer::CheckPortal()
+{
+    //CPlayer* thisclient = GServer->GetClientByCharName( CharInfo->charname ); 
+    clock_t etime = clock() - lastportalchecktime;      
+   
+    if ( etime >= 2 * CLOCKS_PER_SEC )
+    {  
+        lastportalchecktime = clock();
+        for(int i=0;i<GServer->CustomGateList.size();i++)
+        {
+            CCustomGate* thisgate = GServer->CustomGateList.at(i);
+            if(!thisgate->active)
+                continue;
+            if(thisgate->sourcemap == Position->Map && thisgate->active == true)
+            {
+                float xmin = thisgate->source.x - thisgate->radius;
+                float xmax = thisgate->source.x + thisgate->radius;
+                float ymin = thisgate->source.y - thisgate->radius;
+                float ymax = thisgate->source.y + thisgate->radius;
+                if(Position->current.x >= xmin && Position->current.x <= xmax && Position->current.y >= ymin && Position->current.y <=ymax)
+                {
+                    fPoint coord;
+                    coord.x = thisgate->dest.x;
+                    coord.y = thisgate->dest.y;
+                    GServer->MapList.Index[thisgate->destmap]->TeleportPlayer( this, coord, false ); 
+                    return true;                  
+                }
+            }
+        }   
+    }
+    return true;
+}
+bool CPlayer::CheckEvents()
+{
+   //CPlayer* thisclient = GServer->GetClientByCharName( CharInfo->charname ); 
+   
+   clock_t etime = clock() - lastEventTime; 
+   clock_t rtime = clock() - RefreshEventTimer; 
+   if ( etime >= 2 * CLOCKS_PER_SEC )
+   {
+       lastEventTime = clock( );
+       for(int i=0;i<GServer->CustomEventList.size();i++)
+       {
+           CCustomEvent* thisevent = GServer->CustomEventList.at(i);  
+           if(thisevent->map == Position->Map && thisevent->active == 1)
+           {
+               float xmin = thisevent->location.x - thisevent->radius;
+               float xmax = thisevent->location.x + thisevent->radius;
+               float ymin = thisevent->location.y - thisevent->radius;
+               float ymax = thisevent->location.y + thisevent->radius; 
+               if(Position->current.x >= xmin && Position->current.x <= xmax && Position->current.y >= ymin && Position->current.y <= ymax)
+               {    
+                   //first interrogate the player's inventory to see if they have any of the necessary items.
+                   //Log( MSG_INFO, "Found the right event details. Event = %i",CharInfo->ActiveEvent ); 
+                   if(CharInfo->ActiveEvent == true)
+                       continue;
+                   CharInfo->ActiveEvent = true;
+                   //Log( MSG_INFO, "event = %i",CharInfo->ActiveEvent ); 
+                   bool hasitem = false;
+                   char buffer2[200];
+                   int itemcount = 0;
+                   for(int slot=71;slot<103;slot++)
+                   {
+                       if(items[slot].itemtype == thisevent->collecttype && items[slot].itemnum == thisevent->collectid && items[slot].count >0)
+                       {
+                           //player has some of the items needed for this event
+                           hasitem = true;  
+                           itemcount +=  items[slot].count;                    
+                       }      
+                   }
+                   // fetch type event. Collect items and exchange for rewards
+                   // Also used for pure information that requires no items
+                   if (thisevent->eventtype == 0) 
+                   {
+                       if (hasitem == true) //call this script if player has some of the items
+                       {
+                           if(itemcount < thisevent->prizecost[1])
+                           {
+                               sprintf ( buffer2, "I'm sorry but you haven't collected enough %s to earn a reward yet. Please collect more", thisevent->itemname );
+                               GServer->NPCMessage(this, buffer2, thisevent->npcname);                 
+                           } 
+                           else
+                           {  
+                               sprintf ( buffer2, "Oh you have collected enough %s to earn a reward.",thisevent->itemname );
+                               GServer->NPCMessage(this, buffer2, thisevent->npcname); 
+                               sprintf ( buffer2, "%s", thisevent->script2 ); //invitation to a prize script
+                               GServer->NPCMessage(this, buffer2, thisevent->npcname);
+                               for(int j=0;j<10;j++)
+                               {
+                                   if(itemcount >= thisevent->prizecost[j] && thisevent->prizecost[j] != 0)
+                                   {
+                                       sprintf ( buffer2, "Item %i: %s. %i %s and its yours", j,thisevent->prizename[j].prizename,thisevent->prizecost[j],thisevent->itemname );
+                                       GServer->NPCMessage(this, buffer2, thisevent->npcname);        
+                                   }
+                               }
+                           }
+                       }
+                       else // call this if the player doesn't have any
+                       {    
+                           sprintf ( buffer2, "%s", thisevent->script1 ); //event introduction script
+                           GServer->NPCMessage(this, buffer2, thisevent->npcname);
+                           Log( MSG_INFO, "Custom event script1 sent for type 0 event" );  
+                       }
+                   }
+                   // quest type event
+                   // used if a specific item unlocks a different behaviour from the NPC
+                   if (thisevent->eventtype == 1) 
+                   {
+                       if(hasitem == false)
+                       {
+                           sprintf ( buffer2, "%s", thisevent->script1 ); //send this script if the player has no prerequisite item for the next step of the quest
+                           GServer->NPCMessage(this, buffer2, thisevent->npcname);
+                           Log( MSG_INFO, "Custom event script1 sent for type1 event" );          
+                       }                        
+                   }
+               }
+               else
+               {
+                   CharInfo->ActiveEvent = false;    
+               } 
+           }
+       }
+   }
+   return true;  
+}
+ 
+bool CPlayer::PrizeExchange(CPlayer* thisclient, UINT prizeid)
+{
+    //first find which, if any, event area the player is currently in.
+    Log( MSG_INFO, "Prize function called" );
+    char buffer2[200];
+    for(int i=0;i<GServer->CustomEventList.size();i++)
+    {
+        CCustomEvent* thisevent = GServer->CustomEventList.at(i);  
+        if(thisevent->map == Position->Map && thisevent->active == 1)
+        {
+            float xmin = thisevent->location.x - thisevent->radius;
+            float xmax = thisevent->location.x + thisevent->radius;
+            float ymin = thisevent->location.y - thisevent->radius;
+            float ymax = thisevent->location.y + thisevent->radius; 
+            if(Position->current.x >= xmin && Position->current.x <= xmax && Position->current.y >= ymin && Position->current.y <= ymax)
+            { 
+                //well we found the correct event
+                int cost = thisevent->prizecost[prizeid];
+                int type = thisevent->prizetype[prizeid];
+                int id = thisevent->prizeid[prizeid];
+                if (type == 0)return true; //just in case somebody puts in an invalid number.
+                //now find if the player has enough items to purchase the prize
+                UINT itemcount = 0;
+                for(int slot=42;slot<101;slot++)
+                {
+                    if(items[slot].itemtype == thisevent->collecttype && items[slot].itemnum == thisevent->collectid && items[slot].count > 0)
+                    {
+                        //player has some of the items needed for this event
+                        itemcount += items[slot].count; 
+                        items[slot].count = 0;
+                        ClearItem(items[slot]);  
+                        BEGINPACKET( pak, 0x718 );
+                        {ADDBYTE( pak, 1 );} 
+                        ADDBYTE    ( pak, slot);
+                        ADDDWORD   ( pak, GServer->BuildItemHead( items[slot] ) );
+                        ADDDWORD   ( pak, GServer->BuildItemData( items[slot] ) ); 
+                        client->SendPacket( &pak );                
+                    }      
+                }  
+                if(itemcount >= cost)
+                {
+                    Log( MSG_INFO, "Itemcount = %i. Cost = %i",itemcount,cost ); 
+                    //OK the player meets the criteria. Now give him the prize and take away the items 
+                    sprintf ( buffer2, "Your prize has been placed into your inventory.");
+                    GServer->NPCMessage(this, buffer2, thisevent->npcname);            
+                    bool freeslot = false;
+                    int slot;
+                    for(slot=12;slot<41;slot++)
+                    {
+                        if(items[slot].count == 0)
+                        {
+                            freeslot = true;
+                            break;                 
+                        }      
+                    } 
+                    if(freeslot) // put the unused items back into inventory
+                    {
+                        itemcount -= cost;
+                        items[slot].itemnum = thisevent->prizeid[prizeid];
+                        items[slot].itemtype = thisevent->prizetype[prizeid];
+                        items[slot].count = 1;  
+                        items[slot].lifespan = 100;
+                        items[slot].durability = GServer->RandNumber(25, 50);
+                        items[slot].stats = GServer->RandNumber(1, 299);
+                        BEGINPACKET( pak, 0x718 );
+                        ADDBYTE( pak, 1 );
+                        ADDBYTE    ( pak, slot);
+                        ADDDWORD   ( pak, GServer->BuildItemHead( items[slot] ) );
+                        ADDDWORD   ( pak, GServer->BuildItemData( items[slot] ) ); 
+                        client->SendPacket( &pak );  
+                        if (thisevent->collecttype == 12)
+                        {
+                          for(int slt=72;slt<101;slt++)
+                          {
+                            if(items[slt].count == 0 && itemcount > 0)
+                            {
+                                if(itemcount <= 999) 
+                                {
+                                    items[slt].count = itemcount;
+                                    items[slt].itemtype = thisevent->collecttype;
+                                    items[slt].itemnum = thisevent->collectid; 
+                                    itemcount = 0;
+                                    RESETPACKET( pak, 0x718 );
+                                    ADDBYTE( pak, 1 );
+                                    ADDBYTE    ( pak, slt);
+                                    ADDDWORD   ( pak, GServer->BuildItemHead( items[slt] ) );
+                                    ADDDWORD   ( pak, GServer->BuildItemData( items[slt] ) ); 
+                                    client->SendPacket( &pak ); 
+                                    Log( MSG_INFO, "Placed items into slot %i",slt );      
+                                } 
+                                else
+                                {
+                                    items[slt].count = 999;
+                                    items[slt].itemtype = thisevent->collecttype;
+                                    items[slt].itemnum = thisevent->collectid;   
+                                    itemcount -= 999; 
+                                    RESETPACKET( pak, 0x718 );
+                                    ADDBYTE( pak, 1 );
+                                    ADDBYTE    ( pak, slt);
+                                    ADDDWORD   ( pak, GServer->BuildItemHead( items[slt] ) );
+                                    ADDDWORD   ( pak, GServer->BuildItemData( items[slt] ) ); 
+                                    client->SendPacket( &pak ); 
+                                    Log( MSG_INFO, "Placed items into slot %i",slt );
+                                }               
+                            }        
+                          }
+                        } 
+                        if (thisevent->collecttype == 10)
+                        {
+                          for(int slt=42;slt<71;slt++)
+                          {
+                            if(items[slt].count == 0 && itemcount > 0)
+                            {
+                                if(itemcount <= 999) 
+                                {
+                                    items[slt].count = itemcount;
+                                    items[slt].itemtype = thisevent->collecttype;
+                                    items[slt].itemnum = thisevent->collectid; 
+                                    itemcount = 0;
+                                    RESETPACKET( pak, 0x718 );
+                                    ADDBYTE( pak, 1 );
+                                    ADDBYTE    ( pak, slt);
+                                    ADDDWORD   ( pak, GServer->BuildItemHead( items[slt] ) );
+                                    ADDDWORD   ( pak, GServer->BuildItemData( items[slt] ) ); 
+                                    client->SendPacket( &pak ); 
+                                    Log( MSG_INFO, "Placed items into slot %i",slt );      
+                                } 
+                                else
+                                {
+                                    items[slt].count = 999;
+                                    items[slt].itemtype = thisevent->collecttype;
+                                    items[slt].itemnum = thisevent->collectid;   
+                                    itemcount -= 999; 
+                                    RESETPACKET( pak, 0x718 );
+                                    ADDBYTE( pak, 1 );
+                                    ADDBYTE    ( pak, slt);
+                                    ADDDWORD   ( pak, GServer->BuildItemHead( items[slt] ) );
+                                    ADDDWORD   ( pak, GServer->BuildItemData( items[slt] ) ); 
+                                    client->SendPacket( &pak ); 
+                                    Log( MSG_INFO, "Placed items into slot %i",slt );
+                                }               
+                            }        
+                          }
+                        }  
+                           
+                    }
+                    else //didn't have a free slot so put all the items back
+                    {
+                       Log( MSG_INFO, "Sorry we don't have a free slot" );
+                       sprintf ( buffer2, "Sorry You don't have a free slot to put the item in.");
+                       GServer->NPCMessage(this, buffer2, thisevent->npcname);
+                       if (thisevent->collecttype == 12)
+                       {
+                         for(int slt=72;slt<101;slt++)
+                         {
+                            if(items[slt].count == 0 && itemcount > 0)
+                            {
+                                if(itemcount < 999) 
+                                {
+                                    items[slt].count = itemcount;
+                                    items[slt].itemtype = thisevent->collecttype;
+                                    items[slt].itemnum = thisevent->collectid;  
+                                    itemcount = 0;
+                                    BEGINPACKET( pak, 0x718 );
+                                    ADDBYTE( pak, 1 );
+                                    ADDBYTE    ( pak, slt);
+                                    ADDDWORD   ( pak, GServer->BuildItemHead( items[slt] ) );
+                                    ADDDWORD   ( pak, GServer->BuildItemData( items[slt] ) ); 
+                                    client->SendPacket( &pak );        
+                                } 
+                                else
+                                {
+                                    items[slt].count = 999;
+                                    items[slt].itemtype = thisevent->collecttype;
+                                    items[slt].itemnum = thisevent->collectid;   
+                                    itemcount -= 999; 
+                                    BEGINPACKET( pak, 0x718 );
+                                    ADDBYTE( pak, 1 );
+                                    ADDBYTE    ( pak, slt);
+                                    ADDDWORD   ( pak, GServer->BuildItemHead( items[slt] ) );
+                                    ADDDWORD   ( pak, GServer->BuildItemData( items[slt] ) ); 
+                                    client->SendPacket( &pak ); 
+                                }               
+                            }        
+                          }
+                        }  
+                        if (thisevent->collecttype == 10)
+                       {
+                         for(int slt=42;slt<71;slt++)
+                         {
+                            if(items[slt].count == 0 && itemcount > 0)
+                            {
+                                if(itemcount < 999) 
+                                {
+                                    items[slt].count = itemcount;
+                                    items[slt].itemtype = thisevent->collecttype;
+                                    items[slt].itemnum = thisevent->collectid;  
+                                    itemcount = 0;
+                                    BEGINPACKET( pak, 0x718 );
+                                    ADDBYTE( pak, 1 );
+                                    ADDBYTE    ( pak, slt);
+                                    ADDDWORD   ( pak, GServer->BuildItemHead( items[slt] ) );
+                                    ADDDWORD   ( pak, GServer->BuildItemData( items[slt] ) ); 
+                                    client->SendPacket( &pak );        
+                                } 
+                                else
+                                {
+                                    items[slt].count = 999;
+                                    items[slt].itemtype = thisevent->collecttype;
+                                    items[slt].itemnum = thisevent->collectid;   
+                                    itemcount -= 999; 
+                                    BEGINPACKET( pak, 0x718 );
+                                    ADDBYTE( pak, 1 );
+                                    ADDBYTE    ( pak, slt);
+                                    ADDDWORD   ( pak, GServer->BuildItemHead( items[slt] ) );
+                                    ADDDWORD   ( pak, GServer->BuildItemData( items[slt] ) ); 
+                                    client->SendPacket( &pak ); 
+                                }               
+                            }        
+                          }
+                        }
+                    }
+                }
+                else
+                {
+                    for(int slt=72;slt<101;slt++) //put the stuff back into inventory
+                    {
+                         if(items[slt].count == 0 && itemcount > 0)
+                         {
+                             if(itemcount < 999) 
+                             {
+                                 items[slt].count = itemcount;
+                                 items[slt].itemtype = thisevent->collecttype;
+                                 items[slt].itemnum = thisevent->collectid;    
+                                 itemcount = 0;     
+                                 BEGINPACKET( pak, 0x718 );
+                                 ADDBYTE( pak, 1 );
+                                 ADDBYTE    ( pak, slt);
+                                 ADDDWORD   ( pak, GServer->BuildItemHead( items[slt] ) );
+                                 ADDDWORD   ( pak, GServer->BuildItemData( items[slt] ) ); 
+                                 client->SendPacket( &pak ); 
+                             } 
+                             else
+                             {
+                                 items[slt].count = 999;
+                                 items[slt].itemtype = thisevent->collecttype;
+                                 items[slt].itemnum = thisevent->collectid;   
+                                 itemcount -= 999; 
+                                 BEGINPACKET( pak, 0x718 );
+                                 ADDBYTE( pak, 1 );
+                                 ADDBYTE    ( pak, slt);
+                                 ADDDWORD   ( pak, GServer->BuildItemHead( items[slt] ) );
+                                 ADDDWORD   ( pak, GServer->BuildItemData( items[slt] ) ); 
+                                 client->SendPacket( &pak ); 
+                                 itemcount -= 999;
+                             }
+                         }   
+                            
+                    }
+                    
+                    sprintf ( buffer2, "Sorry You don't have enough for that.");
+                    GServer->NPCMessage(this, buffer2, thisevent->npcname);  
+                }
+            }
+        }
+    }
+    return true;     
+}
+ 

@@ -99,7 +99,10 @@ class CPlayer: public CCharacter
 	clock_t lastRegenTime_mp;   //LMA: regen for MP
 	clock_t lastShowTime;       //LMA HP Jumping
 	clock_t firstlogin;         //LMA for fairy
-	clock_t lastSaveTime;	
+	clock_t lastSaveTime;
+    clock_t lastportalchecktime;  //custom events
+    clock_t lastEventTime;        //custom events
+    clock_t RefreshEventTimer;	  //custom events
 	clock_t lastGG;	
 	
 	// Visible Lists
@@ -116,6 +119,10 @@ class CPlayer: public CCharacter
         bool CheckPlayerLevelUP( );
         bool CheckDoubleEquip( );  //LMA: Core fix for double weapon and shield
         bool CheckZulies( );
+        bool CheckPortal( );  //custom events
+        bool CheckEvents( );  //custom events
+      //bool CheckCustomQuest( );
+        bool PrizeExchange(CPlayer* thisclient, UINT prizeid );  //custom events
         bool CheckItems ( );
         void SetStats( );
         bool GetPlayerInfo( ); 

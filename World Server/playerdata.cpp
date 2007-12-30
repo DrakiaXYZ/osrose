@@ -26,7 +26,7 @@
 bool CPlayer::loaddata( )
 {
 	MYSQL_ROW row;
-	MYSQL_RES *result = GServer->DB->QStore("SELECT level,face,hairStyle,sex,classid,zuly,str,dex,_int, con,cha,sen,curHp,curMp,id,statp,skillp,exp,stamina,quickbar,basic_skills, class_skills,class_skills_level,respawnid,clanid,clan_rank,townid,rewardpoints,unionid,unionfame,union01,union02,union03,union04,union05,bonusxp,timerxp,shoptype,timershop FROM characters WHERE char_name='%s'", CharInfo->charname);
+	MYSQL_RES *result = GServer->DB->QStore("SELECT level,face,hairStyle,sex,classid,zuly,str,dex,_int, con,cha,sen,curHp,curMp,id,statp,skillp,exp,stamina,quickbar,basic_skills, class_skills,class_skills_level,respawnid,clanid,clan_rank,townid,rewardpoints,unionid,unionfame,union01,union02,union03,union04,union05,bonusxp,timerxp,shoptype,timershop,isGM FROM characters WHERE char_name='%s'", CharInfo->charname);
 	if(result==NULL) return false;
 	if(mysql_num_rows(result)!=1)
 	{
@@ -77,6 +77,9 @@ bool CPlayer::loaddata( )
     
     Shop->ShopType=atoi(row[37]);
     Shop->mil_shop_time=atoi(row[38]);
+
+    //GM Additional Security by PurpleYouKo
+    CharInfo->isGM=atoi(row[39]);   // GM Security
     
     //resetting some values:
     sp_hp=0;

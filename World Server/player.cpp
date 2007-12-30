@@ -48,6 +48,7 @@ CPlayer::CPlayer( CClientSocket* CLIENT )
     CharInfo->StatPoints = 0;
     CharInfo->SkillPoints = 0;
     CharInfo->stamina = 0;
+    CharInfo->isGM = 0; // GM Security
 
     // RIDE
     Ride = new RIDE;

@@ -641,6 +641,52 @@ struct CTeleGate
 	unsigned char destMap;
 };
 
+ 
+//------------------------------------------------------------------------------------------
+// Custom events, quests and games
+//------------------------------------------------------------------------------------------
+ 
+struct CCustomString
+{
+    char prizename[50];     
+};
+       
+struct CCustomEvent
+{
+    unsigned short id;
+    UINT eventtype;
+    char npcname[50];
+    fPoint location;
+    unsigned short map;
+    UINT active;  
+    UINT prizetype[10];
+    UINT prizeid[10];
+    UINT prizecost[10];
+    CCustomString prizename[10];
+    UINT collecttype;
+    UINT collectid;
+    char script1[200];
+    char script2[200];
+    char script3[200];
+    char script4[200];
+    UINT radius;
+    char itemname[20];
+    bool inuse;
+    UINT level;
+};
+ 
+struct CCustomGate
+{
+  unsigned short id;
+  fPoint source;
+  unsigned short sourcemap;
+  fPoint dest;
+  unsigned short destmap;    
+  bool active; 
+  unsigned short radius;
+};
+ 
+
 // -----------------------------------------------------------------------------------------
 // A respawn point object
 // -----------------------------------------------------------------------------------------

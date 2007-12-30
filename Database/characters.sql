@@ -4,7 +4,7 @@ Source Host: 192.168.1.100
 Source Database: osrose
 Target Host: 192.168.1.100
 Target Database: osrose
-Date: 11/15/2007 7:54:02 PM
+Date: 12/29/2007 10:31:51 AM
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -54,8 +54,9 @@ CREATE TABLE `characters` (
   `timerxp` int(11) NOT NULL default '0',
   `shoptype` int(11) NOT NULL default '0',
   `timershop` int(11) NOT NULL default '0',
+  `isgm` tinyint(1) NOT NULL default '0',
   PRIMARY KEY  (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=442 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records 

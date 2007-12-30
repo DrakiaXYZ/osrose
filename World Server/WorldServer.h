@@ -322,6 +322,8 @@ class CWorldServer : public CServerSocket
     	bool LoadEquip( );
     	bool LoadItemStats( );
         bool LoadTeleGateData( );
+        bool LoadCustomTeleGate( );
+        bool LoadCustomEvents( );
         bool LoadMonsterSpawn( );
         bool LoadRespawnData( );
         bool LoadQuestData( );
@@ -345,6 +347,7 @@ class CWorldServer : public CServerSocket
         // Server Functions
         bool SendPM( CPlayer* thisclient, char msg[200] );
         bool SendGlobalMSG( CPlayer* thisclient, char msg[200] );
+        bool NPCMessage( CPlayer* thisclient, char msg[200], char npc[50] );  //Custom Events
         UINT GetMaxPartyExp( UINT partylevel );
         bool DoSkillScript( CCharacter* character, CSkills* thisskill );
 
@@ -356,7 +359,9 @@ class CWorldServer : public CServerSocket
     	char*					cct;					// Encryption table for char server
 
     	vector<CTeleGate*>		TeleGateList;			// Telegates List
-
+        vector<CCustomGate*>    CustomGateList;         // Custom Telegate list 
+        vector<CCustomEvent*>   CustomEventList;        //Custom events list
+ 
         vector<CQuest*>         QuestList;              // Quest List
         vector<CSkills*>        SkillList;              // Skills List
         vector<CMDrops*>        MDropList;              // Drops List

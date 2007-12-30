@@ -1409,3 +1409,99 @@ bool CWorldServer::LoadBreakList()
     return true;
 }
 
+ 
+bool CWorldServer::LoadCustomTeleGate()
+{
+    Log( MSG_INFO, "Loading Custom Telegate data" );     
+    MYSQL_ROW row;    
+    MYSQL_RES *result = DB->QStore("SELECT id,sourcex,sourcey,sourcemap,destx,desty,destmap,radius,active FROM list_customgates");  
+    CustomGateList.clear();
+    if(result==NULL) 
+    {
+        DB->QFree( );
+        return false;
+    }
+    while( row = mysql_fetch_row(result) )
+    {
+        CCustomGate* thisgate = new (nothrow) CCustomGate;
+        if(thisgate == NULL)
+        {
+            Log(MSG_ERROR, "Error allocing memory       " );
+            DB->QFree( );
+            return false;          
+        }
+        thisgate->id = atoi(row[0]);
+        thisgate->source.x = (float)atof(row[1]);
+        thisgate->source.y = (float)atof(row[2]); 
+        thisgate->sourcemap = atoi(row[3]);
+        thisgate->dest.x = (float)atof(row[4]);
+        thisgate->dest.y = (float)atof(row[5]);
+        thisgate->destmap = atoi(row[6]);
+        thisgate->radius = atoi(row[7]);
+        thisgate->active = atoi(row[8]);
+        CustomGateList.push_back(thisgate);         
+    }
+    DB->QFree( );   
+    return true;
+}
+
+ 
+bool CWorldServer::LoadCustomEvents( )
+{
+    Log( MSG_LOAD, "Custom Events data            " );     
+    MYSQL_ROW row;
+    MYSQL_RES *result = DB->QStore("SELECT id,eventtype,npcname,x,y,map,radius,active,pc1,pc2,pc3,pc4,pc5,pc6,pc7,pc8,pc9,pc10,pt1,pt2,pt3,pt4,pt5,pt6,pt7,pt8,pt9,pt10,pi1,pi2,pi3,pi4,pi5,pi6,pi7,pi8,pi9,pi10,pn1,pn2,pn3,pn4,pn5,pn6,pn7,pn8,pn9,pn10,script1,script2,script3,script4,itemname,collecttype,collectnum,level FROM list_customevents");
+    CustomEventList.clear();
+    if(result==NULL) 
+    {
+        DB->QFree( );
+        return false;
+    }  
+    int i;      
+    while( row = mysql_fetch_row(result) )
+    {  
+        CCustomEvent* thisevent = new (nothrow) CCustomEvent;
+        if(thisevent == NULL)  
+        { 
+            Log(MSG_ERROR, "Error allocing memory" );
+            DB->QFree( );
+            return false;
+        }
+        thisevent->id = atoi(row[0]);
+        thisevent->eventtype = atoi(row[1]);
+        strcpy(thisevent->npcname,row[2]); 
+        thisevent->location.x = (float)atof(row[3]);
+        thisevent->location.y = (float)atof(row[4]); 
+        thisevent->map = atoi(row[5]);
+        thisevent->radius = atoi(row[6]);
+        thisevent->active = atoi(row[7]);
+        for(i=1;i<11;i++)
+        {
+            thisevent->prizecost[i] = atoi(row[7+i]);
+        }
+        for(i=1;i<11;i++)
+        {
+            thisevent->prizetype[i] = atoi(row[17+i]);
+        }
+        for(i=1;i<11;i++)
+        {
+            thisevent->prizeid[i] = atoi(row[27+i]);
+        }
+        for(i=1;i<11;i++)
+        {
+            strcpy(thisevent->prizename[i].prizename ,row[37+i]);
+        }
+        strcpy(thisevent->script1,row[48]);
+        strcpy(thisevent->script2,row[49]);
+        strcpy(thisevent->script3,row[50]);
+        strcpy(thisevent->script4,row[51]);
+        strcpy(thisevent->itemname,row[52]);
+        thisevent->collecttype = atoi(row[53]);
+        thisevent->collectid = atoi(row[54]);
+        thisevent->level = atoi(row[55]);
+        CustomEventList.push_back(thisevent);
+    }
+    DB->QFree( );
+    Log( MSG_INFO, "Custom Event data loaded" ); 
+    return true; 
+}

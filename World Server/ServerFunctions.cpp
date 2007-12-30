@@ -44,6 +44,21 @@ bool CWorldServer::SendGlobalMSG( CPlayer* thisclient, char msg[200] )
            return true;
 }
 
+ 
+// Send a PM from a specific NPC using the blue text of the shout system. Used in custom quests
+bool CWorldServer::NPCMessage( CPlayer* thisclient, char msg[200], char npc[50] )
+{
+    if (npc == "")
+        strcpy(npc, "Event NPC");
+    BEGINPACKET(pak, 0x0785);
+    ADDSTRING  ( pak, npc );
+    ADDBYTE    ( pak, 0 );
+    ADDSTRING  ( pak, msg );
+    ADDBYTE    ( pak, 0 );
+    thisclient->client->SendPacket(&pak);
+    return true;
+}
+ 
 // Search Quest by ID
 CQuest* CWorldServer::GetQuestByID( unsigned long int id )
 {

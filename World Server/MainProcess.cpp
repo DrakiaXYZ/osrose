@@ -66,6 +66,9 @@ PVOID MapProcess( PVOID TS )
                 player->PlayerHeal( );
                 player->Regeneration( );
                 player->CheckPlayerLevelUP( );
+                player->CheckPortal( );  //Custom Events
+                player->CheckEvents( );  //Custom Events
+ 
                 player->CheckDoubleEquip(); //LMA: Core fix for double weapon and shield
                 player->CheckZulies( );
                 

@@ -4,7 +4,7 @@ Source Host: 192.168.1.100
 Source Database: osrose
 Target Host: 192.168.1.100
 Target Database: osrose
-Date: 12/27/2007 2:49:32 PM
+Date: 12/29/2007 10:34:10 AM
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -9488,7 +9488,7 @@ INSERT INTO `item_drops` VALUES ('9457', '177', '8', '0', '0', '75', '0', '659',
 INSERT INTO `item_drops` VALUES ('9458', '578', '5', '0', '0', '50', '0', '659', '0|0|0|0|0|0|0|0', '');
 INSERT INTO `item_drops` VALUES ('9459', '678', '5', '0', '0', '50', '0', '659', '0|0|0|0|0|0|0|0', '');
 INSERT INTO `item_drops` VALUES ('9460', '985', '8', '0', '0', '2', '0', '659', '0|0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('9516', '403', '12', '0', '0', '500', '0', '303', '0|0|0|0|0|0|0', 'Santa Lottery');
-INSERT INTO `item_drops` VALUES ('9513', '247', '10', '1', '210', '850', '0', '0', '0|0|0|0|0|0|0', 'Xmas Gift, all maps, all mobs');
-INSERT INTO `item_drops` VALUES ('9514', '248', '10', '1', '210', '850', '0', '0', '0|0|0|0|0|0|0', 'Xmas Gift, all maps, all mobs');
-INSERT INTO `item_drops` VALUES ('9515', '249', '10', '1', '210', '850', '0', '0', '0|0|0|0|0|0|0', 'Xmas Gift, all maps, all mobs');
+INSERT INTO `item_drops` VALUES ('9516', '403', '12', '0', '0', '550', '0', '303', '0|0|0|0|0|0|0', 'Santa Lottery');
+INSERT INTO `item_drops` VALUES ('9513', '247', '10', '1', '210', '450', '0', '0', '0|0|0|0|0|0|0', 'Xmas Gift, all maps, all mobs');
+INSERT INTO `item_drops` VALUES ('9514', '248', '10', '1', '210', '450', '0', '0', '0|0|0|0|0|0|0', 'Xmas Gift, all maps, all mobs');
+INSERT INTO `item_drops` VALUES ('9515', '249', '10', '1', '210', '450', '0', '0', '0|0|0|0|0|0|0', 'Xmas Gift, all maps, all mobs');

@@ -483,6 +483,10 @@ bool CWorldServer::OnServerReady( )
 
     LoadChestData( );
     LoadQuestData( );
+    // PY custom events start
+    LoadCustomTeleGate( );
+    LoadCustomEvents( );
+    // PY custom events end
     LoadNPCData( );
     LoadTeleGateData( );
     LoadRespawnData( );
