@@ -68,7 +68,9 @@ struct STATS
     float Attack_Distance;
     unsigned int MaxWeight;
     unsigned int MaxSummonGauge;
-    unsigned int MPReduction;    
+    unsigned int MPReduction;
+    unsigned int side; //future expansion of drop system
+    unsigned int sidechance; //future expansion of drop system
     unsigned int ExtraDamage;
     unsigned int ExtraDamage_add;
 };
