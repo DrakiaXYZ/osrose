@@ -196,8 +196,13 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
     { 
 //         if(Config.Command_Reload > thisclient->Session->accesslevel )
            if(Config.Command_Reload > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)
+           {
            Log( MSG_GMACTION, " %s : /reload NOT ALLOWED" , thisclient->CharInfo->charname, tmp);
-                        return true;
+           char buffer[200];
+           sprintf ( buffer, "reload NOT ALLOWED");
+           SendPM(thisclient, buffer);
+	                    return true;
+           }
          if ((tmp = strtok(NULL, " "))==NULL)return true;
          else if(strcmp(tmp, "config")==0)
 //         {
@@ -546,10 +551,15 @@ else if (loc == 10) // Sikuku Underground Prison
     }
     //******************************* START RESPAWN ***************************
     else if (strcmp(command, "SSPAWN")==0)
-    { //STARTPOINT IDMOB CANTMIN CANTMAX RESPAWNTIME(s)  (3 points minim)
+    { //STARTPOINT IDMOB CANTMIN CANTMAX RESPAWNTIME(s)  (3 points minimum)
         if(Config.Command_SSpawn > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)
+          { 
            Log( MSG_GMACTION, " %s : /SSPAWN NOT ALLOWED" , thisclient->CharInfo->charname);
+           char buffer[200];
+           sprintf ( buffer, "SSPAWN NOT ALLOWED");
+           SendPM(thisclient, buffer);
 	                    return true;
+           }
         thisclient->GMRespawnPoints.map = thisclient->Position->Map;                
         if ((tmp = strtok(NULL, " "))==NULL)
         {
@@ -587,8 +597,13 @@ else if (loc == 10) // Sikuku Underground Prison
     else if (strcmp(command, "SET")==0) 
     {
         if(Config.Command_Set > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)
+           {
            Log( MSG_GMACTION, " %s : /SET NOT ALLOWED" , thisclient->CharInfo->charname);
+           char buffer[200];
+           sprintf ( buffer, "SET NOT ALLOWED");
+           SendPM(thisclient, buffer);
 	                    return true;
+           }
         if(thisclient->GMRespawnPoints.b==1 && thisclient->GMRespawnPoints.n<50)        
         {         
             int n=thisclient->GMRespawnPoints.n;   
@@ -608,8 +623,13 @@ else if (loc == 10) // Sikuku Underground Prison
     else if (strcmp(command, "ESPAWN")==0) 
     {
         if(Config.Command_ESpawn > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)
+           {
            Log( MSG_GMACTION, " %s : /ESPAWN NOT ALLOWED" , thisclient->CharInfo->charname);
+           char buffer[200];
+           sprintf ( buffer, "ESPAWN NOT ALLOWED");
+           SendPM(thisclient, buffer);
 	                    return true;
+           }
         if(thisclient->GMRespawnPoints.n>3 && thisclient->GMRespawnPoints.b==1)
         {
             if ((tmp = strtok(NULL, " "))==NULL)
@@ -641,8 +661,13 @@ else if (loc == 10) // Sikuku Underground Prison
     }    else if (strcmp(command, "DSPAWN")==0) 
     {
         if(Config.Command_DSpawn > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)         
+           {
            Log( MSG_GMACTION, " %s : /DSPAWN NOT ALLOWED" , thisclient->CharInfo->charname);
+           char buffer[200];
+           sprintf ( buffer, "SSPAWN NOT ALLOWED");
+           SendPM(thisclient, buffer);
 	                    return true;
+           }
         if ((tmp = strtok(NULL, " "))==NULL)
             return true; 
         int id=atoi(tmp);         
@@ -687,8 +712,13 @@ else if (loc == 10) // Sikuku Underground Prison
     else if(strcmp(command, "DELETESPAWN")==0)
     {
          if(Config.Command_DelSpawn > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)
+           {
            Log( MSG_GMACTION, " %s : /DELETESPAWN NOT ALLOWED" , thisclient->CharInfo->charname);
+           char buffer[200];
+           sprintf ( buffer, "DELETESPAWN NOT ALLOWED");
+           SendPM(thisclient, buffer);
 	                    return true;
+           }
         if ((tmp = strtok(NULL, " "))==NULL)
              return true; 
         int id=atoi(tmp);    
@@ -719,8 +749,13 @@ else if (loc == 10) // Sikuku Underground Prison
     else if(strcmp(command, "p")==0)  //*** READ THE PACKET.TXT AND SEND IT
     {
          if(Config.Command_Pak > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)
+           {
            Log( MSG_GMACTION, " %s : /p NOT ALLOWED" , thisclient->CharInfo->charname);
+           char buffer[200];
+           sprintf ( buffer, "p NOT ALLOWED");
+           SendPM(thisclient, buffer);
 	                    return true;
+           }
          if ((tmp = strtok(NULL, " "))==NULL)
              return true; 	        
             char buffer;              
@@ -806,8 +841,13 @@ else if (loc == 10) // Sikuku Underground Prison
     else if (strcmp(command, "kick")==0)
     {
         if(Config.Command_Kick > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)
+           {
            Log( MSG_GMACTION, " %s : /kick NOT ALLOWED" , thisclient->CharInfo->charname);
-	       return true;
+           char buffer[200];
+           sprintf ( buffer, "kick NOT ALLOWED");
+           SendPM(thisclient, buffer);
+	                    return true;
+           }
         if ((tmp = strtok(NULL, " "))==NULL) return true; char* name=tmp;
         Log( MSG_GMACTION, " %s : /kick %s" , thisclient->CharInfo->charname, name);        
         return pakGMKick( thisclient, name );
@@ -1310,8 +1350,13 @@ else if (strcmp(command, "give2")==0)
     else if (strcmp(command, "ban")==0)
     {
          if(Config.Command_Ban > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)
+           {
            Log( MSG_GMACTION, " %s : /ban NOT ALLOWED" , thisclient->CharInfo->charname);
+           char buffer[200];
+           sprintf ( buffer, "ban NOT ALLOWED");
+           SendPM(thisclient, buffer);
 	                    return true;
+           }
         if ((tmp = strtok(NULL, " "))==NULL) return true; char* name=tmp;
         Log( MSG_GMACTION, " %s : /ban %s" , thisclient->CharInfo->charname, name);
         return pakGMBan( thisclient, name );
@@ -1380,8 +1425,13 @@ else if (strcmp(command, "give2")==0)
 	else if (strcmp(command, "shutdown")==0)
 	{        
              if(Config.Command_Shutdown > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)
+           {
            Log( MSG_GMACTION, " %s : /showdown NOT ALLOWED" , thisclient->CharInfo->charname);
+           char buffer[200];
+           sprintf ( buffer, "shutdown NOT ALLOWED");
+           SendPM(thisclient, buffer);
 	                    return true;
+           }
         if ((tmp = strtok(NULL, " "))==NULL) return true; 
             unsigned int minutes =atoi(tmp);        
         char text[200];
@@ -1399,8 +1449,13 @@ else if (strcmp(command, "give2")==0)
     else if(strcmp(command, "dquest")==0)
     {                          
          if(Config.Command_DQuest > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)
+           {
            Log( MSG_GMACTION, " %s : /dquest NOT ALLOWED" , thisclient->CharInfo->charname);
+           char buffer[200];
+           sprintf ( buffer, "dquest NOT ALLOWED");
+           SendPM(thisclient, buffer);
 	                    return true;
+           }
         char line0[200];
                         
         if( thisclient->questdebug )
@@ -1421,8 +1476,13 @@ else if (strcmp(command, "give2")==0)
     else if(strcmp(command, "iquest")==0)    
     {
          if(Config.Command_IQuest > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)
+           {
            Log( MSG_GMACTION, " %s : /iquest NOT ALLOWED" , thisclient->CharInfo->charname);
+           char buffer[200];
+           sprintf ( buffer, "iquest NOT ALLOWED");
+           SendPM(thisclient, buffer);
 	                    return true;
+           }
         int n=1;
         if ((tmp = strtok(NULL, " "))==NULL) return true; 
         unsigned int itemquest =atoi(tmp); 
@@ -1783,8 +1843,13 @@ else if (strcmp(command, "give2")==0)
     else if(strcmp(command, "pdmg")==0)
     {
         if(Config.Command_Pdmg > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)
+           {
            Log( MSG_GMACTION, " %s : /pdmg NOT ALLOWED" , thisclient->CharInfo->charname);
+           char buffer[200];
+           sprintf ( buffer, "pdmg NOT ALLOWED");
+           SendPM(thisclient, buffer);
 	                    return true;
+           }
 	    if((tmp = strtok(NULL, " "))==NULL) return true; unsigned rate=atoi(tmp);
 	    Log( MSG_GMACTION, " Rate for Player Dmg is now set at %i by %s" , rate, thisclient->CharInfo->charname);
 	    return pakGMChangePlayerDmg(thisclient, rate);
@@ -1792,8 +1857,13 @@ else if (strcmp(command, "give2")==0)
 	else if(strcmp(command, "mdmg")==0)
     {
         if(Config.Command_Mdmg > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)
+           {
            Log( MSG_GMACTION, " %s : /mdmg NOT ALLOWED" , thisclient->CharInfo->charname);
+           char buffer[200];
+           sprintf ( buffer, "mdmg NOT ALLOWED");
+           SendPM(thisclient, buffer);
 	                    return true;
+           }
 	    if((tmp = strtok(NULL, " "))==NULL) return true; unsigned rate=atoi(tmp);
 	    Log( MSG_GMACTION, " Rate for Monster Dmg is now set at %i by %s" , rate, thisclient->CharInfo->charname);
 	    return pakGMChangeMonsterDmg(thisclient, rate);
@@ -1801,8 +1871,13 @@ else if (strcmp(command, "give2")==0)
 	else if(strcmp(command, "grid")==0)
     {
         if(Config.Command_grid > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)
+           {
            Log( MSG_GMACTION, " %s : /grid NOT ALLOWED" , thisclient->CharInfo->charname);
-                return true;
+           char buffer[200];
+           sprintf ( buffer, "grid NOT ALLOWED");
+           SendPM(thisclient, buffer);
+	                    return true;
+           }
         if((tmp = strtok(NULL, " "))!=NULL)
         {
             if (Config.testgrid==0)
