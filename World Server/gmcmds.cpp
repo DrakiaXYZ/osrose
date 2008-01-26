@@ -560,6 +560,7 @@ else if (loc == 10) // Sikuku Underground Prison
            SendPM(thisclient, buffer);
 	                    return true;
            }
+        Log( MSG_GMACTION, " %s : /SSPAWN" );
         thisclient->GMRespawnPoints.map = thisclient->Position->Map;                
         if ((tmp = strtok(NULL, " "))==NULL)
         {
@@ -604,6 +605,7 @@ else if (loc == 10) // Sikuku Underground Prison
            SendPM(thisclient, buffer);
 	                    return true;
            }
+        Log( MSG_GMACTION, " %s : /SET" );
         if(thisclient->GMRespawnPoints.b==1 && thisclient->GMRespawnPoints.n<50)        
         {         
             int n=thisclient->GMRespawnPoints.n;   
@@ -630,6 +632,7 @@ else if (loc == 10) // Sikuku Underground Prison
            SendPM(thisclient, buffer);
 	                    return true;
            }
+        Log( MSG_GMACTION, " %s : /ESPAWN" );
         if(thisclient->GMRespawnPoints.n>3 && thisclient->GMRespawnPoints.b==1)
         {
             if ((tmp = strtok(NULL, " "))==NULL)
@@ -658,9 +661,11 @@ else if (loc == 10) // Sikuku Underground Prison
             return true;
         }        
         return true;
-    }    else if (strcmp(command, "DSPAWN")==0) 
-    {
-        if(Config.Command_DSpawn > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)         
+    }    
+    else if (strcmp(command, "DSPAWN")==0) 
+      {
+        if(Config.Command_DSpawn > thisclient->Session->accesslevel)
+//        if(Config.Command_DSpawn > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)         
            {
            Log( MSG_GMACTION, " %s : /DSPAWN NOT ALLOWED" , thisclient->CharInfo->charname);
            char buffer[200];
@@ -668,6 +673,7 @@ else if (loc == 10) // Sikuku Underground Prison
            SendPM(thisclient, buffer);
 	                    return true;
            }
+        Log( MSG_GMACTION, " %s : /DSPAWN" );
         if ((tmp = strtok(NULL, " "))==NULL)
             return true; 
         int id=atoi(tmp);         
