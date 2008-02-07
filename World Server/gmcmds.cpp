@@ -560,7 +560,7 @@ else if (loc == 10) // Sikuku Underground Prison
            SendPM(thisclient, buffer);
 	                    return true;
            }
-        Log( MSG_GMACTION, " %s : /SSPAWN" );
+        Log( MSG_GMACTION, " %s : /SSPAWN", thisclient->CharInfo->charname);
         thisclient->GMRespawnPoints.map = thisclient->Position->Map;                
         if ((tmp = strtok(NULL, " "))==NULL)
         {
@@ -605,7 +605,7 @@ else if (loc == 10) // Sikuku Underground Prison
            SendPM(thisclient, buffer);
 	                    return true;
            }
-        Log( MSG_GMACTION, " %s : /SET" );
+        Log( MSG_GMACTION, " %s : /SET" , thisclient->CharInfo->charname);
         if(thisclient->GMRespawnPoints.b==1 && thisclient->GMRespawnPoints.n<50)        
         {         
             int n=thisclient->GMRespawnPoints.n;   
@@ -632,7 +632,7 @@ else if (loc == 10) // Sikuku Underground Prison
            SendPM(thisclient, buffer);
 	                    return true;
            }
-        Log( MSG_GMACTION, " %s : /ESPAWN" );
+        Log( MSG_GMACTION, " %s : /ESPAWN" , thisclient->CharInfo->charname);
         if(thisclient->GMRespawnPoints.n>3 && thisclient->GMRespawnPoints.b==1)
         {
             if ((tmp = strtok(NULL, " "))==NULL)
@@ -673,7 +673,7 @@ else if (loc == 10) // Sikuku Underground Prison
            SendPM(thisclient, buffer);
 	                    return true;
            }
-        Log( MSG_GMACTION, " %s : /DSPAWN" );
+        Log( MSG_GMACTION, " %s : /DSPAWN" , thisclient->CharInfo->charname);
         if ((tmp = strtok(NULL, " "))==NULL)
             return true; 
         int id=atoi(tmp);         
