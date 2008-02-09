@@ -662,38 +662,53 @@ bool CWorldServer::TeleportTo ( CPlayer* thisclient, int map, fPoint position )
 
 // Learn Skill
 bool CWorldServer::LearnSkill( CPlayer* thisclient, UINT skill )
-{
+{                 
 /*
-0 - ya aprendido
-1 - aprendio
-2 - no job
-3 - falta otro skill
-4 - no status points (lvl)
-5 - no se puede subir de lvl el skill
-6 - numero incorrecto de skill
-7 - no tienes suficientes sp
-*/
-        int b=1;
+0 - already learned 
+1 - he learned 
+2 - not job
+3 - another skill is absent 
+4 - not status points the (lvl)
+5 - it is not possible to raise of lvl the skill
+6 - incorrect number of skill
+7 - you do not have sufficient sp
+*/    
+        int b=1;         
         CSkills* thisskill = GetSkillByID( skill );
         if( thisskill==NULL )
             return false;
         if( thisskill->clevel>thisclient->Stats->Level )
         {
-            b=4;
+            b=4;      
         }
         else if( thisclient->CharInfo->SkillPoints<thisskill->sp )
         {
-                b=7;
+                b=7;          
+        }
+        for(unsigned int i=0;i<3; i++)
+        {
+            if(thisskill->rskill[i] != 0)
+            {
+                unsigned int rskill = thisclient->GetSkillPos(thisskill->rskill[i]);
+                if(rskill == 0xffff)
+                {
+                    b=5;          
+                }
+                if(thisskill->lskill[i] > thisclient->cskills[rskill].level)
+                {
+                    b=5;          
+                }
+            }
         }
         if(b==1)
         {
             thisclient->cskills[thisclient->p_skills].id = skill;
             thisclient->cskills[thisclient->p_skills].level=1;
-            thisclient->cskills[thisclient->p_skills].thisskill = thisskill;
-            thisclient->CharInfo->SkillPoints -= 1;
+            thisclient->cskills[thisclient->p_skills].thisskill = thisskill;            
+            thisclient->CharInfo->SkillPoints -= 1;        
             thisclient->p_skills++;
         }
-        BEGINPACKET( pak, 0x7b0 );
+        BEGINPACKET( pak, 0x7b0 );                            
         ADDBYTE    ( pak, b);
         ADDWORD    ( pak, thisclient->p_skills-1);
         ADDWORD    ( pak, skill);
@@ -701,7 +716,7 @@ bool CWorldServer::LearnSkill( CPlayer* thisclient, UINT skill )
         thisclient->client->SendPacket( &pak);
         if(b==1)
         {
-            thisclient->SetStats( );
+            thisclient->SetStats( );   
             return true;
         }
         else

@@ -433,7 +433,7 @@ UINT CPlayer::GetNewStorageItemSlot( CItem thisitem )
         //no place...
         return 0xffff;                     
     }
-    
+
     //stackables items.
     int free_slot=-1;
      for(UINT i=0;i<160;i++)
@@ -454,6 +454,17 @@ UINT CPlayer::GetNewStorageItemSlot( CItem thisitem )
        return free_slot;
     
 	return 0xffff;
+}
+
+// Required skill check by insider
+UINT CPlayer::GetSkillPos( unsigned int id )
+{
+    for(int i=0;i<MAX_SKILL;i++)
+    {
+        if (cskills[i].id == id)
+            return i;
+    }
+    return 0xffff;
 }
 
 // Erase a object from the user

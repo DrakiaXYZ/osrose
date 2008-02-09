@@ -133,6 +133,7 @@ class CPlayer: public CCharacter
         void CalculateSignature( int slot );    //LMA: get item signature
         int CheckSignature( int slot );         //LMA: check signature
         UINT GetNewStorageItemSlot( CItem thisitem );
+        UINT GetSkillPos( unsigned int id ); // Required skill check by insider
         UINT GetNewItemSlot( CItem thisitem );        
         bool ClearObject( unsigned int otherclientid );
         void RestartPlayerVal( );

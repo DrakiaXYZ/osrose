@@ -2712,6 +2712,29 @@ bool  CWorldServer::pakLevelUpSkill( CPlayer *thisclient, CPacket* P )
         return true;
     if(thisclient->cskills[pos].id!=skill-thisclient->cskills[pos].level)
         return true;
+    // Required skill check by insider
+    for(unsigned int i=0;i<3; i++)
+    {
+        if(thisskill->rskill[i] != 0)
+        {
+            unsigned int rskill = thisclient->GetSkillPos(thisskill->rskill[i]);
+            if(rskill == 0xffff)
+            {
+                return true;
+            }
+            if(thisskill->lskill[i] > thisclient->cskills[rskill].level)
+            {
+                BEGINPACKET( pak, 0x7b1 );                            
+                ADDBYTE    ( pak, 0x05);
+                ADDWORD    ( pak, pos);
+                ADDWORD    ( pak, skill);
+                ADDWORD    ( pak, thisclient->CharInfo->SkillPoints);
+                thisclient->client->SendPacket( &pak);
+                return true;
+            }
+        }
+    }
+
     if(thisclient->CharInfo->SkillPoints>=thisskill->sp)
     {
        thisclient->CharInfo->SkillPoints -= 1;
