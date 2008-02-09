@@ -209,7 +209,11 @@ bool CMap::DeleteMonster( CMonster* monster, bool clearobject, UINT i )
     {
         CSpawnArea* thisspawn = GServer->GetSpawnArea( monster->Position->respawn, monster->Position->Map );
         if(thisspawn!=NULL)
+        {
+            if(thisspawn->amon >= thisspawn->max)// reset spawn timer if the spawn is full
+                thisspawn->lastRespawnTime = clock(); // XxXshidoXxX fix for invisible mobs
             thisspawn->amon--; 
+        }
     }
     if(clearobject)
     {

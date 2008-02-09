@@ -1147,18 +1147,18 @@ bool CWorldServer::LoadSellData( )
 
 bool CWorldServer::LoadConsItem( )
 {
-    Log( MSG_LOAD, "Consumible Data         " );
+    Log( MSG_LOAD, "Consumible Data         " );    
     FILE* fh = NULL;
     fh = fopen("data/useitem_data.csv", "r");
     if(fh==NULL)
     {
         Log(MSG_ERROR, "\nError loading file data/useitem_data.csv" );
         return false;
-    }
+    }    
     char line[500];
-    fgets( line, 500, fh );// this is the column name
+    fgets( line, 500, fh );// this is the column name    
     while(!feof(fh))
-    {
+    {        
         memset( &line, '\0', 500 );
         fgets( line, 500, fh );
         CUseData* newuse = new (nothrow) CUseData;
@@ -1175,18 +1175,19 @@ bool CWorldServer::LoadConsItem( )
         newuse->pricerate = GetUIntValue(",");
         newuse->weight = GetUIntValue(",");
         newuse->quality = GetUIntValue(",");
-        newuse->pricevalue = GetUIntValue(",");
+        newuse->material = GetUIntValue(","); //core
+        newuse->pricevalue = GetUIntValue(",");        
         char* usecondition = GetStrValue(",");
-        char* useeffect = GetStrValue(",");
+        char* useeffect = GetStrValue(",");  
         for(int i=0;i<2;i++)
             newuse->usecondition[i] = GetUIntValue("|",i==0?usecondition:NULL);
         for(int i=0;i<2;i++)
             newuse->useeffect[i] = GetUIntValue("|",i==0?useeffect:NULL);
         UseList.Data.push_back( newuse );
-        UseList.Index[newuse->id] = newuse;
-    }
+        UseList.Index[newuse->id] = newuse;           
+    }        
     fclose(fh);
-    return true;
+    return true;    
 }
 
 bool CWorldServer::LoadZoneData( )

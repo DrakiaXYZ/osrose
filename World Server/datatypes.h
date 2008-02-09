@@ -321,6 +321,7 @@ struct CUseData
     UINT pricerate;
     UINT weight;
     UINT quality;
+    UINT material; //core    
     UINT usecondition[2];
     UINT useeffect[2];
     UINT pricevalue;

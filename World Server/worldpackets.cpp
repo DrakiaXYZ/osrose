@@ -2770,10 +2770,10 @@ bool CWorldServer::pakEquipABC ( CPlayer* thisclient, CPacket* P )
 /////////////////////////////////////////////////////////////////////////////////
 
 bool CWorldServer::pakCraft( CPlayer* thisclient, CPacket* P )
-{
+{    
 	if(thisclient->Shop->open==true)
         return true;
-	CItem item;
+	CItem item;        
 	item.count = 1;
 	// item durability randomizer
 	int lowest = thisclient->Attr->Con/ 10 + 17;
@@ -2786,7 +2786,7 @@ bool CWorldServer::pakCraft( CPlayer* thisclient, CPacket* P )
 	item.itemtype = (GETBYTE((*P), 0x2));
 	item.lifespan = 100; //Its new so 100%
 	item.refine = 0;
-
+	
 	// stats randomizer
 	int changeofstatslow = thisclient->Attr->Sen / 13 + 10;
 	int changeofstatshigh = thisclient->Attr->Sen / 13 + 50;
@@ -2796,7 +2796,7 @@ bool CWorldServer::pakCraft( CPlayer* thisclient, CPacket* P )
 	int statshighget = 256;
 	int setstatrange=(statshighget-statslowget)+1;
   	item.stats = statslowget+int(setstatrange*rand()/(RAND_MAX + 1.0));
-	item.appraised = 1;
+	item.appraised = 1;              
 	}else {
           item.stats = 0;
           item.appraised = 0;
@@ -2804,7 +2804,7 @@ bool CWorldServer::pakCraft( CPlayer* thisclient, CPacket* P )
 	// stats set
 	item.socketed = 0;
 	item.gem = 0;
-
+	
 	unsigned newslot= thisclient->GetNewItemSlot( item );
 	if (newslot !=0xffff)
     {
@@ -2818,10 +2818,12 @@ bool CWorldServer::pakCraft( CPlayer* thisclient, CPacket* P )
         {
             switch(item.itemtype)
             {
+                //UseList by core
+                case 10:materialnumber = UseList.Index[item.itemnum]->material;break;
                 case 11:materialnumber = JemList.Index[item.itemnum]->material;break;
                 case 14:materialnumber = PatList.Index[item.itemnum]->material;break;
             }
-        }
+        }		
 		int	m = 0;
 		for(char used=5; used != 11; used +=2)
         {
@@ -2832,6 +2834,7 @@ bool CWorldServer::pakCraft( CPlayer* thisclient, CPacket* P )
                 if (thisclient->items[material].count < ProductList.Index[materialnumber]->amount[m])
                     return false;
                 UINT clientMat = (thisclient->items[material].itemtype * 1000) + thisclient->items[material].itemnum;
+                //Log(MSG_HACK, "Clientmat: %i | Productlist: %i | materialnumber: %i | material: %i", clientMat, ProductList.Index[materialnumber]->item[m], materialnumber, material);
                 if (clientMat != ProductList.Index[materialnumber]->item[m]) {
                     Log(MSG_HACK, "Client craft mats don't equal server. Player: %s", thisclient->CharInfo->charname);
                     return false;
@@ -2849,46 +2852,46 @@ bool CWorldServer::pakCraft( CPlayer* thisclient, CPacket* P )
         ADDWORD( pak, 0x0100);
         ADDWORD( pak, item.itemnum);// item id not shifted
         thisclient->client->SendPacket(&pak);
-
+     
         RESETPACKET( pak, 0x07af);
         ADDBYTE( pak, 0x00);//00
-        ADDWORD( pak, newslot);
-
+        ADDWORD( pak, newslot); 
+        
         // Make craft bars
-        int bar1 = item.durability * 9;
+        int bar1 = item.durability * 9;                                  
         int bar2 = changeofstatsrange * 9;
         int bar3 = item.durability + changeofstatsrange * 6;
-        int bar4 = item.durability + changeofstatsrange + bar3 / 3;
-
+        int bar4 = item.durability + changeofstatsrange + bar3 / 3;                   
+        
         ADDWORD( pak, bar1);//progress bar1 0 is empty 0x0400 is full bar
         ADDWORD( pak, bar2);//progress bar2 0 is empty 0x0400 is full bar
         if ((GETWORD((*P),  9))==0){ ADDWORD( pak, 0x99a0);}else{ ADDWORD( pak, bar3);}//progress bar3 0 is empty 0x0400 is full bar
         if ((GETWORD((*P), 11))==0){ ADDWORD( pak, 0x99a0);}else{ ADDWORD( pak, bar4);}//progress bar4 0 is empty 0x0400 is full bar
-        ADDDWORD(pak, BuildItemHead(item));
+        ADDDWORD(pak, BuildItemHead(item)); 
 
      if (item.itemtype == 11){
 	     ADDWORD( pak, 0x0001);// amount
 	     ADDWORD( pak, 0x0000);
      }
      else{
-	     ADDDWORD(pak, BuildItemData(item));
+	     ADDDWORD(pak, BuildItemData(item));  
      }
         ADDDWORD( pak, 0x00000000 );
         ADDWORD ( pak, 0x0000 );
         int crafting_exp = item.durability + changeofstatsrange * (thisclient->Stats->Level/ 15);
-		thisclient->CharInfo->Exp += crafting_exp;//  add exp
+		thisclient->CharInfo->Exp += crafting_exp;//  add exp		
 		thisclient->client->SendPacket(&pak);
         RESETPACKET( pak, 0x79b );
         ADDDWORD   ( pak, thisclient->CharInfo->Exp );
         ADDWORD    ( pak, thisclient->CharInfo->stamina );
         ADDWORD    ( pak, 0 );
-        thisclient->client->SendPacket( &pak );
+        thisclient->client->SendPacket( &pak );	
      }
      else
      {
-         BEGINPACKET (pak, 0x702);
-         ADDSTRING(pak, "No free slot !");
-         ADDBYTE(pak, 0);
+         BEGINPACKET (pak, 0x702); 
+         ADDSTRING(pak, "No free slot !"); 
+         ADDBYTE(pak, 0); 
          thisclient->client->SendPacket(&pak);
      }
      return true;
