@@ -504,7 +504,13 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
             x = 5093;
             y = 5144;
         }
-else if (loc == 10) // Sikuku Underground Prison
+        else if (loc == 10) // Pyramid Tombs
+        {
+            map = 41;
+            x = 5050; // 5165 if jRose Client
+            y = 5250; // 5207 if jRose Client
+        } 
+        else if (loc == 11) // Sikuku Underground Prison
         {
              if (thisclient->Stats->Level<160) // by Terr0risT
              {
@@ -516,8 +522,8 @@ else if (loc == 10) // Sikuku Underground Prison
             map = 65;
             x = 5485;
             y = 5285;
-             }
-        }
+        }         
+      }
         else
         {
             SendPM(thisclient, "Please input a number after the go command, below is a list of places and their appropriate number");
@@ -530,7 +536,8 @@ else if (loc == 10) // Sikuku Underground Prison
             SendPM(thisclient, "7 = Lions Plains");
             SendPM(thisclient, "8 = Luna Clan Field");
             SendPM(thisclient, "9 = Desert of the Dead");
-            SendPM(thisclient, "10 = Sikuku Underground Prison");
+            SendPM(thisclient, "10 = Pyramid Tombs - ElVerloon");
+            SendPM(thisclient, "11 = Sikuku Underground Prison");
             SendPM(thisclient, "Example; /go 3");
         }
         if ( thisclient->Stats->HP < (thisclient->Stats->MaxHP / 2) || thisclient->Stats->HP < 1 || thisclient->Session->inGame == false )
