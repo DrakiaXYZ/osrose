@@ -673,30 +673,97 @@ bool CWorldServer::LearnSkill( CPlayer* thisclient, UINT skill )
 6 - incorrect number of skill
 7 - you do not have sufficient sp
 */    
-        int b=1;         
+        int b=1;
         CSkills* thisskill = GetSkillByID( skill );
         if( thisskill==NULL )
             return false;
-        if( thisskill->clevel>thisclient->Stats->Level )
+        if( thisclient->CharInfo->SkillPoints<thisskill->sp )
         {
-            b=4;      
+            b=7;
         }
-        else if( thisclient->CharInfo->SkillPoints<thisskill->sp )
+        else if( thisskill->clevel>thisclient->Stats->Level )
         {
-                b=7;          
+            b=4;
         }
-        for(unsigned int i=0;i<3; i++)
+        if(b==1)
         {
-            if(thisskill->rskill[i] != 0)
+            UINT rclass = 0;
+            for(UINT i=0;i<4; i++)
             {
-                unsigned int rskill = thisclient->GetSkillPos(thisskill->rskill[i]);
-                if(rskill == 0xffff)
+                if (thisskill->c_class[i] == 41)
                 {
-                    b=5;          
+                    rclass = 111;
                 }
-                if(thisskill->lskill[i] > thisclient->cskills[rskill].level)
+                else if (thisskill->c_class[i] == 42)
                 {
-                    b=5;          
+                    rclass = 211;
+                }
+                else if (thisskill->c_class[i] == 43)
+                {
+                    rclass = 311;
+                }
+                else if (thisskill->c_class[i] == 44)
+                {
+                    rclass = 411;
+                }
+                else if (thisskill->c_class[i] == 61)
+                {
+                    rclass = 121;
+                }
+                else if (thisskill->c_class[i] == 62)
+                {
+                    rclass = 122;
+                }
+                else if (thisskill->c_class[i] == 63)
+                {
+                    rclass = 221;
+                }
+                else if (thisskill->c_class[i] == 64)
+                {
+                    rclass = 222;
+                }
+                else if (thisskill->c_class[i] == 65)
+                {
+                    rclass = 321;
+                }
+                else if (thisskill->c_class[i] == 66)
+                {
+                    rclass = 322;
+                }
+                else if (thisskill->c_class[i] == 67)
+                {
+                    rclass = 421;
+                }
+                else if (thisskill->c_class[i] == 68)
+                {
+                    rclass = 422;
+                }
+                if(rclass == thisclient->CharInfo->Job)
+                {
+                    b=1;
+                    break;
+                }
+                else
+                {
+                    b=2;
+                }
+            }
+        }
+        if(b==1)
+        {
+            for(UINT i=0;i<3; i++)
+            {
+                if(thisskill->rskill[i] != 0)
+                {
+                    UINT rskill = thisclient->GetPlayerSkill(thisskill->rskill[i]);
+                    if(rskill == 0xffff)
+                    {
+                        b=3;
+                    }
+                    if(thisskill->lskill[i] > thisclient->cskills[rskill].level)
+                    {
+                        b=5;
+                    }
                 }
             }
         }
@@ -704,11 +771,11 @@ bool CWorldServer::LearnSkill( CPlayer* thisclient, UINT skill )
         {
             thisclient->cskills[thisclient->p_skills].id = skill;
             thisclient->cskills[thisclient->p_skills].level=1;
-            thisclient->cskills[thisclient->p_skills].thisskill = thisskill;            
-            thisclient->CharInfo->SkillPoints -= 1;        
+            thisclient->cskills[thisclient->p_skills].thisskill = thisskill;
+            thisclient->CharInfo->SkillPoints -= 1;
             thisclient->p_skills++;
         }
-        BEGINPACKET( pak, 0x7b0 );                            
+        BEGINPACKET( pak, 0x7b0 );
         ADDBYTE    ( pak, b);
         ADDWORD    ( pak, thisclient->p_skills-1);
         ADDWORD    ( pak, skill);
@@ -716,7 +783,7 @@ bool CWorldServer::LearnSkill( CPlayer* thisclient, UINT skill )
         thisclient->client->SendPacket( &pak);
         if(b==1)
         {
-            thisclient->SetStats( );   
+            thisclient->SetStats( );
             return true;
         }
         else

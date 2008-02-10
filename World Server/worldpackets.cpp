@@ -2699,57 +2699,127 @@ bool CWorldServer::pakUseItem ( CPlayer* thisclient, CPacket* P )
 
 // Level UP Skill
 bool  CWorldServer::pakLevelUpSkill( CPlayer *thisclient, CPacket* P )
-{
+{       
     WORD pos = GETWORD ((*P),0);
     WORD skill = GETWORD ((*P),2);
     if(pos>=MAX_SKILL)
     {
         Log( MSG_HACK, "Invalid Skill id %i for %s ", pos, thisclient->CharInfo->charname );
         return false;
-    }
+    }        
+    int b=0;
     CSkills* thisskill = GetSkillByID( skill );
     if(thisskill==NULL)
         return true;
-    if(thisclient->cskills[pos].id!=skill-thisclient->cskills[pos].level)
-        return true;
-    // Required skill check by insider
-    for(unsigned int i=0;i<3; i++)
+    if(thisclient->CharInfo->SkillPoints>=thisskill->sp)
     {
-        if(thisskill->rskill[i] != 0)
+        b=7;
+    }
+    else if(thisclient->cskills[pos].id!=skill-thisclient->cskills[pos].level)
+    {
+        b=4;
+    }
+    if(b==0)
+    {
+        UINT rclass = 0;
+        for(UINT i=0;i<4; i++)
         {
-            unsigned int rskill = thisclient->GetSkillPos(thisskill->rskill[i]);
-            if(rskill == 0xffff)
+            if (thisskill->c_class[i] == 41)
             {
-                return true;
+                rclass = 111;
             }
-            if(thisskill->lskill[i] > thisclient->cskills[rskill].level)
+            else if (thisskill->c_class[i] == 42)
             {
-                BEGINPACKET( pak, 0x7b1 );                            
-                ADDBYTE    ( pak, 0x05);
-                ADDWORD    ( pak, pos);
-                ADDWORD    ( pak, skill);
-                ADDWORD    ( pak, thisclient->CharInfo->SkillPoints);
-                thisclient->client->SendPacket( &pak);
-                return true;
+                rclass = 211;
+            }
+            else if (thisskill->c_class[i] == 43)
+            {
+                rclass = 311;
+            }
+            else if (thisskill->c_class[i] == 44)
+            {
+                rclass = 411;
+            }
+            else if (thisskill->c_class[i] == 61)
+            {
+                rclass = 121;
+            }
+            else if (thisskill->c_class[i] == 62)
+            {
+                rclass = 122;
+            }
+            else if (thisskill->c_class[i] == 63)
+            {
+                rclass = 221;
+            }
+            else if (thisskill->c_class[i] == 64)
+            {
+                rclass = 222;
+            }
+            else if (thisskill->c_class[i] == 65)
+            {
+                rclass = 321;
+            }
+            else if (thisskill->c_class[i] == 66)
+            {
+                rclass = 322;
+            }
+            else if (thisskill->c_class[i] == 67)
+            {
+                rclass = 421;
+            }
+            else if (thisskill->c_class[i] == 68)
+            {
+                rclass = 422;
+            }
+            if(rclass == thisclient->CharInfo->Job)
+            {
+                b=1;
+                break;
+            }
+            else
+            {
+                b=2;
             }
         }
     }
-
-    if(thisclient->CharInfo->SkillPoints>=thisskill->sp)
+    if(b==0)
     {
-       thisclient->CharInfo->SkillPoints -= 1;
-	   BEGINPACKET( pak, 0x7b1 );
-	   ADDBYTE    ( pak, 0x00);
-	   ADDWORD    ( pak, pos);
-	   ADDWORD    ( pak, skill);
-	   ADDWORD    ( pak, thisclient->CharInfo->SkillPoints);
-	   thisclient->client->SendPacket( &pak );
-       thisclient->cskills[pos].level+=1;
-       thisclient->cskills[pos].thisskill = thisskill;
-       thisclient->SetStats( );
+        for(UINT i=0;i<3; i++)
+        {
+            if(thisskill->rskill[i] != 0)
+            {
+                UINT rskill = thisclient->GetPlayerSkill(thisskill->rskill[i]);
+                if(rskill == 0xffff)
+                {
+                    b=3;
+                }
+                if(thisskill->lskill[i] > thisclient->cskills[rskill].level)
+                {
+                    b=5;
+                }
+            }
+        }
     }
-	return true;
+    if(b==0)
+    {
+        thisclient->CharInfo->SkillPoints -= 1;
+    }
+    BEGINPACKET( pak, 0x7b1 );
+    ADDBYTE    ( pak, b);
+    ADDWORD    ( pak, pos); 
+    ADDWORD    ( pak, skill);
+    ADDWORD    ( pak, thisclient->CharInfo->SkillPoints);    
+    thisclient->client->SendPacket( &pak );       
+    if(b==0)
+    {
+        thisclient->cskills[pos].level+=1; 
+        thisclient->cskills[pos].thisskill = thisskill;
+        thisclient->SetStats( );
+    }
+    return true;
 }
+
 
 // Equip bullets arrows and cannons
 bool CWorldServer::pakEquipABC ( CPlayer* thisclient, CPacket* P )
