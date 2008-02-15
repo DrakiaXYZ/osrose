@@ -788,7 +788,8 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
             }
             else // Emotions
             if( (useitem->itemnum>970 && useitem->itemnum<979) ||
-                (useitem->itemnum>599 && useitem->itemnum<608) )
+                (useitem->itemnum>917 && useitem->itemnum<920) ||
+                (useitem->itemnum>599 && useitem->itemnum<608) )  //918 - Love Chocolate  919 - Kiss Scroll
             {
                 useitem->usescript = 4;
                 useitem->usetype = UseList.Index[useitem->itemnum]->useeffect[0];

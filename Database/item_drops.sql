@@ -4,7 +4,7 @@ Source Host: 192.168.1.100
 Source Database: osrose
 Target Host: 192.168.1.100
 Target Database: osrose
-Date: 1/28/2008 8:02:10 PM
+Date: 2/14/2008 3:11:27 PM
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -23,7 +23,7 @@ CREATE TABLE `item_drops` (
   `alt` varchar(500) collate latin1_general_ci NOT NULL default '0|0|0|0|0|0|0',
   `description` varchar(100) collate latin1_general_ci NOT NULL,
   PRIMARY KEY  (`ref`)
-) ENGINE=MyISAM AUTO_INCREMENT=9519 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=9520 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- ----------------------------
 -- Records 
@@ -696,3 +696,4 @@ INSERT INTO `item_drops` VALUES ('9514', '248', '10', '300', '350', '450', '0', 
 INSERT INTO `item_drops` VALUES ('9515', '249', '10', '300', '350', '450', '0', '0', '0|0|0|0|0|0|0', 'Xmas Gift, all maps, all mobs');
 INSERT INTO `item_drops` VALUES ('9517', '87', '12', '150', '250', '300', '64', '0', '0|0|0|0|0|0|0', '7th Bindrunes - Marsh');
 INSERT INTO `item_drops` VALUES ('9518', '77', '12', '150', '250', '200', '64', '0', '0|0|0|0|0|0|0', '7th Talismans - Marsh');
+INSERT INTO `item_drops` VALUES ('9519', '1080', '10', '1', '250', '450', '0', '0', '0|0|0|0|0|0|0', 'Valentine Day 2008, all maps, all mobs');
