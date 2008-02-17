@@ -359,8 +359,7 @@ bool CPlayer::VisiblityList( )
     return true;
 
 }
-
-
+ 
 // Returns a free slot in the inventory (0xffff if is full)
 UINT CPlayer::GetNewItemSlot( CItem thisitem )
 {
@@ -371,7 +370,7 @@ UINT CPlayer::GetNewItemSlot( CItem thisitem )
         case 1:case 2:case 3:case 4:case 5:case 6:case 7:case 8:case 9://equip
             itemtab=0;
         break;
-        case 10://consumables
+        case 10://consumibles
             itemtab=1;
         break;
         case 11:case 12://etc
@@ -385,40 +384,47 @@ UINT CPlayer::GetNewItemSlot( CItem thisitem )
             return 0xffff;
          break;      
     }
+    //useitems and natural
+    //first we try to find a slot that already contains some of this item
+    //this way the items will always stack if possible.
+    if(itemtab == 1 || itemtab == 2)
+    {
+        for(int i=0;i<30;i++)
+        {
+            UINT slot=12;
+            slot += (tabsize*itemtab)+i;
+            if(items[slot].itemnum == thisitem.itemnum && items[slot].itemtype == thisitem.itemtype)
+            {
+                int totcount=thisitem.count + items[slot].count;
+                if(totcount<999)
+                    return slot;
+            }                                
+        }
+    }
+    //now scan again to find a fully empty slot for mats, useitems and equipable stuff
+    //doesn't matter what tab type
     for(int i=0;i<30;i++)
     {
         UINT slot=12;
         slot += (tabsize*itemtab)+i;
-        switch(itemtab)
-        {
-            case 0:case 3://equip and pat
-            {
-                if(items[slot].itemnum==0 && items[slot].count<1)
-                    return slot;
-            }
-            break;
-            case 1:case 2://consumable and etc - updated by Core
-            {
-               if((items[slot].itemnum == thisitem.itemnum && items[slot].itemtype == thisitem.itemtype && items[slot].count<999)
-                    ||(items[slot].itemnum==0 && items[slot].count<1))
-                    return slot;            }
-            break;                                 
-        }
-    }	
-	return 0xffff;
+        if(items[slot].itemnum==0 &items[slot].count<1)
+            return slot;  
+    }   
+    return 0xffff;
 }
 
+/*
 // Returns a free slot in the storage (0xffff if is full)
 UINT CPlayer::GetNewStorageItemSlot( CItem thisitem )
 {
      //LMA: previous algo
-     /*
+//     Comment old code
     for(UINT i=0;i<160;i++)
     {
         if(storageitems[i].itemtype == 0)
             return i;
     }
-    */
+//    End comment
     
     //LMA: New one, we try to see if we can stack some items...
     //non stackable items, so a new slot will be enough...
@@ -455,6 +461,36 @@ UINT CPlayer::GetNewStorageItemSlot( CItem thisitem )
     
 	return 0xffff;
 }
+*/
+
+// Returns a free slot in the storage (0xffff if is full)
+UINT CPlayer::GetNewStorageItemSlot( CItem thisitem )
+{
+    //first check for a slot that already contains this item if it is stackable
+    if(thisitem.itemtype == 10 || thisitem.itemtype == 12)
+        {
+        for(UINT i=0;i<160;i++)
+        {
+            if(storageitems[i].itemtype == thisitem.itemtype && storageitems[i].itemnum == thisitem.itemnum)
+            {
+                //now we make sure that the total of the new items plus the ones already there do not exceed 999
+                int totalcount = storageitems[i].count + thisitem.count;
+                if(totalcount < 999)
+                    return i;
+            }  
+        }
+    }
+    //so we couldn't find a matching entry to stack onto
+    //or the item is unstackable
+    //Let's look for an empty slot instead then
+    for(UINT i=0;i<160;i++)
+    {
+        if(storageitems[i].itemtype == 0)
+            return i;
+    }
+    return 0xffff;
+}
+
 
 // Required skill check by insider
 UINT CPlayer::GetPlayerSkill( unsigned int id )
