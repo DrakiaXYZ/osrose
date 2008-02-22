@@ -55,6 +55,7 @@ bool CPlayer::loaddata( )
 	CharInfo->SkillPoints = atoi(row[16]);
 	CharInfo->Exp = atoi(row[17]);
 	CharInfo->stamina = atoi(row[18]);
+	CharInfo->MaxStamina = 5000;
     Position->respawn = atoi(row[23]);	
     Clan->clanid = atoi(row[24]);
     Clan->clanrank = atoi(row[25]);
