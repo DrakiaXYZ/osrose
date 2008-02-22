@@ -3608,15 +3608,16 @@ bool CWorldServer::pakGMGotomap( CPlayer* thisclient, int map )
 }
 
 // Heal a player ( by rl2171 )
+// need to add stamina heal to this function
 bool CWorldServer::pakGMHeal( CPlayer* thisclient )
 {
 	thisclient->Stats->HP = thisclient->Stats->MaxHP;
 	thisclient->Stats->MP = thisclient->Stats->MaxMP;
-//	thisclient->CharInfo->Stamina = thisclient->CharInfo->MaxStamina;
+//	thisclient->CharInfo->stamina = thisclient->CharInfo->MaxStamina;
 	BEGINPACKET( pak, 0x7ec );
 	ADDWORD( pak, thisclient->Stats->HP );
 	ADDWORD( pak, thisclient->Stats->MP );
-//	ADDWORD( pak, thisclient->CharInfo->Stamina );
+//	ADDWORD( pak, thisclient->CharInfo->stamina );
 	thisclient->client->SendPacket( &pak );
 	return true;
 }

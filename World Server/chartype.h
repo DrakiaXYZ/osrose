@@ -56,7 +56,8 @@ struct STATS
     long int MP;
     unsigned int MaxHP;
     unsigned int MaxMP;
-        
+
+            
     unsigned int Attack_Power;
     unsigned int Defense;
     unsigned int Critical;
@@ -196,6 +197,8 @@ struct INFO
     int StatPoints;
     int SkillPoints;
     unsigned int stamina;
+    unsigned int MaxStamina;
+
     // event tracking
     bool ActiveEvent;
     bool isGM; // GM Security
