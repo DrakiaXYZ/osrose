@@ -693,7 +693,8 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
             else //Return Scrolls
             if( (useitem->itemnum>349 && useitem->itemnum<355) ||
                 (useitem->itemnum>359 && useitem->itemnum<365) ||
-                (useitem->itemnum==945 ) )
+                (useitem->itemnum==945 )  ||
+                (useitem->itemnum>1029 && useitem->itemnum<1035) )
             {
                 if( thisclient->Stats->MP < 33 ){delete useitem;}
                 thisclient->Stats->MP -= 32;
@@ -760,11 +761,37 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
                         useitem->usetype = 2;
                         useitem->usevalue = 53225100;
                     break;
+                    //Goblin Cave - Mileage Scroll - 2
+                    case 1030:
+                        useitem->usetype = 22; //31 Value Before - rl2171
+                        useitem->usevalue = 54105040; //55185444 Value Before - rl2171
+                    break;
+                    //Desert of the Dead - Mileage Scroll - 2
+                    case 1031:
+                        useitem->usetype = 29;
+                        useitem->usevalue = 51405160; //50825013 Value Before - rl2171
+                    break;
+                    //El Verloon - Mileage Scroll - 2
+                    case 1032:
+                        useitem->usetype = 24;
+                        useitem->usevalue = 55205370;
+                    break;
+                    //George of Silence - Mileage Scroll - 2
+                    case 1033:
+                        useitem->usetype = 28;
+                        useitem->usevalue = 53005100; //54674783 Value before - rl2171
+                    break;
+                    //Shady Jungle - Mileage Scroll - 2
+                    case 1034:
+                        useitem->usetype = 62;
+                        useitem->usevalue = 58405170; //57515196 Value before - rl2171
+                    break;
 
                 }
             }
-            else //Charm Scrolls
-            if( (useitem->itemnum>380 && useitem->itemnum<384) )
+            else //Charm Scrolls - 210-218 Bombs, 381-383 Charm Scrolls
+            if( (useitem->itemnum>209 && useitem->itemnum<213) ||
+                (useitem->itemnum>380 && useitem->itemnum<384) )
             {
                 useitem->usescript = 3;
                 useitem->usetype = UseList.Index[useitem->itemnum]->useeffect[1];
@@ -780,7 +807,7 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
             else // Firecrackers
             if( useitem->itemnum==913 ||
                 (useitem->itemnum>920 && useitem->itemnum<935) ||
-                (useitem->itemnum>989 && useitem->itemnum<996) )
+                (useitem->itemnum>990 && useitem->itemnum<996) )
             {
                 useitem->usescript = 4;
                 useitem->usetype = UseList.Index[useitem->itemnum]->useeffect[0];
