@@ -1,7 +1,7 @@
 -- ----------------------------
 -- Table structure for items
 -- ----------------------------
-CREATE TABLE IF NOT `EXISTS` items (
+CREATE TABLE IF NOT EXISTS items (
   `owner` int(11) NOT NULL default '0',
   `itemnum` int(11) NOT NULL default '0',
   `itemtype` int(11) NOT NULL default '0',

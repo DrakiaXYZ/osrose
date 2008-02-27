@@ -79,15 +79,18 @@ bool CLoginServer::pakUserLogin( CLoginClient* thisclient, CPacket* P )
                     ADDBYTE( pak, 4 );
                     ADDDWORD( pak, 0 );        
                     thisclient->SendPacket( &pak );
-                    DB->QFree( );
-                    DB->QExecute( "update accounts set online=0 WHERE username='%s'", thisclient->username.c_str());                 
-                       BEGINPACKET( pak2, 0x502 );
-                       ADDBYTE    ( pak2, 1 );
-                       ADDDWORD   ( pak2, atoi(row[0]) );
-                      cryptPacket( (char*)&pak2, NULL );               
+                    
+                    //relogin crash fixed by zrose.
+                    BEGINPACKET( pak2, 0x502 );
+                    ADDBYTE    ( pak2, 1 );
+                    ADDDWORD   ( pak2, atoi(row[0]) );
+                    cryptPacket( (char*)&pak2, NULL );                    
+                    
+                    DB->QFree( );             
                     for(UINT i=0;i<ServerList.size();i++)
                         send( ServerList.at(i)->sock , (char*)&pak2, pak2.Size, 0 );
-                        
+                    
+                    DB->QExecute( "update accounts set online=0 WHERE username='%s'", thisclient->username.c_str());
                     return false;                
                 }
 

@@ -3169,7 +3169,9 @@ bool CWorldServer::pakChangeStorage( CPlayer* thisclient, CPacket* P)
                 ClearItem(thisclient->items[itemslot]);
             }
             int newslot = thisclient->GetNewStorageItemSlot ( newitem );
-            //Log(MSG_INFO,"New (?) slot for deposit: %i",newslot);
+            if(newslot==0xffff)
+                return true;            
+            //Log(MSG_INFO,"New (?) slot for deposit: %i",newslot);           
 
             //LMA: New code (stackables?)
             if (thisclient->storageitems[newslot].itemnum!=0)
@@ -3184,8 +3186,6 @@ bool CWorldServer::pakChangeStorage( CPlayer* thisclient, CPacket* P)
                 thisclient->nstorageitems++;
             }
 
-            if(newslot==0xffff)
-                return true;
             BEGINPACKET( pak, 0x7ae );
             ADDWORD    ( pak, itemslot );
             ADDWORD    ( pak, newslot );
