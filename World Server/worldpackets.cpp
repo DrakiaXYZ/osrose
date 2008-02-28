@@ -371,12 +371,37 @@ void CWorldServer::pakQuestData( CPlayer *thisclient )
 
     ADDBYTE( pak, 0x00 );
     */
-
+	// wish list
+	b = 0;
+	MYSQL_ROW row;
+	MYSQL_RES *result = DB->QStore( "SELECT slot,itemhead,itemdata FROM wishlist WHERE itemowner=%u", thisclient->CharInfo->charid );
+	if(result!=NULL)
+	{
+		while(row=mysql_fetch_row(result))
+		{
+			ADDDWORD( pak, atoi(row[1]) );
+			ADDDWORD( pak, atoi(row[2]) );
+			ADDDWORD( pak, 0 );			
+			ADDWORD( pak, 0 );
+			b++;
+		}
+		DB->QFree( );
+	}	
+	while(b<30)
+	{
+		ADDDWORD( pak, 0 );
+		ADDDWORD( pak, 0 );
+		ADDDWORD( pak, 0 );			
+		ADDWORD( pak, 0 );
+		b++;
+	}
+/*
     for(int i=0;i<32;i++) // Wish list [Caali]
     {
         ADDDWORD( pak, 0x00000000 ); //Item Head
         ADDDWORD( pak, 0x00000000 ); //Item Data
     }
+*/
 
     thisclient->client->SendPacket( &pak );
 }
@@ -4442,4 +4467,28 @@ bool CWorldServer::pakItemMall( CPlayer* thisclient, CPacket* P )
 
 
     return true;
+}
+
+/**
+	* add item to the wishlist
+	* @param thisclient CPlayer class
+	* @param P CPacket class
+	* @return bool true if the item was added else false
+*/
+bool CWorldServer::pakAddWishList( CPlayer* thisclient , CPacket* P )
+{
+	if(thisclient==NULL) return false;
+	UINT slot = GETBYTE( (*P), 0 );
+	if(slot>=30) return true;
+	UINT head = GETDWORD((*P),1);
+	UINT data = GETDWORD((*P),5);
+    CItem testitem = GetItemByHeadAndData( head , data);
+	// check if is a valid item
+	if(testitem.itemtype>14 || testitem.itemtype<1) return false;
+	// save to the database
+	DB->QExecute( "DELETE FROM wishlist WHERE itemowner=%u AND slot=%i", 
+		thisclient->CharInfo->charid, slot );
+	DB->QExecute( "INSERT INTO wishlist (itemowner,slot,itemhead,itemdata) VALUES (%u,%i,%u,%u)", 
+		thisclient->CharInfo->charid, slot, head, data );
+	return true;
 }

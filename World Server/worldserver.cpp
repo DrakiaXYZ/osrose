@@ -799,7 +799,7 @@ bool CWorldServer::OnReceivePacket( CClientSocket* thisclient, CPacket *P )
     	case 0x07ae: return pakChangeStorage    ( (CPlayer*)thisclient->player, P );
     	case 0x07ba: return pakidentify         ( (CPlayer*)thisclient->player, P );
     	case 0x07bc: return pakModifiedItem     ( (CPlayer*)thisclient->player, P );
-    	case 0x07bf: return true;//add to wishlist
+    	case 0x07bf: return pakAddWishList      ( (CPlayer*)thisclient->player, P );
     	case 0x07c2: return pakOpenShop         ( (CPlayer*)thisclient->player, P );
     	case 0x07c3: return pakCloseShop        ( (CPlayer*)thisclient->player, P );
         case 0x07c4: return pakShowShop         ( (CPlayer*)thisclient->player, P );

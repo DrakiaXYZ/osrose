@@ -247,6 +247,7 @@ class CWorldServer : public CServerSocket
         void pakQuestData( CPlayer *thisclient );
     	void pakClearUser( CPlayer* thisclient );
         bool LearnSkill( CPlayer* thisclient, UINT skill );
+   		bool pakAddWishList( CPlayer* , CPacket* );
 
         //-------------------------- Clan functions
         bool pakClanManager ( CPlayer* thisclient, CPacket* P );
