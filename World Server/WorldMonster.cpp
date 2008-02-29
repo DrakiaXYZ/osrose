@@ -33,6 +33,7 @@ CMonster::CMonster( fPoint MonsterPosition, UINT MonsterType, UINT MonsterMap, U
     Position->Map = MonsterMap;
     Position->respawn = spawnid;
     Position->lastMoveTime = clock( );
+	lastLifeUpdate = time(NULL);    
     // Magic status (buffs)   
     for(unsigned int i=0;i<30;i++)
     {

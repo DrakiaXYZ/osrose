@@ -32,7 +32,8 @@ class CMonster : public CCharacter
               
         // times
         clock_t SpawnTime;
-     	clock_t lastSighCheck;    
+     	clock_t lastSighCheck;
+		time_t lastLifeUpdate;     	
 
         MDrop* MonsterDrop;
 

@@ -389,6 +389,22 @@ PVOID MapProcess( PVOID TS )
                         monster->Turak3(monster,map);      //rl2171: 3rd Turak under attack (LMA)
 */
                 }
+				else
+				{						
+					if(monster->IsSummon( ))
+					{// if is summon and is not attacking we reduce his life 1% 
+						time_t elapsedTime = time(NULL) - monster->lastLifeUpdate;
+						if(elapsedTime>=5) // every 5 seconds
+						{
+							monster->Stats->HP -= (long int)ceil(monster->GetMaxHP( )/100);
+							monster->lastLifeUpdate = time(NULL);
+							if(monster->Stats->HP<=0)
+							{
+								map->DeleteMonster( monster, true, j ); continue;
+							}
+						}
+					}
+				}                
                 monster->RefreshBuff( );
                 if(monster->IsDead( ))
                     monster->OnDie( );
