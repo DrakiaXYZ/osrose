@@ -53,6 +53,7 @@ class CCharServer : public CServerSocket
     	bool OnServerReady( );    	
         void LoadConfigurations( char* );    	
     	bool OnReceivePacket( CClientSocket* thisclient, CPacket* P );
+    	bool isBanned( sockaddr_in* ClientInfo );
 
     	//LMA BEGIN
     	//20070623, 224500
@@ -123,5 +124,6 @@ void StopSignal( );
 void HandleSignal( int num );
 extern class CCharServer* GServer;
 #endif
+
 
 

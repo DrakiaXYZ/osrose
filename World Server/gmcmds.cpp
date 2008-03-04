@@ -1747,11 +1747,25 @@ else if (strcmp(command, "give2")==0)
             CPlayer* whoclient = (CPlayer*)ClientList.at(count)->player;
             if(whoclient->Session->accesslevel > 100) 
             {
-                sprintf(line0, "%s - GM[%i]", whoclient->CharInfo->charname, whoclient->Session->accesslevel);                                      
+//                sprintf(line0, "%s - GM[%i]", whoclient->CharInfo->charname, whoclient->Session->accesslevel);                                      
+                sprintf(line0, "%s - (GM %i, lvl %u), map %u[%.2f,%.2f]", whoclient->CharInfo->charname, whoclient->Session->accesslevel,
+                whoclient->Stats->Level,
+                whoclient->Position->Map,
+                whoclient->Position->current.x,
+                whoclient->Position->current.y);                                                      
+
             } 
             else 
             {
-                sprintf(line0, "%s", whoclient->CharInfo->charname);
+//                sprintf(line0, "%s", whoclient->CharInfo->charname);
+ 
+        sprintf(line0, "%s (job %u, lvl %u), map %u[%.2f,%.2f]", whoclient->CharInfo->charname,
+        whoclient->CharInfo->Job,
+        whoclient->Stats->Level,
+        whoclient->Position->Map,
+        whoclient->Position->current.x,
+        whoclient->Position->current.y);
+ 
             }
             if(whoclient->isInvisibleMode != true) 
             {

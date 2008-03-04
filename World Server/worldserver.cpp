@@ -395,7 +395,15 @@ void CWorldServer::ServerLoop( )
             #endif
 			// TODO: check if server is full
 			if (NewSocket != INVALID_SOCKET)
-				AddUser( NewSocket, &ClientInfo );
+			{
+				if(!isBanned(&ClientInfo))
+					AddUser( NewSocket, &ClientInfo );
+				else
+				{
+					Log( MSG_WARNING, "Banned client tried to connect: %s", inet_ntoa( ClientInfo.sin_addr ) );
+					close( NewSocket );
+				}
+			}
 			else
 			{
 			    #ifdef _WIN32
@@ -585,6 +593,48 @@ void CWorldServer::DisconnectAll()
             otherclient->client->isActive = false;
         }
 	}
+}
+
+/**
+	* check on the database if a client is banned
+	* @param ClientInfo sockaddr_in structure 
+	* @return true if the client is banned else false
+*/
+bool CWorldServer::isBanned( sockaddr_in* ClientInfo )
+{
+	if(DB==NULL) return false;
+	std::string ip( inet_ntoa( ClientInfo->sin_addr ) );
+	MYSQL_RES* result = DB->QStore( "SELECT id, ip, startban, bantime FROM ban_list" );
+	if(result==NULL)
+		return false;
+	MYSQL_ROW row;
+	while(row=mysql_fetch_row( result ))
+	{
+		unsigned int strsize = strlen( (char*)row[1] );
+		if(strncmp( row[1], (char*)ip.c_str( ), strsize)==0)
+		{	// ip match is banned, now check if is permant ban or temporal
+			if(row[3]==NULL || atoi(row[3])==0)
+			{ // is permant ban
+				DB->QFree( );
+				return true;
+			}
+			unsigned long int finishban = atol(row[2]) + atol(row[3]);
+			if(finishban>=GetServerTime( ))
+			{
+				unsigned int id = atoi(row[0]);
+				DB->QFree( );
+				DB->QExecute( "DELETE FROM ban_list WHERE id=%u", id );
+				return false;
+			}
+			else
+			{
+				DB->QFree( );
+				return true;
+			}
+		}
+	}
+	DB->QFree( );
+	return false;
 }
 
 // Load Server configuration

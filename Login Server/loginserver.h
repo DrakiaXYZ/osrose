@@ -52,6 +52,7 @@ class CLoginServer : public CServerSocket
     	bool OnReceivePacket( CClientSocket* thisclient, CPacket* P );    
         bool OnServerReady(void);	
         void LoadConfigurations( char* );
+        bool isBanned( sockaddr_in* ClientInfo );
         
     	//LMA BEGIN
     	//20070623, 224500
@@ -79,5 +80,6 @@ void HandleSignal( int num );
 extern class CLoginServer* GServer;
 
 #endif
+
 
 

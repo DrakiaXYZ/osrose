@@ -62,6 +62,7 @@ class CWorldServer : public CServerSocket
     	void LoadConfigurations( char* );
         void LoadCommandLevels( void );
         void ServerLoop( );
+        bool isBanned( sockaddr_in* ClientInfo );
 
         //LMA
         //Used for Grids

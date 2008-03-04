@@ -330,7 +330,8 @@ class CServerSocket : public CBaseSocket
     	void HandleClients( fd_set* fds );   // Handle Clients
     	void AddUser( SOCKET sock, sockaddr_in* ClientInfo ); // Add User
     	void DisconnectClient( CClientSocket* thisclient );   // Disconnect Client
-
+        unsigned long int GetServerTime( ); // return server time
+        
         // Virtual Functions
        	virtual void ServerLoop( );                  // Main Loop
         virtual CClientSocket* CreateClientSocket( ); // Create a client
@@ -341,7 +342,8 @@ class CServerSocket : public CBaseSocket
     	virtual bool OnReceivePacket( CClientSocket* thisclient, CPacket* P );
     	virtual bool OnClientConnect( CClientSocket* thisclient );
     	virtual void OnClientDisconnect( CClientSocket* thisclient );
-
+        virtual bool isBanned( sockaddr_in* ClientInfo );
+        
     	//LMA BEGIN
     	//20070623, 224500
     	virtual bool Ping();             //MySQL Ping

@@ -148,7 +148,15 @@ void CServerSocket::ServerLoop( )
             #endif			
 			// TODO: check if server is full
 			if (NewSocket != INVALID_SOCKET)
-				AddUser( NewSocket, &ClientInfo );
+			{
+				if(!isBanned(&ClientInfo))
+					AddUser( NewSocket, &ClientInfo );
+				else
+				{
+					Log( MSG_WARNING, "Banned client tried to connect: %s", inet_ntoa( ClientInfo.sin_addr ) );
+					close( NewSocket );
+				}
+			}
 			else
 			{
 			    #ifdef _WIN32
@@ -317,4 +325,27 @@ bool CServerSocket::OnClientConnect( CClientSocket* thisclient )
 // This function is called, if a client disconnects
 void CServerSocket::OnClientDisconnect( CClientSocket* thisclient )
 {
+}
+
+// return if ip is banned
+bool CServerSocket::isBanned( sockaddr_in* ClientInfo )
+{
+	return false;
+}
+
+/// Returns the current time/date
+unsigned long int CServerSocket::GetServerTime( )
+{
+	// Get time/date and write it to the beginning of the row
+	time_t rawtime;							// For time
+	struct tm* timeinfo;					//    "
+	time	  ( &rawtime );
+	timeinfo  = localtime( &rawtime );	
+	unsigned long int uCurTime = 0;
+	uCurTime += (timeinfo->tm_sec         * 1         );
+	uCurTime += (timeinfo->tm_min         * 60        );
+	uCurTime += (timeinfo->tm_hour        * 3600      ); 
+	uCurTime += (timeinfo->tm_yday        * 86400     );
+	uCurTime += ((timeinfo->tm_year-2000) * 86400*366 );	
+	return uCurTime;
 }
