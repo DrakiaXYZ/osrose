@@ -21,6 +21,7 @@
 #include "loginserver.h"
 
 unsigned char LOG_THISSERVER = 0;
+bool PRINT_LOG = true;
 class CLoginServer* GServer;
 
 // Main Funtion
@@ -52,7 +53,7 @@ int main(int argc, char *argv[])
         #ifdef _WIN32
 		system("pause");
 		#endif
-		return -1;        
+		return -1;
     }
     
 	server->StartServer();

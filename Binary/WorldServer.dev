@@ -1,7 +1,7 @@
 [Project]
 FileName=WorldServer.dev
 Name=WorldServer
-UnitCount=52
+UnitCount=53
 Type=1
 Ver=1
 IsCpp=1
@@ -598,4 +598,16 @@ IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=0
 compilerType=0
+
+[Unit53]
+FileName=..\World Server\console.cpp
+CompileCpp=1
+Folder=World
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+
 

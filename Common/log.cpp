@@ -60,10 +60,12 @@ va_start( ap, Format );
     if(flag!=MSG_QUERY&&flag!=MSG_LOAD)
     {
         textcolor(WHITE);
-        printf("%s", timestamp );
+        if(PRINT_LOG)
+            printf("%s", timestamp );
     }
-
-    switch (flag) {
+	if(PRINT_LOG)
+	{
+        switch (flag) {
 		case MSG_NONE: // direct printf replacement
 			textcolor(WHITE);
 			vprintf( Format, ap );
@@ -117,14 +119,24 @@ va_start( ap, Format );
             vprintf( Format, ap );
             printf( "\r\n" );
             break;                    								
-	}
-	textcolor(LIGHTGRAY);
-	if(flag!=MSG_QUERY)
+	   }
+    }
+    else
+    {
+        if(flag==MSG_CONSOLE)
+        {
+			textcolor(LIGHTRED);
+			printf("[CONSOLE]: ");            
+        }
+    }
+	if(PRINT_LOG || flag==MSG_CONSOLE)
+    	textcolor(LIGHTGRAY);
+	if(flag!=MSG_QUERY && (PRINT_LOG || flag==MSG_CONSOLE))
 	{
     	vprintf( Format, ap );
     	printf( (flag==MSG_LOAD) ? "\r" : "\n" );
     }
-	FILE *fh;
+	FILE *fh = NULL;
     switch(LOG_THISSERVER)
     {
         case LOG_LOGIN_SERVER:
@@ -139,21 +151,20 @@ va_start( ap, Format );
         case LOG_SAME_FILE:
             fh = fopen(LOG_DIRECTORY LOG_DEFAULT_FILE, "a+" );                 
         break;                                                
-    }	    	
+    }
     if(flag==MSG_QUERY)
     {
         if(fh!=NULL)
             fclose(fh);
         fh = fopen(LOG_DIRECTORY "queries.txt", "a+" ); 
     }
-if ( fh != NULL )
+    if ( fh != NULL )
     {
         fprintf( fh, "%s- ", timestamp );
         vfprintf( fh, Format, ap );
         fputc( '\n', fh );
         fclose( fh );
     }
-
-	va_end  ( ap );
-        fflush( stdout );
+    va_end  ( ap );
+    fflush( stdout );
 }

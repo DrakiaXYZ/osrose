@@ -21,6 +21,7 @@
 
 // Log File names
 extern unsigned char LOG_THISSERVER;
+extern bool PRINT_LOG;
 #define LOG_FILENAME_LOGINFILE  "loginserver.log"
 #define LOG_FILENAME_CHARFILE   "charserver.log"
 #define LOG_FILENAME_WORLDFILE  "worldserver.log"
@@ -48,7 +49,8 @@ enum msg_type {
 	MSG_SDEBUG,
 	MSG_GMACTION,
 	MSG_START,
-	MSG_QUERY
+	MSG_QUERY,
+	MSG_CONSOLE
 };
 
 // Logging function

@@ -349,3 +349,43 @@ unsigned long int CServerSocket::GetServerTime( )
 	uCurTime += ((timeinfo->tm_year-2000) * 86400*366 );	
 	return uCurTime;
 }
+
+void CServerSocket::startConsole( )
+{
+    pthread_create( &consoleThread, NULL, Console, (PVOID)this );
+}
+
+void* CServerSocket::Console( PVOID cserver )
+{
+    //When the console is open, all the servers messages will not be printed (but still will be saved to files)
+    Log( MSG_INFO, "Console started." );
+    CServerSocket* server = static_cast<CServerSocket*>(cserver);
+    bool running = true;
+    PRINT_LOG = false;
+    while(running)
+    {
+        char command[100];
+        memset( &command,'\0', 100 );
+        std::cout << "# ";
+        std::cin.getline( command, 100 );
+        if(strcasecmp( command, "exit" )==0)
+            running = false;
+        else
+            if(!server->handleCommand( command ))
+                running = false;
+    }
+    PRINT_LOG = true;    
+    Log( MSG_INFO, "Console closed." );
+}
+
+bool CServerSocket::handleCommand( char* cmd )
+{
+    if(strcasecmp(cmd, "close server")==0)
+    {
+        Log( MSG_CONSOLE, "Closing server..." );
+        isActive = false;
+        return false;
+    }
+    Log( MSG_CONSOLE, "Unhandled command: %s", cmd );
+    return true;
+}

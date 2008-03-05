@@ -22,7 +22,7 @@
 #include "worldserver.h"
 
 CWorldServer* GServer;
-
+bool PRINT_LOG = true;
 unsigned char LOG_THISSERVER;
 
 //LMA: TEST Values

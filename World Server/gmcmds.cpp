@@ -250,7 +250,7 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
         if(Config.Command_Ann > thisclient->Session->accesslevel)
 	       return true;
         Log( MSG_GMACTION, " %s : /ann %s" , thisclient->CharInfo->charname, &P->Buffer[5] );        
-		return pakGMAnn(thisclient, P);						
+		return pakGMAnn(thisclient, P);
     }
     /*else if(strcmp(command, "bodysize")==0)    
     {
@@ -5105,4 +5105,5 @@ SendPM (thisclient, "Relogin to remove All Skills");
 }
     return true;
 }
+
 

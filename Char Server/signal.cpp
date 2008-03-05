@@ -58,13 +58,11 @@ void HandleSignal( int num )
     switch(num)
     {
         case SIGINT:/* Interactive attention */        
-            Log( MSG_ERROR, "Signal received: SIGINT" );                      
-    	    #ifdef _WIN32
-            Sleep(1000);
-    	    #else
-    	    usleep(1000);
-    	    #endif
-            raise(num);
+            Log( MSG_ERROR, "Starting console..." );   
+            GServer->startConsole( );
+            // restart signals
+            StopSignal( );
+            StartSignal( );
         break;        
         case SIGILL:/* Illegal instruction */
             Log( MSG_ERROR, "Signal received: SIGILL, Server will be closed, Trying to save..." );                          

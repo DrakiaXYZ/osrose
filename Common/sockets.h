@@ -356,7 +356,15 @@ class CServerSocket : public CBaseSocket
         UINT                        ConnectedClients;
     	unsigned short				port;
     	pthread_t                   threads[65535];
+    	pthread_t consoleThread;
+    	
+    	// console thread function
+    	void startConsole( );
+        static void *Console( PVOID );
+        virtual bool handleCommand( char* );
+        
 };
+
 PVOID ClientMainThread( PVOID ); // Handle clients
 bool	InitWinSocket ( void ); // Init windows sockets (wsa)
 void	CloseWinSocket( void ); // Close Windows sockets (wsa)

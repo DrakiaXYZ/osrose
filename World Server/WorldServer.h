@@ -404,6 +404,10 @@ class CWorldServer : public CServerSocket
         UINT BreakListSize;
         bool LoadBreakList();
         CBreakList BreakList[1000];
+        
+        // console
+        bool handleCommand( char* );
+        bool pakConsoleAnn( char* from, char* message );
 
 };
 extern class CWorldServer* GServer;

@@ -21,6 +21,7 @@
 #include "charserver.h"
 
 unsigned char LOG_THISSERVER = 0;
+bool PRINT_LOG = true;
 class CCharServer* GServer;
 
 // Main function
