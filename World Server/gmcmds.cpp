@@ -1,6 +1,6 @@
 /*
     Rose Online Server Emulator
-    Copyright (C) 2006,2007 OSRose Team http://www.osrose.net
+    Copyright (C) 2006,2007,2008 OSRose Team http://www.osrose.net
     
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -215,16 +215,29 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
              GServer->LoadPYDropsData( );
          else if(strcmp(tmp, "cmd")==0)
              LoadConfigurations( "commands.ini" );
+         else if(strcmp(tmp, "cquests")==0)
+         {
+             LoadCustomEvents( );
+             LoadCustomTeleGate( );     
+         }    
          else if(strcmp(tmp, "events")==0)
-{
+         {
              GServer->LoadCustomEvents( );
              GServer->LoadCustomTeleGate( );
-}
+         }
          else if(strcmp(tmp, "quests")==0)
-{
+         {
              GServer->QuestList.clear( );
              GServer->LoadQuestData( );
-}
+         }
+         else if(strcmp(tmp, "spawns")==0)
+         {
+             GServer->LoadMonsterSpawn();    
+         }
+         //else if(strcmp(tmp, "equip")==0)
+         //{
+         //    GServer->LoadEquip();
+         //}
          else
          {
              Log( MSG_INFO, "Unrecognized reload command by GM %s" , thisclient->CharInfo->charname);
@@ -1767,7 +1780,7 @@ else if (strcmp(command, "give2")==0)
         whoclient->Position->current.y);
  
             }
-            if(whoclient->isInvisibleMode != true) 
+            if(!whoclient->isInvisibleMode || thisclient->Session->accesslevel >= whoclient->Session->accesslevel) 
             {
                 SendPM(thisclient, line0 );
             } 

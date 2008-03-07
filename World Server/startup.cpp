@@ -1,6 +1,6 @@
 /*
     Rose Online Server Emulator
-    Copyright (C) 2006,2007 OSRose Team http://www.osrose.net
+    Copyright (C) 2006,2007,2008 OSRose Team http://www.osrose.net
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -23,7 +23,8 @@
 
 bool CWorldServer::LoadNPCData( )
 {
-	Log( MSG_LOAD, "NPC Data           " );
+//	Change MSG_LOAD to MSG_INFO for more details on the screen
+	Log( MSG_LOAD, "NPC Data                    " );
 	MYSQL_ROW row;
 	MYSQL_RES *result = DB->QStore("SELECT id,life,walkspeed,runspeed,drivespeed,weapon, subweapon,level,hp,attackpower,hitpower,defense,strength,evasion,attackspeed,AI,exp,dropid,money,item,tab1,tab2,tab3,specialtab,attackdistance,aggresive,shp,dialog,eventid,askills,bskills,dskills,sigskill,delayskill FROM npc_data order by id");
     if(result==NULL) return false;
@@ -127,12 +128,13 @@ bool CWorldServer::LoadNPCData( )
         NPCData.push_back( newnpc );
     }
 	DB->QFree( );
+	Log( MSG_LOAD, "NPC Data loaded" );
 	return true;
 }
 
 bool CWorldServer::LoadSkillData( )
 {
-	Log( MSG_LOAD, "Skills data            " );
+	Log( MSG_LOAD, "Skills data                 " );
 	MYSQL_ROW row;
 	MYSQL_RES *result = DB->QStore("SELECT id,level,sp,type,range,target,power,duration,mp, success,weapon,class,rskills,lskills,buff1,buffv11,buffv12, buff2,buffv21,buffv22,buff3,buffv31,buffv32,clevel,aoe,aoeradius,script,value1,gm_aoe FROM skills_data order by id");
     if(result==NULL) return false;
@@ -233,12 +235,13 @@ bool CWorldServer::LoadSkillData( )
         SkillList.push_back( newskill );
 	}
 	DB->QFree( );
+	Log( MSG_LOAD, "Skills Data loaded" );
 	return true;
 }
 
 bool CWorldServer::LoadTeleGateData( )
 {
-	Log( MSG_LOAD, "Telegates data       " );
+	Log( MSG_LOAD, "Telegates data              " );
 	MYSQL_ROW row;
 	MYSQL_RES *result = DB->QStore("SELECT id,x,y,map FROM list_telegates");
 	if(result==NULL) return false;
@@ -258,12 +261,13 @@ bool CWorldServer::LoadTeleGateData( )
 		TeleGateList.push_back( thisgate );
 	}
 	DB->QFree( );
+	Log( MSG_LOAD, "Telegates Data loaded" );
 	return true;
 }
 
 bool CWorldServer::LoadQuestData( )
 {
-    Log( MSG_LOAD, "Quest data        " );
+    Log( MSG_LOAD, "Quest data                  " );
 	MYSQL_ROW row;
 	MYSQL_RES *result = DB->QStore("SELECT id,questid,mobs,items,itemsreward,exp,zulie,itemid,numitems,finalid,nitems, citems,script,value1,value2,value3,startItems FROM quest_data order by id");
     if(result==NULL) return false;
@@ -413,12 +417,13 @@ bool CWorldServer::LoadQuestData( )
 		QuestList.push_back( thisquest );
 	}
 	DB->QFree( );
+	Log( MSG_LOAD, "Quest Data loaded" );
 	return true;
 }
 
 bool CWorldServer::LoadRespawnData( )
 {
-	Log( MSG_LOAD, "RespawnZones data        " );
+	Log( MSG_LOAD, "RespawnZones data           " );
 	MYSQL_ROW row;
 	MYSQL_RES *result = DB->QStore("SELECT id,x,y,map,radius,type FROM list_respawnzones");
     if(result==NULL) return false;
@@ -440,12 +445,13 @@ bool CWorldServer::LoadRespawnData( )
 		MapList.Index[thisrespawnpoint->destMap]->RespawnList.push_back( thisrespawnpoint );
 	}
 	DB->QFree( );
+	Log( MSG_LOAD, "RespawnZones Data loaded" );
 	return true;
 }
 
 bool CWorldServer::LoadChestData( )
 {
-    Log(MSG_LOAD, "Chest Data       ");
+    Log(MSG_LOAD, "Chest Data                   ");
     MYSQL_ROW row;
     MYSQL_RES *result = DB->QStore("SELECT chestid,reward,rewardtype,prob FROM chest_data order by id");
     if(result==NULL) return false;
@@ -512,13 +518,23 @@ bool CWorldServer::LoadChestData( )
         ChestList.push_back( newchest );
     }
     DB->QFree( );
+    Log( MSG_LOAD, "Chest Data loaded" );
+   	return true;
 }
 
 bool CWorldServer::LoadMonsterSpawn( )
 {
-	Log( MSG_LOAD, "SpawnZones data      " );
+	Log( MSG_LOAD, "SpawnZones data             " );
+    //clear the respawns data first  
+    
+    for(int i=0;i<MapList.Map.size();i++)
+    {
+        MapList.Index[i]->MonsterSpawnList.clear();
+    }
+     
 	MYSQL_ROW row;
 	MYSQL_RES *result = DB->QStore("SELECT id,map,montype,min,max,respawntime,points,triggeramount,bossid FROM list_spawnareas");
+//    MYSQL_RES *result = DB->QStore("SELECT id, map, montype, min, max, respawntime, points, spawntype, triggermontype, triggerammount, agressive, areatrigger, lim, spawnk FROM list_spawnareas");
 	if(result==NULL) return false;
 	while(row = mysql_fetch_row(result))
     {
@@ -537,7 +553,7 @@ bool CWorldServer::LoadMonsterSpawn( )
 		thisspawn->min=atoi(row[3]);
 		thisspawn->max=atoi(row[4]);
 		thisspawn->respawntime=atoi(row[5]);
-
+        //log(MSG_LOAD, "line 1 OK");
 		//LMA: Adding support for spawn 'boss' (by Rob)
 		thisspawn->nb_trigger=atoi(row[7]);
 		thisspawn->bossid=atoi(row[8]);
@@ -610,12 +626,13 @@ bool CWorldServer::LoadMonsterSpawn( )
         }
 	}
 	DB->QFree( );
+	Log( MSG_LOAD, "SpawnZones Data loaded" );
 	return true;
 }
 
 bool CWorldServer::LoadNPCs( )
 {
-	Log( MSG_LOAD, "NPC spawn        " );
+	Log( MSG_LOAD, "NPC spawn                   " );
 	MYSQL_ROW row;
 	MYSQL_RES *result = DB->QStore("SELECT type,map,dir,x,y FROM list_npcs");
 	if(result==NULL) return false;
@@ -638,7 +655,7 @@ bool CWorldServer::LoadNPCs( )
 		thisnpc->thisnpc = GetNPCDataByID( thisnpc->npctype );
 		if( thisnpc->thisnpc == NULL)
 		{
-           Log(MSG_INFO,"The NPC %i has not been found!, it won't be displayed",thisnpc->npctype);
+           Log(MSG_LOAD,"The NPC %i has not been found!, it won't be displayed",thisnpc->npctype);
             delete thisnpc;
             continue;
         }
@@ -648,12 +665,13 @@ bool CWorldServer::LoadNPCs( )
 		MapList.Index[thisnpc->posMap]->AddNPC( thisnpc );
 	}
 	DB->QFree( );
+	Log( MSG_LOAD, "NPC spawn Data loaded" );
 	return true;
 }
 
 bool CWorldServer::LoadDropsData( )
 {
-	Log( MSG_LOAD, "Drops Data       " );
+	Log( MSG_LOAD, "Drops Data                  " );
     FILE* fh = NULL;
     fh = fopen("data/drops_data.csv", "r");
     if(fh==NULL)
@@ -741,12 +759,14 @@ bool CWorldServer::LoadDropsData( )
         MDropList.push_back( newdrop );
 	}
 	fclose(fh);
+	Log( MSG_LOAD, "Drops Data loaded" );
 	return true;
 }
 
 //hidden
 bool CWorldServer::LoadPYDropsData( )
 {
+   	Log( MSG_LOAD, "PYDrops Data                " );
     MDropList.clear();
     MYSQL_ROW row;
     MYSQL_RES *result = DB->QStore("SELECT id,type,min_level,max_level,prob,mob,map,alt FROM item_drops");
@@ -781,13 +801,14 @@ bool CWorldServer::LoadPYDropsData( )
         MDropList.push_back( newdrop );
     }
     DB->QFree( );
-    Log( MSG_INFO, "PYDrops loaded" );
+    Log( MSG_LOAD, "PYDrops Data loaded" );
     return true;
 }
 
 //hidden
 bool CWorldServer::LoadSkillBookDropsData( )
 {
+	Log( MSG_LOAD, "Skillbook Data              " );
     //LogSkillbook data load
     MYSQL_ROW row;
     MYSQL_RES *result = DB->QStore("SELECT id,min,max,prob FROM list_skillbooks");
@@ -811,15 +832,15 @@ bool CWorldServer::LoadSkillBookDropsData( )
         SkillbookList.push_back( newdrop );
     }
     DB->QFree( );
-    Log( MSG_INFO, "Skillbook Drops loaded" );
+    Log( MSG_LOAD, "Skillbook Data loaded" );
     return true;
 }
 
 
 bool CWorldServer::LoadMonsters( )
 {
-	Log( MSG_LOAD, "Monsters Spawn       " );
-	// Do our monster spawnin
+	Log( MSG_LOAD, "Monsters Spawn              " );
+	// Do our monster spawning
     for(UINT i=0;i<MapList.Map.size();i++)
     {
         CMap* thismap = MapList.Map.at(i);
@@ -850,12 +871,13 @@ bool CWorldServer::LoadMonsters( )
             }
         }
     }
+   	Log( MSG_LOAD, "Monsters Spawn loaded" );
 	return true;
 }
 
 bool CWorldServer::LoadUpgrade( )
 {
-	Log( MSG_LOAD, "Refine Data      " );
+	Log( MSG_LOAD, "Refine Data                 " );
     FILE* fh = NULL;
     fh = fopen("data/refine_data.csv", "r");
     if(fh==NULL)
@@ -872,6 +894,7 @@ bool CWorldServer::LoadUpgrade( )
         upgrade[GetUIntValue(",",&line)] = GetUIntValue(",");
     }
     fclose(fh);
+   	Log( MSG_LOAD, "Refine Data loaded" );
 	return true;
 }
 
@@ -879,12 +902,13 @@ bool CWorldServer::CleanConnectedList( )
 {
     Log( MSG_LOAD, "Cleaning Connected Clients         " );
     DB->QExecute("UPDATE accounts set online=false");
+    Log( MSG_LOAD, "Cleaning Connected loaded" );
     return true;
 }
 
 bool CWorldServer::LoadEquip( )
 {
-    Log( MSG_LOAD, "Equip Data         " );
+    Log( MSG_LOAD, "Equip Data                  " );
     FILE* fh = NULL;
     fh = fopen("data/equip_data.csv", "r");
     if(fh==NULL)
@@ -947,12 +971,13 @@ bool CWorldServer::LoadEquip( )
         EquipList[newequip->equiptype].Index[newequip->id] = newequip; // Index to read more quickly the data
     }
     fclose(fh);
+    Log( MSG_LOAD, "Equip Data loaded" );
     return true;
 }
 
 bool CWorldServer::LoadJemItem( )
 {
-    Log( MSG_LOAD, "Jem Data         " );
+    Log( MSG_LOAD, "Jem Data                    " );
     FILE* fh = NULL;
     fh = fopen("data/jemitem_data.csv", "r");
     if(fh==NULL)
@@ -990,12 +1015,13 @@ bool CWorldServer::LoadJemItem( )
         JemList.Index[thisjem->id] = thisjem;
     }
     fclose(fh);
+    Log( MSG_LOAD, "Jem Data loaded" );
     return true;
 }
 
 bool CWorldServer::LoadNaturalItem( )
 {
-    Log( MSG_LOAD, "Natural Data         " );
+    Log( MSG_LOAD, "Natural Data                " );
     FILE* fh = NULL;
     fh = fopen("data/natural_data.csv", "r");
     if(fh==NULL)
@@ -1027,12 +1053,13 @@ bool CWorldServer::LoadNaturalItem( )
         NaturalList.Index[thisnatural->id] = thisnatural;
     }
     fclose(fh);
+    Log( MSG_LOAD, "Natural Data loaded" );
     return true;
 }
 
 bool CWorldServer::LoadPatItem( )
 {
-    Log( MSG_LOAD, "Consumible Data         " );
+    Log( MSG_LOAD, "PAT Data                    " );
     FILE* fh = NULL;
     fh = fopen("data/pat_data.csv", "r");
     if(fh==NULL)
@@ -1071,12 +1098,13 @@ bool CWorldServer::LoadPatItem( )
         PatList.Index[newpat->id] = newpat;
     }
     fclose(fh);
+    Log( MSG_LOAD, "PAT Data loaded" );
     return true;
 }
 
 bool CWorldServer::LoadProductItem( )
 {
-    Log( MSG_LOAD, "Product Data         " );
+    Log( MSG_LOAD, "Product Data                " );
     FILE* fh = NULL;
     fh = fopen("data/product_data.csv", "r");
     if(fh==NULL)
@@ -1108,12 +1136,13 @@ bool CWorldServer::LoadProductItem( )
         ProductList.Index[newproduct->id] = newproduct;
     }
     fclose(fh);
+    Log( MSG_LOAD, "Product Data loaded" );
     return true;
 }
 
 bool CWorldServer::LoadSellData( )
 {
-    Log( MSG_LOAD, "Sell Data         " );
+    Log( MSG_LOAD, "Sell Data                   " );
     FILE* fh = NULL;
     fh = fopen("data/sell_data.csv", "r");
     if(fh==NULL)
@@ -1142,12 +1171,13 @@ bool CWorldServer::LoadSellData( )
         SellList.Index[newsell->id] = newsell;
     }
     fclose(fh);
+    Log( MSG_LOAD, "Sell Data loaded" );
     return true;
 }
 
 bool CWorldServer::LoadConsItem( )
 {
-    Log( MSG_LOAD, "Consumible Data         " );    
+    Log( MSG_LOAD, "Consumable Data             " );    
     FILE* fh = NULL;
     fh = fopen("data/useitem_data.csv", "r");
     if(fh==NULL)
@@ -1187,6 +1217,7 @@ bool CWorldServer::LoadConsItem( )
         UseList.Index[newuse->id] = newuse;           
     }        
     fclose(fh);
+    Log( MSG_LOAD, "Consumable Data Loaded" );
     return true;    
 }
 
@@ -1238,7 +1269,7 @@ bool CWorldServer::LoadZoneData( )
        //mode 1: one monster temporarily, then the "real" one :)
         if (newzone->is_cf==1)
         {
-           Log( MSG_INFO, "Map %u is CF mode 1 !",newzone->id);
+           Log( MSG_LOAD, "Map %u is CF mode 1 !",newzone->id);
            newzone->min_lvl = GetUIntValue(",");
            newzone->id_temp_mon = GetUIntValue(",");
            newzone->id_def_mon = GetUIntValue(",");
@@ -1260,13 +1291,14 @@ bool CWorldServer::LoadZoneData( )
         MapList.Index[newzone->id] = newzone;
     }
     fclose(fh);
+    Log( MSG_LOAD, "Zone Data Loaded" );
     return true;
 }
 
 //LMA: Grid Maps
 bool CWorldServer::LoadGrids( )
 {
-    Log( MSG_LOAD, "Grid Data                  " );
+    Log( MSG_LOAD, "Grid Data                   " );
     FILE* fh = fopen( "data/map_grid.csv", "r" );
     if(fh==NULL)
     {
@@ -1320,7 +1352,7 @@ bool CWorldServer::LoadGrids( )
         allmaps[j].nb_col=(int) ceil(gridmaps[k].length/MINVISUALRANGE);
         allmaps[j].nb_row=(int) ceil(gridmaps[k].width/MINVISUALRANGE);
 
-        //Log(MSG_INFO,"map %i, row=%i, col=%i",j,allmaps[j].nb_row,allmaps[j].nb_col);
+        //Log(MSG_LOAD,"map %i, row=%i, col=%i",j,allmaps[j].nb_row,allmaps[j].nb_col);
 
         if (gridmaps[k].width==0)
            gridmaps[k].width=1;
@@ -1339,13 +1371,13 @@ bool CWorldServer::LoadGrids( )
     fclose(fh);
 
 
-    Log( MSG_INFO, "Grid reseted.");
+    Log( MSG_LOAD, "Grid reseted.");
     return true;
 }
 
 bool CWorldServer::LoadItemStats( )
 {
-    Log( MSG_LOAD, "Item Stats         " );
+    Log( MSG_LOAD, "Item Stats                  " );
     FILE* fh = NULL;
     fh = fopen("data/stat.csv", "r");
     if(fh==NULL)
@@ -1367,13 +1399,14 @@ bool CWorldServer::LoadItemStats( )
         StatsList[id].value[1] = GetUIntValue(",");
     }
     fclose(fh);
+    Log( MSG_LOAD, "Item Stats Loaded" );
     return true;
 }
 
 // geo edit for disassemble // 22 oct 07
 bool CWorldServer::LoadBreakList()
 {
-    Log( MSG_LOAD, "Disassembly List      " );
+    Log( MSG_LOAD, "Disassembly List            " );
     FILE* fh = NULL;
     fh = fopen("data/break_data.csv", "r");
     if(fh==NULL)
@@ -1407,13 +1440,14 @@ bool CWorldServer::LoadBreakList()
     }
     BreakListSize = i-1;
     fclose(fh);
+    Log( MSG_LOAD, "Disassembly List Loaded" );
     return true;
 }
 
  
 bool CWorldServer::LoadCustomTeleGate()
 {
-    Log( MSG_INFO, "Loading Custom Telegate data" );     
+    Log( MSG_LOAD, "Loading Custom Telegate data" );     
     MYSQL_ROW row;    
     MYSQL_RES *result = DB->QStore("SELECT id,sourcex,sourcey,sourcemap,destx,desty,destmap,radius,active FROM list_customgates");  
     CustomGateList.clear();
@@ -1442,14 +1476,15 @@ bool CWorldServer::LoadCustomTeleGate()
         thisgate->active = atoi(row[8]);
         CustomGateList.push_back(thisgate);         
     }
-    DB->QFree( );   
+    DB->QFree( );
+    Log( MSG_LOAD, "Custom Telegate Data Loaded" );   
     return true;
 }
 
  
 bool CWorldServer::LoadCustomEvents( )
 {
-    Log( MSG_LOAD, "Custom Events data            " );     
+    Log( MSG_LOAD, "Custom Events data          " );     
     MYSQL_ROW row;
     MYSQL_RES *result = DB->QStore("SELECT id,eventtype,npcname,x,y,map,radius,active,pc1,pc2,pc3,pc4,pc5,pc6,pc7,pc8,pc9,pc10,pt1,pt2,pt3,pt4,pt5,pt6,pt7,pt8,pt9,pt10,pi1,pi2,pi3,pi4,pi5,pi6,pi7,pi8,pi9,pi10,pn1,pn2,pn3,pn4,pn5,pn6,pn7,pn8,pn9,pn10,script1,script2,script3,script4,itemname,collecttype,collectnum,level FROM list_customevents");
     CustomEventList.clear();
@@ -1503,6 +1538,6 @@ bool CWorldServer::LoadCustomEvents( )
         CustomEventList.push_back(thisevent);
     }
     DB->QFree( );
-    Log( MSG_INFO, "Custom Event data loaded" ); 
+    Log( MSG_LOAD, "Custom Events data loaded" ); 
     return true; 
 }
