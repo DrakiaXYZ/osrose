@@ -470,26 +470,40 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
         else if (loc == 3) // Junon Polis
         {
             map = 2;
-            x = 5516;
-            y = 5236;
+            x = 5514;
+            y = 5247;
         }
         else if (loc == 4) // Magic City of Eucar - Luna
         {
+             if (thisclient->Stats->Level<50)
+             {
+             SendPM(thisclient, "You need to be a least Level 50 to visit Eucar!");
+             return true;
+             }
+         {
             map = 51;
             x = 5357;
             y = 5013;
+         }
         }
         else if (loc == 5) // Xita Refuge - Eldeon
         {
+             if (thisclient->Stats->Level<90)
+             {
+             SendPM(thisclient, "You need to be a least Level 90 to visit Eldeon!");
+             return true;
+             }
+         {
             map = 61;
             x = 5434;
             y = 4569;
+         }
         }
         else if (loc == 6) // Training Grounds
         {
             map = 6;
-            x = 5243;
-            y = 5240;
+            x = 5199;
+            y = 5280;
         }
         else if (loc == 7) // Lions Plains
         {
@@ -507,8 +521,8 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
 
         {
             map = 59;
-            x = 5102;
-            y = 5132;
+            x = 5095;
+            y = 5128;
         }
       }
         else if (loc == 9) // Desert of the Dead
@@ -520,8 +534,8 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
         else if (loc == 10) // Pyramid Tombs
         {
             map = 41;
-            x = 5050; // 5165 if jRose Client
-            y = 5250; // 5207 if jRose Client
+            x = 5105; // 5165 if jRose Client
+            y = 5246; // 5207 if jRose Client
         } 
         else if (loc == 11) // Sikuku Underground Prison
         {

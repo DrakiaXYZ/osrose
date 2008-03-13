@@ -1,10 +1,10 @@
 /*
 MySQL Data Transfer
-Source Host: 192.168.1.100
+Source Host: dhrr
 Source Database: osrose
-Target Host: 192.168.1.100
+Target Host: dhrr
 Target Database: osrose
-Date: 2/14/2008 3:11:27 PM
+Date: 3/13/2008 8:15:10 AM
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -696,4 +696,4 @@ INSERT INTO `item_drops` VALUES ('9514', '248', '10', '300', '350', '450', '0', 
 INSERT INTO `item_drops` VALUES ('9515', '249', '10', '300', '350', '450', '0', '0', '0|0|0|0|0|0|0', 'Xmas Gift, all maps, all mobs');
 INSERT INTO `item_drops` VALUES ('9517', '87', '12', '150', '250', '300', '64', '0', '0|0|0|0|0|0|0', '7th Bindrunes - Marsh');
 INSERT INTO `item_drops` VALUES ('9518', '77', '12', '150', '250', '200', '64', '0', '0|0|0|0|0|0|0', '7th Talismans - Marsh');
-INSERT INTO `item_drops` VALUES ('9519', '1080', '10', '1', '250', '450', '0', '0', '0|0|0|0|0|0|0', 'Valentine Day 2008, all maps, all mobs');
+INSERT INTO `item_drops` VALUES ('9519', '1080', '10', '300', '350', '450', '0', '0', '0|0|0|0|0|0|0', 'Valentine Day 2008, all maps, all mobs');
