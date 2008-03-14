@@ -1,10 +1,10 @@
 /*
 MySQL Data Transfer
-Source Host: 192.168.1.100
+Source Host: dhrr
 Source Database: osrose
-Target Host: 192.168.1.100
+Target Host: dhrr
 Target Database: osrose
-Date: 2/14/2008 3:27:47 PM
+Date: 3/14/2008 4:49:40 AM
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -19,7 +19,7 @@ CREATE TABLE `chest_data` (
   `prob` varchar(255) NOT NULL,
   `Description` varchar(255) NOT NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=45 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records 
@@ -65,3 +65,4 @@ INSERT INTO `chest_data` VALUES ('39', '906', '13', '10', '500', 'Surprise Gift 
 INSERT INTO `chest_data` VALUES ('40', '907', '13', '10', '500', 'Impressive Gift Box');
 INSERT INTO `chest_data` VALUES ('42', '946', '13', '10', '500', 'Christmas Gift Box');
 INSERT INTO `chest_data` VALUES ('43', '1080', '918|919|168|281', '10|10|1|6', '1000|1000|250|150', 'Valentine Box - 2008');
+INSERT INTO `chest_data` VALUES ('44', '1081', '169|175|178|175|178|195', '1|2|3|4|5|3', '200|400|600|350|350|150', 'St Patricks Day Box - 2008');

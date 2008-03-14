@@ -22,6 +22,15 @@ bool CWorldServer::handleCommand( char* buffer )
         return pakConsoleAnn( from, (char*)&buffer[msgoffset] );
     }
     else
+    if(strcasecmp( command, "help" )==0)
+    {
+            Log (MSG_CONSOLE, "Console Commands Available:" );        
+            Log (MSG_CONSOLE, "'ann' command: ann <name> <message>" );        
+            Log (MSG_CONSOLE, "'help' command: returns this list" );        
+            return true;
+    }
+    else
+    
         Log( MSG_CONSOLE, "Command not handled" );
     return true;
 }
