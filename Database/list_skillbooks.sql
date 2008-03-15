@@ -1,27 +1,19 @@
--- phpMyAdmin SQL Dump
--- version 2.10.3
--- http://www.phpmyadmin.net
--- 
--- Host: localhost
--- Generation Time: Dec 21, 2007 at 09:41 AM
--- Server version: 5.0.45
--- PHP Version: 5.2.3
+/*
+MySQL Data Transfer
+Source Host: dhrr
+Source Database: osrose
+Target Host: dhrr
+Target Database: osrose
+Date: 3/15/2008 4:24:39 PM
+*/
 
-SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
-
--- 
--- Database: `hiddenrose`
--- 
-
--- --------------------------------------------------------
-
--- 
--- Table structure for table `list_skillbooks`
--- 
-
-DROP TABLE IF EXISTS `list_skillbooks`;
-CREATE TABLE IF NOT EXISTS `list_skillbooks` (
+SET FOREIGN_KEY_CHECKS=0;
+-- ----------------------------
+-- Table structure for list_skillbooks
+-- ----------------------------
+CREATE TABLE `list_skillbooks` (
   `id` int(11) NOT NULL,
+  `itemtype` int(11) NOT NULL default '10',
   `name` varchar(500) collate latin1_general_ci NOT NULL,
   `charlevel` int(11) NOT NULL,
   `min` int(11) NOT NULL,
@@ -29,299 +21,321 @@ CREATE TABLE IF NOT EXISTS `list_skillbooks` (
   `prob` int(11) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
--- 
--- Dumping data for table `list_skillbooks`
--- 
-
-INSERT INTO `list_skillbooks` (`id`, `name`, `charlevel`, `min`, `max`, `prob`) VALUES 
-(441, 'Veteran Sniper', 100, 85, 120, 100),
-(442, 'Top Gunner', 100, 85, 120, 100),
-(443, 'Merchandising', 100, 85, 120, 100),
-(444, 'Third Eye', 100, 85, 120, 100),
-(445, 'Triple Shot', 100, 85, 120, 100),
-(446, 'Poison Shot', 100, 85, 120, 100),
-(447, 'Zulie Bolt', 100, 85, 120, 100),
-(448, 'Shrapnel Burst', 100, 85, 120, 100),
-(449, 'Chaotic Burst', 100, 85, 120, 100),
-(450, 'Wind Step', 120, 105, 140, 100),
-(451, 'Light Step', 120, 105, 140, 100),
-(452, 'Stockpile', 130, 115, 150, 100),
-(453, 'Weapon Augment', 120, 105, 140, 100),
-(454, 'Jury-Rigging', 120, 105, 140, 100),
-(455, 'Summon Terror Knight', 130, 115, 150, 100),
-(456, 'Stun Shot', 145, 130, 165, 100),
-(457, 'Zulie Stun', 145, 130, 165, 100),
-(458, 'Rapidfire Triple Shot', 150, 135, 170, 100),
-(459, 'Cannon Splash Burst', 145, 130, 165, 100),
-(460, 'Flame Stun Burst', 145, 130, 165, 100),
-(461, 'Reflect Aura', 170, 155, 190, 100),
-(462, 'Dual Layer', 170, 155, 190, 100),
-(463, 'Returner Form', 100, 85, 120, 100),
-(464, 'Top Gunner', 100, 85, 120, 100),
-(465, 'Triple Shot', 100, 85, 120, 100),
-(466, 'Poison Shot', 100, 85, 120, 100),
-(467, 'Hypno Shot', 100, 85, 120, 100),
-(468, 'Summon Terror Knight', 130, 115, 150, 100),
-(469, 'Advanced Weapon Research', 100, 85, 120, 100),
-(470, 'Advanced Armor Research', 100, 85, 120, 100),
-(471, 'Expert Subitem Research', 100, 85, 120, 100),
-(472, 'Expert Potion Research', 100, 85, 120, 100),
-(473, 'Expert Sword Craft', 100, 85, 120, 100),
-(474, 'Expert Mace Craft', 100, 85, 120, 100),
-(475, 'Expert Bow Craft', 100, 85, 120, 100),
-(476, 'Expert Magic Weapon Craft', 100, 85, 120, 100),
-(477, 'Expert Gun Craft', 100, 85, 120, 100),
-(478, 'Deluxe Clothing Craft', 100, 85, 120, 100),
-(479, 'Deluxe Armor Craft', 100, 85, 120, 100),
-(480, 'Deluxe Robe Craft', 100, 85, 120, 100),
-(481, 'Deluxe SubItem Craft', 100, 85, 120, 100),
-(482, 'Deluxe Potion Craft', 100, 85, 120, 100),
-(483, 'Advanced Craft Research', 110, 95, 130, 100),
-(484, 'Cart Craft', 100, 85, 120, 100),
-(485, 'Castle Gear Craft', 100, 85, 120, 100),
-(486, 'Gem Cutting', 100, 85, 120, 100),
-(560, 'Soul Recall', 50, 35, 70, 100),
-(561, 'Face Item Craft', 100, 85, 120, 100),
-(562, 'Accessory Craft', 100, 85, 120, 100),
-(563, 'Adamantine Fist', 120, 105, 140, 100),
-(564, 'Mana Shield', 120, 105, 140, 100),
-(565, 'Call Beast', 100, 85, 120, 100),
-(566, 'Expert Crafting', 120, 105, 140, 100),
-(567, 'ManaBrake', 100, 85, 120, 100),
-(568, 'Anti Magic Shell', 100, 85, 120, 100),
-(569, 'Sacrifice', 100, 85, 120, 100),
-(611, 'Physical Training', 10, 19, 30, 100),
-(612, 'Repose', 10, 19, 30, 100),
-(613, 'Defense Training', 10, 19, 30, 100),
-(614, 'Power Overflow', 10, 19, 30, 100),
-(615, 'Howl', 15, 19, 35, 100),
-(616, 'Staminal Assist', 20, 19, 40, 100),
-(617, 'Melee Weapon Mastery', 10, 19, 30, 100),
-(618, 'Melee Double Attack', 10, 19, 30, 100),
-(619, 'One Handed Weapon Mastery', 55, 40, 75, 100),
-(620, 'Shield Mastery', 55, 40, 75, 100),
-(621, 'Fatal Thrust', 55, 40, 75, 100),
-(622, 'Durability Assist', 70, 55, 90, 100),
-(623, 'Shield Stun', 70, 55, 90, 100),
-(624, 'Soul Wreck', 50, 35, 70, 100),
-(625, 'Two-Handed Weapon Mastery', 55, 40, 75, 100),
-(626, 'Two-Handed Sword Mastery', 55, 40, 75, 100),
-(627, 'Piercing Lunge', 55, 40, 75, 100),
-(628, 'Battle Howl', 70, 55, 90, 100),
-(629, 'Voltage Crash', 70, 55, 90, 100),
-(630, 'Spear Mastery', 55, 40, 75, 100),
-(631, 'Raging Spear Strike', 55, 40, 75, 100),
-(632, 'Battle Scream', 70, 55, 90, 100),
-(633, 'Spear Screw', 70, 55, 90, 100),
-(634, 'Axe Mastery', 55, 40, 75, 100),
-(635, 'Leaping Axe Strike', 55, 40, 75, 100),
-(636, 'Battle Cry', 70, 55, 90, 100),
-(637, 'Axe Launcher', 70, 55, 90, 100),
-(638, 'Taunt', 50, 35, 70, 100),
-(639, 'Soundless Vacuum', 50, 35, 70, 100),
-(640, 'Immortal Form', 100, 85, 120, 100),
-(641, 'Advanced Defense Training', 100, 85, 120, 100),
-(642, 'One-Handed Combat Mastery', 100, 85, 120, 100),
-(643, 'Actual Battle Training', 145, 130, 165, 100),
-(644, 'Advanced Shield Mastery', 100, 85, 120, 100),
-(645, 'Triple Strike', 100, 85, 120, 100),
-(646, 'Safe Guard', 140, 125, 160, 100),
-(647, 'Shield Barrier', 140, 125, 160, 100),
-(648, 'Battle Alertness', 100, 85, 120, 100),
-(649, 'Staminal Training', 100, 85, 120, 100),
-(650, 'Refreshment', 100, 85, 120, 100),
-(651, 'Sword Master Form', 100, 85, 120, 100),
-(652, 'Melee Combat Mastery', 100, 85, 120, 100),
-(653, 'Two-Handed Battle Mastery', 100, 85, 120, 100),
-(654, 'Battle Sense Mastery', 145, 130, 165, 100),
-(655, 'Advanced Two-Handed Sword Mastery', 100, 85, 120, 100),
-(656, 'Geon Archangel Crumpler', 100, 85, 120, 100),
-(657, 'Combat Howl', 140, 125, 160, 100),
-(658, 'War Howl', 140, 125, 160, 100),
-(659, 'Seismic Impact', 145, 130, 165, 100),
-(660, 'Advanced Spear Mastery', 100, 85, 120, 100),
-(661, 'Longinus''s Spear', 100, 85, 120, 100),
-(662, 'Combat Scream', 140, 125, 160, 100),
-(663, 'War Scream', 140, 125, 160, 100),
-(664, 'Achilles''s Heel Strike', 145, 130, 165, 100),
-(665, 'Advanced Axe Mastery', 100, 85, 120, 100),
-(666, 'Vaulting Axe Smash', 100, 85, 120, 100),
-(667, 'Combat Cry', 140, 125, 160, 100),
-(668, 'War Cry', 140, 125, 160, 100),
-(669, 'Axe Slugger', 145, 130, 165, 100),
-(670, 'Motion Sensing', 100, 85, 120, 100),
-(671, 'Berserk', 120, 105, 140, 100),
-(672, 'Quick Step', 100, 85, 120, 100),
-(673, 'Battle March', 120, 105, 140, 100),
-(674, 'Sword Force', 145, 130, 165, 100),
-(675, '0', 0, 0, 0, 0),
-(676, 'Staff Mastery', 10, 19, 30, 100),
-(677, 'Ice Bolt', 10, 19, 30, 100),
-(678, 'Frostbiter', 55, 40, 75, 100),
-(679, 'Wind Storm', 30, 19, 50, 100),
-(680, 'Tornado', 70, 55, 90, 100),
-(681, 'Mana Bolt', 10, 19, 30, 100),
-(682, 'Mana Spear', 55, 40, 75, 100),
-(683, 'Voltage Jolt', 55, 40, 75, 100),
-(684, 'Icy Hailstorm', 70, 55, 90, 100),
-(685, 'Fire Ring', 55, 40, 75, 100),
-(686, 'Meteorite Strike', 70, 55, 90, 100),
-(687, 'Spell Mastery', 10, 19, 30, 100),
-(688, 'Spirit Boost', 10, 19, 30, 100),
-(689, 'Meditation', 10, 19, 30, 100),
-(690, 'Cure', 10, 19, 30, 100),
-(691, 'Hustle Charm', 20, 19, 40, 100),
-(692, 'Wand Mastery', 10, 19, 30, 100),
-(693, 'Mana Drop', 10, 19, 30, 100),
-(694, 'Voltage Crash', 55, 40, 75, 100),
-(695, 'Summon Phantom Sword', 55, 40, 75, 100),
-(696, 'Soul Revive', 20, 19, 40, 100),
-(697, 'Recovery', 55, 40, 75, 100),
-(698, 'Wallop Charm', 10, 19, 30, 100),
-(699, 'Resilience Charm', 10, 19, 30, 100),
-(700, 'Purify', 40, 25, 60, 100),
-(701, 'Precision Charm', 10, 19, 30, 100),
-(702, 'Bonfire', 55, 40, 75, 100),
-(703, 'Party Heal', 10, 19, 30, 100),
-(704, 'Blessed Mind', 10, 19, 30, 100),
-(705, 'Integrity', 60, 45, 80, 100),
-(706, 'Sorceror Form', 100, 85, 120, 100),
-(707, 'Melee Combat Mastery', 100, 85, 120, 100),
-(708, 'Freezing Chill', 100, 85, 120, 100),
-(709, 'Tempest', 110, 95, 130, 100),
-(710, 'Glaciating Chill', 145, 130, 165, 100),
-(711, 'Hurricane', 150, 135, 170, 100),
-(712, 'Soul Shock', 100, 85, 120, 100),
-(713, 'Fierce Cudgeling', 100, 85, 120, 100),
-(714, 'Soul Electric', 145, 130, 165, 100),
-(715, 'Permafrost Chill', 120, 105, 140, 100),
-(716, 'Hellfire', 100, 85, 120, 100),
-(717, 'Staff Stun', 100, 85, 120, 100),
-(718, 'Mana Burn', 145, 130, 165, 100),
-(719, 'Mystic Eye', 100, 85, 120, 100),
-(720, 'Elemental Bolt', 100, 85, 120, 100),
-(721, 'Aural Pierce', 100, 85, 120, 100),
-(722, 'Elemental Spike', 145, 130, 165, 100),
-(723, 'Meteorite Flow', 120, 105, 140, 100),
-(724, 'Soul Doubt', 145, 130, 165, 100),
-(725, 'Untouchable Aura', 100, 85, 120, 100),
-(726, 'Magic Battle Mastery', 100, 85, 120, 100),
-(727, 'Summon Mastery', 100, 85, 120, 100),
-(728, 'Mana Wave', 100, 85, 120, 100),
-(729, 'Summon Elemental', 100, 85, 120, 100),
-(730, 'Voltage Storm', 145, 130, 165, 100),
-(731, 'Summon Firegon', 145, 130, 165, 100),
-(732, 'Heavenly Grace', 145, 130, 165, 100),
-(733, 'Battle Charm', 100, 85, 120, 100),
-(734, 'Salamander Flame', 100, 85, 120, 100),
-(735, 'Mana Flame', 145, 130, 165, 100),
-(736, 'Clobber Charm', 100, 85, 120, 100),
-(737, 'Toughness Charm', 100, 85, 120, 100),
-(738, 'Critical Charm', 100, 85, 120, 100),
-(739, 'Valkyrie Charm', 100, 85, 120, 100),
-(740, 'Dragon Scale', 100, 85, 120, 100),
-(741, 'Chant Focusing', 100, 85, 120, 100),
-(742, 'Lucid Soul', 100, 85, 120, 100),
-(743, '0', 0, 0, 0, 0),
-(744, '0', 0, 0, 0, 0),
-(745, '0', 0, 0, 0, 0),
-(746, 'Combat Mastery', 10, 19, 30, 100),
-(747, 'Bow Mastery', 10, 19, 30, 100),
-(748, 'Clamp Arrow', 10, 19, 30, 100),
-(749, 'Double Arrow', 10, 19, 30, 100),
-(750, 'Backpack Mastery', 10, 19, 30, 100),
-(751, 'Mana Profit', 15, 19, 35, 100),
-(752, 'Offensive Focus', 15, 19, 35, 100),
-(753, 'Shackle Arrow', 55, 40, 75, 100),
-(754, 'Triple Arrow', 55, 40, 75, 100),
-(755, 'Soul Discipline', 60, 45, 80, 100),
-(756, 'Stun Arrow', 70, 55, 90, 100),
-(757, 'Sprint', 20, 19, 40, 100),
-(758, 'Velocity Accordance', 30, 19, 50, 100),
-(759, 'Second Sight', 90, 75, 110, 100),
-(760, 'Knuckle Mastery', 10, 19, 30, 100),
-(761, 'Double Slash', 10, 19, 30, 100),
-(762, 'Focused Impact', 10, 19, 30, 100),
-(763, 'Poison Knife', 10, 19, 30, 100),
-(764, 'Triple Slash', 55, 40, 75, 100),
-(765, 'Katar Upper', 55, 40, 75, 100),
-(766, 'Dividing Cleave', 55, 40, 75, 100),
-(767, 'Venom Knife', 55, 40, 75, 100),
-(768, 'Katar Mastery', 55, 40, 75, 100),
-(769, 'Dual Weapon Mastery', 55, 40, 75, 100),
-(770, 'Stealth', 60, 45, 80, 100),
-(771, 'Ferocity Accordance', 70, 55, 90, 100),
-(772, 'Weaken', 70, 55, 90, 100),
-(773, 'Mirror Phantasm', 60, 45, 80, 100),
-(774, 'Flame Hawk', 70, 55, 90, 100),
-(775, 'Spiral Kick', 70, 55, 90, 100),
-(776, 'Amazon Form', 100, 85, 120, 100),
-(777, 'Advanced Bow Mastery', 100, 85, 120, 100),
-(778, 'Call Hawk', 100, 85, 120, 100),
-(779, 'Trap Arrow', 100, 85, 120, 100),
-(780, 'Triple Arrow', 100, 85, 120, 100),
-(781, 'Stealth', 110, 95, 130, 100),
-(782, 'Longinus''s Incarnation', 110, 95, 130, 100),
-(783, 'Mana Flow', 120, 105, 140, 100),
-(784, 'Point Blank Arrow', 120, 105, 140, 100),
-(785, 'Entangling Arrow', 145, 130, 165, 100),
-(786, 'Phenix Arrow', 145, 130, 165, 100),
-(787, 'Soul Current', 160, 145, 180, 100),
-(788, 'Hawker Accordance', 110, 95, 130, 100),
-(789, 'Rapid Twitch', 150, 135, 170, 100),
-(790, 'Requiem', 170, 155, 190, 100),
-(791, 'Assassin Form', 100, 85, 120, 100),
-(792, 'Combat Weapon Mastery', 100, 85, 120, 100),
-(793, 'Triple Slash', 100, 85, 120, 100),
-(794, 'Mystic Knife', 100, 85, 120, 100),
-(795, 'Crazy-style Slash', 100, 85, 120, 100),
-(796, 'Quick-style Assault', 100, 85, 120, 100),
-(797, 'Screw Slash', 120, 105, 140, 100),
-(798, 'Advanced Katar Mastery', 100, 85, 120, 100),
-(799, 'Cloaking', 110, 95, 130, 100),
-(800, 'Evasive Guard', 110, 95, 130, 100),
-(801, 'Advanced Dual Weapon Mastery', 100, 85, 120, 100),
-(802, 'Bloody Assault', 120, 105, 140, 100),
-(803, 'Vicious Accordance', 130, 115, 150, 100),
-(804, 'Critical Accordance', 130, 115, 150, 100),
-(805, 'Mental Storm', 130, 115, 150, 100),
-(806, 'Enfeeblement', 130, 115, 150, 100),
-(807, 'Phenix Slash', 145, 130, 165, 100),
-(808, 'Flame Slash', 145, 130, 165, 100),
-(809, 'Freezing Assault', 145, 130, 165, 100),
-(810, 'Slash Precision', 145, 130, 165, 100),
-(811, 'Assault Precision', 145, 130, 165, 100),
-(812, 'Plasma Falcon', 120, 105, 140, 100),
-(813, 'Circle Break', 120, 105, 140, 100),
-(814, 'Impact Arrow', 120, 105, 140, 100),
-(815, '0', 0, 0, 0, 0),
-(816, 'Trigger Finger', 10, 19, 30, 100),
-(817, 'Tough Gunner', 10, 19, 30, 100),
-(818, 'Intensify Weapon', 10, 19, 30, 100),
-(819, 'Twin Shot', 10, 19, 30, 100),
-(820, 'Craftsman''s Talent', 10, 19, 30, 100),
-(821, 'Discount', 10, 19, 30, 100),
-(822, 'Salesman Gait', 20, 19, 40, 100),
-(823, 'Sniping', 55, 40, 75, 100),
-(824, 'Master Twin Shot', 55, 40, 75, 100),
-(825, 'Demolition Expertise', 55, 40, 75, 100),
-(826, 'Backpack Mastery', 55, 40, 75, 100),
-(827, 'Illusion', 55, 40, 75, 100),
-(828, 'Mercenary Employment', 70, 55, 90, 100),
-(829, 'Employ Warrior', 70, 55, 90, 100),
-(830, 'Employ Hunter', 85, 70, 105, 100),
-(831, 'Weapon Expertise', 55, 40, 75, 100),
-(832, 'Weapon Research', 10, 19, 30, 100),
-(833, 'Armor Research', 10, 19, 30, 100),
-(834, 'SubItem Research', 10, 19, 30, 100),
-(835, 'Potion Research', 10, 19, 30, 100),
-(836, 'Sword Craft', 10, 19, 30, 100),
-(837, 'Mace Craft', 10, 19, 30, 100),
-(838, 'Bow Craft', 10, 19, 30, 100),
-(839, 'Magic Weapon Craft', 10, 19, 30, 100),
-(840, 'Gun Craft', 10, 19, 30, 100),
-(841, 'Clothing Craft', 10, 19, 30, 100),
-(842, 'Armor Craft', 10, 19, 30, 100),
-(843, 'Robe Craft', 10, 19, 30, 100),
-(844, 'SubItem Craft', 10, 19, 30, 100),
-(845, 'Potion Craft', 10, 19, 30, 100);
+-- ----------------------------
+-- Records 
+-- ----------------------------
+INSERT INTO `list_skillbooks` VALUES ('441', '10', 'Veteran Sniper', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('442', '10', 'Top Gunner', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('443', '10', 'Merchandising', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('444', '10', 'Third Eye', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('445', '10', 'Triple Shot', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('446', '10', 'Poison Shot', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('447', '10', 'Zulie Bolt', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('448', '10', 'Shrapnel Burst', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('449', '10', 'Chaotic Burst', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('450', '10', 'Wind Step', '120', '105', '140', '100');
+INSERT INTO `list_skillbooks` VALUES ('451', '10', 'Light Step', '120', '105', '140', '100');
+INSERT INTO `list_skillbooks` VALUES ('452', '10', 'Stockpile', '130', '115', '150', '100');
+INSERT INTO `list_skillbooks` VALUES ('453', '10', 'Weapon Augment', '120', '105', '140', '100');
+INSERT INTO `list_skillbooks` VALUES ('454', '10', 'Jury-Rigging', '120', '105', '140', '100');
+INSERT INTO `list_skillbooks` VALUES ('455', '10', 'Summon Terror Knight', '130', '115', '150', '100');
+INSERT INTO `list_skillbooks` VALUES ('456', '10', 'Stun Shot', '145', '130', '165', '100');
+INSERT INTO `list_skillbooks` VALUES ('457', '10', 'Zulie Stun', '145', '130', '165', '100');
+INSERT INTO `list_skillbooks` VALUES ('458', '10', 'Rapidfire Triple Shot', '150', '135', '170', '100');
+INSERT INTO `list_skillbooks` VALUES ('459', '10', 'Cannon Splash Burst', '145', '130', '165', '100');
+INSERT INTO `list_skillbooks` VALUES ('460', '10', 'Flame Stun Burst', '145', '130', '165', '100');
+INSERT INTO `list_skillbooks` VALUES ('461', '10', 'Reflect Aura', '170', '155', '190', '100');
+INSERT INTO `list_skillbooks` VALUES ('462', '10', 'Dual Layer', '170', '155', '190', '100');
+INSERT INTO `list_skillbooks` VALUES ('463', '10', 'Returner Form', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('464', '10', 'Top Gunner', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('465', '10', 'Triple Shot', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('466', '10', 'Poison Shot', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('467', '10', 'Hypno Shot', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('468', '10', 'Summon Terror Knight', '130', '115', '150', '100');
+INSERT INTO `list_skillbooks` VALUES ('469', '10', 'Advanced Weapon Research', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('470', '10', 'Advanced Armor Research', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('471', '10', 'Expert Subitem Research', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('472', '10', 'Expert Potion Research', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('473', '10', 'Expert Sword Craft', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('474', '10', 'Expert Mace Craft', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('475', '10', 'Expert Bow Craft', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('476', '10', 'Expert Magic Weapon Craft', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('477', '10', 'Expert Gun Craft', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('478', '10', 'Deluxe Clothing Craft', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('479', '10', 'Deluxe Armor Craft', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('480', '10', 'Deluxe Robe Craft', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('481', '10', 'Deluxe SubItem Craft', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('482', '10', 'Deluxe Potion Craft', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('483', '10', 'Advanced Craft Research', '110', '95', '130', '100');
+INSERT INTO `list_skillbooks` VALUES ('484', '10', 'Cart Craft', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('485', '10', 'Castle Gear Craft', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('486', '10', 'Gem Cutting', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('560', '10', 'Soul Recall', '50', '35', '70', '100');
+INSERT INTO `list_skillbooks` VALUES ('561', '10', 'Face Item Craft', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('562', '10', 'Accessory Craft', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('563', '10', 'Adamantine Fist', '120', '105', '140', '100');
+INSERT INTO `list_skillbooks` VALUES ('564', '10', 'Mana Shield', '120', '105', '140', '100');
+INSERT INTO `list_skillbooks` VALUES ('565', '10', 'Call Beast', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('566', '10', 'Expert Crafting', '120', '105', '140', '100');
+INSERT INTO `list_skillbooks` VALUES ('567', '10', 'ManaBrake', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('568', '10', 'Anti Magic Shell', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('569', '10', 'Sacrifice', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('611', '10', 'Physical Training', '10', '19', '30', '100');
+INSERT INTO `list_skillbooks` VALUES ('612', '10', 'Repose', '10', '19', '30', '100');
+INSERT INTO `list_skillbooks` VALUES ('613', '10', 'Defense Training', '10', '19', '30', '100');
+INSERT INTO `list_skillbooks` VALUES ('614', '10', 'Power Overflow', '10', '19', '30', '100');
+INSERT INTO `list_skillbooks` VALUES ('615', '10', 'Howl', '15', '19', '35', '100');
+INSERT INTO `list_skillbooks` VALUES ('616', '10', 'Staminal Assist', '20', '19', '40', '100');
+INSERT INTO `list_skillbooks` VALUES ('617', '10', 'Melee Weapon Mastery', '10', '19', '30', '100');
+INSERT INTO `list_skillbooks` VALUES ('618', '10', 'Melee Double Attack', '10', '19', '30', '100');
+INSERT INTO `list_skillbooks` VALUES ('619', '10', 'One Handed Weapon Mastery', '55', '40', '75', '100');
+INSERT INTO `list_skillbooks` VALUES ('620', '10', 'Shield Mastery', '55', '40', '75', '100');
+INSERT INTO `list_skillbooks` VALUES ('621', '10', 'Fatal Thrust', '55', '40', '75', '100');
+INSERT INTO `list_skillbooks` VALUES ('622', '10', 'Durability Assist', '70', '55', '90', '100');
+INSERT INTO `list_skillbooks` VALUES ('623', '10', 'Shield Stun', '70', '55', '90', '100');
+INSERT INTO `list_skillbooks` VALUES ('624', '10', 'Soul Wreck', '50', '35', '70', '100');
+INSERT INTO `list_skillbooks` VALUES ('625', '10', 'Two-Handed Weapon Mastery', '55', '40', '75', '100');
+INSERT INTO `list_skillbooks` VALUES ('626', '10', 'Two-Handed Sword Mastery', '55', '40', '75', '100');
+INSERT INTO `list_skillbooks` VALUES ('627', '10', 'Piercing Lunge', '55', '40', '75', '100');
+INSERT INTO `list_skillbooks` VALUES ('628', '10', 'Battle Howl', '70', '55', '90', '100');
+INSERT INTO `list_skillbooks` VALUES ('629', '10', 'Voltage Crash', '70', '55', '90', '100');
+INSERT INTO `list_skillbooks` VALUES ('630', '10', 'Spear Mastery', '55', '40', '75', '100');
+INSERT INTO `list_skillbooks` VALUES ('631', '10', 'Raging Spear Strike', '55', '40', '75', '100');
+INSERT INTO `list_skillbooks` VALUES ('632', '10', 'Battle Scream', '70', '55', '90', '100');
+INSERT INTO `list_skillbooks` VALUES ('633', '10', 'Spear Screw', '70', '55', '90', '100');
+INSERT INTO `list_skillbooks` VALUES ('634', '10', 'Axe Mastery', '55', '40', '75', '100');
+INSERT INTO `list_skillbooks` VALUES ('635', '10', 'Leaping Axe Strike', '55', '40', '75', '100');
+INSERT INTO `list_skillbooks` VALUES ('636', '10', 'Battle Cry', '70', '55', '90', '100');
+INSERT INTO `list_skillbooks` VALUES ('637', '10', 'Axe Launcher', '70', '55', '90', '100');
+INSERT INTO `list_skillbooks` VALUES ('638', '10', 'Taunt', '50', '35', '70', '100');
+INSERT INTO `list_skillbooks` VALUES ('639', '10', 'Soundless Vacuum', '50', '35', '70', '100');
+INSERT INTO `list_skillbooks` VALUES ('640', '10', 'Immortal Form', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('641', '10', 'Advanced Defense Training', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('642', '10', 'One-Handed Combat Mastery', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('643', '10', 'Actual Battle Training', '145', '130', '165', '100');
+INSERT INTO `list_skillbooks` VALUES ('644', '10', 'Advanced Shield Mastery', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('645', '10', 'Triple Strike', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('646', '10', 'Safe Guard', '140', '125', '160', '100');
+INSERT INTO `list_skillbooks` VALUES ('647', '10', 'Shield Barrier', '140', '125', '160', '100');
+INSERT INTO `list_skillbooks` VALUES ('648', '10', 'Battle Alertness', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('649', '10', 'Staminal Training', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('650', '10', 'Refreshment', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('651', '10', 'Sword Master Form', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('652', '10', 'Melee Combat Mastery', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('653', '10', 'Two-Handed Battle Mastery', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('654', '10', 'Battle Sense Mastery', '145', '130', '165', '100');
+INSERT INTO `list_skillbooks` VALUES ('655', '10', 'Advanced Two-Handed Sword Mastery', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('656', '10', 'Geon Archangel Crumpler', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('657', '10', 'Combat Howl', '140', '125', '160', '100');
+INSERT INTO `list_skillbooks` VALUES ('658', '10', 'War Howl', '140', '125', '160', '100');
+INSERT INTO `list_skillbooks` VALUES ('659', '10', 'Seismic Impact', '145', '130', '165', '100');
+INSERT INTO `list_skillbooks` VALUES ('660', '10', 'Advanced Spear Mastery', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('661', '10', 'Longinus\'s Spear', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('662', '10', 'Combat Scream', '140', '125', '160', '100');
+INSERT INTO `list_skillbooks` VALUES ('663', '10', 'War Scream', '140', '125', '160', '100');
+INSERT INTO `list_skillbooks` VALUES ('664', '10', 'Achilles\'s Heel Strike', '145', '130', '165', '100');
+INSERT INTO `list_skillbooks` VALUES ('665', '10', 'Advanced Axe Mastery', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('666', '10', 'Vaulting Axe Smash', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('667', '10', 'Combat Cry', '140', '125', '160', '100');
+INSERT INTO `list_skillbooks` VALUES ('668', '10', 'War Cry', '140', '125', '160', '100');
+INSERT INTO `list_skillbooks` VALUES ('669', '10', 'Axe Slugger', '145', '130', '165', '100');
+INSERT INTO `list_skillbooks` VALUES ('670', '10', 'Motion Sensing', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('671', '10', 'Berserk', '120', '105', '140', '100');
+INSERT INTO `list_skillbooks` VALUES ('672', '10', 'Quick Step', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('673', '10', 'Battle March', '120', '105', '140', '100');
+INSERT INTO `list_skillbooks` VALUES ('674', '10', 'Sword Force', '145', '130', '165', '100');
+INSERT INTO `list_skillbooks` VALUES ('675', '10', '0', '0', '0', '0', '0');
+INSERT INTO `list_skillbooks` VALUES ('676', '10', 'Staff Mastery', '10', '19', '30', '100');
+INSERT INTO `list_skillbooks` VALUES ('677', '10', 'Ice Bolt', '10', '19', '30', '100');
+INSERT INTO `list_skillbooks` VALUES ('678', '10', 'Frostbiter', '55', '40', '75', '100');
+INSERT INTO `list_skillbooks` VALUES ('679', '10', 'Wind Storm', '30', '19', '50', '100');
+INSERT INTO `list_skillbooks` VALUES ('680', '10', 'Tornado', '70', '55', '90', '100');
+INSERT INTO `list_skillbooks` VALUES ('681', '10', 'Mana Bolt', '10', '19', '30', '100');
+INSERT INTO `list_skillbooks` VALUES ('682', '10', 'Mana Spear', '55', '40', '75', '100');
+INSERT INTO `list_skillbooks` VALUES ('683', '10', 'Voltage Jolt', '55', '40', '75', '100');
+INSERT INTO `list_skillbooks` VALUES ('684', '10', 'Icy Hailstorm', '70', '55', '90', '100');
+INSERT INTO `list_skillbooks` VALUES ('685', '10', 'Fire Ring', '55', '40', '75', '100');
+INSERT INTO `list_skillbooks` VALUES ('686', '10', 'Meteorite Strike', '70', '55', '90', '100');
+INSERT INTO `list_skillbooks` VALUES ('687', '10', 'Spell Mastery', '10', '19', '30', '100');
+INSERT INTO `list_skillbooks` VALUES ('688', '10', 'Spirit Boost', '10', '19', '30', '100');
+INSERT INTO `list_skillbooks` VALUES ('689', '10', 'Meditation', '10', '19', '30', '100');
+INSERT INTO `list_skillbooks` VALUES ('690', '10', 'Cure', '10', '19', '30', '100');
+INSERT INTO `list_skillbooks` VALUES ('691', '10', 'Hustle Charm', '20', '19', '40', '100');
+INSERT INTO `list_skillbooks` VALUES ('692', '10', 'Wand Mastery', '10', '19', '30', '100');
+INSERT INTO `list_skillbooks` VALUES ('693', '10', 'Mana Drop', '10', '19', '30', '100');
+INSERT INTO `list_skillbooks` VALUES ('694', '10', 'Voltage Crash', '55', '40', '75', '100');
+INSERT INTO `list_skillbooks` VALUES ('695', '10', 'Summon Phantom Sword', '55', '40', '75', '100');
+INSERT INTO `list_skillbooks` VALUES ('696', '10', 'Soul Revive', '20', '19', '40', '100');
+INSERT INTO `list_skillbooks` VALUES ('697', '10', 'Recovery', '55', '40', '75', '100');
+INSERT INTO `list_skillbooks` VALUES ('698', '10', 'Wallop Charm', '10', '19', '30', '100');
+INSERT INTO `list_skillbooks` VALUES ('699', '10', 'Resilience Charm', '10', '19', '30', '100');
+INSERT INTO `list_skillbooks` VALUES ('700', '10', 'Purify', '40', '25', '60', '100');
+INSERT INTO `list_skillbooks` VALUES ('701', '10', 'Precision Charm', '10', '19', '30', '100');
+INSERT INTO `list_skillbooks` VALUES ('702', '10', 'Bonfire', '55', '40', '75', '100');
+INSERT INTO `list_skillbooks` VALUES ('703', '10', 'Party Heal', '10', '19', '30', '100');
+INSERT INTO `list_skillbooks` VALUES ('704', '10', 'Blessed Mind', '10', '19', '30', '100');
+INSERT INTO `list_skillbooks` VALUES ('705', '10', 'Integrity', '60', '45', '80', '100');
+INSERT INTO `list_skillbooks` VALUES ('706', '10', 'Sorceror Form', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('707', '10', 'Melee Combat Mastery', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('708', '10', 'Freezing Chill', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('709', '10', 'Tempest', '110', '95', '130', '100');
+INSERT INTO `list_skillbooks` VALUES ('710', '10', 'Glaciating Chill', '145', '130', '165', '100');
+INSERT INTO `list_skillbooks` VALUES ('711', '10', 'Hurricane', '150', '135', '170', '100');
+INSERT INTO `list_skillbooks` VALUES ('712', '10', 'Soul Shock', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('713', '10', 'Fierce Cudgeling', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('714', '10', 'Soul Electric', '145', '130', '165', '100');
+INSERT INTO `list_skillbooks` VALUES ('715', '10', 'Permafrost Chill', '120', '105', '140', '100');
+INSERT INTO `list_skillbooks` VALUES ('716', '10', 'Hellfire', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('717', '10', 'Staff Stun', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('718', '10', 'Mana Burn', '145', '130', '165', '100');
+INSERT INTO `list_skillbooks` VALUES ('719', '10', 'Mystic Eye', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('720', '10', 'Elemental Bolt', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('721', '10', 'Aural Pierce', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('722', '10', 'Elemental Spike', '145', '130', '165', '100');
+INSERT INTO `list_skillbooks` VALUES ('723', '10', 'Meteorite Flow', '120', '105', '140', '100');
+INSERT INTO `list_skillbooks` VALUES ('724', '10', 'Soul Doubt', '145', '130', '165', '100');
+INSERT INTO `list_skillbooks` VALUES ('725', '10', 'Untouchable Aura', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('726', '10', 'Magic Battle Mastery', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('727', '10', 'Summon Mastery', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('728', '10', 'Mana Wave', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('729', '10', 'Summon Elemental', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('730', '10', 'Voltage Storm', '145', '130', '165', '100');
+INSERT INTO `list_skillbooks` VALUES ('731', '10', 'Summon Firegon', '145', '130', '165', '100');
+INSERT INTO `list_skillbooks` VALUES ('732', '10', 'Heavenly Grace', '145', '130', '165', '100');
+INSERT INTO `list_skillbooks` VALUES ('733', '10', 'Battle Charm', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('734', '10', 'Salamander Flame', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('735', '10', 'Mana Flame', '145', '130', '165', '100');
+INSERT INTO `list_skillbooks` VALUES ('736', '10', 'Clobber Charm', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('737', '10', 'Toughness Charm', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('738', '10', 'Critical Charm', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('739', '10', 'Valkyrie Charm', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('740', '10', 'Dragon Scale', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('741', '10', 'Chant Focusing', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('742', '10', 'Lucid Soul', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('743', '10', '0', '0', '0', '0', '0');
+INSERT INTO `list_skillbooks` VALUES ('744', '10', '0', '0', '0', '0', '0');
+INSERT INTO `list_skillbooks` VALUES ('745', '10', '0', '0', '0', '0', '0');
+INSERT INTO `list_skillbooks` VALUES ('746', '10', 'Combat Mastery', '10', '19', '30', '100');
+INSERT INTO `list_skillbooks` VALUES ('747', '10', 'Bow Mastery', '10', '19', '30', '100');
+INSERT INTO `list_skillbooks` VALUES ('748', '10', 'Clamp Arrow', '10', '19', '30', '100');
+INSERT INTO `list_skillbooks` VALUES ('749', '10', 'Double Arrow', '10', '19', '30', '100');
+INSERT INTO `list_skillbooks` VALUES ('750', '10', 'Backpack Mastery', '10', '19', '30', '100');
+INSERT INTO `list_skillbooks` VALUES ('751', '10', 'Mana Profit', '15', '19', '35', '100');
+INSERT INTO `list_skillbooks` VALUES ('752', '10', 'Offensive Focus', '15', '19', '35', '100');
+INSERT INTO `list_skillbooks` VALUES ('753', '10', 'Shackle Arrow', '55', '40', '75', '100');
+INSERT INTO `list_skillbooks` VALUES ('754', '10', 'Triple Arrow', '55', '40', '75', '100');
+INSERT INTO `list_skillbooks` VALUES ('755', '10', 'Soul Discipline', '60', '45', '80', '100');
+INSERT INTO `list_skillbooks` VALUES ('756', '10', 'Stun Arrow', '70', '55', '90', '100');
+INSERT INTO `list_skillbooks` VALUES ('757', '10', 'Sprint', '20', '19', '40', '100');
+INSERT INTO `list_skillbooks` VALUES ('758', '10', 'Velocity Accordance', '30', '19', '50', '100');
+INSERT INTO `list_skillbooks` VALUES ('759', '10', 'Second Sight', '90', '75', '110', '100');
+INSERT INTO `list_skillbooks` VALUES ('760', '10', 'Knuckle Mastery', '10', '19', '30', '100');
+INSERT INTO `list_skillbooks` VALUES ('761', '10', 'Double Slash', '10', '19', '30', '100');
+INSERT INTO `list_skillbooks` VALUES ('762', '10', 'Focused Impact', '10', '19', '30', '100');
+INSERT INTO `list_skillbooks` VALUES ('763', '10', 'Poison Knife', '10', '19', '30', '100');
+INSERT INTO `list_skillbooks` VALUES ('764', '10', 'Triple Slash', '55', '40', '75', '100');
+INSERT INTO `list_skillbooks` VALUES ('765', '10', 'Katar Upper', '55', '40', '75', '100');
+INSERT INTO `list_skillbooks` VALUES ('766', '10', 'Dividing Cleave', '55', '40', '75', '100');
+INSERT INTO `list_skillbooks` VALUES ('767', '10', 'Venom Knife', '55', '40', '75', '100');
+INSERT INTO `list_skillbooks` VALUES ('768', '10', 'Katar Mastery', '55', '40', '75', '100');
+INSERT INTO `list_skillbooks` VALUES ('769', '10', 'Dual Weapon Mastery', '55', '40', '75', '100');
+INSERT INTO `list_skillbooks` VALUES ('770', '10', 'Stealth', '60', '45', '80', '100');
+INSERT INTO `list_skillbooks` VALUES ('771', '10', 'Ferocity Accordance', '70', '55', '90', '100');
+INSERT INTO `list_skillbooks` VALUES ('772', '10', 'Weaken', '70', '55', '90', '100');
+INSERT INTO `list_skillbooks` VALUES ('773', '10', 'Mirror Phantasm', '60', '45', '80', '100');
+INSERT INTO `list_skillbooks` VALUES ('774', '10', 'Flame Hawk', '70', '55', '90', '100');
+INSERT INTO `list_skillbooks` VALUES ('775', '10', 'Spiral Kick', '70', '55', '90', '100');
+INSERT INTO `list_skillbooks` VALUES ('776', '10', 'Amazon Form', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('777', '10', 'Advanced Bow Mastery', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('778', '10', 'Call Hawk', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('779', '10', 'Trap Arrow', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('780', '10', 'Triple Arrow', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('781', '10', 'Stealth', '110', '95', '130', '100');
+INSERT INTO `list_skillbooks` VALUES ('782', '10', 'Longinus\'s Incarnation', '110', '95', '130', '100');
+INSERT INTO `list_skillbooks` VALUES ('783', '10', 'Mana Flow', '120', '105', '140', '100');
+INSERT INTO `list_skillbooks` VALUES ('784', '10', 'Point Blank Arrow', '120', '105', '140', '100');
+INSERT INTO `list_skillbooks` VALUES ('785', '10', 'Entangling Arrow', '145', '130', '165', '100');
+INSERT INTO `list_skillbooks` VALUES ('786', '10', 'Phenix Arrow', '145', '130', '165', '100');
+INSERT INTO `list_skillbooks` VALUES ('787', '10', 'Soul Current', '160', '145', '180', '100');
+INSERT INTO `list_skillbooks` VALUES ('788', '10', 'Hawker Accordance', '110', '95', '130', '100');
+INSERT INTO `list_skillbooks` VALUES ('789', '10', 'Rapid Twitch', '150', '135', '170', '100');
+INSERT INTO `list_skillbooks` VALUES ('790', '10', 'Requiem', '170', '155', '190', '100');
+INSERT INTO `list_skillbooks` VALUES ('791', '10', 'Assassin Form', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('792', '10', 'Combat Weapon Mastery', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('793', '10', 'Triple Slash', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('794', '10', 'Mystic Knife', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('795', '10', 'Crazy-style Slash', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('796', '10', 'Quick-style Assault', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('797', '10', 'Screw Slash', '120', '105', '140', '100');
+INSERT INTO `list_skillbooks` VALUES ('798', '10', 'Advanced Katar Mastery', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('799', '10', 'Cloaking', '110', '95', '130', '100');
+INSERT INTO `list_skillbooks` VALUES ('800', '10', 'Evasive Guard', '110', '95', '130', '100');
+INSERT INTO `list_skillbooks` VALUES ('801', '10', 'Advanced Dual Weapon Mastery', '100', '85', '120', '100');
+INSERT INTO `list_skillbooks` VALUES ('802', '10', 'Bloody Assault', '120', '105', '140', '100');
+INSERT INTO `list_skillbooks` VALUES ('803', '10', 'Vicious Accordance', '130', '115', '150', '100');
+INSERT INTO `list_skillbooks` VALUES ('804', '10', 'Critical Accordance', '130', '115', '150', '100');
+INSERT INTO `list_skillbooks` VALUES ('805', '10', 'Mental Storm', '130', '115', '150', '100');
+INSERT INTO `list_skillbooks` VALUES ('806', '10', 'Enfeeblement', '130', '115', '150', '100');
+INSERT INTO `list_skillbooks` VALUES ('807', '10', 'Phenix Slash', '145', '130', '165', '100');
+INSERT INTO `list_skillbooks` VALUES ('808', '10', 'Flame Slash', '145', '130', '165', '100');
+INSERT INTO `list_skillbooks` VALUES ('809', '10', 'Freezing Assault', '145', '130', '165', '100');
+INSERT INTO `list_skillbooks` VALUES ('810', '10', 'Slash Precision', '145', '130', '165', '100');
+INSERT INTO `list_skillbooks` VALUES ('811', '10', 'Assault Precision', '145', '130', '165', '100');
+INSERT INTO `list_skillbooks` VALUES ('812', '10', 'Plasma Falcon', '120', '105', '140', '100');
+INSERT INTO `list_skillbooks` VALUES ('813', '10', 'Circle Break', '120', '105', '140', '100');
+INSERT INTO `list_skillbooks` VALUES ('814', '10', 'Impact Arrow', '120', '105', '140', '100');
+INSERT INTO `list_skillbooks` VALUES ('815', '10', '0', '0', '0', '0', '0');
+INSERT INTO `list_skillbooks` VALUES ('816', '10', 'Trigger Finger', '10', '19', '30', '100');
+INSERT INTO `list_skillbooks` VALUES ('817', '10', 'Tough Gunner', '10', '19', '30', '100');
+INSERT INTO `list_skillbooks` VALUES ('818', '10', 'Intensify Weapon', '10', '19', '30', '100');
+INSERT INTO `list_skillbooks` VALUES ('819', '10', 'Twin Shot', '10', '19', '30', '100');
+INSERT INTO `list_skillbooks` VALUES ('820', '10', 'Craftsman\'s Talent', '10', '19', '30', '100');
+INSERT INTO `list_skillbooks` VALUES ('821', '10', 'Discount', '10', '19', '30', '100');
+INSERT INTO `list_skillbooks` VALUES ('822', '10', 'Salesman Gait', '20', '19', '40', '100');
+INSERT INTO `list_skillbooks` VALUES ('823', '10', 'Sniping', '55', '40', '75', '100');
+INSERT INTO `list_skillbooks` VALUES ('824', '10', 'Master Twin Shot', '55', '40', '75', '100');
+INSERT INTO `list_skillbooks` VALUES ('825', '10', 'Demolition Expertise', '55', '40', '75', '100');
+INSERT INTO `list_skillbooks` VALUES ('826', '10', 'Backpack Mastery', '55', '40', '75', '100');
+INSERT INTO `list_skillbooks` VALUES ('827', '10', 'Illusion', '55', '40', '75', '100');
+INSERT INTO `list_skillbooks` VALUES ('828', '10', 'Mercenary Employment', '70', '55', '90', '100');
+INSERT INTO `list_skillbooks` VALUES ('829', '10', 'Employ Warrior', '70', '55', '90', '100');
+INSERT INTO `list_skillbooks` VALUES ('830', '10', 'Employ Hunter', '85', '70', '105', '100');
+INSERT INTO `list_skillbooks` VALUES ('831', '10', 'Weapon Expertise', '55', '40', '75', '100');
+INSERT INTO `list_skillbooks` VALUES ('832', '10', 'Weapon Research', '10', '19', '30', '100');
+INSERT INTO `list_skillbooks` VALUES ('833', '10', 'Armor Research', '10', '19', '30', '100');
+INSERT INTO `list_skillbooks` VALUES ('834', '10', 'SubItem Research', '10', '19', '30', '100');
+INSERT INTO `list_skillbooks` VALUES ('835', '10', 'Potion Research', '10', '19', '30', '100');
+INSERT INTO `list_skillbooks` VALUES ('836', '10', 'Sword Craft', '10', '19', '30', '100');
+INSERT INTO `list_skillbooks` VALUES ('837', '10', 'Mace Craft', '10', '19', '30', '100');
+INSERT INTO `list_skillbooks` VALUES ('838', '10', 'Bow Craft', '10', '19', '30', '100');
+INSERT INTO `list_skillbooks` VALUES ('839', '10', 'Magic Weapon Craft', '10', '19', '30', '100');
+INSERT INTO `list_skillbooks` VALUES ('840', '10', 'Gun Craft', '10', '19', '30', '100');
+INSERT INTO `list_skillbooks` VALUES ('841', '10', 'Clothing Craft', '10', '19', '30', '100');
+INSERT INTO `list_skillbooks` VALUES ('842', '10', 'Armor Craft', '10', '19', '30', '100');
+INSERT INTO `list_skillbooks` VALUES ('843', '10', 'Robe Craft', '10', '19', '30', '100');
+INSERT INTO `list_skillbooks` VALUES ('844', '10', 'SubItem Craft', '10', '19', '30', '100');
+INSERT INTO `list_skillbooks` VALUES ('845', '10', 'Potion Craft', '10', '19', '30', '100');
+INSERT INTO `list_skillbooks` VALUES ('301', '11', 'Garnet[1]', '0', '19', '50', '10');
+INSERT INTO `list_skillbooks` VALUES ('302', '11', 'Garnet[2]', '0', '51', '90', '7');
+INSERT INTO `list_skillbooks` VALUES ('303', '11', 'Garnet[3]', '0', '91', '140', '5');
+INSERT INTO `list_skillbooks` VALUES ('304', '11', 'Garnet[4]', '0', '141', '250', '3');
+INSERT INTO `list_skillbooks` VALUES ('311', '11', 'Ruby[1]', '0', '19', '50', '10');
+INSERT INTO `list_skillbooks` VALUES ('312', '11', 'Ruby[2]', '0', '51', '90', '7');
+INSERT INTO `list_skillbooks` VALUES ('313', '11', 'Ruby[3]', '0', '91', '140', '5');
+INSERT INTO `list_skillbooks` VALUES ('314', '11', 'Ruby[4]', '0', '141', '250', '3');
+INSERT INTO `list_skillbooks` VALUES ('321', '11', 'Sapphire[1]', '0', '19', '50', '10');
+INSERT INTO `list_skillbooks` VALUES ('322', '11', 'Sapphire[2]', '0', '51', '90', '7');
+INSERT INTO `list_skillbooks` VALUES ('323', '11', 'Sapphire[3]', '0', '91', '140', '5');
+INSERT INTO `list_skillbooks` VALUES ('324', '11', 'Sapphire[4]', '0', '141', '250', '3');
+INSERT INTO `list_skillbooks` VALUES ('331', '11', 'Emerald[1]', '0', '19', '50', '10');
+INSERT INTO `list_skillbooks` VALUES ('332', '11', 'Emerald[2]', '0', '51', '90', '7');
+INSERT INTO `list_skillbooks` VALUES ('333', '11', 'Emerald[3]', '0', '91', '140', '5');
+INSERT INTO `list_skillbooks` VALUES ('334', '11', 'Emerald[4]', '0', '141', '250', '3');
+INSERT INTO `list_skillbooks` VALUES ('341', '11', 'Peridot[1]', '0', '19', '50', '10');
+INSERT INTO `list_skillbooks` VALUES ('342', '11', 'Peridot[2]', '0', '51', '90', '7');
+INSERT INTO `list_skillbooks` VALUES ('343', '11', 'Peridot[3]', '0', '91', '140', '5');
+INSERT INTO `list_skillbooks` VALUES ('344', '11', 'Peridot[4]', '0', '141', '250', '3');
+INSERT INTO `list_skillbooks` VALUES ('351', '11', 'Diamond[1]', '0', '19', '50', '10');
+INSERT INTO `list_skillbooks` VALUES ('352', '11', 'Diamond[2]', '0', '51', '90', '7');
+INSERT INTO `list_skillbooks` VALUES ('353', '11', 'Diamond[3]', '0', '91', '140', '5');
+INSERT INTO `list_skillbooks` VALUES ('354', '11', 'Diamond[4]', '0', '141', '250', '3');

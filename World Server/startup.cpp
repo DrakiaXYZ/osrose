@@ -806,33 +806,33 @@ bool CWorldServer::LoadPYDropsData( )
 }
 
 //hidden
+ 
 bool CWorldServer::LoadSkillBookDropsData( )
 {
-	Log( MSG_LOAD, "Skillbook Data              " );
-    //LogSkillbook data load
+    Log( MSG_INFO, "Loading Skillbook data" );
     MYSQL_ROW row;
-    MYSQL_RES *result = DB->QStore("SELECT id,min,max,prob FROM list_skillbooks");
-    if(result==NULL)
+    MYSQL_RES *result = DB->QStore("SELECT id,itemtype,min,max,prob FROM list_skillbooks");
+    if(result==NULL) 
     {
         DB->QFree( );
         return false;
     }
     int c = 0;
     while(row = mysql_fetch_row(result))
-    {
-
+    {  
+        
         c++;
         CMDrops* newdrop = new (nothrow) CMDrops;
         assert(newdrop);
-        newdrop->itemnum = atoi(row[0]);
-        newdrop->itemtype = 10;
-        newdrop->level_min = atoi(row[1]);
-        newdrop->level_max = atoi(row[2]);
-        newdrop->prob = atoi(row[3]);
-        SkillbookList.push_back( newdrop );
+        newdrop->itemnum = atoi(row[0]); 
+        newdrop->itemtype = atoi(row[1]);               
+        newdrop->level_min = atoi(row[2]); 
+        newdrop->level_max = atoi(row[3]);
+        newdrop->prob = atoi(row[4]);   
+        SkillbookList.push_back( newdrop );    
     }
     DB->QFree( );
-    Log( MSG_LOAD, "Skillbook Data loaded" );
+    Log( MSG_INFO, "Skillbook Data loaded" );
     return true;
 }
 

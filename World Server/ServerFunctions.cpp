@@ -546,11 +546,19 @@ CDrop* CWorldServer::GetPYDrop( CMonster* thismon, UINT droptype )
         if(thismon->thisnpc->level == 1 && newdrop->item.count > 6) newdrop->item.count = 6; //limit the drop rate of items from level 1 event mobs
         if(newdrop->item.count==0)
             newdrop->item.count = 1;
+// Skillbooks & Chests
         if(newdrop->item.itemtype == 10)
         {
-            if(newdrop->item.itemnum >=441 && newdrop->item.itemnum <= 888)// skillbooks
-                newdrop->item.count = 1;   // just one skill book per drop
+            if((newdrop->item.itemnum >=441 && newdrop->item.itemnum <= 888) ||
+               (newdrop->item.itemnum >=247 && newdrop->item.itemnum <= 249) ||
+               (newdrop->item.itemnum >=1001 && newdrop->item.itemnum <= 1028) ||
+               (newdrop->item.itemnum >=1080 && newdrop->item.itemnum <= 1081) )                              
+                newdrop->item.count = 1;   // just one skill book or chest per drop
         }
+// Gem Drops
+        if(newdrop->item.itemtype == 11)
+            newdrop->item.count = 1;   // just one gem per drop
+             
         if(newdrop->item.itemtype == 12)
         {
             if(newdrop->item.itemnum > 300 && newdrop->item.itemnum < 360) //bullets get a lot higher count.
