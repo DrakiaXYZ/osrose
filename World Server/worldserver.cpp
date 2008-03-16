@@ -264,20 +264,17 @@ void CWorldServer::OnClientDisconnect( CClientSocket* thisclient )
     	cryptPacket( (char*)&pak, NULL );
     	send( csock, (char*)&pak, pak.Size, 0 );
     }
-    if ( player->Fairy ){
-        GServer->FairyList.at(player->FairyListIndex)->assigned = false;
-        GServer->FairyList.at(player->FairyListIndex)->LastTime = clock();
-        GServer->FairyList.at(player->FairyListIndex)->ListIndex = 0;
-        GServer->FairyList.at(player->FairyListIndex)->WaitTime = GServer->Config.FairyWait * (rand()% GServer->GetFairyRange(1)+ GServer->GetFairyRange(0));
+    if ( player->Fairy )
+    {
+        FairyList.at(player->FairyListIndex)->assigned = false;
+        FairyList.at(player->FairyListIndex)->LastTime = clock();
+        FairyList.at(player->FairyListIndex)->ListIndex = 0;
+        FairyList.at(player->FairyListIndex)->WaitTime = Config.FairyWait * (rand()% GetFairyRange(1)+ GetFairyRange(0));
         player->Fairy = false;
         player->FairyListIndex = 0;
-        GServer->DoFairyStuff(player, 0);
+        DoFairyStuff(player, 0);
         // recalculate FairyMax
-        int oldFairyMax = GServer->Config.FairyMax;
-        GServer->Config.FairyMax = (int)ceil((float)GServer->ClientList.size() / 50.0); //(1 fairy more every 50 player)
-	    if( oldFairyMax > GServer->Config.FairyMax ){
-            GServer->FairyList.erase( GServer->FairyList.begin() + GServer->FairyList.size() );
-        }
+        Config.FairyMax = (int)ceil((float)ClientList.size() / 50.0); //(1 fairy more every 50 player)
     }
     if(player->Party->party!=NULL)
     {

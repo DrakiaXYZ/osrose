@@ -91,15 +91,21 @@ bool CWorldServer::GiveExp( CMonster* thismon, UINT special_lvl, UINT special_ex
                     thisparty->num = 1;
                     thisparty->partymember[0] = thisclient->CharInfo->charid;
                     thisparty->maxlevel = thisclient->Stats->Level;
-                    for(int p=0;p<thisclient->VisiblePlayers.size();p++)
+                    for(unsigned int p=0;p<ClientList.size();p++)
                     {
-                        CPlayer* otherclient = thisclient->VisiblePlayers.at( p );
+                        CPlayer* otherclient = (CPlayer*) ClientList.at( p )->player;
+                        if(otherclient->client==NULL) continue;
                         if(otherclient->Party->party==NULL) continue;
-                        if( thisclient->Party->party == otherclient->Party->party )
+                        if(!otherclient->client->isActive) continue;
+                        if(!otherclient->Session->inGame) continue;
+                        if( IsVisible(thisclient, otherclient))
                         {
-                            thisparty->partymember[thisparty->num] = otherclient->CharInfo->charid;
-                            thisparty->num++;
-                            thisparty->maxlevel += otherclient->Stats->Level;
+                            if(thisclient->Party->party == otherclient->Party->party )
+                            {
+                                thisparty->partymember[thisparty->num] = otherclient->CharInfo->charid;
+                                thisparty->num++;
+                                thisparty->maxlevel += otherclient->Stats->Level;
+                            }
                         }
                     }
                     PartyExp.push_back( thisparty );

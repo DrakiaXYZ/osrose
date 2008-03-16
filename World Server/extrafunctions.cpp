@@ -107,35 +107,45 @@ void CWorldServer::SendToAll( CPacket* pak )
     for(UINT i=0;i<ClientList.size();i++)
     {
         CPlayer* otherclient = (CPlayer*) ClientList.at( i )->player;
-		if (otherclient->Session->inGame)
-            otherclient->client->SendPacket( pak );
-	}
+        if (otherclient->client == NULL) continue;
+        if (!otherclient->client->isActive) continue;
 
+        if (otherclient->Session->inGame)
+            otherclient->client->SendPacket( pak );
+    }
 }
 
-// Send a packet too all X who are visible
-// -- CLIENT --
 void CWorldServer::SendToVisible( CPacket* pak, CPlayer* thisclient, bool dothisclient )
 {
-	for(unsigned j=0; j<thisclient->VisiblePlayers.size(); j++)
+    for(UINT j=0;j<ClientList.size();j++)
     {
-        if(thisclient->VisiblePlayers.at( j )->client==NULL) continue;
-		 thisclient->VisiblePlayers.at( j )->client->SendPacket( pak );
-	}
-	if(dothisclient && thisclient->client!=NULL)
+        CPlayer* otherclient = (CPlayer*) ClientList.at( j )->player;
+        if(otherclient == NULL) continue;
+        if(otherclient->client==NULL) continue;
+        if(!otherclient->client->isActive) continue;
+        if(!otherclient->Session->inGame) continue;
+
+        if( IsVisible(thisclient, otherclient))
+            otherclient->client->SendPacket( pak );
+    }
+    if(dothisclient && thisclient->client!=NULL && thisclient->client->isActive)
         thisclient->client->SendPacket( pak );
 }
 
 void CWorldServer::SendToVisible( CPacket* pak, CPlayer* thisclient, CPlayer* xotherclient )
 {
-	for(unsigned j=0; j<thisclient->VisiblePlayers.size(); j++)
+    for(UINT j=0;j<ClientList.size();j++)
     {
-		CPlayer* otherclient = thisclient->VisiblePlayers.at( j );
-		if(otherclient==xotherclient)
-		  continue;
+		CPlayer* otherclient = (CPlayer*) ClientList.at( j )->player;
+		if(otherclient == NULL) continue;
+        if(otherclient==xotherclient) continue;
         if(otherclient->client==NULL) continue;
-		otherclient->client->SendPacket( pak );
-	}
+        if(!otherclient->client->isActive) continue;
+        if(!otherclient->Session->inGame) continue;
+
+        if( IsVisible(thisclient, otherclient))
+            otherclient->client->SendPacket( pak );
+    }
 }
 
 // -- MONSTER --
@@ -145,13 +155,18 @@ void CWorldServer::SendToVisible( CPacket* pak, CMonster* thismon, CDrop* thisdr
     for(UINT i=0;i<map->PlayerList.size();i++)
     {
         CPlayer* otherclient = map->PlayerList.at(i);
-		if( IsVisible(otherclient, thismon) )
-			otherclient->client->SendPacket( pak );
-		if(thisdrop!=NULL)
-		{
+        if(otherclient == NULL) continue;
+        if(otherclient->client==NULL) continue;
+        if(!otherclient->client->isActive) continue;
+        if(!otherclient->Session->inGame) continue;
+
+        if(IsVisible(otherclient,thismon))
+            otherclient->client->SendPacket( pak );
+        if(thisdrop!=NULL)
+        {
             otherclient->VisibleDrops.push_back( thisdrop );
         }
-	}
+    }
 }
 
 // -- CHARACTER --
@@ -172,24 +187,30 @@ void CWorldServer::SendToVisible( CPacket* pak, CCharacter* character, CDrop* th
 void CWorldServer::SendToVisible( CPacket* pak, CDrop* thisdrop )
 {
     CMap* map = MapList.Index[thisdrop->posMap];
+    if(map == NULL) return;
     for(UINT i=0;i<map->PlayerList.size();i++)
     {
         CPlayer* otherclient = map->PlayerList.at(i);
-		if( IsVisible(otherclient, thisdrop) )
-			otherclient->client->SendPacket( pak );
-	}
+        if (thisdrop == NULL || otherclient->client==NULL || !otherclient->client->isActive)
+            continue;
+        if( IsVisible(otherclient, thisdrop) )
+            otherclient->client->SendPacket( pak );
+    }
 }
 
 // Send a packet too all clients on the specified map
 void CWorldServer::SendToMap( CPacket* pak, int mapid )
 {
     CMap* map = MapList.Index[mapid];
+    if(map==NULL) return;
     for(UINT i=0;i<map->PlayerList.size();i++)
     {
         CPlayer* otherclient = map->PlayerList.at(i);
-		if( otherclient->Session->inGame )
-			otherclient->client->SendPacket( pak );
-	}
+        if (otherclient->client == NULL) continue;
+        if (!otherclient->client->isActive) continue;
+        if( otherclient->Session->inGame )
+            otherclient->client->SendPacket( pak );
+    }
 }
 
 // -----------------------------------------------------------------------------------------
@@ -696,7 +717,11 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
                 (useitem->itemnum==945 )  ||
                 (useitem->itemnum>1029 && useitem->itemnum<1035) )
             {
-                if( thisclient->Stats->MP < 33 ){delete useitem;}
+                if( thisclient->Stats->MP < 33 )
+                { 
+                    delete useitem; 
+                    return NULL; 
+                }
                 thisclient->Stats->MP -= 32;
                 useitem->usescript = 2;
                 switch( useitem->itemnum )
@@ -1292,18 +1317,21 @@ bool CWorldServer::GetSlotStorage( CPlayer* thisclient,UINT slotnum)
          return false;
      }
 
-    row = mysql_fetch_row(result);
-    //we refresh only the item storage we need.
-    thisclient->storageitems[slotnum].itemnum = atoi(row[0]);
-    thisclient->storageitems[slotnum].itemtype = atoi(row[1]);
-    thisclient->storageitems[slotnum].refine = atoi(row[2]);
-    thisclient->storageitems[slotnum].durability = atoi(row[3]);
-    thisclient->storageitems[slotnum].lifespan = atoi(row[4]);
-    thisclient->storageitems[slotnum].count = atoi(row[6]);
-    thisclient->storageitems[slotnum].stats = atoi(row[7]);
-    thisclient->storageitems[slotnum].socketed = (atoi(row[8])==1)?true:false;
-    thisclient->storageitems[slotnum].appraised = (atoi(row[9])==1)?true:false;
-    thisclient->storageitems[slotnum].gem = atoi(row[10]);
+    //row = mysql_fetch_row(result);
+    while(row = mysql_fetch_row(result))
+    {
+        //we refresh only the item storage we need.
+        thisclient->storageitems[slotnum].itemnum = atoi(row[0]);
+        thisclient->storageitems[slotnum].itemtype = atoi(row[1]);
+        thisclient->storageitems[slotnum].refine = atoi(row[2]);
+        thisclient->storageitems[slotnum].durability = atoi(row[3]);
+        thisclient->storageitems[slotnum].lifespan = atoi(row[4]);
+        thisclient->storageitems[slotnum].count = atoi(row[6]);
+        thisclient->storageitems[slotnum].stats = atoi(row[7]);
+        thisclient->storageitems[slotnum].socketed = (atoi(row[8])==1)?true:false;
+        thisclient->storageitems[slotnum].appraised = (atoi(row[9])==1)?true:false;
+        thisclient->storageitems[slotnum].gem = atoi(row[10]);
+    }
     GServer->DB->QFree( );
 
 

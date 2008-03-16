@@ -4133,11 +4133,19 @@ bool CWorldServer::pakGMBuff( CPlayer* thisClient, int strength )
     pakGMGiveBuff( thisClient, thisClient, 3901, strength); // Max MP   (420s) (39)
     pakGMGiveBuff( thisClient, thisClient, 3912, strength); //additional damage (420s) (36)
     // Buff all players visible
-    for (int i = 0; i < thisClient->VisiblePlayers.size(); i++)
+//    for (int i = 0; i < thisClient->VisiblePlayers.size(); i++)
+//    {
+//        CPlayer* target = thisClient->VisiblePlayers[i];
+//        if ( target->Session->isLoggedIn == false ) continue;
+//        if ( target->Stats->HP <= 0 ) continue;
+    for(UINT j=0;j<ClientList.size();j++)
     {
-        CPlayer* target = thisClient->VisiblePlayers[i];
+        CPlayer* target = (CPlayer*) ClientList.at( j )->player;
+        if ( target == NULL) continue;
         if ( target->Session->isLoggedIn == false ) continue;
         if ( target->Stats->HP <= 0 ) continue;
+        if ( IsVisible(thisClient, target))
+        {
         pakGMGiveBuff( thisClient, target, 3906, strength); // Attack   (300s) (18)
         pakGMGiveBuff( thisClient, target, 3905, strength); // Defense  (300s) (19)
         pakGMGiveBuff( thisClient, target, 3908, strength); // Accuracy (420s) (20)
@@ -4149,7 +4157,7 @@ bool CWorldServer::pakGMBuff( CPlayer* thisClient, int strength )
         pakGMGiveBuff( thisClient, target, 3900, strength); // Max HP   (420s) (38)
         pakGMGiveBuff( thisClient, target, 3901, strength); // Max MP   (420s) (39)
         pakGMGiveBuff( thisClient, target, 3912, strength); //additional damage (420s) (36)
- 
+        }
     }
     return true;
 }
