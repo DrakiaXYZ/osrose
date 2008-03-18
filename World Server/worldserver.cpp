@@ -476,6 +476,9 @@ bool CWorldServer::OnServerReady( )
     LoadJemItem( );
     LoadEquip( );
     LoadItemStats( );
+    // PY new Stat Lookup table
+    LoadStatLookup( );
+    // PY end 
     LoadBreakList( );     // geo edit for disassemble // 22 oct 07
     LoadSkillData( );
 

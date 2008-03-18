@@ -870,6 +870,15 @@ struct CItemStas
   UINT value[2];
 };
 
+//PY stat lookup table
+struct CExtraStats
+{
+ UINT id;
+ UINT statnumber;
+ };
+ //PY end
+
+
 struct CFairy
 {
     UINT ListIndex;

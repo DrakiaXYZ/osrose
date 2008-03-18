@@ -183,7 +183,8 @@ bool CLoginServer::pakGetServers( CLoginClient* thisclient, CPacket* P )
     	UINT maxconnections = atoi(row[3]);
     	BYTE id = atoi( row[0] );
     	string name = row[1];
-    	BYTE status = (((100 * connected) / maxconnections==0?1:maxconnections) / 5) & 0xff;  
+    	//BYTE status = (((100 * connected) / maxconnections==0?1:maxconnections) / 5) & 0xff;  
+    	unsigned int status = (connected * 100) / maxconnections;
 		ADDWORD( pak, id );
 		ADDBYTE( pak, 0 );
 		ADDWORD( pak, status );

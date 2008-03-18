@@ -617,8 +617,13 @@ CDrop* CWorldServer::GetPYDrop( CMonster* thismon, UINT droptype )
         }
         //Uniques count as blues.
         if(newdrop->item.itemnum > 900)pstats = 1; //make sure we get stats for this unique item
-        if( pstats < Config.StatChance)        // default 5%
-            newdrop->item.stats = rand()%300;
+        if( pstats < Config.StatChance)
+        {   // default 5%
+            //PY stats
+            newdrop->item.stats = GetExtraStats( 0 );
+            //newdrop->item.stats = rand()%300;
+        }
+        
     }
     newdrop->item.gem = 0;
 
@@ -626,6 +631,14 @@ CDrop* CWorldServer::GetPYDrop( CMonster* thismon, UINT droptype )
     return newdrop;
 }
 
+
+ // PY extra stats lookup
+ UINT CWorldServer::GetExtraStats( UINT modifier )
+ {
+    UINT stat = rand()%300 + modifier;
+    if(stat > 300)stat = 300;
+    return StatLookup[stat].statnumber;
+ }
 
 UINT CWorldServer::GetColorExp( UINT playerlevel,UINT moblevel, UINT exp )
 {

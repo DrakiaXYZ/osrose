@@ -1806,7 +1806,8 @@ else if (strcmp(command, "give2")==0)
         }
         sprintf(line0, "There are currently %i players connected!", ((ClientList.size()-1)-hiddenam));
         Log( MSG_GMACTION, " %s : /who2" , thisclient->CharInfo->charname);
-        SendPM(thisclient, line0 );
+        
+
         return true;
     }
     else if(strcmp(command, "rate")==0) //incomplete

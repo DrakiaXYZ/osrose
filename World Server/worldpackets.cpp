@@ -300,8 +300,13 @@ void CWorldServer::pakQuestData( CPlayer *thisclient )
     if(thisclient->speaksLuna)
         liste_flags[3]=1;            //Lunar language
 
-    if(thisclient->canUseFlyingVessel)
-       liste_flags[37]=1;           //Warp vessel
+    //Warp vessel
+    if(thisclient->canUseFlyingVessel)    
+    {      
+        liste_flags[1]=1;      
+        liste_flags[16]=1;       
+        liste_flags[37]=1;    
+    }       
 
     //1: Stat reset already done
     //4: stat reset done (event ?)

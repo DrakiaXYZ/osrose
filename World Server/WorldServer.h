@@ -168,6 +168,10 @@ class CWorldServer : public CServerSocket
         void ReturnItemMallList(CPlayer* thisclient);   //LMA: Return ItemMall List
         void TakeItemMallList(CPlayer* thisclient,int qty,int slot); //LMA: takes an item from Item Mall to player's inventory
         void RefreshFairy( );
+        
+        // PY extra stats lookup
+        UINT GetExtraStats( UINT modifier );
+        // PY end 
 
         //------------------ Fairies ---------------------
         void DoFairyStuff( CPlayer* targetclient, int action );
@@ -323,6 +327,7 @@ class CWorldServer : public CServerSocket
     	bool LoadJemItem( );
     	bool LoadEquip( );
     	bool LoadItemStats( );
+    	bool LoadStatLookup( ); 
         bool LoadTeleGateData( );
         bool LoadCustomTeleGate( );
         bool LoadCustomEvents( );
@@ -374,6 +379,8 @@ class CWorldServer : public CServerSocket
         vector<CChest*>         ChestList;              // Chest List
 
         CItemStas               StatsList[500];
+        CExtraStats             StatLookup[300];        //PY: Item Stats
+        
         UINT                    upgrade[10];
         CEquipList              EquipList[10];
         CJemList                JemList;

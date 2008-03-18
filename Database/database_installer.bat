@@ -83,6 +83,8 @@ echo updating storage
 %mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < storage.sql
 echo updating chest_data
 %mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < chest_data.sql
+echo updating extra_stats
+%mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < list_extra_stats.sql
 
 :end
 echo.

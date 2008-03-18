@@ -1403,6 +1403,32 @@ bool CWorldServer::LoadItemStats( )
     return true;
 }
 
+ 
+//PY stat lookup table
+bool CWorldServer::LoadStatLookup( )
+{
+    Log( MSG_INFO, "Loading Stats Lookup Table" );
+    MYSQL_ROW row;
+    MYSQL_RES *result = DB->QStore("SELECT id, stat_number FROM list_extra_stats");
+    if(result==NULL)
+    {
+        DB->QFree( );
+        return false;
+    }
+    UINT counter = 1;
+    while( row = mysql_fetch_row(result) )
+    {
+        StatLookup[counter].id = atoi(row[0]);
+        StatLookup[counter].statnumber = atoi(row[1]);
+        counter++;
+    }
+    DB->QFree( );
+    Log( MSG_INFO, "Stats Lookup Data Loaded" );
+    return true;
+}
+//PY end
+ 
+
 // geo edit for disassemble // 22 oct 07
 bool CWorldServer::LoadBreakList()
 {
