@@ -379,7 +379,7 @@ class CWorldServer : public CServerSocket
         vector<CChest*>         ChestList;              // Chest List
 
         CItemStas               StatsList[500];
-        CExtraStats             StatLookup[300];        //PY: Item Stats
+        CExtraStats             StatLookup[301];        //PY: Item Stats
         
         UINT                    upgrade[10];
         CEquipList              EquipList[10];
