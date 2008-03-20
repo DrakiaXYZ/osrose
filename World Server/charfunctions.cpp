@@ -463,7 +463,13 @@ void CCharacter::RefreshBuff( )
                      else
                          Status->ExtraDamage_down = 0xff;
                          
-                break;                
+                break;
+                case A_STEALTH:
+                    if(i<15)
+                        Status->Stealth_up = 0xff;
+                    else
+                        Status->Stealth_down = 0xff;
+                break;
                 case A_STUN:
                      Status->Stun = 0xff;
                      printf("removing stun\n");

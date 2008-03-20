@@ -895,8 +895,8 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
 
             //LMA: Anti hack protection, those skills (plastic surgeon, reset skills) will be
             //deleted in the quest itself, it'll avoid packets injections ;) .
-            if (useitem->itemnum>=451&&useitem->itemnum<=453)
-               useitem->usescript = 11;
+//            if (useitem->itemnum>=451&&useitem->itemnum<=453)
+//               useitem->usescript = 11;
         }
         break;
         case 315://Repair Tool

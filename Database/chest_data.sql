@@ -1,8 +1,8 @@
 /*
 MySQL Data Transfer
-Source Host: dhrr
+Source Host: osrose
 Source Database: osrose
-Target Host: dhrr
+Target Host: osrose
 Target Database: osrose
 Date: 3/14/2008 4:49:40 AM
 */
