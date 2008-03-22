@@ -2727,128 +2727,89 @@ bool CWorldServer::pakUseItem ( CPlayer* thisclient, CPacket* P )
     return true;
 }
 
+
+ 
+ 
+ 
 // Level UP Skill
 bool  CWorldServer::pakLevelUpSkill( CPlayer *thisclient, CPacket* P )
 {       
-    WORD pos = GETWORD ((*P),0);
-    WORD skill = GETWORD ((*P),2);
-    if(pos>=MAX_SKILL)
+    WORD pos = GETWORD ((*P),0);   // number of skill. appears to be an array index
+    WORD skill = GETWORD ((*P),2); // skill id
+    if(pos >= MAX_SKILL)             //can't have more than 60 skills apparently
     {
         Log( MSG_HACK, "Invalid Skill id %i for %s ", pos, thisclient->CharInfo->charname );
         return false;
     }        
-    int b=0;
     CSkills* thisskill = GetSkillByID( skill );
     if(thisskill==NULL)
         return true;
-    if(thisclient->CharInfo->SkillPoints>=thisskill->sp)
+    if(thisclient->cskills[pos].id != skill - thisclient->cskills[pos].level)                
+        return true;
+        
+ 
+// checks made for prerequisite skills here.
+    UINT hasPreskill = 0;
+    for(int i=0;i<3;i++)
     {
-        b=7;
-    }
-    else if(thisclient->cskills[pos].id!=skill-thisclient->cskills[pos].level)
-    {
-        b=4;
-    }
-    if(b==0)
-    {
-        UINT rclass = 0;
-        for(UINT i=0;i<4; i++)
+        int preskill = thisskill->rskill[i];
+        if(thisskill->lskill[i] > 0)
+            preskill += thisskill->lskill[i] - 1;
+        if(preskill == 0)
         {
-            if (thisskill->c_class[i] == 41)
+            hasPreskill ++; // no preskill defined in this element so give a credit then skip to the next preskill.
+            continue;            
+        }
+        Log( MSG_INFO, "[DEBUG] Checking %i / 3, preskill %i",i,preskill);
+        for(int skillid=0;skillid<MAX_SKILL;skillid++)
+        {
+            Log( MSG_INFO, "[DEBUG] Skillid %i < %u",skillid,MAX_SKILL);
+            if(preskill == thisclient->cskills[skillid].id)
             {
-                rclass = 111;
-            }
-            else if (thisskill->c_class[i] == 42)
-            {
-                rclass = 211;
-            }
-            else if (thisskill->c_class[i] == 43)
-            {
-                rclass = 311;
-            }
-            else if (thisskill->c_class[i] == 44)
-            {
-                rclass = 411;
-            }
-            else if (thisskill->c_class[i] == 61)
-            {
-                rclass = 121;
-            }
-            else if (thisskill->c_class[i] == 62)
-            {
-                rclass = 122;
-            }
-            else if (thisskill->c_class[i] == 63)
-            {
-                rclass = 221;
-            }
-            else if (thisskill->c_class[i] == 64)
-            {
-                rclass = 222;
-            }
-            else if (thisskill->c_class[i] == 65)
-            {
-                rclass = 321;
-            }
-            else if (thisskill->c_class[i] == 66)
-            {
-                rclass = 322;
-            }
-            else if (thisskill->c_class[i] == 67)
-            {
-                rclass = 421;
-            }
-            else if (thisskill->c_class[i] == 68)
-            {
-                rclass = 422;
-            }
-            if(rclass == thisclient->CharInfo->Job)
-            {
-                b=1;
-                break;
-            }
-            else
-            {
-                b=2;
-            }
+                hasPreskill ++;
+                break; // no need to carry on. Skill found
+            }          
         }
     }
-    if(b==0)
-    {
-        for(UINT i=0;i<3; i++)
-        {
-            if(thisskill->rskill[i] != 0)
-            {
-                UINT rskill = thisclient->GetPlayerSkill(thisskill->rskill[i]);
-                if(rskill == 0xffff)
-                {
-                    b=3;
-                }
-                if(thisskill->lskill[i] > thisclient->cskills[rskill].level)
-                {
-                    b=5;
-                }
-            }
-        }
+    Log( MSG_INFO, "[DEBUG] hasPreskill state = %i",hasPreskill);
+    if(hasPreskill != 3)
+    { 
+        Log( MSG_INFO, "Prerequisite skills not all found" ); 
+        return true; //doesn't have the necessary prerequisite skill
     }
-    if(b==0)
+        
+    // is character a high enough level?
+    if(thisskill->clevel > thisclient->Stats->Level)
     {
-        thisclient->CharInfo->SkillPoints -= 1;
+        Log( MSG_INFO, "Character level too low" ); 
+        return true; //not high enough level
     }
-    BEGINPACKET( pak, 0x7b1 );
-    ADDBYTE    ( pak, b);
-    ADDWORD    ( pak, pos); 
-    ADDWORD    ( pak, skill);
-    ADDWORD    ( pak, thisclient->CharInfo->SkillPoints);    
-    thisclient->client->SendPacket( &pak );       
-    if(b==0)
+        
+    //check that it is the next skill in the series
+    if(thisclient->cskills[pos].id != skill - thisclient->cskills[pos].level) //check that it is the next skill in the series
     {
-        thisclient->cskills[pos].level+=1; 
-        thisclient->cskills[pos].thisskill = thisskill;
-        thisclient->SetStats( );
+        Log( MSG_INFO, "Skill Id doesn't match next in the CSkills series" ); 
+        return true;
+    }
+    
+    if(thisclient->CharInfo->SkillPoints >= thisskill->sp)
+    {
+       thisclient->CharInfo->SkillPoints -= 1;
+       BEGINPACKET( pak, 0x7b1 );
+       ADDBYTE    ( pak, 0x00);
+       ADDWORD    ( pak, pos);  
+       ADDWORD    ( pak, skill);
+       ADDWORD    ( pak, thisclient->CharInfo->SkillPoints);     
+       thisclient->client->SendPacket( &pak );       
+       thisclient->cskills[pos].level+=1; 
+       thisclient->cskills[pos].thisskill = thisskill;
+       thisclient->SetStats( );
     }
     return true;
 }
+ 
+ 
+
 
 
 // Equip bullets arrows and cannons
@@ -4076,22 +4037,27 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
                 return true;
             unsigned int prefine = rand()%100;
             bool success = false;
-            if( prefine <= upgrade[nextlevel] )
-                success = true;
-            BEGINPACKET( pak, 0x7bc )
+           if( prefine <= upgrade[nextlevel] )
+                success = true;      
+ 
+            BEGINPACKET( pak, 0x7bc );
             if( success )
             {
                 thisclient->items[item].refine = nextlevel*16;
-                ADDBYTE    ( pak, 0x10 );//successful
+                ADDBYTE    ( pak, 0x10 );// 0x10 successful
             }
             else
             {
-                ClearItem( thisclient->items[item] );
-                ADDBYTE    ( pak, 0x11 );//Fail
+                if (nextlevel > 5) { // take item away
+                    ClearItem( thisclient->items[item] );
+                } else { // decreade grade
+                    thisclient->items[item].refine = RandNumber(0,4) * 16;
+                }
+                ADDBYTE    ( pak, 0x11 );// 0x11 Fail
             }
             thisclient->items[material].count--; // geo edit, moved this up two lines
             if(thisclient->items[material].count<1)
-                ClearItem( thisclient->items[material] );
+                ClearItem( thisclient->items[material] );                    
             ADDBYTE    ( pak, 0x03 );//items a actualizar
             ADDBYTE    ( pak, material );
             ADDDWORD   ( pak, BuildItemHead( thisclient->items[material] ) );
