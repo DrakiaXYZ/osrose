@@ -2748,6 +2748,7 @@ bool  CWorldServer::pakLevelUpSkill( CPlayer *thisclient, CPacket* P )
         return true;
         
  
+ 
 // checks made for prerequisite skills here.
     UINT hasPreskill = 0;
     for(int i=0;i<3;i++)
@@ -2760,24 +2761,26 @@ bool  CWorldServer::pakLevelUpSkill( CPlayer *thisclient, CPacket* P )
             hasPreskill ++; // no preskill defined in this element so give a credit then skip to the next preskill.
             continue;            
         }
-        Log( MSG_INFO, "[DEBUG] Checking %i / 3, preskill %i",i,preskill);
+//        Log( MSG_INFO, "[DEBUG] Checking %i / 3, preskill %i",i,preskill);
         for(int skillid=0;skillid<MAX_SKILL;skillid++)
         {
-            Log( MSG_INFO, "[DEBUG] Skillid %i < %u",skillid,MAX_SKILL);
-            if(preskill == thisclient->cskills[skillid].id)
+//            Log( MSG_INFO, "[DEBUG] Skillid %i < %u",skillid,MAX_SKILL);
+            int checkskill = thisclient->cskills[skillid].id + thisclient->cskills[skillid].level -1;
+            if(preskill == checkskill)
             {
                 hasPreskill ++;
+//                Log( MSG_INFO, "[DEBUG] Skill matched to requirements");
                 break; // no need to carry on. Skill found
             }          
         }
     }
-    Log( MSG_INFO, "[DEBUG] hasPreskill state = %i",hasPreskill);
+//    Log( MSG_INFO, "[DEBUG] hasPreskill state = %i",hasPreskill);
     if(hasPreskill != 3)
     { 
         Log( MSG_INFO, "Prerequisite skills not all found" ); 
         return true; //doesn't have the necessary prerequisite skill
     }
-        
+    
     // is character a high enough level?
     if(thisskill->clevel > thisclient->Stats->Level)
     {
