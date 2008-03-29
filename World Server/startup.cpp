@@ -453,7 +453,7 @@ bool CWorldServer::LoadChestData( )
 {
     Log(MSG_LOAD, "Chest Data                   ");
     MYSQL_ROW row;
-    MYSQL_RES *result = DB->QStore("SELECT chestid,reward,rewardtype,prob FROM chest_data order by id");
+    MYSQL_RES *result = DB->QStore("SELECT chestid,reward,rewardtype,prob,maxamount,maxpossible FROM chest_data order by id");
     if(result==NULL) return false;
     while( row = mysql_fetch_row(result) )
     {
