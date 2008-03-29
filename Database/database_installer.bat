@@ -7,8 +7,8 @@ REM MYSQL BIN PATH
 set mysqlBinPath=C:\Program Files\MySQL\MySQL Server 5.0\bin
 
 set user=root
-set pass=
-set db=roseon
+set pass=thefool
+set db=roseon81
 set host=localhost
 
 REM ############################################
@@ -85,6 +85,24 @@ echo updating chest_data
 %mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < chest_data.sql
 echo updating extra_stats
 %mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < list_extra_stats.sql
+echo mileage
+%mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < mileage.sql
+echo ban_list
+%mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < ban_list.sql
+echo item_drops2
+%mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < item_drops2.sql
+echo item_reference
+%mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < item_reference.sql
+echo custom events
+%mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < list_customevents.sql
+echo custom gates
+%mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < list_customgates.sql
+echo extra stats
+%mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < list_extra_stats.sql
+echo skillbooks
+%mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < list_skillbooks.sql
+echo wishlist
+%mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < wishlist.sql
 
 :end
 echo.
