@@ -64,12 +64,16 @@ CPlayer* CParty::GetMemberByCharID( UINT id )
 void CParty::SendToMembers( CPacket* pak, CPlayer* explayer )
 {
     for(UINT i=0;i<Members.size( );i++)
-    {   
+    {
         CPlayer* member = Members.at(i);
         if(member==explayer)
             continue;
+        //Maxxon: Party crash when exit fix.
+        if (member == NULL) {
+            continue;
+        }
         member->client->SendPacket( pak );
-    }
+    }   
 }
 
 void CParty::SendToVisible( CPacket* pak, CPlayer* thisclient )

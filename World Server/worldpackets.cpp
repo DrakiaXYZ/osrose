@@ -1579,6 +1579,8 @@ bool CWorldServer::pakCharSelect ( CPlayer* thisclient, CPacket* P )
 {
    	thisclient->savedata();
   	if(!thisclient->Session->inGame) return true;
+	//Maxxon: Party crash when exit fix.
+	OnClientDisconnect(thisclient->client);  	
     thisclient->Session->isLoggedIn = false;
     if(thisclient->client!=NULL) thisclient->client->isActive = false;
     //send packet to change messenger status (offline)
@@ -3148,6 +3150,91 @@ bool CWorldServer::pakChangeStorage( CPlayer* thisclient, CPacket* P)
             */
 
             CItem newitem = thisclient->items[itemslot];
+ 			//Maxxon: Deposit Fee
+            int storageprice=0;
+            switch (newitem.itemtype) {
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                case 6:
+                case 7:
+                case 8:
+                case 9:
+                {
+                    // EQ
+                    CEquip* neweq = EquipList[newitem.itemtype].Index[newitem.itemnum];
+                    if (neweq == NULL) {
+                        storageprice = -1;
+                    } else {
+                        storageprice = (neweq->price / 200 + 1) * (neweq->pricerate + 1);
+                    }
+                }
+                    break;
+                case 10:
+                {
+                    // consumes
+                    CUseData* newuse = UseList.Index[newitem.itemnum];
+                    if (newuse == NULL) {
+                        storageprice = -1;
+                    } else {
+                        storageprice = GETWORD((*P),6) * ((newuse->price / 200 + 1) * (newuse->pricerate + 1));
+                    }
+                }
+                    break;
+                case 11:
+                {
+                    // gems
+                    CJemData* thisjem = JemList.Index[newitem.itemnum];
+                    if (thisjem == NULL) {
+                        storageprice = -1;
+                    } else {
+                        storageprice = GETWORD((*P),6) * ((thisjem->price / 200 + 1) * (thisjem->pricerate + 1));
+                    }
+                }
+                    break;
+                case 12:
+                {
+                    // mats
+                    CNaturalData* newnatural = NaturalList.Index[newitem.itemnum];
+                    if (newnatural == NULL) {
+                        storageprice = -1;
+                    } else {
+                        storageprice = GETWORD((*P),6) * ((newnatural->price / 200 + 1) * (newnatural->pricerate + 1));
+                    }
+                }
+                    break;
+                case 14:
+                {
+                    // PAT
+                    CPatData* newpat = PatList.Index[newitem.itemnum];
+                    if (newpat == NULL) {
+                        storageprice = -1;
+                    } else {
+                        storageprice = (newpat->price / 200 + 1) * (newpat->pricerate + 1);
+                    }
+                }
+                    break;
+                default:
+                    Log (MSG_ERROR, "pakChangeStorage: item type %i unknown!", newitem.itemtype);
+                    storageprice = -1;
+                    break;
+            }
+ 
+            if (storageprice < 0) {
+                Log(MSG_HACK, "pakChangeStorage: crappy persons did try to hack your server");
+                return false;
+            }
+ 
+            if (storageprice <= thisclient->CharInfo->Zulies) {
+                thisclient->CharInfo->Zulies -= storageprice;
+            } else {
+                // not enough zulies
+                return true;
+            }
+			//End of deposit Fee.           
+            
             if(newitem.itemtype>9 && newitem.itemtype<14)
             {
                 WORD count = GETWORD((*P),6);
