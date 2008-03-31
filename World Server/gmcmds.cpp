@@ -197,7 +197,7 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
 //         if(Config.Command_Reload > thisclient->Session->accesslevel )
            if(Config.Command_Reload > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)
            {
-           Log( MSG_GMACTION, " %s : /reload NOT ALLOWED" , thisclient->CharInfo->charname, tmp);
+           Log( MSG_GMACTION, " %s : /reload NOT ALLOWED" , thisclient->CharInfo->charname);
            char buffer[200];
            sprintf ( buffer, "reload NOT ALLOWED");
            SendPM(thisclient, buffer);

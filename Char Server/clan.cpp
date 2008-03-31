@@ -566,7 +566,9 @@ bool CCharServer::pakClanManager ( CCharClient* thisclient, CPacket* P )
             else
             {                   //    0      1        2
                 result = DB->QStore("SELECT clan_rank,classid,level FROM characters WHERE char_name='%s'",nick);
-                if(result==NULL);
+                //Bug
+                //if(result==NULL);
+                if(result==NULL)
                 {
                     delete []nick;
                     return false;                

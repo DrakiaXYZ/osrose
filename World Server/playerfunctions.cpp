@@ -407,7 +407,9 @@ UINT CPlayer::GetNewItemSlot( CItem thisitem )
     {
         UINT slot=12;
         slot += (tabsize*itemtab)+i;
-        if(items[slot].itemnum==0 &items[slot].count<1)
+		//LMA: Bug?
+        //if(items[slot].itemnum==0 &items[slot].count<1)
+		if(items[slot].itemnum==0&&items[slot].count<1)
             return slot;  
     }   
     return 0xffff;

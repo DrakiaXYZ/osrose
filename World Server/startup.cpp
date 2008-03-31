@@ -91,7 +91,7 @@ bool CWorldServer::LoadNPCData( )
                 if((tmp = strtok( NULL , "|"))==NULL)
                     newnpc->askills[i]=newnpc->askills[0];
                 else
-                    newnpc->askills[i]==atoi(tmp);
+                    newnpc->askills[i]=atoi(tmp);
             }
 
         }
@@ -104,7 +104,7 @@ bool CWorldServer::LoadNPCData( )
                 if((tmp = strtok( NULL , "|"))==NULL)
                     newnpc->bskills[i]=newnpc->bskills[0];
                 else
-                    newnpc->bskills[i]==atoi(tmp);
+                    newnpc->bskills[i]=atoi(tmp);
             }
 
         }
@@ -117,7 +117,7 @@ bool CWorldServer::LoadNPCData( )
                 if((tmp = strtok( NULL , "|"))==NULL)
                     newnpc->dskills[i]=newnpc->dskills[0];
                 else
-                    newnpc->dskills[i]==atoi(tmp);
+                    newnpc->dskills[i]=atoi(tmp);
             }
 
         }

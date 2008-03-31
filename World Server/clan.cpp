@@ -223,7 +223,7 @@ bool CWorldServer::pakCreateClan ( CPlayer* thisclient, CPacket* P )
     if(thisclient->CharInfo->Zulies<1000000)
         return true;
     thisclient->CharInfo->Zulies -= 1000000;
-	MYSQL_ROW row;    
+	//MYSQL_ROW row;    
     int background = GETWORD((*P),1);
     int icon = GETWORD((*P),3);
     char *name = "";

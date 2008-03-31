@@ -593,8 +593,13 @@ CSkills* CWorldServer::GetSkillByID( unsigned int id )
         if(A==B)
         {
             CSkills* thisskill = (CSkills*) SkillList.at( A );
+			//LMA: bugs?
+			/*
             if( id = thisskill->id );
             return thisskill;
+			*/
+            if( id == thisskill->id )
+				return thisskill;
          }
         C = (A+B)/2;
         CSkills* thisskill = (CSkills*) SkillList.at( C );
