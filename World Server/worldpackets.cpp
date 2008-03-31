@@ -2764,18 +2764,20 @@ bool  CWorldServer::pakLevelUpSkill( CPlayer *thisclient, CPacket* P )
             continue;            
         }
 //        Log( MSG_INFO, "[DEBUG] Checking %i / 3, preskill %i",i,preskill);
-        for(int skillid=0;skillid<MAX_SKILL;skillid++)
+ 
+   for(int skillid=0;skillid<MAX_SKILL;skillid++)
         {
-//            Log( MSG_INFO, "[DEBUG] Skillid %i < %u",skillid,MAX_SKILL);
-            int checkskill = thisclient->cskills[skillid].id + thisclient->cskills[skillid].level -1;
-            if(preskill == checkskill)
+            //Log( MSG_INFO, "[DEBUG] Skillid %i < %u",skillid,MAX_SKILL);
+            if(thisclient->cskills[skillid].id == thisskill->rskill[i] && thisclient->cskills[skillid].level >= thisskill->lskill[i])
+            //int checkskill = thisclient->cskills[skillid].id + thisclient->cskills[skillid].level -1;
+            //if(preskill == checkskill)
             {
                 hasPreskill ++;
-//                Log( MSG_INFO, "[DEBUG] Skill matched to requirements");
+                //Log( MSG_INFO, "[DEBUG] Skill matched to requirements");
                 break; // no need to carry on. Skill found
             }          
         }
-    }
+   }
 //    Log( MSG_INFO, "[DEBUG] hasPreskill state = %i",hasPreskill);
     if(hasPreskill != 3)
     { 
