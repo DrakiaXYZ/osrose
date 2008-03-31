@@ -14,12 +14,12 @@ CREATE TABLE `chest_data` (
 `Description` varchar(255) NOT NULL,
 PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-INSERT INTO `chest_data` VALUES ('1', '70', '153|153|153|142|147|146|149|150', '2|3|5|10|10|10|10|10', '800|800|800|900|900|900|900|900', '', '', '', 'Small Gift Box - 2006');
-INSERT INTO `chest_data` VALUES ('2', '71', '153|153|153|142|147|146|149|150', '2|3|5|10|10|10|10|10', '800|800|800|900|900|900|900|900', '', '', '', 'Surprise Gift Box - 2006');
-INSERT INTO `chest_data` VALUES ('3', '72', '153|153|153|142|147|146|149|150', '2|3|5|10|10|10|10|10', '800|800|800|900|900|900|900|900', '', '', '', 'Impressive Gift Box - 2006');
-INSERT INTO `chest_data` VALUES ('11', '905', '13', '10', '500', '', '', '', 'Small Gift Box ?');
-INSERT INTO `chest_data` VALUES ('12', '906', '13', '10', '500', '', '', '', 'Surprise Gift Box ?');
-INSERT INTO `chest_data` VALUES ('13', '907', '13', '10', '500', '', '', '', 'Impressive Gift Box ?');
+INSERT INTO `chest_data` VALUES ('1', '70', '153|153|153|142|147|146|149|150', '2|3|5|10|10|10|10|10', '800|800|800|900|900|900|900|900', '1|1|1|1|1|1|1|1', '1', '8', 'Small Gift Box - 2006');
+INSERT INTO `chest_data` VALUES ('2', '71', '153|153|153|142|147|146|149|150', '2|3|5|10|10|10|10|10', '800|800|800|900|900|900|900|900', '1|1|1|1|1|1|1|1', '1', '8', 'Surprise Gift Box - 2006');
+INSERT INTO `chest_data` VALUES ('3', '72', '153|153|153|142|147|146|149|150', '2|3|5|10|10|10|10|10', '800|800|800|900|900|900|900|900', '1|1|1|1|1|1|1|1', '1', '8', 'Impressive Gift Box - 2006');
+INSERT INTO `chest_data` VALUES ('11', '905', '13', '10', '500', '1', '1', '1', 'Small Gift Box ?');
+INSERT INTO `chest_data` VALUES ('12', '906', '13', '10', '500', '1', '1', '1', 'Surprise Gift Box ?');
+INSERT INTO `chest_data` VALUES ('13', '907', '13', '10', '500', '1', '1', '1', 'Impressive Gift Box ?');
 INSERT INTO `chest_data` VALUES ('1801', '75', '146|147|153|153|153|987|988|898', '10|10|2|3|5|10|10|10', '65000|20000|4000|3000|3000|2000|2000|1000', '5|5|1|1|1|3|3|1', '1', '8', 'Event: Gift Box (S)');
 INSERT INTO `chest_data` VALUES ('1802', '76', '146|147|153|153|153|987|988|898', '10|10|2|3|5|10|10|10', '65000|20000|4000|3000|3000|2000|2000|1000', '5|5|1|1|1|3|3|1', '2', '8', 'Event: Gift Box (M)');
 INSERT INTO `chest_data` VALUES ('1803', '77', '011|030|280|005|102|202|006|103|203', '10|10|10|14|14|14|14|14|14', '60000|25000|3000|2000|2000|2000|2000|2000|2000', '20|20|1|1|1|1|1|1|1', '1', '9', 'Event: GM Event Gift Box ');

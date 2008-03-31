@@ -169,7 +169,7 @@ bool CPlayer::loaddata( )
     {
         items[i].sig_data=-1;
         items[i].sig_head=-1;
-        items[i].sig_gem-1;                        
+        items[i].sig_gem=-1;                        
         items[i].sp_value=0;
         items[i].last_sp_value=0;        
     }
@@ -821,7 +821,7 @@ bool CPlayer::loaddata( )
             }             
             
             //LMA: Patch for lvl 30 class quests.
-            if (myquest->thisquest->id==857|myquest->thisquest->id==907||myquest->thisquest->id==956||myquest->thisquest->id==1006||myquest->thisquest->id==1007)
+            if (myquest->thisquest->id==857||myquest->thisquest->id==907||myquest->thisquest->id==956||myquest->thisquest->id==1006||myquest->thisquest->id==1007)
             {
                if (QuestVariables[5]<0x04)
                {
