@@ -708,13 +708,14 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
                 useitem->usetype = UseList.Index[useitem->itemnum]->useeffect[1];
                 useitem->usevalue = 0;
             }
-            else //Super Cherry - Berry -- Not complete
-            if((useitem->itemnum>980 && useitem->itemnum<986)|| (useitem->itemnum>986 && useitem->itemnum<989))
+ 
+else // cherry berrys
+            if((useitem->itemnum >= 981 && useitem->itemnum <= 988) || (useitem->itemnum >= 1035 && useitem->itemnum <= 1039))
             {
-            useitem->usescript = 1;
-            useitem->usetype = UseList.Index[useitem->itemnum]->useeffect[0];
-            useitem->usevalue = UseList.Index[useitem->itemnum]->useeffect[1];
-            }
+                useitem->usescript = 0;
+                useitem->usetype = UseList.Index[useitem->itemnum]->useeffect[0]; // don't really need this as it is zero
+                useitem->usevalue = UseList.Index[useitem->itemnum]->useeffect[1];                  
+            } 
 
             else //Return Scrolls
             if( (useitem->itemnum>349 && useitem->itemnum<355) ||

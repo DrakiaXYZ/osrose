@@ -2534,6 +2534,15 @@ bool CWorldServer::pakUseItem ( CPlayer* thisclient, CPacket* P )
     bool flag = false;
     switch(thisuse->usescript)
     {
+ 
+        case 0: //  cherry berrys
+            thisclient->StartAction( NULL, BUFF_SELF, thisuse->usevalue );
+            thisclient->items[slot].count -= 1;        
+            if( thisclient->items[slot].count == 0 )        
+                ClearItem( thisclient->items[slot] ); 
+            flag = true;
+        break;
+
         case 1: // Food
         {
             thisclient->UsedItem->usevalue = thisuse->usevalue;
