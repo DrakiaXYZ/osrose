@@ -51,7 +51,8 @@ bool CPlayer::AddQuest( unsigned long int questid )
            return false;        
     }
     
-    // Check if is Start Quest ID        
+    // Check if is Start Quest ID
+    QUESTS* myquest_first = new QUESTS();
     CQuest* thisquest = GServer->GetQuestByQuestID( questid ); 
     if(thisquest!=0)
     { 
@@ -119,26 +120,31 @@ bool CPlayer::AddQuest( unsigned long int questid )
             }
         }
         
-        QUESTS* myquest = new QUESTS;
-        assert(myquest);
-        myquest->questid = thisquest->questid;
-        myquest->thisquest = thisquest;        
-        myquest->active = true;
-        for(int i=0;i<5;i++)
-            myquest->items[i] = 0;  
+        //QUESTS* myquest = new QUESTS;
+        //assert(myquest_first);
+        myquest_first->questid = thisquest->questid;
+        myquest_first->thisquest = thisquest;        
+        myquest_first->active = true;
+        //for(int i=0;i<5;i++)
+            //myquest->items[i] = 0;  
             
         //LMA BEGIN
         //rev.70 org code (modified)
         for(int i=0;i<5;i++) // Look for start items
         {
-            if( myquest->thisquest->startItems[i] != 0)
+            if( myquest_first->thisquest->startItems[i] != 0)
             {
                 //myquest->items[i]++;
-                myquest->items[i]=myquest->thisquest->startItems[i];
-            }        
+                myquest_first->items[i]=myquest_first->thisquest->startItems[i];
+            }
+			else
+			{
+				myquest_first->items[i] = 0;
+			}
+
         } 
         
-        MyQuest.push_back( myquest );
+        MyQuest.push_back( myquest_first );
         ActiveQuest++;
         
          //LMA begin
@@ -1051,6 +1057,10 @@ bool CPlayer::AddQuest( unsigned long int questid )
             //LMA begin
             LogQuest("Questid %lu not found (by item).",questid); 
             //LMA end
+            
+			//LMA: let's save the first quest if it exists.
+			if(myquest_first->questid>0)
+				SaveQuest(myquest_first);            
         } 
            
     }

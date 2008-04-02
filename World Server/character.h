@@ -29,6 +29,7 @@ class CCharacter
         ~CCharacter( );
 
         unsigned int clientid;
+        unsigned int char_montype;  //LMA: montype ID for CCharacter
         BYTE CharType; // 0 = undefined | 1 = player | 2 = monster | 3 = summon
 
         //LMA: maps grids

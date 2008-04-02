@@ -285,7 +285,13 @@ CCharacter* CMap::GetCharInMap( unsigned int id )
 {
     CMonster* monster = GetMonsterInMap( id );
     if(monster!=NULL)
-        return (CCharacter*) monster;
+    {
+        //LMA: Setting montype for CCharacter too.
+        CCharacter* temp_char=(CCharacter*) monster;
+        temp_char->char_montype=monster->montype;
+        //return (CCharacter*) monster;
+        return temp_char;
+    }
     CPlayer* player = GetPlayerInMap( id );
     if(player!=NULL)
         return (CCharacter*) player;        
