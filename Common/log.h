@@ -1,17 +1,20 @@
 /*
-    Open Source Rose Online Team - http://osroseon.to.md/
+    Open Source Rose Online Team - http://www.dev-osrose.com
     note: the Server is develop with erose source server + eich source        
 */
 #ifndef __ROSE_LOGGING_FUNCTIONS__
 #define __ROSE_LOGGING_FUNCTIONS__
 
 // Log path
+//LMA: we add another dir for packets logs.
 #ifdef _WIN32
 #	define LOG_DIRECTORY "log/"
+#	define PLOG_DIRECTORY "plog/"
 #endif
 
 #ifdef __unix__
 #	define LOG_DIRECTORY "/var/log/roseserver/"
+#	define PLOG_DIRECTORY "/var/log/roseserver/p/"
 #endif
 
 #define LOG_LOGIN_SERVER		0x01

@@ -1,6 +1,6 @@
 /*
     Rose Online Server Emulator
-    Copyright (C) 2006,2007 OSRose Team http://osroseon.to.md
+    Copyright (C) 2006,2007 OSRose Team http://www.dev-osrose.com
     
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -39,6 +39,7 @@ bool CClientSocket::ReceiveData( )
 	int   ReceivedBytes;
 	short BytesToRead;
 	
+        	
 	// Calculate bytes to read to get the full packet
 	BytesToRead = PacketSize - PacketOffset;
 	// This should never happen, but it is integrated:
@@ -70,34 +71,45 @@ bool CClientSocket::ReceiveData( )
 	}		
 	cryptPacket( (char*)Buffer, this->CryptTable );
 	CPacket* pak = (CPacket*)Buffer;
+	
+    //LMA: Timestamp
+    //LMA: changing directory for packet logs.
+    time_t rtime;
+    time(&rtime);
+    char *timestamp = ctime(&rtime);
+    timestamp[ strlen(timestamp)-1 ] = ' ';                             	
+    
 	FILE *fh = NULL;	
     switch(LOG_THISSERVER)
 	{
         case LOG_LOGIN_SERVER:
-	       fh = fopen( LOG_DIRECTORY LOG_LOGINPACKETS, "a+" );          
+	       fh = fopen( PLOG_DIRECTORY LOG_LOGINPACKETS, "a+" );          
         break;
         case LOG_CHARACTER_SERVER:
-	       fh = fopen( LOG_DIRECTORY LOG_CHARPACKETS, "a+" );                   
+	       fh = fopen( PLOG_DIRECTORY LOG_CHARPACKETS, "a+" );                   
         break;
         case LOG_WORLD_SERVER:
             if( pak->Command==0x7ec || pak->Command==0x808 )
                 break;	       
-	       fh = fopen( LOG_DIRECTORY LOG_WORLDPACKETS, "a+" );
+	       fh = fopen( PLOG_DIRECTORY LOG_WORLDPACKETS, "a+" );
         break;       
         case LOG_SAME_FILE:
             if( pak->Command==0x7ec || pak->Command== 0x808 )
                 break;	       
-	       fh = fopen( LOG_DIRECTORY LOG_DEFAULTPACKETS, "a+" );
+	       fh = fopen( PLOG_DIRECTORY LOG_DEFAULTPACKETS, "a+" );
         break;                        
     }
 	if ( fh != NULL ) 
     {
-		fprintf( fh, "(SID:%08u) IN %04x: ", sock, pak->Command );
+		//fprintf( fh, "(SID:%08u) IN %04x: ", sock, pak->Command );
+		fprintf( fh, "%s- (SID:%08u) IN %04x: ",timestamp, sock, pak->Command );		
 		for ( int i=0; i<pak->Size-6; ++i ) 
             fprintf( fh, "%02x ", (unsigned char)pak->Buffer[i] );
 		fprintf( fh, "\n" );
 		fclose( fh );
 	}     
+
+
 	// Handle actions for this packet
 	if ( !GS->OnReceivePacket( this, pak ) )
 		return false;
@@ -117,34 +129,45 @@ void CClientSocket::SendPacket( CPacket *P )
 	//             THE SENDTOALL FUNCTIONS
 
 	if (!this->isActive) return;
+	
+    //LMA: Timestamp
+    //LMA: changing dir for packet logs.
+    time_t rtime;
+    time(&rtime);
+    char *timestamp = ctime(&rtime);
+    timestamp[ strlen(timestamp)-1 ] = ' ';
+    	
 	FILE *fh = NULL;	
     switch(LOG_THISSERVER)
 	{
         case LOG_LOGIN_SERVER:
-	       fh = fopen( LOG_DIRECTORY LOG_LOGINPACKETS, "a+" );          
+	       fh = fopen( PLOG_DIRECTORY LOG_LOGINPACKETS, "a+" );          
         break;
         case LOG_CHARACTER_SERVER:
-	       fh = fopen( LOG_DIRECTORY LOG_CHARPACKETS, "a+" );                   
+	       fh = fopen( PLOG_DIRECTORY LOG_CHARPACKETS, "a+" );                   
         break;
         case LOG_WORLD_SERVER:
             if( P->Command==0x7ec || P->Command==0x808)
                 break;	       
-	       fh = fopen( LOG_DIRECTORY LOG_WORLDPACKETS, "a+" );
+	       fh = fopen( PLOG_DIRECTORY LOG_WORLDPACKETS, "a+" );
         break;       
         case LOG_SAME_FILE:
             if( P->Command==0x7ec || P->Command==0x808 )
                 break;	       
-	       fh = fopen( LOG_DIRECTORY LOG_DEFAULTPACKETS, "a+" );
+	       fh = fopen( PLOG_DIRECTORY LOG_DEFAULTPACKETS, "a+" );
         break;                        
     }
-	if ( fh != NULL ) 
+	
+    if ( fh != NULL ) 
     {
-		fprintf( fh, "(SID:%08u) OUT %04x: ", sock, P->Command );
+		//fprintf( fh, "(SID:%08u) OUT %04x: ", sock, P->Command );
+		fprintf( fh, "%s- (SID:%08u) OUT %04x: ",timestamp, sock, P->Command );
 		for ( int i=0; i<P->Size-6; ++i ) 
             fprintf( fh, "%02x ", (unsigned char)P->Buffer[i] );
 		fprintf( fh, "\n" );
 		fclose( fh );
-	}      	
+	}
+	
 	u_long iMode = 1; 
 	#ifdef WIN32
     if (ioctlsocket(sock, FIONBIO, &iMode))

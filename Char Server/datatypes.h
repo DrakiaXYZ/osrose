@@ -1,5 +1,5 @@
 /*
-    Open Source Rose Online Team - http://osroseon.to.md/
+    Open Source Rose Online Team - http://www.dev-osrose.com
     note: the Server is develop with erose source server + eich source        
 */
 #ifndef __ROSE_DATATYPES__
