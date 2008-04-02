@@ -53,6 +53,7 @@ bool CPlayer::AddQuest( unsigned long int questid )
     
     // Check if is Start Quest ID
     QUESTS* myquest_first = new QUESTS();
+    QUESTS* myquest = new QUESTS();    
     CQuest* thisquest = GServer->GetQuestByQuestID( questid ); 
     if(thisquest!=0)
     { 
@@ -184,7 +185,7 @@ bool CPlayer::AddQuest( unsigned long int questid )
     
     // Check if is Finish Quest ID
     CQuest* finalquest = GServer->GetQuestByFinalID( questid );    
-    QUESTS* myquest = 0;
+    //QUESTS* myquest = 0;
     bool flag = false;
     if( finalquest != 0) 
     {                       
