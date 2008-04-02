@@ -74,7 +74,7 @@ CCharacter::CCharacter( )
     Status->HP_up = 0xff;
     Status->MP_up = 0xff;
     Status->ExtraDamage_up = 0xff;  //LMA: Devilking/Arnold
-    Status->Stealth_up = 0xff;
+    Status->Stealth_1 = 0xff;
         //Stats down
     Status->Attack_down = 0xff;
     Status->Defense_down = 0xff;
@@ -87,7 +87,6 @@ CCharacter::CCharacter( )
     Status->HP_down = 0xff;
     Status->MP_down = 0xff;
     Status->ExtraDamage_down = 0xff;  //LMA: Devilking/Arnold
-    Status->Stealth_down = 0xff;
         //Status
     Status->Stun = 0xff;
     //Status->Spoisoned = 0xff;

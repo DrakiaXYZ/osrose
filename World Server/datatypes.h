@@ -92,7 +92,7 @@
 #define A_HP_REC_RATE 27
 #define A_MP_REC_RATE 28
 #define A_MP_CONSUMATION 29
-#define A_STEALTH 33
+#define A_STEALTH_1 33
 #define A_Extra_Damage 36
 #define A_MAX_HP 38
 #define A_MAX_MP 39
@@ -133,10 +133,12 @@
 #define SLEEPING 0x80
 //BYTE4
 #define STUN 0x01
-#define STEALTH_UP 0x02//test
-#define STEALTH_DOWN 0x04//test
+
+//Invisible (Devilking)
+#define STEALTH_1 0x02
 //#define INVISIBLE_1 0x02
-//#define INVISIBLE_2 0x04
+#define INVISIBLE_2 0x04//not in use yet 
+
 #define UNK3 0x08
 #define DAMAGE_UP 0x10
 #define SUMMON 0x20

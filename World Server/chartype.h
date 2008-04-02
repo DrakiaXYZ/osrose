@@ -104,7 +104,7 @@ struct STATUS
     BYTE HP_up;
     BYTE MP_up;    
     BYTE ExtraDamage_up;
-    BYTE Stealth_up;
+    BYTE Stealth_1;
     //Stats down
     BYTE Attack_down;
     BYTE Defense_down;
@@ -117,7 +117,6 @@ struct STATUS
     BYTE HP_down;
     BYTE MP_down;   
     BYTE ExtraDamage_down;
-    BYTE Stealth_down;
 
     //Status
     BYTE Stun;

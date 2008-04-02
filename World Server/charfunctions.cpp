@@ -464,11 +464,8 @@ void CCharacter::RefreshBuff( )
                          Status->ExtraDamage_down = 0xff;
                          
                 break;
-                case A_STEALTH:
-                    if(i<15)
-                        Status->Stealth_up = 0xff;
-                    else
-                        Status->Stealth_down = 0xff;
+                case A_STEALTH_1:
+                    Status->Stealth_1 = 0xff;
                 break;
                 case A_STUN:
                      Status->Stun = 0xff;
