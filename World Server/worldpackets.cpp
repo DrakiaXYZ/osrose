@@ -2534,15 +2534,13 @@ bool CWorldServer::pakUseItem ( CPlayer* thisclient, CPacket* P )
     bool flag = false;
     switch(thisuse->usescript)
     {
- 
-        case 0: //  cherry berrys
+       case 0: //  cherry berrys
             thisclient->StartAction( NULL, BUFF_SELF, thisuse->usevalue );
-            thisclient->items[slot].count -= 1;        
-            if( thisclient->items[slot].count == 0 )        
-                ClearItem( thisclient->items[slot] ); 
+            //thisclient->items[slot].count -= 1;        
+            //if( thisclient->items[slot].count == 0 )        
+            //    ClearItem( thisclient->items[slot] ); 
             flag = true;
         break;
-
         case 1: // Food
         {
             thisclient->UsedItem->usevalue = thisuse->usevalue;
@@ -2556,21 +2554,21 @@ bool CWorldServer::pakUseItem ( CPlayer* thisclient, CPacket* P )
             flag = true;
         }
         break;
-        case 2: // Return Scroll
-        {
+        case 2: // Return Scroll        
+        {      
             BEGINPACKET( pak,0x7a3 );
             ADDWORD    ( pak,thisclient->clientid );
             ADDWORD    ( pak, thisuse->itemnum );
             ADDBYTE    ( pak,slot );
             thisclient->client->SendPacket( &pak );
-            thisclient->items[slot].count -= 1;
-            if( thisclient->items[slot].count == 0 )
-                ClearItem( thisclient->items[slot] );
+            //thisclient->items[slot].count -= 1;        
+            //if( thisclient->items[slot].count == 0 )        
+            //    ClearItem( thisclient->items[slot] );                           
             fPoint thispoint;
             thispoint.x = floor( thisuse->usevalue/10000 );
             thispoint.y = floor( thisuse->usevalue%10000 );
-            TeleportTo ( thisclient, thisuse->usetype, thispoint );
-            flag = true;
+            TeleportTo ( thisclient, thisuse->usetype, thispoint );                 
+            flag = true;            
         }
         break;
         case 3: // Charm Scroll
@@ -2724,15 +2722,15 @@ bool CWorldServer::pakUseItem ( CPlayer* thisclient, CPacket* P )
         break;
     }
     if(flag == true)
-    {
+    {    
+        thisclient->items[slot].count -= 1;        
+        if( thisclient->items[slot].count <= 0 )        
+            ClearItem( thisclient->items[slot] );          
         BEGINPACKET( pak,0x7a3 );
         ADDWORD    ( pak, thisclient->clientid );
         ADDWORD    ( pak, thisuse->itemnum );
         ADDBYTE    ( pak, slot );
         thisclient->client->SendPacket( &pak );
-        thisclient->items[slot].count -= 1;
-        if( thisclient->items[slot].count <= 0 )
-            ClearItem( thisclient->items[slot] );
     }
     delete thisuse;
     return true;
