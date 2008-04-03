@@ -118,24 +118,45 @@ void CCharacter::DoAttack( )
                 BuffSkill( Enemy, skill );
         }
         break;          
-        case SKILL_BUFF://buffs
+       case SKILL_BUFF://buffs
         {
-            CCharacter* Enemy= GetCharTarget( );
-            if(Enemy==NULL) 
-            {
-                ClearBattle( Battle );
-                return;
-            }
+ 
             CSkills* skill = GServer->GetSkillByID( Battle->skillid );
             if(skill==NULL)
             {
                 ClearBattle( Battle );
                 return;
-            }
-            if(IsTargetReached( Enemy, skill ) && CanAttack( ))
-            {
-                Log(MSG_INFO,"%i Buff time for %i",clientid,Enemy->clientid);
-                BuffSkill( Enemy, skill );
+            } // debuff or buff? [netwolf]
+            switch (skill->target)
+             {
+                    case 5:
+                    {
+                     CCharacter* Enemy = GetCharTarget( );
+                     if(Enemy==NULL) 
+                     {
+                                     ClearBattle( Battle );
+                                     return;
+                     }
+                     if(IsTargetReached( Enemy, skill ) && CanAttack( ))
+                     {   
+                        Log(MSG_INFO,"%i Buff time for %i",clientid,Enemy->clientid);
+                        DebuffSkill( Enemy, skill );
+                     }
+                    }break;
+                    default:
+                    {
+                            CCharacter* Target = GetCharTarget( );
+                            if(Target==NULL) 
+                            {
+                                     ClearBattle( Battle );
+                                     return;
+                            }
+                            if(IsTargetReached( Target, skill ) && CanAttack( ))
+                            {  
+                               Log(MSG_INFO,"%i Buff time for %i",clientid,Target->clientid);
+                               BuffSkill( Target, skill );
+                            }
+                    }break;               
             }
             
         }
@@ -221,7 +242,7 @@ void CCharacter::DoAttack( )
             BuffSkill( this, skill );              
         }
         break;        
-        case BUFF_AOE:
+       case BUFF_AOE:
         {
             CSkills* skill = GServer->GetSkillByID( Battle->skillid );
             if(skill==NULL)
@@ -229,7 +250,19 @@ void CCharacter::DoAttack( )
                 ClearBattle( Battle );
                 return;
             }  
-            AoeBuff( skill );                      
+            //[netwolf]
+            switch (skill->target)
+             {
+                    case 5:
+                    {
+                         CCharacter* Enemy = NULL;
+                         AoeDebuff( skill, Enemy );
+                    } break;
+                    default:
+                    {
+                            AoeBuff( skill );
+                    }   break;
+             }                  
         }
         break;
     }    
@@ -399,6 +432,34 @@ bool CCharacter::BuffSkill( CCharacter* Target, CSkills* skill )
     }
     Battle->castTime = 0;   
     UseBuffSkill( Target, skill );    
+    Stats->MP -= (skill->mp - (skill->mp * Stats->MPReduction / 100));      
+    if(Stats->MP<0) Stats->MP=0;
+    ClearBattle( Battle );
+    GServer->DoSkillScript( this, skill );           
+    Battle->lastAtkTime = clock( );    
+    return true;    
+}
+
+// do Debuff skill [netwolf]
+bool CCharacter::DebuffSkill( CCharacter* Enemy, CSkills* skill )
+{
+    Position->destiny = Position->current;        
+    if(Battle->castTime==0)
+    {
+        BEGINPACKET( pak, 0x7bb );
+        ADDWORD    ( pak, clientid );
+        GServer->SendToVisible( &pak, (CCharacter*)this );          
+        Battle->castTime = clock();
+        return true;
+    }
+    else
+    {
+        clock_t etime = clock() - Battle->castTime;
+        if(etime<SKILL_DELAY)
+            return true;      
+    }
+    Battle->castTime = 0;   
+    UseDebuffSkill( Enemy, skill );    
     Stats->MP -= (skill->mp - (skill->mp * Stats->MPReduction / 100));      
     if(Stats->MP<0) Stats->MP=0;
     ClearBattle( Battle );
@@ -590,6 +651,69 @@ bool CCharacter::AoeBuff( CSkills* skill )
     return true;
 }
 
+// Aoe Debuff [netwolf]
+bool CCharacter::AoeDebuff( CSkills* skill, CCharacter* Enemy )
+{
+    Position->destiny = Position->current;        
+    
+    if(Battle->castTime==0)    
+    {
+        BEGINPACKET( pak, 0x7bb );
+        ADDWORD    ( pak, clientid );
+        GServer->SendToVisible( &pak, (CCharacter*)this );          
+        Battle->castTime = clock();
+        return true;
+    }
+    else
+    {
+        clock_t etime = clock() - Battle->castTime;
+        if(etime<SKILL_DELAY)
+            return true;      
+    }
+    Battle->castTime = 0;  
+    
+    CMap* map = GServer->MapList.Index[Position->Map];
+    for(UINT i=0;i<map->MonsterList.size();i++)
+    {
+        CMonster* monster = map->MonsterList.at(i);
+        if(monster->clientid==clientid) continue;
+        if(IsSummon( ) || IsPlayer( ))
+        {
+            if(monster->IsSummon( ) && (map->allowpvp==0 || monster->owner==clientid)) continue;
+        }
+        else
+        {
+            if(!monster->IsSummon( )) continue;
+        }
+        if(GServer->IsMonInCircle( Position->current,monster->Position->current,(float)skill->aoeradius+1))
+        {
+            Log(MSG_INFO,"AOE Debuff (1) monster %i",monster->montype);
+            UseDebuffSkill( (CCharacter*) monster, skill );
+        }
+        
+    }
+     
+    if(map->allowpvp!=0 || (IsMonster( ) && !IsSummon( )))
+    {
+        for(UINT i=0;i<map->PlayerList.size();i++)
+        {
+            CPlayer* player = map->PlayerList.at(i);
+            if(player->clientid==clientid) continue;
+            if(GServer->IsMonInCircle( Position->current,player->Position->current,(float)skill->aoeradius+1))
+            {
+                Log(MSG_INFO,"AOE Debuff (2) player %s",player->CharInfo->charname);
+                UseDebuffSkill( (CCharacter*) player, skill );
+            }
+            
+        }
+    }
+    
+    Stats->MP -= (skill->mp - (skill->mp * Stats->MPReduction / 100));   
+    if(Stats->MP<0) Stats->MP=0;     
+    ClearBattle( Battle );
+    Battle->lastAtkTime = clock( );      
+    return true;
+}
 
 // use skill attack
 void CCharacter::UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff )
@@ -718,4 +842,26 @@ void CCharacter::UseBuffSkill( CCharacter* Target, CSkills* skill )
     ADDWORD    ( pak, Battle->skillid);
     ADDWORD    ( pak, 1);
 	GServer->SendToVisible( &pak, (CCharacter*)this );                          
+}
+
+// use Debuff skill
+void CCharacter::UseDebuffSkill( CCharacter* Enemy, CSkills* skill )
+{
+    bool bflag = false;       
+    bflag = GServer->AddBuffs( skill, Enemy, GetInt( ) ); 
+    if(skill->nbuffs>0 && bflag == true)
+    {  
+        BEGINPACKET( pak, 0x7b5 );
+        ADDWORD    ( pak, Enemy->clientid );
+        ADDWORD    ( pak, clientid );    
+        ADDWORD    ( pak, Battle->skillid );
+        ADDWORD    ( pak, GetInt( ) );
+        ADDBYTE    ( pak, skill->nbuffs );  
+        GServer->SendToVisible( &pak, Enemy ); 
+    }                                   
+    BEGINPACKET( pak, 0x7b9);
+    ADDWORD    ( pak, clientid);
+    ADDWORD    ( pak, Battle->skillid);
+    ADDWORD    ( pak, 1);
+    GServer->SendToVisible( &pak, (CCharacter*)this );                          
 }

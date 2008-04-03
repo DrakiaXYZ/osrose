@@ -41,14 +41,17 @@ class CCharacter
         STATUS* Status;
         MAGICSTATUS MagicStatus[30];
         
-        // Batle Functions
+       // Battle Functions
         void DoAttack( );
         void NormalAttack( CCharacter* Enemy );
         bool SkillAttack( CCharacter* Enemy, CSkills* skill );
         bool BuffSkill( CCharacter* Target, CSkills* skill );
+        bool DebuffSkill ( CCharacter* Enemy, CSkills* skill );//netwolf
         bool SummonBuffSkill( CCharacter* Target, CSkills* skill );  //LMA: Special for supportive summons :)
         bool AoeSkill( CSkills* skill, CCharacter* Enemy=NULL );
         bool AoeBuff( CSkills* skill );
+        bool AoeDebuff ( CSkills* skill, CCharacter* Enemy=NULL ); //netwolf
+        void UseDebuffSkill ( CCharacter* Enemy, CSkills* skill );//netwolf
         void UseBuffSkill( CCharacter* Target, CSkills* skill );
         void UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff= false );
 
