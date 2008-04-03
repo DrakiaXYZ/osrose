@@ -185,7 +185,7 @@ struct CROSEServerConfig
     int Cfmode;
     int EventType; //Event
     int EventNPC;  //Event
-    int osRoseVer ; //Revision of server
+    char* osRoseVer ; //Revision of server
     int testgrid; //LMA: maps, testing grids...
     int jrose; //LMA: for handling jRose (163)
 
@@ -210,6 +210,7 @@ struct CROSEServerConfig
     int Command_Debuff;
     int Command_DelSpawn;
     int Command_DelSkills; // by rl2171
+    int Command_Dev; // by rl2171
     int Command_DQuest;
     int Command_Drop;
     int Command_DSpawn;

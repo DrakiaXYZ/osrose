@@ -2038,7 +2038,16 @@ else if (strcmp(command, "give2")==0)
             return true;
         Log( MSG_GMACTION, " %s : /MaxStats", thisclient->CharInfo->charname );
         return pakGMMaxStats( thisclient );
-    }     
+    }
+    // Dev - by rl2171
+    else if (strcmp(command, "dev")==0)
+     {
+        if(Config.Command_Dev > thisclient->Session->accesslevel)
+            return true;
+         char buffer[200];
+             sprintf ( buffer, "osRose Version %s", Config.osRoseVer);
+             SendPM(thisclient, buffer);  
+      }
 
     // myloc - by PurpleYouko
     else if (strcmp(command, "myloc")==0)
@@ -2096,6 +2105,8 @@ else if (strcmp(command, "give2")==0)
              SendPM(thisclient, buffer);  
          }
     }
+
+ 
 
      // get all castlegear parts
     else if (strcmp(command, "cg")==0)

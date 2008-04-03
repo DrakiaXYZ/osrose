@@ -684,11 +684,11 @@ void CWorldServer::LoadConfigurations( char* file )
     Config.RefineChance         = ConfigGetInt    ( file, "refinechance", 5); //hidden
     Config.MonsterDmg           = ConfigGetInt    ( file, "monsterdmg", 100);
     Config.Cfmode               = ConfigGetInt    ( file, "cfmode", 0);
-    Config.osRoseVer             = ConfigGetInt    ( file, "osRoseVer", 79);
+    Config.osRoseVer            = ConfigGetString    ( file, "osRoseVer", "79.999");
     Config.testgrid             = ConfigGetInt    ( file, "testgrid", 0); //LMA: maps tests grids (0=usual, 1=grid)
     Config.jrose             = ConfigGetInt    ( file, "jrose", 0); //LMA: Special code for jRose handling (163)
 
-    Log (MSG_INFO, "osRose Revision %i", Config.osRoseVer );
+    Log (MSG_INFO, "osRose Revision %s", Config.osRoseVer );
 
     //LMA: jRose.
     if(Config.jrose==1)
@@ -729,6 +729,7 @@ void CWorldServer::LoadCommandLevels( void )
     Config.Command_Debuff = ConfigGetInt    ( "commands.ini", "debuff", 299 );
     Config.Command_DelSkills = ConfigGetInt ( "commands.ini", "delskills", 299 );
     Config.Command_DelSpawn = ConfigGetInt    ( "commands.ini", "delspawn", 299 );
+    Config.Command_Dev = ConfigGetInt    ( "commands.ini", "dev", 299 );
     Config.Command_DQuest = ConfigGetInt    ( "commands.ini", "dquest", 299 );
     Config.Command_Drop = ConfigGetInt    ( "commands.ini", "drop", 299 );
     Config.Command_DSpawn = ConfigGetInt    ( "commands.ini", "dspawn", 299 );
