@@ -759,26 +759,31 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
                     break;
                     //Goblin Cave - Mileage Scroll
                     case 360:
+                    case 1030:                         
                         useitem->usetype = 22; //31 Value Before - rl2171
                         useitem->usevalue = 54105040; //55185444 Value Before - rl2171
                     break;
                     //Desert of the Dead - Mileage Scroll
                     case 361:
+                    case 1031:     
                         useitem->usetype = 29;
                         useitem->usevalue = 51405160; //50825013 Value Before - rl2171
                     break;
                     //El Verloon - Mileage Scroll
                     case 362:
+                    case 1032:     
                         useitem->usetype = 24;
                         useitem->usevalue = 55205370;
                     break;
                     //George of Silence - Mileage Scroll
                     case 363:
+                    case 1033:     
                         useitem->usetype = 28;
                         useitem->usevalue = 53005100; //54674783 Value before - rl2171
                     break;
                     //Shady Jungle - Mileage Scroll
                     case 364:
+                    case 1034:     
                         useitem->usetype = 62;
                         useitem->usevalue = 58405170; //57515196 Value before - rl2171
                     break;
@@ -792,32 +797,6 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
                         useitem->usetype = 2;
                         useitem->usevalue = 53225100;
                     break;
-                    //Goblin Cave - Mileage Scroll - 2
-                    case 1030:
-                        useitem->usetype = 22; //31 Value Before - rl2171
-                        useitem->usevalue = 54105040; //55185444 Value Before - rl2171
-                    break;
-                    //Desert of the Dead - Mileage Scroll - 2
-                    case 1031:
-                        useitem->usetype = 29;
-                        useitem->usevalue = 51405160; //50825013 Value Before - rl2171
-                    break;
-                    //El Verloon - Mileage Scroll - 2
-                    case 1032:
-                        useitem->usetype = 24;
-                        useitem->usevalue = 55205370;
-                    break;
-                    //George of Silence - Mileage Scroll - 2
-                    case 1033:
-                        useitem->usetype = 28;
-                        useitem->usevalue = 53005100; //54674783 Value before - rl2171
-                    break;
-                    //Shady Jungle - Mileage Scroll - 2
-                    case 1034:
-                        useitem->usetype = 62;
-                        useitem->usevalue = 58405170; //57515196 Value before - rl2171
-                    break;
-
                 }
             }
             else //Charm Scrolls - 210-218 Bombs, 381-383 Charm Scrolls
