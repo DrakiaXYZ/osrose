@@ -162,6 +162,12 @@ CMonster* CMap::AddMonster( UINT montype, fPoint position, UINT owner, CMDrops* 
        monster->maxhitcount=1;   //rl2171: Cursed Ant Vagabond
     }
 
+    if(monster->thisnpc->id==662)
+    {
+       monster->maxhitcount=3;   //rl2171: Dragon Egg for Clan Wars  - 662, 667, 673, 678
+       monster->stay_still=true;
+    }
+
      if(monster->thisnpc->id==558)
     {
        monster->maxhitcount=1;   //rl2171: 1st Turak
@@ -180,7 +186,19 @@ CMonster* CMap::AddMonster( UINT montype, fPoint position, UINT owner, CMDrops* 
     //Sunrise, Sunset and Dusk Crystal in Junon Cartel
     if (monster->thisnpc->id>=431&&monster->thisnpc->id<=433)
        monster->stay_still=true;    
-    
+
+    //Rune Stone, Green, Blue, Red, White Crystal in Luna
+//    if (monster->thisnpc->id>=325&&monster->thisnpc->id<=329)
+//       monster->stay_still=true;    
+
+    //Seal Stone
+//    if (monster->thisnpc->id>=451&&monster->thisnpc->id<=457)
+//       monster->stay_still=true;    
+
+    //Clan Wars gate - wall
+//    if (monster->thisnpc->id>=1022&&monster->thisnpc->id<=1023)
+//       monster->stay_still=true;    
+
     //LMA: bonfire (and salamender...) don't move and don't attack ;)
     if (monster->IsBonfire())
     {

@@ -102,6 +102,7 @@ class CMonster : public CCharacter
         bool MoonChild(CMonster* monster,CMap* map);          //LMA: For Moon Child
         bool WormDragon(CMonster* monster,CMap* map);          //LMA: For Worm Dragon
         bool AntVagabond(CMonster* monster,CMap* map);         //rl2171: For Cursed Ant Vagabond
+        bool DragonEgg(CMonster* monster,CMap* map);         //rl2171: For Dragon Eggs
         bool Turak1(CMonster* monster,CMap* map);         //rl2171: For 1st Turak
         bool Turak2(CMonster* monster,CMap* map);         //rl2171: For 2nd Turak
 /*        bool Turak3(CMonster* monster,CMap* map);         //rl2171: For 3rd Turak

@@ -1,10 +1,10 @@
 /*
 MySQL Data Transfer
-Source Host: osrose
+Source Host: localhost
 Source Database: osrose
-Target Host: osrose
+Target Host: localhost
 Target Database: osrose
-Date: 4/6/2008 10:29:06 AM
+Date: 4/11/2008 9:20:23 AM
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -697,9 +697,9 @@ INSERT INTO `item_drops` VALUES ('9515', '249', '10', '300', '350', '450', '0', 
 INSERT INTO `item_drops` VALUES ('9517', '87', '12', '150', '250', '300', '64', '0', '0|0|0|0|0|0|0', '7th Bindrunes - Marsh');
 INSERT INTO `item_drops` VALUES ('9518', '77', '12', '150', '250', '200', '64', '0', '0|0|0|0|0|0|0', '7th Talismans - Marsh');
 INSERT INTO `item_drops` VALUES ('9519', '1080', '10', '300', '350', '450', '0', '0', '0|0|0|0|0|0|0', 'Valentine Day 2008, all maps, all mobs');
-INSERT INTO `item_drops` VALUES ('9520', '1081', '10', '1', '250', '450', '0', '0', '0|0|0|0|0|0|0', 'St. Patricks Day 2008, all maps, all mobs');
-INSERT INTO `item_drops` VALUES ('9521', '1082', '10', '1', '250', '500', '0', '0', '0|0|0|0|0|0|0', 'Easter 2008, all maps, all mobs');
+INSERT INTO `item_drops` VALUES ('9520', '1081', '10', '1', '250', '450', '0', '0', '0|0|0|0|0|0|0', 'St. Patricks Day 2008');
 INSERT INTO `item_drops` VALUES ('1000', '304', '11', '0', '0', '60', '0', '1591', '305|306|314|315|316|324|325|326|334|335|336|344|345|346|354|355|356', 'Grade 4 - 6 Gems - MossGolem');
-INSERT INTO `item_drops` VALUES ('1001', '304', '11', '0', '0', '60', '0', '1719', '305|306|314|315|316|324|325|326|334|335|336|344|345|346|354|355|356', 'Grade 4 - 6 Gems - Kera');
+INSERT INTO `item_drops` VALUES ('9521', '1082', '10', '1', '250', '500', '0', '0', '0|0|0|0|0|0|0', 'Easter 2008');
+INSERT INTO `item_drops` VALUES ('1001', '304', '11', '0', '0', '60', '0', '1719', '305|306|314|315|316|324|325|326|334|335|336|344|345|346|354|355|356', 'Grade 4 - 6 Gems - Kera\r\n');
 INSERT INTO `item_drops` VALUES ('1002', '304', '11', '0', '0', '60', '0', '1582', '305|306|314|315|316|324|325|326|334|335|336|344|345|346|354|355|356', 'Grade 4 - 6 Gems - IkanessHeavygear');
-INSERT INTO `item_drops` VALUES ('1003', '304', '11', '0', '0', '60', '0', '1571', '305|306|314|315|316|324|325|326|334|335|336|344|345|346|354|355|356', 'Grade 4 - 6 Gems - Sikuku Elite Slaughterer');
+INSERT INTO `item_drops` VALUES ('1003', '304', '11', '0', '0', '60', '0', '1571', '305|306|314|315|316|324|325|326|334|335|336|344|345|346|354|355|356', 'Grade 4 - 6 Gems - Sikuku Elite Slaughterer\r\n');

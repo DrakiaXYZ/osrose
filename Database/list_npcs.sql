@@ -1,10 +1,10 @@
 /*
 MySQL Data Transfer
-Source Host: 192.168.1.100
+Source Host: localhost
 Source Database: osrose
-Target Host: 192.168.1.100
+Target Host: localhost
 Target Database: osrose
-Date: 12/9/2007 9:54:16 AM
+Date: 4/11/2008 9:13:21 AM
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -20,7 +20,7 @@ CREATE TABLE `list_npcs` (
   `x` float NOT NULL,
   `y` float NOT NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=158 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=168 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records 
@@ -180,3 +180,13 @@ INSERT INTO `list_npcs` VALUES ('133', '[Cleric] Jude', '1251', '62', '315', '58
 INSERT INTO `list_npcs` VALUES ('134', '[Sikuku Resident] Shilma', '1261', '62', '315', '5854', '5224');
 INSERT INTO `list_npcs` VALUES ('135', '[Sikuku Warrior] Wounded Soldier', '1262', '62', '230', '5865', '5211');
 INSERT INTO `list_npcs` VALUES ('156', '[Sikuku Warrior] Wounded Soldier', '1263', '62', '315', '5862', '5218');
+INSERT INTO `list_npcs` VALUES ('158', '[Arumic Merchant] Scarlet', '1135', '80', '270', '5183', '5086');
+-- INSERT INTO `list_npcs` VALUES ('159', '[Journeyman Miner] Aidan', '1133', '80', '0', '5266', '5065');
+-- INSERT INTO `list_npcs` VALUES ('160', '[Journeyman Miner] Vishael', '1126', '80', '90', '5273', '5110');
+-- INSERT INTO `list_npcs` VALUES ('161', '[Bar Owner] Monica', '1134', '80', '270', '5239', '5152');
+-- INSERT INTO `list_npcs` VALUES ('162', '[Ferrell Guild Merchant] Kieran', '1128', '80', '0', '5280', '5280');
+-- INSERT INTO `list_npcs` VALUES ('163', '[Ferrell Guild Banker] Urtharo', '1127', '80', '0', '5231', '5280');
+-- INSERT INTO `list_npcs` VALUES ('164', '[Armor Merchant] Marjak', '1129', '80', '0', '5156', '5287');
+-- INSERT INTO `list_npcs` VALUES ('165', '[Weapon Merchant] Khardan', '1130', '80', '0', '5129', '5287');
+-- INSERT INTO `list_npcs` VALUES ('166', '[Royal Prince] Osiris', '1125', '80', '0', '5200', '5359');
+-- INSERT INTO `list_npcs` VALUES ('167', '[Station Guide] Gilbert', '1055', '80', '0', '5335', '5426');

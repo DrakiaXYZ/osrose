@@ -432,7 +432,118 @@ bool CMonster::AntVagabond(CMonster* monster,CMap* map)
      return true;
 }
 
-//LMA: added by rl2171 Handling 1st Turak :)
+///LMA: added by rl2171 Handling Dragon Eggs :)
+bool CMonster::DragonEgg(CMonster* monster,CMap* map)
+{
+     if (monster->hitcount>=monster->maxhitcount)
+        return true;
+     
+     if(Stats->HP>(Stats->MaxHP*0.98))
+         monster->hitcount=0;
+         
+     CPlayer* player = NULL;
+     
+         
+     switch (monster->hitcount)
+     {
+         case 0:
+              if(Stats->HP<(Stats->MaxHP*0.98))
+              {
+                  Log(MSG_INFO,"case 0 for the Dragon Egg");
+                  for(unsigned char i=0;i<2;i++)
+                  {
+                      fPoint position = GServer->RandInCircle( monster->Position->current, 5 );
+                      CMonster* monster2=map->AddMonster( 663, position, 0, NULL, NULL, 0, true );
+
+                      if(i==0)
+                         player = monster2->GetNearPlayer(20);    //getting near player.
+
+                     if(player!=NULL)
+                         monster2->StartAction( (CCharacter*)player, NORMAL_ATTACK, 0 );
+                     
+                  }
+                  
+                  monster->hitcount=1;
+              }
+              break;
+         case 1:
+              if(Stats->HP<(Stats->MaxHP*0.80))
+              {
+                  Log(MSG_INFO,"case 1 for the Dragon Egg");                                               
+                  for(unsigned char i=0;i<3;i++)
+                  {
+                      fPoint position = GServer->RandInCircle( monster->Position->current, 5 );
+                      CMonster* monster2=map->AddMonster( 663, position, 0, NULL, NULL, 0, true );
+
+                      if(i==0)
+                         player = monster2->GetNearPlayer(20);    //getting near player.
+
+                     if(player!=NULL)
+                         monster2->StartAction( (CCharacter*)player, NORMAL_ATTACK, 0 );
+                  }
+                  monster->hitcount=2;
+              }
+              break;
+         case 2:
+              if(Stats->HP<(Stats->MaxHP*0.70))
+              {
+                  Log(MSG_INFO,"case 2 for the Dragon Egg");                                               
+                  for(unsigned char i=0;i<2;i++)
+                  {
+                      fPoint position = GServer->RandInCircle( monster->Position->current, 5 );
+                      CMonster* monster2=map->AddMonster( 663, position, 0, NULL, NULL, 0, true );
+
+                      if(i==0)
+                         player = monster2->GetNearPlayer(20);    //getting near player.
+
+                     if(player!=NULL)
+                         monster2->StartAction( (CCharacter*)player, NORMAL_ATTACK, 0 );
+                     
+                  }
+                  monster->hitcount=monster->maxhitcount;
+              }
+              break;
+
+         default:
+                 monster->hitcount=monster->maxhitcount;
+                 
+     }
+     
+     
+     return true;
+}
+/*bool CMonster::DragonEgg(CMonster* monster,CMap* map)
+{
+     if (monster->hitcount>=monster->maxhitcount)
+        return true;
+     
+     if(Stats->HP>(Stats->MaxHP*0.60))
+         return true;
+         
+     CPlayer* player = NULL;
+     int nb_egg =0;
+     nb_egg=GServer->RandNumber(2,4);
+     
+      Log(MSG_INFO,"case 0 for the Dragon Eggs (%i)",nb_egg);
+      for(unsigned char i=0;i<nb_egg;i++)
+      {
+          fPoint position = GServer->RandInCircle( monster->Position->current, 5 );
+          CMonster* monster2=map->AddMonster( 663, position, 0, NULL, NULL, 0, true );
+
+          if(i==0)
+             player = monster2->GetNearPlayer(20);    //getting near player.
+
+         if(player!=NULL)
+             monster2->StartAction( (CCharacter*)player, NORMAL_ATTACK, 0 );         
+      }
+      
+      monster->hitcount=monster->maxhitcount;
+     
+     
+     return true;
+}
+*/
+///LMA: added by rl2171 Handling 1st Turak :)
 bool CMonster::Turak1(CMonster* monster,CMap* map)
 {
      if (monster->hitcount>=monster->maxhitcount)
