@@ -7,8 +7,8 @@ REM MYSQL BIN PATH
 set mysqlBinPath=C:\Program Files\MySQL\MySQL Server 5.0\bin
 
 set user=root
-set pass=thefool
-set db=roseon81
+set pass=
+set db=roseon
 set host=localhost
 
 REM ############################################
