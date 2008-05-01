@@ -586,7 +586,7 @@ bool CWorldServer::pakDoID( CPlayer* thisclient, CPacket* P )
 // Move Characters in map
 bool CWorldServer::pakMoveChar( CPlayer* thisclient, CPacket* P )
 {
-    if( thisclient->Shop->open || (!thisclient->Ride->Drive && thisclient->Ride->Ride) || !thisclient->Status->CanMove )
+    if( thisclient->Shop->open || (!thisclient->Ride->Drive && thisclient->Ride->Ride) || !thisclient->Status->CanMove || thisclient->Status->Stun != 0xff )
         return true;
     if( thisclient->Status->Stance==1 )
         thisclient->Status->Stance=3;

@@ -799,13 +799,19 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
                     break;
                 }
             }
-            else //Charm Scrolls - 210-218 Bombs, 381-383 Charm Scrolls
-            if( (useitem->itemnum>209 && useitem->itemnum<213) ||
-                (useitem->itemnum>380 && useitem->itemnum<384) )
+            else //Charm Scrolls - 381-383 Charm Scrolls
+            if (useitem->itemnum>380 && useitem->itemnum<384)
             {
                 useitem->usescript = 3;
                 useitem->usetype = UseList.Index[useitem->itemnum]->useeffect[1];
             }
+            else //Artisan 210-227 Bombs
+            if (useitem->itemnum>209 && useitem->itemnum<228)
+            {
+                useitem->usescript = 0; //not correct script ?
+                useitem->usetype = UseList.Index[useitem->itemnum]->useeffect[1]; // not correct ?
+            }
+            
             else //Dance Scroll
             if( (useitem->itemnum>370 && useitem->itemnum<377) ||
                 (useitem->itemnum>389 && useitem->itemnum<398) )
