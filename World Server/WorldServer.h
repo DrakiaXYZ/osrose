@@ -410,7 +410,7 @@ class CWorldServer : public CServerSocket
        // geo edit for disassemble // 22 oct 07
         UINT BreakListSize;
         bool LoadBreakList();
-        CBreakList BreakList[1000];
+        CBreakList BreakList[3000];
         
         // console
         bool handleCommand( char* );

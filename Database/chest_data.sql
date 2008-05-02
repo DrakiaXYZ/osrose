@@ -4,7 +4,7 @@ Source Host: osrose
 Source Database: osrose
 Target Host: osrose
 Target Database: osrose
-Date: 4/29/2008 5:00:54 PM
+Date: 5/1/2008 4:15:54 PM
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -75,6 +75,24 @@ INSERT INTO `chest_data` VALUES ('1953', '1153', '344', '12', '100000', '50', '1
 INSERT INTO `chest_data` VALUES ('1954', '1154', '345', '12', '100000', '50', '1', '1', 'Portable Fire Cannon Dispenser: Portable Fire Cannon Dispenser');
 INSERT INTO `chest_data` VALUES ('1955', '1155', '351', '12', '100000', '50', '1', '1', 'Portable Poison Cannon Dispenser: Portable Poison Cannon Dispenser');
 INSERT INTO `chest_data` VALUES ('1956', '1156', '352', '12', '100000', '50', '1', '1', 'Portable Blaze Cannon Dispenser: Portable Blaze Cannon Dispenser');
+INSERT INTO `chest_data` VALUES ('1958', '1160', '001', '10', '100000', '20', '1', '1', 'Health Vial (S) Dispenser: Health Vial (S) Dispenser');
+INSERT INTO `chest_data` VALUES ('1959', '1161', '002', '10', '100000', '20', '1', '1', 'Health Vial (M) Dispenser: Health Vial (M) Dispenser');
+INSERT INTO `chest_data` VALUES ('1960', '1162', '003', '10', '100000', '20', '1', '1', 'Health Vial (L) Dispenser: Health Vial (L) Dispenser');
+INSERT INTO `chest_data` VALUES ('1961', '1163', '004', '10', '100000', '20', '1', '1', 'Health Bottle (S) Dispenser: Health Bottle (S) Dispenser');
+INSERT INTO `chest_data` VALUES ('1962', '1164', '005', '10', '100000', '20', '1', '1', 'Health Bottle (M) Dispenser: Health Bottle (M) Dispenser');
+INSERT INTO `chest_data` VALUES ('1963', '1165', '006', '10', '100000', '20', '1', '1', 'Health Bottle (L) Dispenser: Health Bottle (L) Dispenser');
+INSERT INTO `chest_data` VALUES ('1964', '1166', '010', '10', '100000', '20', '1', '1', 'Vital Water (S) Dispenser: Vital Water (S) Dispenser');
+INSERT INTO `chest_data` VALUES ('1965', '1167', '011', '10', '100000', '20', '1', '1', 'Vital Water (M) Dispenser: Vital Water (M) Dispenser');
+INSERT INTO `chest_data` VALUES ('1966', '1168', '012', '10', '100000', '20', '1', '1', 'Vital Water (L) Dispenser: Vital Water (L) Dispenser');
+INSERT INTO `chest_data` VALUES ('1968', '1170', '021', '10', '100000', '20', '1', '1', 'Mana Vial (S) Dispenser: Mana Vial (S) Dispenser');
+INSERT INTO `chest_data` VALUES ('1969', '1171', '022', '10', '100000', '20', '1', '1', 'Mana Vial (M) Dispenser: Mana Vial (M) Dispenser');
+INSERT INTO `chest_data` VALUES ('1970', '1172', '023', '10', '100000', '20', '1', '1', 'Mana Vial (L) Dispenser: Mana Vial (L) Dispenser');
+INSERT INTO `chest_data` VALUES ('1971', '1173', '024', '10', '100000', '20', '1', '1', 'Mana Bottle (S) Dispenser: Mana Bottle (S) Dispenser');
+INSERT INTO `chest_data` VALUES ('1972', '1174', '025', '10', '100000', '20', '1', '1', 'Mana Bottle (M) Dispenser: Mana Bottle (M) Dispenser');
+INSERT INTO `chest_data` VALUES ('1973', '1175', '026', '10', '100000', '20', '1', '1', 'Mana Bottle (L) Dispenser: Mana Bottle (L) Dispenser');
+INSERT INTO `chest_data` VALUES ('1974', '1176', '029', '10', '100000', '20', '1', '1', 'Spiritual Water (S) Dispenser: Spiritual Water (S) Dispenser');
+INSERT INTO `chest_data` VALUES ('1975', '1177', '030', '10', '100000', '20', '1', '1', 'Spiritual Water (M) Dispenser: Spiritual Water (M) Dispenser');
+INSERT INTO `chest_data` VALUES ('1976', '1178', '031', '10', '100000', '20', '1', '1', 'Spiritual Water (L) Dispenser: Spiritual Water (L) Dispenser');
 INSERT INTO `chest_data` VALUES ('2001', '1001', '132|133|087|077|103|133|051|183|680|073|553', '12|12|12|12|2|2|8|8|5|3|8', '78895|20000|204|51|234|234|137|137|35|35|38', '5|3|1|1|1|1|1|1|1|1|1', '1', '11', 'Sikuku Prison Treasure Chests: Wooden Treasure Chest A');
 INSERT INTO `chest_data` VALUES ('2002', '1002', '132|133|087|077|043|073|686|321|581|781|865', '12|12|12|12|3|3|8|8|4|2|8', '78795|20000|204|51|256|256|154|154|47|47|36', '5|3|1|1|1|1|1|1|1|1|1', '1', '11', 'Sikuku Prison Treasure Chests: Wooden Treasure Chest B');
 INSERT INTO `chest_data` VALUES ('2003', '1003', '132|133|087|077|103|133|349|250|581|381|718', '12|12|12|12|3|3|8|8|5|4|8', '78795|20000|204|51|256|256|154|154|44|44|42', '5|3|1|1|1|1|1|1|1|1|1', '1', '11', 'Sikuku Prison Treasure Chests: Wooden Treasure Chest C');

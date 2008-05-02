@@ -1446,7 +1446,9 @@ bool CWorldServer::LoadBreakList()
     int i=0;
     while(!feof(fh))
     {
-      if(i<1000)
+      if(i<3000)
+// make sure above line is set higher than actual amount
+// In WorldServer.h change this one CBreakList BreakList[3000] to match above     
       {
         memset( &line, '\0', 500 );
         fgets( line, 500, fh );

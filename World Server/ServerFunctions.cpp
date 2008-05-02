@@ -549,12 +549,21 @@ CDrop* CWorldServer::GetPYDrop( CMonster* thismon, UINT droptype )
 // Skillbooks & Chests
         if(newdrop->item.itemtype == 10)
         {
-            if((newdrop->item.itemnum >=441 && newdrop->item.itemnum <= 888) ||
-               (newdrop->item.itemnum >=247 && newdrop->item.itemnum <= 249) ||
-               (newdrop->item.itemnum >=270 && newdrop->item.itemnum <= 275) ||
-               (newdrop->item.itemnum >=1001 && newdrop->item.itemnum <= 1028) ||
-               (newdrop->item.itemnum >=1080 && newdrop->item.itemnum <= 1090) )                              
+            if((newdrop->item.itemnum >=441 && newdrop->item.itemnum <= 888) || 
+               (newdrop->item.itemnum >=247 && newdrop->item.itemnum <= 249) || 
+               (newdrop->item.itemnum >=270 && newdrop->item.itemnum <= 275) || 
+               (newdrop->item.itemnum >=1001 && newdrop->item.itemnum <= 1028) || 
+               (newdrop->item.itemnum >=1110 && newdrop->item.itemnum <= 1178) || 
+               (newdrop->item.itemnum >=1080 && newdrop->item.itemnum <= 1090) ) 
                 newdrop->item.count = 1;   // just one skill book or chest per drop
+/*
+441-888    Skills
+247-249    Christmas Presents
+270-275    Dirty Stones
+1001-1028  Prison Chests
+1110-1178  Dispensers
+1080-1090  Event Boxes
+*/                
         }
 // Gem Drops
         if(newdrop->item.itemtype == 11)
