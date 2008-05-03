@@ -497,8 +497,34 @@ bool CWorldServer::LoadChestData( )
             }
         }
 
-        newchest->probmax = 0;
+        newchest->rewardamount = 0;
         value = 0;
+        // Reward Amount
+        for(UINT j=0;j<newchest->Rewards.size();j++)
+        {
+            value = atoi(strtok((j==0?row[4]:NULL), "|"));
+            if(value==0)
+            {
+                newchest->Rewards.erase(newchest->Rewards.begin() + j);
+                Log(MSG_WARNING, "reward amount not set! chestid: %i - reward id: %i - reward deleted", newchest->chestid, newchest->Rewards.at(j)->id );
+            }
+            else
+            {
+            newchest->Rewards.at(j)->rewardamount = value;
+            }
+        }
+        // Reward Total
+        for(UINT j=0;j<newchest->Rewards.size();j++)
+        {
+            value = atoi(row[5]);
+            {
+            newchest->rewardposs = value;
+//            newchest->Rewards.at(j)->rewardposs = value;
+            }
+        }
+
+        newchest->probmax = 0;
+        value = 0;        
         // probability
         for(UINT j=0;j<newchest->Rewards.size();j++)
         {

@@ -795,6 +795,8 @@ struct CReward
     unsigned int id;
     unsigned int type;
     unsigned int prob;
+    unsigned int rewardamount;
+    unsigned int rewardposs;    
 };
 
 struct CChest
@@ -802,6 +804,8 @@ struct CChest
     unsigned int chestid;
     vector<CReward*> Rewards;
     unsigned int probmax;
+    unsigned int rewardamount;
+    unsigned int rewardposs;    
 };
 
 struct CBValue

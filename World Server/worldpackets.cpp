@@ -4026,7 +4026,7 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
                 {
                     item.itemtype = reward->type;
                     item.itemnum = reward->id;
-                    item.count = 1;
+                    item.count = reward->rewardamount;
                     item.socketed = false;
                     item.appraised = true;
                     item.lifespan = 100;
@@ -4038,7 +4038,10 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
                     break;
                 }
             }
-            if (rewardCount > 1)
+            unsigned int rewardmax = RandNumber( 1, thischest->rewardposs ); //test
+      
+            //if (rewardCount > 1)
+            if (rewardmax >1)
             {
                 DWORD probextra = 1;
                 randv = RandNumber( 1, thischest->probmax - prob );
@@ -4052,7 +4055,7 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
                         {
                             itemextra.itemtype = reward->type;
                             itemextra.itemnum = reward->id;
-                            itemextra.count = 1;
+                            itemextra.count = reward->rewardamount;
                             itemextra.socketed = false;
                             itemextra.appraised = true;
                             itemextra.lifespan = 100;
@@ -4067,7 +4070,8 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
                 if (itemextra.itemnum == 0)
                 {
                     Log(MSG_INFO, "Could not obtain secondary reward. Make sure all chests have atleast 2 rewards.");
-                    rewardCount = 1;
+                    //rewardCount = 1;
+                    rewardmax=1;
                 }
             }
 
@@ -4080,14 +4084,16 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
             {
             BEGINPACKET( pak, 0x7bc );
             ADDBYTE (pak, 0x13);  // Status code. Congrats?
-            ADDBYTE (pak, (rewardCount + 1));  // Number of items
+            //ADDBYTE (pak, (rewardCount + 1));  // Number of items
+            ADDBYTE (pak, (rewardmax + 1));  // Number of items
 
             ADDBYTE (pak, tempslot);
             ADDDWORD(pak, BuildItemHead(thisclient->items[tempslot]));
             ADDDWORD(pak, BuildItemData(thisclient->items[tempslot]));
             ADDDWORD( pak, 0x00000000 );
             ADDWORD ( pak, 0x0000 );
-            if (rewardCount > 1)
+            //if (rewardCount > 1)
+            if (rewardmax > 1)
             {
                 tempslot = thisclient->AddItem(itemextra);
                 if (tempslot != 0xffff)
