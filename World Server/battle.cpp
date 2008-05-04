@@ -321,6 +321,12 @@ void CCharacter::NormalAttack( CCharacter* Enemy )
         Enemy->AddDamage( this, hitpower );
     }
     Enemy->Stats->HP -= hitpower;
+     
+    // actually the target was hit, if it was sleeping, set duration of
+    // sleep to 0. map process will remove sleep then at next player-update
+    if (Enemy->Status->Sleep != 0xff) {
+        Enemy->MagicStatus[Enemy->Status->Sleep].Duration = 0;
+    }
     
     //if (IsPlayer())
     //printf("Target suffered %i physical damage, %i HP still remain \n", hitpower, Enemy->Stats->HP);
@@ -746,6 +752,12 @@ void CCharacter::UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff )
         Enemy->AddDamage( this, skillpower );
     }
     Enemy->Stats->HP -= skillpower;
+      
+    // actually the target was hit, if it was sleeping, set duration of
+    // sleep to 0. map process will remove sleep then at next player-update
+    if (Enemy->Status->Sleep != 0xff) {
+        Enemy->MagicStatus[Enemy->Status->Sleep].Duration = 0;
+    }
     
     BEGINPACKET( pak, 0x7b6 );
     ADDWORD    ( pak, Enemy->clientid );

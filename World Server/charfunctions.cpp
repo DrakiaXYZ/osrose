@@ -273,7 +273,13 @@ bool CCharacter::IsOnBattle( )
 
 bool CCharacter::CanAttack( ) // updated by Core
 {
-    clock_t etime = clock() - Battle->lastAtkTime;
+ 
+    // we cannot attack while sleeping or stunned
+    if (Status->Sleep != 0xff || Status->Stun != 0xff) {
+        return false;
+    }
+ 
+     clock_t etime = clock() - Battle->lastAtkTime;
     //if( etime < CLOCKS_PER_SEC * 100 / Stats->Attack_Speed ) return false;   for the time being let's just let it be unsynced to avoid disbalanced
     int weapontype = IsPlayer()?getWeaponType():0;
     //the fix: not much but it works ;)
@@ -483,6 +489,11 @@ void CCharacter::RefreshBuff( )
                      Status->Flame = 0xff;
                 printf("removing flame\n");
                 break;
+                case A_SLEEP:
+                     Status->Sleep = 0xff;
+                     //StartAction(NULL, 0, 0, true);
+                break;
+
                                                                         
             }
             MagicStatus[i].Buff = 0;
