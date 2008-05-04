@@ -47,6 +47,7 @@ CCharacter::CCharacter( )
     Stats->ExtraDamage = 0; //LMA: Devilking / Arnold
     Stats->ExtraDamage_add=0;
     Stats->Stealth = 0;
+    
     // POSITION  
     Position = new POSITION;    
     assert(Position);    
@@ -99,6 +100,7 @@ CCharacter::CCharacter( )
     Status->Poison = 0xff;
     Status->Mute = 0xff;
     Status->Flame = 0xff;
+    Status->Sleep = 0xff;
         // Stance
     Status->Stance = RUNNING;              
     for(int i=0;i<30;i++)

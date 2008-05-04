@@ -100,6 +100,7 @@
 #define A_MUTE 41
 #define A_POISON 42
 #define A_FLAME 58
+#define A_SLEEP 43
 
 
 //*spawn values

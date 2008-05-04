@@ -583,6 +583,28 @@ bool CWorldServer::CheckDBuffs( CSkills* thisskill, CCharacter* character, int E
             else printf("stunning failed: BuffValue.NewValue= %i, rand= %i, (Evalue+200)/700= %i \n", BuffValue.NewValue, tmp, (Evalue+200)/700);
         }
         break;
+
+        case A_SLEEP:
+        {
+            CBValue BuffValue = GetBuffValue( thisskill, character, Evalue, i,
+                                              0xff,
+                                              character->Status->Sleep,
+                                              0, false, true);
+            unsigned tmp=RandNumber(1,100);
+            
+            if(BuffValue.NewValue!=0 && (RandNumber(1,100) < thisskill->success))
+            {                   
+               UINT j = BuffValue.Position;
+               character->Status->Sleep = j;
+               character->MagicStatus[j].Buff = thisskill->buff[i];
+               character->MagicStatus[j].BuffTime = clock();
+               character->MagicStatus[j].Duration = thisskill->duration;  
+               character->MagicStatus[j].Value = BuffValue.Value;                  
+               bflag = true;
+            }
+        }
+        break;
+
         case A_POISON:
         {
              printf("User used poison skill\n");

@@ -117,6 +117,7 @@ struct STATUS
     BYTE HP_down;
     BYTE MP_down;   
     BYTE ExtraDamage_down;
+    BYTE Sleep;
 
     //Status
     BYTE Stun;
