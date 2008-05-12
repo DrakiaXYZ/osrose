@@ -4,7 +4,7 @@ Source Host: osrose
 Source Database: osrose
 Target Host: osrose
 Target Database: osrose
-Date: 5/1/2008 4:15:54 PM
+Date: 5/10/2008 4:15:54 PM
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -43,56 +43,24 @@ INSERT INTO `chest_data` VALUES ('1902', '998', '283|202|363|353|373|191|467|153
 INSERT INTO `chest_data` VALUES ('1903', '999', '771|838|161|406|202|334|425|192|464|283|962|363|985|173|594', '6|2|3|14|10|11|14|3|8|10|10|10|10|3|10', '1000|2000|2000|3000|3000|3000|5000|6000|7000|7000|11000|12000|12000|13000|13000', '1|1|1|1|1|1|1|1|1|1|1|1|1|1|1', '1', '15', 'NA: ROSE Treasure Chest (L)');
 INSERT INTO `chest_data` VALUES ('1904', '1000', '407|202|323|353|373|191|467|153|153|984|942|169|157|171|961', '14|10|11|11|11|3|8|5|2|10|10|3|3|3|10', '1000|1000|3000|3000|3000|3000|4000|9000|9000|10000|10000|10000|11000|11000|12000', '1|1|1|1|1|1|1|1|1|1|1|1|1|1|1', '1', '15', 'NA: ROSE Treasure Chest (XL)');
 INSERT INTO `chest_data` VALUES ('1905', '996', '763|167|333|313|363|284|944|035|157|156|187|405|364|940|963', '6|1|11|11|11|10|10|9|2|3|4|14|10|10|10', '1000|1000|2000|3000|4000|7000|8000|8000|8000|7000|7000|10000|10000|12000|12000', '1|1|1|1|1|1|1|1|1|1|1|1|1|1|1', '1', '15', 'NA: ROSE Treasure Chest (S: 1.5)');
-INSERT INTO `chest_data` VALUES ('1910', '1110', '301', '12', '100000', '50', '1', '1', 'Portable Wooden Arrow Dispenser: Portable Wooden Arrow Dispenser');
-INSERT INTO `chest_data` VALUES ('1911', '1111', '302', '12', '100000', '50', '1', '1', 'Portable Bone Arrow Dispenser: Portable Bone Arrow Dispenser');
-INSERT INTO `chest_data` VALUES ('1912', '1112', '311', '12', '100000', '50', '1', '1', 'Portable Fire Arrow Dispenser: Portable Fire Arrow Dispenser');
-INSERT INTO `chest_data` VALUES ('1913', '1113', '303', '12', '100000', '50', '1', '1', 'Portable Stone Arrow Dispenser: Portable Stone Arrow Dispenser');
-INSERT INTO `chest_data` VALUES ('1914', '1115', '304', '12', '100000', '50', '1', '1', 'Portable Claw Arrow Dispenser: Portable Claw Arrow Dispenser');
-INSERT INTO `chest_data` VALUES ('1915', '1119', '305', '12', '100000', '50', '1', '1', 'Portable Metal Arrow Dispenser: Portable Metal Arrow Dispenser');
-INSERT INTO `chest_data` VALUES ('1916', '1121', '306', '12', '100000', '50', '1', '1', 'Portable Gilded Arrow Dispenser: Portable Gilded Arrow Dispenser');
-INSERT INTO `chest_data` VALUES ('1917', '1122', '307', '12', '100000', '50', '1', '1', 'Portable Platinum Arrow Dispenser: Portable Platinum Arrow Dispenser');
-INSERT INTO `chest_data` VALUES ('1918', '1114', '312', '12', '100000', '50', '1', '1', 'Portable White Night Arrow Dispenser: Portable White Night Arrow Dispenser');
-INSERT INTO `chest_data` VALUES ('1919', '1116', '313', '12', '100000', '50', '1', '1', 'Portable Demon Arrow Dispenser: Portable Demon Arrow Dispenser');
-INSERT INTO `chest_data` VALUES ('1920', '1117', '314', '12', '100000', '50', '1', '1', 'Portable Nymph Arrow Dispenser: Portable Nymph Arrow Dispenser');
-INSERT INTO `chest_data` VALUES ('1921', '1123', '315', '12', '100000', '50', '1', '1', 'Portable Elven Arrow Dispenser: Portable Elven Arrow Dispenser');
-INSERT INTO `chest_data` VALUES ('1922', '1118', '316', '12', '100000', '50', '1', '1', 'Portable Lightning Arrow Dispenser: Portable Lightning Arrow Dispenser');
-INSERT INTO `chest_data` VALUES ('1923', '1120', '317', '12', '100000', '50', '1', '1', 'Portable Storm Arrow Dispenser: Portable Storm Arrow Dispenser');
-INSERT INTO `chest_data` VALUES ('1930', '1130', '321', '12', '100000', '50', '1', '1', 'Portable Bean Bullet Dispenser: Portable Bean Bullet Dispenser');
-INSERT INTO `chest_data` VALUES ('1931', '1131', '322', '12', '100000', '50', '1', '1', 'Portable Bullet Dispenser: Portable Bullet Dispenser');
-INSERT INTO `chest_data` VALUES ('1932', '1132', '323', '12', '100000', '50', '1', '1', 'Portable Iron Bullet Dispenser: Portable Iron Bullet Dispenser');
-INSERT INTO `chest_data` VALUES ('1933', '1133', '324', '12', '100000', '50', '1', '1', 'Portable Plated Bullet Dispenser: Portable Plated Bullet Dispenser');
-INSERT INTO `chest_data` VALUES ('1934', '1134', '325', '12', '100000', '50', '1', '1', 'Portable Silver-Plated Bullet Dispenser: Portable Silver-Plated Bullet Dispenser');
-INSERT INTO `chest_data` VALUES ('1935', '1135', '326', '12', '100000', '50', '1', '1', 'Portable Gold-Plated Bullet Dispenser: Portable Gold-Plated Bullet Dispenser');
-INSERT INTO `chest_data` VALUES ('1936', '1136', '327', '12', '100000', '50', '1', '1', 'Portable Platinum Bullet Dispenser: Portable Platinum Bullet Dispenser');
-INSERT INTO `chest_data` VALUES ('1937', '1139', '328', '12', '100000', '50', '1', '1', 'Portable Chromium Bullet Dispenser: Portable Chromium Bullet Dispenser');
-INSERT INTO `chest_data` VALUES ('1938', '1137', '331', '12', '100000', '50', '1', '1', 'Portable Fire Bullet Dispenser: Portable Fire Bullet Dispenser');
-INSERT INTO `chest_data` VALUES ('1939', '1138', '332', '12', '100000', '50', '1', '1', 'Portable Cold Bullet Dispenser: Portable Cold Bullet Dispenser');
-INSERT INTO `chest_data` VALUES ('1940', '1140', '333', '12', '100000', '50', '1', '1', 'Portable Poison Bullet Dispenser: Portable Poison Bullet Dispenser');
-INSERT INTO `chest_data` VALUES ('1950', '1150', '341', '12', '100000', '50', '1', '1', 'Portable Cannon Dispenser: Portable Cannon Dispenser');
-INSERT INTO `chest_data` VALUES ('1951', '1151', '342', '12', '100000', '50', '1', '1', 'Portable Iron Cannon Dispenser: Portable Iron Cannon Dispenser');
-INSERT INTO `chest_data` VALUES ('1952', '1152', '343', '12', '100000', '50', '1', '1', 'Portable Track Cannon Dispenser: Portable Track Cannon Dispenser');
-INSERT INTO `chest_data` VALUES ('1953', '1153', '344', '12', '100000', '50', '1', '1', 'Portable Bomber Cannon Dispenser: Portable Bomber Cannon Dispenser');
-INSERT INTO `chest_data` VALUES ('1954', '1154', '345', '12', '100000', '50', '1', '1', 'Portable Fire Cannon Dispenser: Portable Fire Cannon Dispenser');
-INSERT INTO `chest_data` VALUES ('1955', '1155', '351', '12', '100000', '50', '1', '1', 'Portable Poison Cannon Dispenser: Portable Poison Cannon Dispenser');
-INSERT INTO `chest_data` VALUES ('1956', '1156', '352', '12', '100000', '50', '1', '1', 'Portable Blaze Cannon Dispenser: Portable Blaze Cannon Dispenser');
-INSERT INTO `chest_data` VALUES ('1958', '1160', '001', '10', '100000', '20', '1', '1', 'Health Vial (S) Dispenser: Health Vial (S) Dispenser');
-INSERT INTO `chest_data` VALUES ('1959', '1161', '002', '10', '100000', '20', '1', '1', 'Health Vial (M) Dispenser: Health Vial (M) Dispenser');
-INSERT INTO `chest_data` VALUES ('1960', '1162', '003', '10', '100000', '20', '1', '1', 'Health Vial (L) Dispenser: Health Vial (L) Dispenser');
-INSERT INTO `chest_data` VALUES ('1961', '1163', '004', '10', '100000', '20', '1', '1', 'Health Bottle (S) Dispenser: Health Bottle (S) Dispenser');
-INSERT INTO `chest_data` VALUES ('1962', '1164', '005', '10', '100000', '20', '1', '1', 'Health Bottle (M) Dispenser: Health Bottle (M) Dispenser');
-INSERT INTO `chest_data` VALUES ('1963', '1165', '006', '10', '100000', '20', '1', '1', 'Health Bottle (L) Dispenser: Health Bottle (L) Dispenser');
-INSERT INTO `chest_data` VALUES ('1964', '1166', '010', '10', '100000', '20', '1', '1', 'Vital Water (S) Dispenser: Vital Water (S) Dispenser');
-INSERT INTO `chest_data` VALUES ('1965', '1167', '011', '10', '100000', '20', '1', '1', 'Vital Water (M) Dispenser: Vital Water (M) Dispenser');
-INSERT INTO `chest_data` VALUES ('1966', '1168', '012', '10', '100000', '20', '1', '1', 'Vital Water (L) Dispenser: Vital Water (L) Dispenser');
-INSERT INTO `chest_data` VALUES ('1968', '1170', '021', '10', '100000', '20', '1', '1', 'Mana Vial (S) Dispenser: Mana Vial (S) Dispenser');
-INSERT INTO `chest_data` VALUES ('1969', '1171', '022', '10', '100000', '20', '1', '1', 'Mana Vial (M) Dispenser: Mana Vial (M) Dispenser');
-INSERT INTO `chest_data` VALUES ('1970', '1172', '023', '10', '100000', '20', '1', '1', 'Mana Vial (L) Dispenser: Mana Vial (L) Dispenser');
-INSERT INTO `chest_data` VALUES ('1971', '1173', '024', '10', '100000', '20', '1', '1', 'Mana Bottle (S) Dispenser: Mana Bottle (S) Dispenser');
-INSERT INTO `chest_data` VALUES ('1972', '1174', '025', '10', '100000', '20', '1', '1', 'Mana Bottle (M) Dispenser: Mana Bottle (M) Dispenser');
-INSERT INTO `chest_data` VALUES ('1973', '1175', '026', '10', '100000', '20', '1', '1', 'Mana Bottle (L) Dispenser: Mana Bottle (L) Dispenser');
-INSERT INTO `chest_data` VALUES ('1974', '1176', '029', '10', '100000', '20', '1', '1', 'Spiritual Water (S) Dispenser: Spiritual Water (S) Dispenser');
-INSERT INTO `chest_data` VALUES ('1975', '1177', '030', '10', '100000', '20', '1', '1', 'Spiritual Water (M) Dispenser: Spiritual Water (M) Dispenser');
-INSERT INTO `chest_data` VALUES ('1976', '1178', '031', '10', '100000', '20', '1', '1', 'Spiritual Water (L) Dispenser: Spiritual Water (L) Dispenser');
+INSERT INTO `chest_data` VALUES ('1958', '1160', '001', '10', '100000', '10', '1', '1', 'Health Vial (S) Dispenser: Health Vial (S) Dispenser');
+INSERT INTO `chest_data` VALUES ('1959', '1161', '002', '10', '100000', '10', '1', '1', 'Health Vial (M) Dispenser: Health Vial (M) Dispenser');
+INSERT INTO `chest_data` VALUES ('1960', '1162', '003', '10', '100000', '10', '1', '1', 'Health Vial (L) Dispenser: Health Vial (L) Dispenser');
+INSERT INTO `chest_data` VALUES ('1961', '1163', '004', '10', '100000', '10', '1', '1', 'Health Bottle (S) Dispenser: Health Bottle (S) Dispenser');
+INSERT INTO `chest_data` VALUES ('1962', '1164', '005', '10', '100000', '10', '1', '1', 'Health Bottle (M) Dispenser: Health Bottle (M) Dispenser');
+INSERT INTO `chest_data` VALUES ('1963', '1165', '006', '10', '100000', '10', '1', '1', 'Health Bottle (L) Dispenser: Health Bottle (L) Dispenser');
+INSERT INTO `chest_data` VALUES ('1964', '1166', '010', '10', '100000', '10', '1', '1', 'Vital Water (S) Dispenser: Vital Water (S) Dispenser');
+INSERT INTO `chest_data` VALUES ('1965', '1167', '011', '10', '100000', '10', '1', '1', 'Vital Water (M) Dispenser: Vital Water (M) Dispenser');
+INSERT INTO `chest_data` VALUES ('1966', '1168', '012', '10', '100000', '10', '1', '1', 'Vital Water (L) Dispenser: Vital Water (L) Dispenser');
+INSERT INTO `chest_data` VALUES ('1968', '1170', '021', '10', '100000', '10', '1', '1', 'Mana Vial (S) Dispenser: Mana Vial (S) Dispenser');
+INSERT INTO `chest_data` VALUES ('1969', '1171', '022', '10', '100000', '10', '1', '1', 'Mana Vial (M) Dispenser: Mana Vial (M) Dispenser');
+INSERT INTO `chest_data` VALUES ('1970', '1172', '023', '10', '100000', '10', '1', '1', 'Mana Vial (L) Dispenser: Mana Vial (L) Dispenser');
+INSERT INTO `chest_data` VALUES ('1971', '1173', '024', '10', '100000', '10', '1', '1', 'Mana Bottle (S) Dispenser: Mana Bottle (S) Dispenser');
+INSERT INTO `chest_data` VALUES ('1972', '1174', '025', '10', '100000', '10', '1', '1', 'Mana Bottle (M) Dispenser: Mana Bottle (M) Dispenser');
+INSERT INTO `chest_data` VALUES ('1973', '1175', '026', '10', '100000', '10', '1', '1', 'Mana Bottle (L) Dispenser: Mana Bottle (L) Dispenser');
+INSERT INTO `chest_data` VALUES ('1974', '1176', '029', '10', '100000', '10', '1', '1', 'Spiritual Water (S) Dispenser: Spiritual Water (S) Dispenser');
+INSERT INTO `chest_data` VALUES ('1975', '1177', '030', '10', '100000', '10', '1', '1', 'Spiritual Water (M) Dispenser: Spiritual Water (M) Dispenser');
+INSERT INTO `chest_data` VALUES ('1976', '1178', '031', '10', '100000', '10', '1', '1', 'Spiritual Water (L) Dispenser: Spiritual Water (L) Dispenser');
 INSERT INTO `chest_data` VALUES ('2001', '1001', '132|133|087|077|103|133|051|183|680|073|553', '12|12|12|12|2|2|8|8|5|3|8', '78895|20000|204|51|234|234|137|137|35|35|38', '5|3|1|1|1|1|1|1|1|1|1', '1', '11', 'Sikuku Prison Treasure Chests: Wooden Treasure Chest A');
 INSERT INTO `chest_data` VALUES ('2002', '1002', '132|133|087|077|043|073|686|321|581|781|865', '12|12|12|12|3|3|8|8|4|2|8', '78795|20000|204|51|256|256|154|154|47|47|36', '5|3|1|1|1|1|1|1|1|1|1', '1', '11', 'Sikuku Prison Treasure Chests: Wooden Treasure Chest B');
 INSERT INTO `chest_data` VALUES ('2003', '1003', '132|133|087|077|103|133|349|250|581|381|718', '12|12|12|12|3|3|8|8|5|4|8', '78795|20000|204|51|256|256|154|154|44|44|42', '5|3|1|1|1|1|1|1|1|1|1', '1', '11', 'Sikuku Prison Treasure Chests: Wooden Treasure Chest C');
@@ -125,11 +93,13 @@ INSERT INTO `chest_data` VALUES ('2050', '270', '361|362|363|364|365|366|367|368
 INSERT INTO `chest_data` VALUES ('2051', '271', '381|382|383|384|385|386|387|388|389|390', '12|12|12|12|12|12|12|12|12|12', '10000|10000|10000|10000|10000|10000|10000|10000|10000|10000', '1|1|1|1|1|1|1|1|1|1', '1', '10', 'Dirty Rune Stone: Dirty Rune Stone');
 INSERT INTO `chest_data` VALUES ('2052', '272', '291|292|293|294', '12|12|12|12', '25000|25000|25000|25000', '1|1|1|1', '1', '4', 'Dirty Ore: Dirty Ore');
 INSERT INTO `chest_data` VALUES ('2053', '273', '121|122|123|124|125', '12|12|12|12|12', '20000|20000|20000|20000|20000', '1|1|1|1|1', '1', '5', 'Dirty Stone: Dirty Stone');
-INSERT INTO `chest_data` VALUES ('2054', '274', '161|162|163|164', '12|12|12|12', '25000|25000|25000|25000', '1|1|1|1', '1', '4', 'Dirty Crystal: Dirty Crystal');
+INSERT INTO `chest_data` VALUES ('2054', '274', '161|162|163|164', '12|12|12|12', '25000|25000|25000|25000', '2|2|2|2', '1', '4', 'Dirty Crystal: Dirty Crystal');
 INSERT INTO `chest_data` VALUES ('2055', '275', '295|296|297|298|299', '12|12|12|12|12', '24875|24875|24875|24875|500', '1|1|1|1|1', '1', '5', 'Dirty Spiritual Stone: Dirty Spiritual Stone');
+INSERT INTO `chest_data` VALUES ('2056', '276', '151|152|153|154|155|156|157', '12|12|12|12|12|12|12', '14286|14286|14286|14286|14286|14285|14285', '1|1|1|1|1|1|1', '1', '7', 'Dirty Heart Stone: Dirty Heart Stone');
 INSERT INTO `chest_data` VALUES ('2380', '1080', '918|918|918|919|919|168|281', '10|10|10|10|10|1|6', '35000|10000|5000|30000|10000|5000|5000', '1|2|5|2|5|1|1', '1', '7', '2008 Valentines Box: Valentines Box');
 INSERT INTO `chest_data` VALUES ('2381', '1081', '178|175|175|178|169', '3|4|2|5|1', '20000|20000|20000|20000|20000', '1|1|1|1|1', '1', '5', '2008 St. Patricks Day Box: Leprechauns Box');
 INSERT INTO `chest_data` VALUES ('2382', '1082', '203|816|817|818|819|039|145|250|251|107|940|941', '2|2|2|2|2|9|10|10|10|10|10|10', '2500|2500|2500|2500|2500|2500|5500|25000|25000|9000|9000|9000', '1|1|1|1|1|1|3|5|5|5|2|2', '1', '12', '2008 Easter Egg: 2008 Easter Egg');
-INSERT INTO `chest_data` VALUES ('2400', '247', '326|913|240|241|243|245|242|244|246|496', '10|10|10|10|10|10|10|10|10|10', '13000|12000|12000|10000|10000|10000|10000|10000|8000|5000', '5|5|3|3|3|3|3|3|3|1', '1', '10', '2007 Christmas Event: Small Christmas Present');
+INSERT INTO `chest_data` VALUES ('2400', '247', '326|913|240|241|243|245|242|244|246|496', '10|10|10|10|10|10|10|10|10|10', '13000|12000|12000|10000|10000|10000|10000|10000|8000|5000', '5|5|3|3|3|3|3|3|3|1', '2', '10', '2007 Christmas Event: Small Christmas Present');
 INSERT INTO `chest_data` VALUES ('2401', '248', '326|240|241|243|245|242|244|246|496|174|177|174|177|038', '10|10|10|10|10|10|10|10|10|2|3|4|5|9', '20000|16000|15000|15000|10000|7000|7000|3000|2000|1000|1000|1000|1000|1000', '10|5|5|5|5|5|5|5|2|1|1|1|1|1', '2', '14', '2007 Christmas Event: Medium Christmas Present');
 INSERT INTO `chest_data` VALUES ('2402', '249', '326|240|241|243|245|242|244|246|496|174|177|174|177|038', '10|10|10|10|10|10|10|10|10|2|3|4|5|9', '18500|15000|14000|15000|10000|7000|7000|3500|2500|1500|1500|1500|1500|1500', '15|8|8|8|8|8|8|8|3|1|1|1|1|1', '2', '14', '2007 Christmas Event: Large Christmas Present');
+
