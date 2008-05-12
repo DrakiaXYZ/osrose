@@ -541,16 +541,30 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
         {
              if (thisclient->Stats->Level<160) // by Terr0risT
              {
-             SendPM(thisclient, "You need to be a least Level 160 to visit Sikuku Underground Prison!");
-             return true;
+                 SendPM(thisclient, "You need to be a least Level 160 to visit Sikuku Underground Prison!");
+                 return true;
              }
              else
              {
-            map = 65;
-            x = 5485;
-            y = 5285;
+                map = 65;
+                x = 5485;
+                y = 5285;
+             }                 
+        }
+        else if (loc == 12) // Oro
+        {
+             if (thisclient->Stats->Level<160)
+             {
+                 SendPM(thisclient, "You need to be a least Level 160 to visit Oro!");
+                 return true;
+             }
+             else
+             {
+                map = 80;
+                x = 5163;
+                y = 5236;
+             }
         }         
-      }
         else
         {
             SendPM(thisclient, "Please input a number after the go command, below is a list of places and their appropriate number");
@@ -565,6 +579,7 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
             SendPM(thisclient, "9 = Desert of the Dead");
             SendPM(thisclient, "10 = Pyramid Tombs - ElVerloon");
             SendPM(thisclient, "11 = Sikuku Underground Prison");
+            SendPM(thisclient, "12 = Oro");
             SendPM(thisclient, "Example; /go 3");
         }
         if ( thisclient->Stats->HP < (thisclient->Stats->MaxHP / 2) || thisclient->Stats->HP < 1 || thisclient->Session->inGame == false )
