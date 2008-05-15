@@ -743,6 +743,32 @@ struct CSpawnArea
 	UINT bossdropID;    //boss drop ID.
 	CMDrops* bossdrop;	//boss drop.
 };
+#ifdef USEIFO
+struct CMob {
+  UINT id;
+  UINT mobId;
+  bool tactical;
+  UINT amount;
+  CNPCData* thisnpc;
+    CMDrops* mobdrop;
+    CMDrops* mapdrop;
+};
+ 
+struct CMobGroup {
+  UINT id;
+  UINT map;
+  UINT limit;
+  UINT active;
+  UINT tacticalpoints;
+  UINT respawntime;
+  UINT basicKills;
+  fPoint point;
+  UINT range;
+  clock_t lastRespawnTime;
+  vector<CMob*> basicMobs;
+  vector<CMob*> tacMobs;
+};
+#endif
 
 struct CUseInfo
 {

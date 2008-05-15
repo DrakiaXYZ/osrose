@@ -397,6 +397,28 @@ CSpawnArea* CWorldServer::GetSpawnArea( UINT id, UINT map )
 	return NULL;
 }
 
+#ifdef USEIFO
+CMobGroup* CWorldServer::GetMobGroup(UINT id, UINT map ) {
+  if (map != 0) {
+    for (unsigned j = 0; j < MapList.Index[map]->MobGroupList.size(); j++) {
+      CMobGroup* thisgroup = MapList.Index[map]->MobGroupList.at(j);
+      if (thisgroup->id == id)
+        return thisgroup;
+    }
+  } else {
+    for (map = 0; map < MapList.Map.size(); map++) {
+      for (unsigned j = 0; j < MapList.Index[map]->MobGroupList.size(); j++) {
+        CMobGroup* thisgroup = MapList.Index[map]->MobGroupList.at(j);
+        if (thisgroup->id == id)
+          return thisgroup;
+      }
+    }
+  }
+  return NULL;
+}
+#endif
+
+
 // delete a spawn
 bool CWorldServer::DeleteSpawn( CSpawnArea* spawn )
 {

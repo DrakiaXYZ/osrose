@@ -498,7 +498,11 @@ bool CWorldServer::OnServerReady( )
     LoadNPCData( );
     LoadTeleGateData( );
     LoadRespawnData( );
+#ifndef USEIFO
     LoadMonsterSpawn( );
+#else
+    LoadMobGroups( );
+#endif
     LoadNPCs( );
     LoadMonsters( );
     LoadUpgrade( );

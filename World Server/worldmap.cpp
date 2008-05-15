@@ -36,6 +36,9 @@ CMap::CMap( )
     CurrentTime = 0;
     RespawnList.clear();
     MonsterSpawnList.clear();
+#ifdef USEIFO
+    MobGroupList.clear();
+#endif
     MonsterList.clear();
     DropsList.clear();
     PlayerList.clear();
@@ -49,6 +52,16 @@ CMap::~CMap( )
 {
     for(UINT i=0;i<RespawnList.size();i++)
         delete RespawnList.at(i);
+#ifdef USEIFO
+    for(UINT i = 0; i < MobGroupList.size(); i++) {
+      CMobGroup *thisgroup = MobGroupList.at(i);
+      for (UINT j = 0; j < thisgroup->basicMobs.size(); j++)
+        delete thisgroup->basicMobs.at(j);
+      for (UINT j = 0; j < thisgroup->tacMobs.size(); j++)
+        delete thisgroup->tacMobs.at(j);
+      delete thisgroup;
+    }
+#endif
     for(UINT i=0;i<MonsterSpawnList.size();i++)
         delete MonsterSpawnList.at(i);    
     for(UINT i=0;i<MonsterList.size();i++)
@@ -121,9 +134,16 @@ CMonster* CMap::AddMonster( UINT montype, fPoint position, UINT owner, CMDrops* 
     MonsterList.push_back( monster );
     if(spawnid!=0)
     {
+#ifndef USEIFO
         CSpawnArea* thisspawn = GServer->GetSpawnArea( spawnid, this->id );
         if(thisspawn!=NULL)
-            thisspawn->amon++;        
+            thisspawn->amon++;
+#else
+        CMobGroup* thisgroup = GServer->GetMobGroup( spawnid, this->id );
+        if(thisgroup!=NULL)
+            thisgroup->active++;
+#endif
+        
     }    
     monster->SpawnTime = clock( );
     monster->OnSpawn( false );
@@ -225,13 +245,25 @@ bool CMap::DeleteMonster( CMonster* monster, bool clearobject, UINT i )
     GServer->ClearClientID( monster->clientid );
     if(monster->Position->respawn!=0)
     {
+#ifndef USEIFO
         CSpawnArea* thisspawn = GServer->GetSpawnArea( monster->Position->respawn, monster->Position->Map );
         if(thisspawn!=NULL)
         {
             if(thisspawn->amon >= thisspawn->max)// reset spawn timer if the spawn is full
-                thisspawn->lastRespawnTime = clock(); // XxXshidoXxX fix for invisible mobs
-            thisspawn->amon--; 
+                thisspawn->lastRespawnTime = clock();
+            thisspawn->amon--;
         }
+#else
+        CMobGroup* thisgroup = GServer->GetMobGroup( monster->Position->respawn, monster->Position->Map );
+        if(thisgroup!=NULL)
+        {
+            if(thisgroup->active >= thisgroup->limit)// reset spawn timer if the spawn is full
+                thisgroup->lastRespawnTime = clock();
+            thisgroup->active--;
+            thisgroup->basicKills++;
+        }
+#endif
+
     }
     if(clearobject)
     {

@@ -242,6 +242,7 @@ void CMap::CleanDrops( )
 // Respawn a Monster
 void CMap::RespawnMonster( )
 {
+  #ifndef USEIFO   
     for(UINT k=0;k<MonsterSpawnList.size( );k++)
     {
         CSpawnArea* thisspawn = MonsterSpawnList.at(k);                
@@ -271,6 +272,28 @@ void CMap::RespawnMonster( )
             thisspawn->lastRespawnTime = clock();                                  
         }
     }                  
+#else
+    for (UINT j = 0; j < MobGroupList.size(); j++) {
+      CMobGroup* thisgroup = MobGroupList.at(j);
+      clock_t rtime = clock() - thisgroup->lastRespawnTime;
+      if (rtime < thisgroup->respawntime*CLOCKS_PER_SEC || thisgroup->active >= thisgroup->limit)
+        continue;
+      for (UINT k = thisgroup->active; k < thisgroup->limit; k++) {
+        CMob *thismob;
+        if (thisgroup->tacMobs.size() > 0 && thisgroup->basicKills > thisgroup->tacticalpoints) {
+          UINT mobId = (UINT)(rand() % thisgroup->tacMobs.size());
+          thismob = thisgroup->tacMobs.at(mobId);
+          thisgroup->basicKills = 0;
+        } else {
+          UINT mobId = (UINT)(rand() % thisgroup->basicMobs.size());
+          thismob = thisgroup->basicMobs.at(mobId);
+        }
+        fPoint position = GServer->RandInCircle( thisgroup->point, thisgroup->range );
+        AddMonster( thismob->mobId, position, 0, thismob->mobdrop, thismob->mapdrop, thisgroup->id );
+      }
+    }
+#endif
+
 }
 
 // Return true if is night

@@ -135,6 +135,9 @@ class CWorldServer : public CServerSocket
     	UINT BuildItemData( CItem thisitem );
     	CMonster* GetMonsterByID( UINT id, UINT map );
     	CSpawnArea* GetSpawnArea( UINT id, UINT map=0 );
+#ifdef USEIFO
+        CMobGroup* GetMobGroup( UINT id, UINT map=0 );
+#endif
         bool DeleteSpawn( CSpawnArea* spawn );
         CNPCData* GetNPCDataByID( UINT id );
     	void SendToMap( CPacket* pak, int mapid );
@@ -332,6 +335,9 @@ class CWorldServer : public CServerSocket
         bool LoadCustomTeleGate( );
         bool LoadCustomEvents( );
         bool LoadMonsterSpawn( );
+#ifdef USEIFO
+        bool LoadMobGroups( );
+#endif
         bool LoadRespawnData( );
         bool LoadQuestData( );
         bool LoadDropsData( );

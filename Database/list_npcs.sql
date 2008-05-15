@@ -199,5 +199,5 @@ INSERT INTO `list_npcs` VALUES ('173', 'Gate', '1023', '74', '0', '5072.13', '52
 INSERT INTO `list_npcs` VALUES ('174', 'Gate', '1023', '74', '0', '5072.59', '5112.01');
 INSERT INTO `list_npcs` VALUES ('175', 'Gate', '1023', '74', '0', '5157.48', '5288.8');
 INSERT INTO `list_npcs` VALUES ('176', 'Gate', '1023', '74', '0', '5159.85', '5109.6');
-INSERT INTO `list_npcs` VALUES ('177', '[Teleporter] Selladin', '1017', '1', '180', '5244', '5222');
-INSERT INTO `list_npcs` VALUES ('178', '[Teleporter] Idiosel', '1119', '2', '270', '5347', '5177');
+INSERT INTO `list_npcs` VALUES ('177', '[Teleporter] Selladin', '1017', '1', '162.011', '5247.24', '5222.58');
+INSERT INTO `list_npcs` VALUES ('178', '[Teleporter] Idiosel', '1119', '2', '270', '5343.67', '5177.36');

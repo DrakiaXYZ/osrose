@@ -557,6 +557,90 @@ bool CWorldServer::LoadChestData( )
    	return true;
 }
 
+#ifdef USEIFO
+bool CWorldServer::LoadMobGroups() {
+  Log(MSG_LOAD, "MobGroups data    " );
+  vector<CMobGroup*> mobGroups;
+  MYSQL_ROW row;
+  bool flag = true;
+  char* tmp = NULL;
+  MYSQL_RES *result = DB->QStore("SELECT id, map, x, y, range, respawntime, `limit`, tacticalpoints, moblist FROM list_mobgroups");
+  if (result == NULL) return false;
+  while (row = mysql_fetch_row(result)) {
+    CMobGroup* thisgroup = new (nothrow) CMobGroup;
+    if (thisgroup == NULL) {
+      Log(MSG_ERROR, "Error allocating memory");
+      DB->QFree();
+      return false;
+    }
+    thisgroup->id = atoi(row[0]);
+    thisgroup->map = atoi(row[1]);
+    thisgroup->point.x = atof(row[2]);
+    thisgroup->point.y = atof(row[3]);
+    thisgroup->range = atoi(row[4]);
+    thisgroup->respawntime = atoi(row[5]);
+    thisgroup->limit = atoi(row[6]);
+    thisgroup->tacticalpoints = atoi(row[7]);
+    char* mobList = row[8];
+ 
+    thisgroup->lastRespawnTime = clock();
+    thisgroup->active = 0;
+ 
+    thisgroup->basicMobs.clear();
+    thisgroup->tacMobs.clear();
+ 
+    // Fill in basic/tac mobs
+    tmp = strtok(mobList, ",|");
+    while (tmp != NULL) {
+      int mobId = atoi(tmp);
+      tmp = strtok(NULL, ",|");
+      if (tmp == NULL) {
+        Log(MSG_ERROR, "MobGroup %i is invalid", thisgroup->id);
+        flag = false;
+        break;
+      }
+      int amount = atoi(tmp);
+      tmp = strtok(NULL, ",|");
+      if (tmp == NULL) {
+        Log(MSG_ERROR, "MobGroup %i is invalid", thisgroup->id);
+        flag = false;
+        break;
+      }
+      int tactical = atoi(tmp);
+      CMob *thismob = new (nothrow) CMob;
+      if (thismob == NULL) {
+        Log(MSG_ERROR, "Error allocating memory");
+        DB->QFree();
+        return false;
+      }
+      thismob->amount = amount;
+      thismob->tactical = tactical;
+      thismob->mobId = mobId;
+      thismob->thisnpc = GetNPCDataByID( thismob->mobId );
+      if (thismob->thisnpc == NULL) {
+        Log(MSG_WARNING, "Invalid mobId - Mob %i will not be added", atoi(row[0]));
+        delete thismob;
+        continue;
+      }
+      if (thismob->tactical)
+        thisgroup->tacMobs.push_back(thismob);
+      else
+        thisgroup->basicMobs.push_back(thismob);
+      tmp = strtok(NULL, ",|");
+    }
+    if (!flag) {
+      delete thisgroup;
+      continue;
+    }
+    MapList.Index[thisgroup->map]->MobGroupList.push_back(thisgroup);
+    mobGroups.push_back(thisgroup);
+    }
+    DB->QFree( );
+    return true;
+}
+#endif
+
+
 bool CWorldServer::LoadMonsterSpawn( )
 {
 	Log( MSG_LOAD, "SpawnZones data             " );
@@ -894,6 +978,7 @@ bool CWorldServer::LoadMonsters( )
 {
 	Log( MSG_LOAD, "Monsters Spawn              " );
 	// Do our monster spawning
+	#ifndef USEIFO
     for(UINT i=0;i<MapList.Map.size();i++)
     {
         CMap* thismap = MapList.Map.at(i);
@@ -925,6 +1010,22 @@ bool CWorldServer::LoadMonsters( )
         }
     }
    	Log( MSG_LOAD, "Monsters Spawn loaded" );
+#else
+    for (UINT i = 0; i < MapList.Map.size(); i++) {
+      CMap *thismap = MapList.Map.at(i);
+      for (UINT j = 0; j < thismap->MobGroupList.size(); j++) {
+        CMobGroup* thisgroup = thismap->MobGroupList.at(j);
+        for (UINT k = 0; k < thisgroup->limit; k++) {
+          UINT mobId = (UINT)(rand() % thisgroup->basicMobs.size());
+          CMob* thismob = thisgroup->basicMobs.at(mobId);
+          thismob->mapdrop = GetDropData( thisgroup->map );
+          thismob->mobdrop = GetDropData( thismob->thisnpc->dropid );
+          fPoint position = RandInCircle( thisgroup->point, thisgroup->range );
+          thismap->AddMonster( thismob->mobId, position, 0, thismob->mobdrop, thismob->mapdrop, thisgroup->id );
+        }
+      }
+    }
+#endif
 	return true;
 }
 
@@ -1413,6 +1514,9 @@ bool CWorldServer::LoadZoneData( )
         newzone->LastUpdate = clock( );
         newzone->CurrentTime = 0;
         newzone->MonsterSpawnList.clear();
+        #ifdef USEIFO
+        newzone->MobGroupList.clear();
+        #endif
         MapList.Map.push_back(newzone);
         MapList.Index[newzone->id] = newzone;
     }
