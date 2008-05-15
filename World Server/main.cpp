@@ -31,7 +31,6 @@ UINT fmmonstertype=0;
 UINT ftypeskill=0;
 UINT fskill=0;
 
-
 // Main server function
 int main(int argc, char *argv[]) 
 {
@@ -76,6 +75,7 @@ int main(int argc, char *argv[])
 		#endif
 		return -1;
 	} 	
+	
 	server->StartServer();
 	// Close server
     pthread_attr_destroy(&server->at);	

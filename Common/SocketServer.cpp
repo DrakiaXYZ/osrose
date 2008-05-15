@@ -36,7 +36,6 @@ CServerSocket::~CServerSocket( )
 bool CServerSocket::StartServer( )
 {
 	struct sockaddr_in ain;
-
 	sock = socket( AF_INET, SOCK_STREAM, 0 );
 	if (sock == INVALID_SOCKET) 
     {

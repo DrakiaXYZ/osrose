@@ -221,6 +221,17 @@
 //LMA: maps
 #define NB_CELL_MAX 400
 
+//LMA: max item list.
+#define MAX_PRODUCT_DATA 6000
+#define MAX_EQUIP_DATA 5100
+#define MAX_JEM_DATA 4000
+#define MAX_NATURAL_DATA 1000
+#define MAX_PAT_DATA 1000
+#define MAX_SELL_DATA 1000
+#define MAX_USE_DATA 2000
+#define MAX_MAP_DATA 300
+
+
 #include "../common/sockets.h"
 
 // Hold party experience when kill a moster
@@ -518,7 +529,8 @@ struct CNPC {
 	unsigned short clientid;
 	fPoint pos;
 	float dir;
-	unsigned char posMap;
+	//unsigned char posMap; //LMA: problem
+	unsigned short posMap;
 	unsigned npctype;
 	CNPCData* thisnpc;
 	unsigned dialog;
@@ -701,7 +713,8 @@ struct CRespawnPoint
 {
 	unsigned short id;
 	fPoint dest;
-	unsigned char destMap;
+	//unsigned char destMap;  //LMA: problem...
+	unsigned short destMap;
 	unsigned char radius;
 	bool masterdest;
 };
@@ -820,56 +833,57 @@ struct CBValue
 // ITEMS
 struct CEquipList
 {
-    CEquip *Index[5000];
+    CEquip *Index[MAX_EQUIP_DATA];
     vector<CEquip*> Data;
     CEquip* nullequip;
 };
 
 struct CJemList
 {
-    CJemData *Index[4000];
+    CJemData *Index[MAX_JEM_DATA];
     vector<CJemData*> Data;
     CJemData* nulljem;
 };
 
 struct CNaturalList
 {
-    CNaturalData *Index[1000];
+    CNaturalData *Index[MAX_NATURAL_DATA];
     vector<CNaturalData*> Data;
     CNaturalData* nullnatural;
 };
 
 struct CPatList
 {
-    CPatData *Index[1000];
+    CPatData *Index[MAX_PAT_DATA];
     vector<CPatData*> Data;
     CPatData* nullpat;
 };
 
 struct CProductList
 {
-    CProductData* Index[2000];
+    //CProductData* Index[2000];
+    CProductData* Index[MAX_PRODUCT_DATA];  //LMA: Sometimes 2000 wasn't enough, constant based now.
     vector<CProductData*> Data;
     CProductData* nullproduct;
 };
 
 struct CSellList
 {
-    CCSellData* Index[1000];
+    CCSellData* Index[MAX_SELL_DATA];
     vector<CCSellData*> Data;
     CCSellData* nullsell;
 };
 
 struct CUseList
 {
-    CUseData* Index[2000];
+    CUseData* Index[MAX_USE_DATA];
     vector<CUseData*> Data;
     CUseData* nulluse;
 };
 
 struct CMapList
 {
-    class CMap* Index[300];
+    class CMap* Index[MAX_MAP_DATA];
     vector<class CMap*> Map;
     class CMap* nullzone;
 };

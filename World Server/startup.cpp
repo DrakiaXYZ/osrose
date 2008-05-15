@@ -442,6 +442,15 @@ bool CWorldServer::LoadRespawnData( )
 		thisrespawnpoint->destMap = atoi(row[3]);
 		thisrespawnpoint->radius = atoi(row[4]);
 		thisrespawnpoint->masterdest = (atoi(row[5]) == 1);
+		
+        //LMA: check if out of memory.
+        if (thisrespawnpoint->destMap>=MAX_MAP_DATA)
+        {
+           Log(MSG_WARNING,"RespawnZones, index overflow trapped %i>%i (increase MAX_MAP_DATA)",thisrespawnpoint->destMap,MAX_MAP_DATA);
+           delete thisrespawnpoint;
+           continue;
+        }
+        		
 		MapList.Index[thisrespawnpoint->destMap]->RespawnList.push_back( thisrespawnpoint );
 	}
 	DB->QFree( );
@@ -648,6 +657,15 @@ bool CWorldServer::LoadMonsterSpawn( )
                 delete thisspawn;
                 continue;
             }
+            
+            //LMA: check if out of memory.
+            if (thisspawn->map>=MAX_MAP_DATA)
+            {
+               Log(MSG_WARNING,"Spawn, index overflow trapped %i>%i (increase MAX_MAP_DATA)",thisspawn->map,MAX_MAP_DATA);
+               delete thisspawn;
+               continue;
+            }
+                    
     		MapList.Index[thisspawn->map]->MonsterSpawnList.push_back( thisspawn );
         }
 	}
@@ -688,6 +706,15 @@ bool CWorldServer::LoadNPCs( )
 
         thisnpc->dialog=thisnpc->thisnpc->dialogid;
         thisnpc->event=thisnpc->thisnpc->eventid; //LMA Event.
+        
+        //LMA: check if out of memory.
+        if (thisnpc->posMap>=MAX_MAP_DATA)
+        {
+           Log(MSG_WARNING,"NPC, index overflow trapped %i>%i (increase MAX_MAP_DATA)",thisnpc->posMap,MAX_MAP_DATA);
+           delete thisnpc;
+           continue;
+        }
+                    
 		MapList.Index[thisnpc->posMap]->AddNPC( thisnpc );
 	}
 	DB->QFree( );
@@ -956,6 +983,15 @@ bool CWorldServer::LoadEquip( )
             return false;
         }
         newequip->id = GetUIntValue(",", &line);
+
+        //LMA: check if out of memory.
+        if (newequip->id>=MAX_EQUIP_DATA)
+        {
+           Log(MSG_WARNING,"equip_data.csv, index overflow trapped %i>%i (increase MAX_EQUIP_DATA)",newequip->id,MAX_EQUIP_DATA);
+           delete newequip;
+           continue;
+        }        
+        
         newequip->equiptype = GetUIntValue(",");
         newequip->type = GetUIntValue(",");
         newequip->price = GetUIntValue(",");
@@ -1025,6 +1061,15 @@ bool CWorldServer::LoadJemItem( )
             continue;
         }
         thisjem->id = GetUIntValue(",", &line);
+        
+        //LMA: check if out of memory.
+        if (thisjem->id>=MAX_JEM_DATA)
+        {
+           Log(MSG_WARNING,"jemitem_data.csv, index overflow trapped %i>%i (increase MAX_JEM_DATA)",thisjem->id,MAX_JEM_DATA);
+           delete thisjem;
+           continue;
+        }
+                
         thisjem->type = GetUIntValue(",");
         thisjem->price = GetUIntValue(",");
         thisjem->pricerate = GetUIntValue(",");
@@ -1069,6 +1114,15 @@ bool CWorldServer::LoadNaturalItem( )
             return false;
         }
         thisnatural->id = GetUIntValue(",", &line);
+
+        //LMA: check if out of memory.
+        if (thisnatural->id>=MAX_NATURAL_DATA)
+        {
+           Log(MSG_WARNING,"natural_data.csv, index overflow trapped %i>%i (increase MAX_NATURAL_DATA)",thisnatural->id,MAX_NATURAL_DATA);
+           delete thisnatural;
+           continue;
+        }
+                
         thisnatural->type = GetUIntValue(",");
         thisnatural->price = GetUIntValue(",");
         thisnatural->pricerate = GetUIntValue(",");
@@ -1107,6 +1161,15 @@ bool CWorldServer::LoadPatItem( )
             return false;
         }
         newpat->id = GetUIntValue(",", &line);
+
+        //LMA: check if out of memory.
+        if (newpat->id>=MAX_PAT_DATA)
+        {
+           Log(MSG_WARNING,"natural_data.csv, index overflow trapped %i>%i (increase MAX_PAT_DATA)",newpat->id,MAX_PAT_DATA);
+           delete newpat;
+           continue;
+        }
+                
         newpat->type = GetUIntValue(",");
         newpat->price = GetUIntValue(",");
         newpat->pricerate = GetUIntValue(",");
@@ -1140,6 +1203,7 @@ bool CWorldServer::LoadProductItem( )
     }
     char line[500];
     fgets( line, 500, fh );// this is the column name
+    
     while(!feof(fh))
     {
         memset( &line, '\0', 500 );
@@ -1152,6 +1216,15 @@ bool CWorldServer::LoadProductItem( )
             return false;
         }
         newproduct->id = GetUIntValue(",", &line);
+        
+        //LMA: check if out of memory.
+        if (newproduct->id>=MAX_PRODUCT_DATA)
+        {
+           Log(MSG_WARNING,"Product_data.csv, index overflow trapped %i>%i (increase MAX_PRODUCT_DATA)",newproduct->id,MAX_PRODUCT_DATA);
+           delete newproduct;
+           continue;
+        }
+        
         char* items = GetStrValue(",");
         char* amount = GetStrValue(",");
         for(int i=0;i<50;i++)
@@ -1159,7 +1232,7 @@ bool CWorldServer::LoadProductItem( )
         for(int i=0;i<50;i++)
             newproduct->amount[i] = GetUIntValue("|",i==0?amount:NULL);
         ProductList.Data.push_back( newproduct );
-        ProductList.Index[newproduct->id] = newproduct;
+        ProductList.Index[newproduct->id] = newproduct;        
     }
     fclose(fh);
     Log( MSG_LOAD, "Product Data loaded" );
@@ -1190,6 +1263,15 @@ bool CWorldServer::LoadSellData( )
             return false;
         }
         newsell->id = GetUIntValue(",", &line);
+        
+        //LMA: check if out of memory.
+        if (newsell->id>=MAX_SELL_DATA)
+        {
+           Log(MSG_WARNING,"sell_data.csv, index overflow trapped %i>%i (increase MAX_SELL_DATA)",newsell->id,MAX_SELL_DATA);
+           delete newsell;
+           continue;
+        }
+                
         char *items = GetStrValue(",");
         for(int i=0;i<48;i++)
             newsell->item[i] = GetUIntValue("|",i==0?items:NULL);
@@ -1225,6 +1307,15 @@ bool CWorldServer::LoadConsItem( )
             return false;
         }
         newuse->id = GetUIntValue(",", &line);
+        
+        //LMA: check if out of memory.
+        if (newuse->id>=MAX_USE_DATA)
+        {
+           Log(MSG_WARNING,"useitem_data.csv, index overflow trapped %i>%i (increase MAX_USE_DATA)",newuse->id,MAX_USE_DATA);
+           delete newuse;
+           continue;
+        }
+                
         newuse->restriction = GetUIntValue(",");
         newuse->type = GetUIntValue(",");
         newuse->price = GetUIntValue(",");
@@ -1271,6 +1362,15 @@ bool CWorldServer::LoadZoneData( )
             return false;
         }
         newzone->id = GetUIntValue(",", &line);
+        
+        //LMA: check if out of memory.
+        if (newzone->id>=MAX_MAP_DATA)
+        {
+           Log(MSG_WARNING,"zone_data.csv, index overflow trapped %i>%i (increase MAX_MAP_DATA)",newzone->id,MAX_MAP_DATA);
+           delete newzone;
+           continue;
+        }
+                
         newzone->dayperiod = GetUIntValue(",");
         newzone->morningtime = GetUIntValue(",");
         newzone->daytime = GetUIntValue(",");

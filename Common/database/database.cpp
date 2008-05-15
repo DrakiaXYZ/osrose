@@ -8,20 +8,22 @@ CDatabase::CDatabase( char* server , char* username, char* password, char* datab
     Username = username;
     Password = password;
     Database = database;
-    Port = port;    
+    Port = port;
     Mysql = mysql;
     SQLMutex = PTHREAD_MUTEX_INITIALIZER;
-    mysql_init( Mysql ); 
+    mysql_init( Mysql );
 }
 
 // deconstructor
 CDatabase::~CDatabase( )
 {
+     Log(MSG_INFO,"deconstructor");                       
 }
 
 // disconnect from mysql
 void CDatabase::Disconnect( )
 {
+     Log(MSG_INFO,"Closing mysql");
     mysql_close( Mysql );
 }
 
@@ -126,9 +128,16 @@ MYSQL_RES* CDatabase::QStore( char *Format, ...)
     va_start( ap, Format );
 	vsprintf( query, Format, ap ); 
 	va_end  ( ap );  
-    result = NULL;
+    //result = NULL;
+    MYSQL_RES *result=NULL;
     Log( MSG_QUERY, query );    
-    pthread_mutex_lock( &SQLMutex );  
+    pthread_mutex_lock( &SQLMutex ); 
+    
+    if (Mysql==NULL)
+    {
+      Log(MSG_INFO,"mysql is NULL");
+    }
+     
     while(Qfail)
     {    
         if(mysql_query( Mysql, query )!=0)
