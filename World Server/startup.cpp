@@ -617,6 +617,8 @@ bool CWorldServer::LoadMobGroups() {
       thismob->tactical = tactical;
       thismob->mobId = mobId;
       thismob->thisnpc = GetNPCDataByID( thismob->mobId );
+      thismob->mapdrop = GetDropData( thisgroup->map );
+      thismob->mobdrop = GetDropData( thismob->thisnpc->dropid );
       if (thismob->thisnpc == NULL) {
         Log(MSG_WARNING, "Invalid mobId - Mob %i will not be added", atoi(row[0]));
         delete thismob;
@@ -1012,16 +1014,17 @@ bool CWorldServer::LoadMonsters( )
    	Log( MSG_LOAD, "Monsters Spawn loaded" );
 #else
     for (UINT i = 0; i < MapList.Map.size(); i++) {
-      CMap *thismap = MapList.Map.at(i);
+      CMap *thismap = MapList.Map.at (i);
       for (UINT j = 0; j < thismap->MobGroupList.size(); j++) {
         CMobGroup* thisgroup = thismap->MobGroupList.at(j);
+        // Load some basic mobs onto map
         for (UINT k = 0; k < thisgroup->limit; k++) {
           UINT mobId = (UINT)(rand() % thisgroup->basicMobs.size());
           CMob* thismob = thisgroup->basicMobs.at(mobId);
-          thismob->mapdrop = GetDropData( thisgroup->map );
-          thismob->mobdrop = GetDropData( thismob->thisnpc->dropid );
-          fPoint position = RandInCircle( thisgroup->point, thisgroup->range );
-          thismap->AddMonster( thismob->mobId, position, 0, thismob->mobdrop, thismob->mapdrop, thisgroup->id );
+          for (UINT l = 0; l < thismob->amount; l++) {
+            fPoint position = RandInCircle( thisgroup->point, thisgroup->range );
+            thismap->AddMonster( thismob->mobId, position, 0, thismob->mobdrop, thismob->mapdrop, thisgroup->id );
+          }
         }
       }
     }

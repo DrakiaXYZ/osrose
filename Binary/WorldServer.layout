@@ -1,9 +1,9 @@
 [Editor_45]
-CursorCol=5
-CursorRow=547
-TopLine=613
+CursorCol=1
+CursorRow=1031
+TopLine=1020
 LeftChar=1
-Open=0
+Open=1
 Top=0
 [Editor_50]
 CursorCol=103
@@ -55,8 +55,8 @@ CursorRow=159
 TopLine=133
 LeftChar=1
 [Editor_8]
-Open=1
-Top=1
+Open=0
+Top=0
 CursorCol=72
 CursorRow=23
 TopLine=19
@@ -111,11 +111,11 @@ CursorRow=66
 TopLine=42
 LeftChar=1
 [Editor_16]
-Open=0
-Top=0
-CursorCol=1
+Open=1
+Top=1
+CursorCol=6
 CursorRow=296
-TopLine=288
+TopLine=279
 LeftChar=1
 [Editor_17]
 <<<<<<< .mine

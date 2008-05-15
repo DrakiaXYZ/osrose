@@ -288,8 +288,10 @@ void CMap::RespawnMonster( )
           UINT mobId = (UINT)(rand() % thisgroup->basicMobs.size());
           thismob = thisgroup->basicMobs.at(mobId);
         }
-        fPoint position = GServer->RandInCircle( thisgroup->point, thisgroup->range );
-        AddMonster( thismob->mobId, position, 0, thismob->mobdrop, thismob->mapdrop, thisgroup->id );
+        for (UINT i = 0; i < thismob->amount; i++) {
+          fPoint position = GServer->RandInCircle( thisgroup->point, thisgroup->range );
+          AddMonster( thismob->mobId, position, 0, thismob->mobdrop, thismob->mapdrop, thisgroup->id );
+        }
       }
     }
 #endif
