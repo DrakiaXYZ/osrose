@@ -103,6 +103,8 @@ echo skillbooks
 %mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < list_skillbooks.sql
 echo wishlist
 %mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < wishlist.sql
+echo npc data sell
+%mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < npc_data_sell.sql
 
 :end
 echo.

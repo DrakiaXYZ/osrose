@@ -1659,12 +1659,19 @@ bool CWorldServer::pakNPCBuy ( CPlayer* thisclient, CPacket* P )
         if(SellList.Index[sellid]==NULL) // invalid tab
             continue;
 		int tmpcount = count;
-		while (tmpcount>0)
+        while (tmpcount>0)
         {
-			CItem thisitem;
-			thisitem.itemnum = SellList.Index[sellid]->item[itemid] % 1000;
-			thisitem.itemtype = SellList.Index[sellid]->item[itemid] / 1000;
-			unsigned newslot = thisclient->GetNewItemSlot( thisitem );
+            CItem thisitem;
+            thisitem.itemnum = SellList.Index[sellid]->item[itemid] % 1000;
+            thisitem.itemtype = SellList.Index[sellid]->item[itemid] / 1000;
+            if (thisitem.itemtype==0||thisitem.itemnum==0)
+            {
+                Log(MSG_WARNING,"Problem with selling list, NPC %i, tabid %i, sellid %i, itemid %i",thisnpc->npctype,tabid,sellid,itemid);
+                GServer->SendPM(thisclient,"Sorry, there is a problem with this NPC, warn admin");
+                return true;
+            }
+         
+            unsigned newslot = thisclient->GetNewItemSlot( thisitem );
 			if ( newslot == 0xffff ) { ncount-=1; break; }
 			int thisslotcount = 999 - thisclient->items[newslot].count;
 			if ( thisslotcount > tmpcount ) thisslotcount=tmpcount;
