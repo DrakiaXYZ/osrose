@@ -14,5 +14,6 @@ CREATE TABLE `storage` (
   `socketed` int(11) NOT NULL default '0',
   `appraised` int(11) NOT NULL default '0',
   `gem` int(11) NOT NULL default '0',
+  `sp_value` int(11) NOT NULL default '0',
   UNIQUE KEY `ow_slot` (`owner`,`slotnum`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
