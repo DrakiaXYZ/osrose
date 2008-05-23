@@ -172,6 +172,11 @@ class CWorldServer : public CServerSocket
         void TakeItemMallList(CPlayer* thisclient,int qty,int slot); //LMA: takes an item from Item Mall to player's inventory
         void RefreshFairy( );
         
+        //LMA: For Union War
+        bool CheckOkUnion();
+        bool GoUnionWar();
+        bool WarIsOver();
+        
         // PY extra stats lookup
         UINT GetExtraStats( UINT modifier );
         // PY end 

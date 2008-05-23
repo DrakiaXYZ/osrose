@@ -189,6 +189,7 @@ struct INFO
     int union03;              //LMA: Union
     int union04;              //LMA: Union
     int union05;              //LMA: Union
+    int nb_kills;             //LMA: Union
     BYTE Sex;
     UINT Face;
     UINT Hair;

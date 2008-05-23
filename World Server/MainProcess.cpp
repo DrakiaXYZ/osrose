@@ -26,7 +26,10 @@ PVOID MapProcess( PVOID TS )
     bool ok_cont=false;
     UINT loopcount=0;
     clock_t time_skill=0;
-                  
+    int warn_union_war_begin=0;
+    int nb_warn=0;
+    
+                      
     while(GServer->ServerOnline)
     {
         loopcount++;            //geobot: refresh only every 100 cycles
@@ -36,10 +39,104 @@ PVOID MapProcess( PVOID TS )
                                         
         pthread_mutex_lock( &GServer->PlayerMutex );
         pthread_mutex_lock( &GServer->MapMutex );
-                
+        
         for(UINT i=0;i<GServer->MapList.Map.size();i++)
         {
             CMap* map = GServer->MapList.Map.at(i);
+            
+            //LMA: Special for Union Wars
+            //Union War?
+            if (i==9)
+            {
+               time_t etime=time(NULL);
+               
+               if(map->utime_begin==0)
+               {
+                  //2do: use the time from Command
+                  map->utime_begin+=11*60; //In 11 minutes...
+               }
+                      
+               if (!map->is_union_fired)
+               {
+                   if(etime>map->utime_begin)
+                   {
+                     map->utime_begin+=86400;
+                     if(GServer->CheckOkUnion())
+                     {
+                        GServer->GoUnionWar();
+                        char text[200];
+                        sprintf( text, "Union War has Begun !!!");
+                        BEGINPACKET( pak, 0x702 );
+                	    ADDSTRING  ( pak, "Mighty Lord" );
+                    	ADDSTRING  ( pak, "> " );        
+                    	ADDSTRING  ( pak, text );
+                    	ADDBYTE    ( pak, 0x00 );
+                    	GServer->SendToAll  ( &pak );                             
+                     }
+                     else
+                     {
+                        char text[200];
+                        sprintf( text, "Union War has been canceled since not enough players were there...");
+                        BEGINPACKET( pak, 0x702 );
+                	    ADDSTRING  ( pak, "Mighty Lord" );
+                    	ADDSTRING  ( pak, "> " );        
+                    	ADDSTRING  ( pak, text );
+                    	ADDBYTE    ( pak, 0x00 );
+                    	GServer->SendToAll  ( &pak );                            
+                     }
+                     
+                   }
+                   else
+                   {
+                       //let's warn users :)
+                       if (nb_warn==0&&etime>(map->utime_begin-600))
+                          warn_union_war_begin=10;
+                       if (nb_warn==1&&etime>(map->utime_begin-300))
+                          warn_union_war_begin=5;
+                       if (nb_warn==3&&etime>(map->utime_begin-120))
+                          warn_union_war_begin=2;                          
+                   }
+                   
+               }
+                else
+                {
+                    //is it ended?
+                    if (etime>map->utime_end)
+                    {
+                       GServer->WarIsOver();
+                       warn_union_war_begin=0;
+                       nb_warn=0;
+                        char text[200];
+                        //2do: who won?
+                        sprintf( text, "Union War has ended with the victory of... Taki ^_^");
+                        BEGINPACKET( pak, 0x702 );
+                	    ADDSTRING  ( pak, "Mighty Lord" );
+                    	ADDSTRING  ( pak, "> " );        
+                    	ADDSTRING  ( pak, text );
+                    	ADDBYTE    ( pak, 0x00 );
+                    	GServer->SendToAll  ( &pak );                       
+                    }
+                    
+                }               
+               
+            }
+            
+            //Let's warn players there's a war going on :)
+            if (i==2&&warn_union_war_begin>0)
+            {   
+                char text[200];
+                sprintf( text, "Union War will begin in %i minutes, Please join mayor of Junon Polis to protect your Emblem !!",warn_union_war_begin );        
+                BEGINPACKET( pak, 0x702 );
+        	    ADDSTRING  ( pak, "Mighty Lord" );
+            	ADDSTRING  ( pak, "> " );        
+            	ADDSTRING  ( pak, text );
+            	ADDBYTE    ( pak, 0x00 );
+            	GServer->SendToAll  ( &pak );
+            	nb_warn++;
+            	warn_union_war_begin=0;
+            }            
+            //END UW Code
+            
             if( map->PlayerList.size()<1 )
                 continue;
             
@@ -253,10 +350,7 @@ PVOID MapProcess( PVOID TS )
                 }  
                 
                 
-                
-                
-                
-//General monsters===============================================================
+                //General monsters===============================================================
                 //LMA: moved to beginning...
                 //if(!monster->PlayerInRange( )) continue;
                 if(!monster->UpdateValues( )) continue;

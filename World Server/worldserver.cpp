@@ -690,7 +690,12 @@ void CWorldServer::LoadConfigurations( char* file )
     Config.Cfmode               = ConfigGetInt    ( file, "cfmode", 0);
     Config.osRoseVer            = ConfigGetString    ( file, "osRoseVer", "79.999");
     Config.testgrid             = ConfigGetInt    ( file, "testgrid", 0); //LMA: maps tests grids (0=usual, 1=grid)
-    Config.jrose             = ConfigGetInt    ( file, "jrose", 0); //LMA: Special code for jRose handling (163)
+    Config.jrose                = ConfigGetInt    ( file, "jrose", 0); //LMA: Special code for jRose handling (163)            
+    Config.unionmin             = ConfigGetInt    ( file, "unionmin", 2); //LMA: union wars (nb players / union, min)
+    Config.uniontime            = ConfigGetString    ( file, "uniontime", "030000"); //LMA: time when to launch union wars (03:00:00, 24 hours mode)
+    Config.unionduration        = ConfigGetInt    ( file, "unionduration", 12000); //LMA: duration of union wars in sec
+
+    //LMA
 
     Log (MSG_INFO, "osRose Revision %s", Config.osRoseVer );
 

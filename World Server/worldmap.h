@@ -73,6 +73,9 @@ class CMap
     UINT ghost;        // ghosttime?
     BYTE allowpvp;     // pvp allowed?
     bool allowpat;     // pat allowed?
+    bool is_union_fired;  //LMA: is union wars on?
+    time_t utime_end;   //LMA: When ends Union War?
+    time_t utime_begin;  //LMA: when begins Union War?
     
     //LMA BEGIN
     //20070621-211100

@@ -1495,6 +1495,11 @@ bool CWorldServer::LoadZoneData( )
        newzone->mon_lvl = 0;
        newzone->mon_exp = 0;
        newzone->percent=0;
+       
+       //LMA: Union Wars:
+       newzone->utime_begin=0;
+       newzone->utime_end=0;
+       newzone->is_union_fired=false;
 
        //mode 1: one monster temporarily, then the "real" one :)
         if (newzone->is_cf==1)

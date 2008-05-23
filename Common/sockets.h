@@ -190,6 +190,12 @@ struct CROSEServerConfig
     char* osRoseVer ; //Revision of server
     int testgrid; //LMA: maps, testing grids...
     int jrose; //LMA: for handling jRose (163)
+    
+    //For union wars
+    int unionmin; //LMA: nb of min players / union
+    char* uniontime; //LMA: union time
+    int unionduration; //LMA: union duration (seconds)
+                
 
     // COMMAND LEVELS
     int Command_AllSkill; // by crashinside

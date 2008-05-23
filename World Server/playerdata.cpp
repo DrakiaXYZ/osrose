@@ -69,7 +69,7 @@ bool CPlayer::loaddata( )
     CharInfo->union03=atoi(row[32]);
     CharInfo->union04=atoi(row[33]);
     CharInfo->union05=atoi(row[34]);
-           
+    
     //LMA: mileage stuff
     bonusxp=atoi(row[35]);
     timerxp=atoi(row[36]);
