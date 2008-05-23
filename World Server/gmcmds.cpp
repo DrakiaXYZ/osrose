@@ -1903,6 +1903,67 @@ else if (strcmp(command, "give2")==0)
         ADDWORD( pak, 0x40b3 );
         thisclient->client->SendPacket( &pak );        
     }
+    else if (strcmp(command, "union")==0)
+    {
+        if(Config.Command_Partylvl > thisclient->Session->accesslevel)
+	       return true;
+        if ((tmp = strtok(NULL, " "))==NULL) return true; int which_union= atoi( tmp );
+        
+        if(which_union<0||which_union>7)
+          return true;
+        
+        Log( MSG_GMACTION, "Union set to %i by %s" , which_union, thisclient->CharInfo->charname);
+        
+        if(which_union==0)
+        {
+           //leaving union.
+           //05 00 00 00 00 00
+            BEGINPACKET( pak, 0x721 );
+            ADDWORD( pak, 0x05 );
+            ADDWORD( pak, 0x0000 );
+            ADDWORD( pak, 0x0000 );
+            thisclient->client->SendPacket( &pak );
+            //05 00 31 71 54 09     
+            RESETPACKET( pak, 0x0730 );
+            ADDWORD( pak, 5 );
+            ADDWORD( pak, 0x7131 );
+            ADDWORD( pak, 0x0954 );
+            thisclient->client->SendPacket( &pak );  
+                    
+           char buffer[200];
+           sprintf ( buffer, "You left the Union.");
+           SendPM(thisclient, buffer);
+           thisclient->CharInfo->unionid=0;
+           return true;
+        }
+        
+        //LMA: changing union :)
+        //28 00 d0 8a ff ff
+        BEGINPACKET( pak, 0x720 );
+        ADDWORD( pak, 0x28 );
+        ADDWORD( pak, 0x8AD0 );
+        ADDWORD( pak, 0xFFFF );
+        thisclient->client->SendPacket( &pak );   
+        RESETPACKET( pak, 0x721 );
+        ADDWORD( pak, 0x05 );
+        ADDWORD( pak, which_union );
+        ADDWORD( pak, 0x0000 );
+        thisclient->client->SendPacket( &pak );            
+        //05 00 16 d4 50 09      
+        RESETPACKET( pak, 0x0730 );
+        ADDWORD( pak, 5 );
+        ADDWORD( pak, 0xD416 );
+        ADDWORD( pak, 0x0950 );
+        thisclient->client->SendPacket( &pak );  
+        
+       char buffer[200];
+       sprintf ( buffer, "Welcome to union %i, %s",which_union,thisclient->CharInfo->charname);
+       SendPM(thisclient, buffer);        
+       thisclient->CharInfo->unionid=0;
+       
+                        
+        return true;
+    }    
     else if (strcmp(command, "partylvl")==0)
     {
         if(Config.Command_Partylvl > thisclient->Session->accesslevel)

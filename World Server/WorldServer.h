@@ -174,7 +174,7 @@ class CWorldServer : public CServerSocket
         
         //LMA: For Union War
         bool CheckOkUnion();
-        bool GoUnionWar();
+        bool GoUnionWar(vector<CPlayer*>  PlayerListToWarp);
         bool WarIsOver();
         
         // PY extra stats lookup

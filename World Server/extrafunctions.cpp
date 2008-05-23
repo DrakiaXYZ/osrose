@@ -1705,11 +1705,11 @@ void CWorldServer::TakeItemMallList(CPlayer* thisclient,int qty,int slot)
 bool CWorldServer::CheckOkUnion()
 {
      //We look through player list to see if we have enough people for each union.
-     int nb_union[3];
-     int nb_union_ok[3];     
+     int nb_union[8];
+     int nb_union_ok[8];     
      
      
-     for (int k=0;k<4;k++)
+     for (int k=0;k<8;k++)
      {
           nb_union[k]=0;
           nb_union_ok[k]=0;
@@ -1719,29 +1719,47 @@ bool CWorldServer::CheckOkUnion()
     CMap* map = MapList.Index[2];
     if (map->PlayerList.size()<Config.unionmin)
        return false;
-       
+    
+    vector<CPlayer*>  PlayerListToWarp;
+    PlayerListToWarp.clear();
+    
     for(UINT i=0;i<map->PlayerList.size();i++)
     {
        //checking radius (player near mayor).
         CPlayer* otherclient = map->PlayerList.at(i);
         if(otherclient == NULL) continue;
-        if (otherclient->CharInfo->unionid==0||otherclient->Shop->open||otherclient->Ride->Drive)
+        if (otherclient->CharInfo->unionid==0||otherclient->Shop->open)
+        {
+           Log(MSG_INFO,"%s has no union id %i or is in shop %i.",otherclient->CharInfo->charname,otherclient->CharInfo->unionid==0,otherclient->Shop->open);
            continue;
-        float dx = ( otherclient->Position->current.x - 5200 );
-        float dy = ( otherclient->Position->current.y - 5200 );
+        }
+        
+        float dx = ( otherclient->Position->current.x - 5515 );
+        float dy = ( otherclient->Position->current.y - 5215 );
     
-        if ( sqrt( (dx * dx) + (dy * dy) ) >= 200 )
+        if ( sqrt( (dx * dx) + (dy * dy) ) >= 50 )
+        {
+           Log(MSG_INFO,"%s is too far away.",otherclient->CharInfo->charname);
            continue;
+        }
         
-        
-        nb_union[otherclient->CharInfo->unionid]++;
-        if(nb_union[otherclient->CharInfo->unionid]>Config.unionmin)
-            nb_union_ok[otherclient->CharInfo->unionid]++;
-           
-        //enough players around to fire union war? 
-        if (nb_union_ok[0]+nb_union_ok[1]+nb_union_ok[2]+nb_union_ok[3]>Config.unionmin)
-           return true;
+        Log(MSG_INFO,"%s is near enough.",otherclient->CharInfo->charname);
+        PlayerListToWarp.push_back(otherclient);
+        nb_union[otherclient->CharInfo->unionid-1]++;
+        if(nb_union[otherclient->CharInfo->unionid-1]>=Config.unionmin&&nb_union_ok[otherclient->CharInfo->unionid-1]==0)
+            nb_union_ok[otherclient->CharInfo->unionid-1]++;                   
     }   
+
+    //enough players around to fire union war? (more than one group)
+    if ((nb_union_ok[0]+nb_union_ok[1]+nb_union_ok[2]+nb_union_ok[3]+nb_union_ok[4]+nb_union_ok[5]+nb_union_ok[6]+nb_union_ok[7])>1)
+    {
+       Log(MSG_INFO,"Let's go Warp !!");
+       GoUnionWar(PlayerListToWarp);
+       PlayerListToWarp.clear();
+       return true;
+    }
+    
+    PlayerListToWarp.clear();
 
 
      return false;
@@ -1749,47 +1767,62 @@ bool CWorldServer::CheckOkUnion()
 
 
 //LMA: let's warp all those gentlemen for Union War :)
-bool CWorldServer::GoUnionWar()
+bool CWorldServer::GoUnionWar(vector<CPlayer*>  PlayerListToWarp)
 {
      //We look through player list to see if we have enough people for each union.
-     //We're in map 2 (Junon Polis), mayor is at 5200,5200
-     fPoint list_tele[3];
+     //We're in map 2 (Junon Polis), mayor is at 5515,5215
+     fPoint list_tele[8];
      
      //union wars emplacement (each union has his own emplacement)
-     list_tele[0].x=5200;
-     list_tele[0].y=5200;     
-     list_tele[1].x=5000;
-     list_tele[1].y=5000;
-     list_tele[2].x=4500;
-     list_tele[2].y=4500;
-     list_tele[3].x=4800;
-     list_tele[3].y=4800;
+     //2do: look for some places for the latest Union...
+     list_tele[0].x=5507;
+     list_tele[0].y=5346;     
+     list_tele[1].x=5150;
+     list_tele[1].y=5085;
+     list_tele[2].x=5435;
+     list_tele[2].y=5070;
+     list_tele[3].x=5459;
+     list_tele[3].y=4732;
+     list_tele[4].x=5459;
+     list_tele[4].y=4732;
+     list_tele[5].x=5459;
+     list_tele[5].y=4732;
+     list_tele[6].x=5459;
+     list_tele[6].y=4732;
+     list_tele[7].x=5459;
+     list_tele[7].y=4732;
      
-    CMap* map = MapList.Index[2];  
-    if (map->PlayerList.size()<Config.unionmin)
+     
+    if (PlayerListToWarp.size()<Config.unionmin)
        return false;
-       
-    for(UINT i=0;i<map->PlayerList.size();i++)
+     
+    
+    for(UINT i=0;i<PlayerListToWarp.size();i++)
     {
        //checking radius (player near mayor).
-        CPlayer* otherclient = map->PlayerList.at(i);
+        CPlayer* otherclient = PlayerListToWarp.at(i);
         if(otherclient == NULL) continue;
-        if (otherclient->CharInfo->unionid==0||otherclient->Shop->open||otherclient->Ride->Drive)
+        if (otherclient->CharInfo->unionid==0||otherclient->Shop->open)
+        {
+           Log(MSG_INFO,"%s has no union id %i or is in shop %i.",otherclient->CharInfo->charname,otherclient->CharInfo->unionid==0,otherclient->Shop->open);
            continue;
-        float dx = ( otherclient->Position->current.x - 5200 );
-        float dy = ( otherclient->Position->current.y - 5200 );
+        }
+           
+        float dx = ( otherclient->Position->current.x - 5515 );
+        float dy = ( otherclient->Position->current.y - 5215 );
     
-        if ( sqrt( (dx * dx) + (dy * dy) ) >= 200 )
+        if ( sqrt( (dx * dx) + (dy * dy) ) >= 50 )
+        {
+           Log(MSG_INFO,"%s is too far away to be warped.",otherclient->CharInfo->charname);
            continue;
+        }
         
         //Warp time.
-        fPoint temp_point=GServer->RandInCircle(list_tele[otherclient->CharInfo->unionid],50);
-        GServer->pakGMTele(otherclient,9,temp_point.x,temp_point.y);        
+        fPoint temp_point=GServer->RandInCircle(list_tele[otherclient->CharInfo->unionid-1],20);
+        Log(MSG_INFO,"Warping %s",otherclient->CharInfo->charname);
+        GServer->pakGMTele(otherclient,8,temp_point.x,temp_point.y);        
     }   
 
-    map->is_union_fired=true;
-    map->utime_end=map->utime_begin+Config.unionduration;
-    
 
      return true;
 }
@@ -1797,26 +1830,22 @@ bool CWorldServer::GoUnionWar()
 //LMA: Union War is over lads, let's come back to Junon :)
 bool CWorldServer::WarIsOver()
 {
-     //We look through player list to see if we have enough people for each union.
-     //We're in map 2 (Junon Polis), mayor is at 5200,5200
-     fPoint list_tele;
-     
+     //We look through player list to see if we have enough people for each union. 
      //Come back in JP
-     list_tele.x=5200;
-     list_tele.y=5200;     
-    
-    CMap* map = MapList.Index[9];       
-    for(UINT i=0;i<map->PlayerList.size();i++)
+     fPoint list_tele;
+     list_tele.x=5540;
+     list_tele.y=5240;     
+    int nb_players=0;
+    CMap* map = MapList.Index[8];
+    nb_players=map->PlayerList.size();
+    for(UINT i=0;i<nb_players;i++)
     {
-        CPlayer* otherclient = map->PlayerList.at(i);
+        CPlayer* otherclient = map->PlayerList.at(map->PlayerList.size()-1);
         if(otherclient == NULL) continue;
         //Warp time.
-        fPoint temp_point=GServer->RandInCircle(list_tele,50);
+        fPoint temp_point=GServer->RandInCircle(list_tele,20);
         GServer->pakGMTele(otherclient,2,temp_point.x,temp_point.y);        
-    }   
-
-    map->is_union_fired=false;
-    map->utime_end=0;
+    }
     
      return true;
 }

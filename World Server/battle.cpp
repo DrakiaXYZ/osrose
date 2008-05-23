@@ -339,6 +339,12 @@ void CCharacter::NormalAttack( CCharacter* Enemy )
     if(Enemy->IsDead())
     {
         Log(MSG_INFO,"Someone died");
+        
+        //LMA: Union Wars
+        //if (Enemy->IsPlayer()&&Enemy->
+        //UW end
+        
+        
         CDrop* thisdrop = NULL;
         ADDDWORD   ( pak, critical?28:16 );
         if(!Enemy->IsSummon( ) && !Enemy->IsPlayer( ))

@@ -28,6 +28,7 @@ PVOID MapProcess( PVOID TS )
     clock_t time_skill=0;
     int warn_union_war_begin=0;
     int nb_warn=0;
+    time_t next_time=0;
     
                       
     while(GServer->ServerOnline)
@@ -46,24 +47,31 @@ PVOID MapProcess( PVOID TS )
             
             //LMA: Special for Union Wars
             //Union War?
-            if (i==9)
+            time_t etime=time(NULL);
+            if (i==8)
             {
-               time_t etime=time(NULL);
-               
                if(map->utime_begin==0)
                {
                   //2do: use the time from Command
-                  map->utime_begin+=11*60; //In 11 minutes...
+                  //map->utime_begin+=etime+11*60; //In 11 minutes...
+                  map->utime_begin=etime+5*60; //In 5 minutes...
+                  next_time=etime+60;
                }
                       
                if (!map->is_union_fired)
                {
                    if(etime>map->utime_begin)
                    {
-                     map->utime_begin+=86400;
                      if(GServer->CheckOkUnion())
                      {
-                        GServer->GoUnionWar();
+                        map->is_union_fired=true;
+                        //FOR TESTS:
+                        //map->utime_end=map->utime_begin+Config.unionduration;
+                        map->utime_end=etime+180; //3 minutes...
+                        next_time=etime+60;
+                        
+                        Log(MSG_INFO,"Union War has begun...");
+                        
                         char text[200];
                         sprintf( text, "Union War has Begun !!!");
                         BEGINPACKET( pak, 0x702 );
@@ -71,10 +79,12 @@ PVOID MapProcess( PVOID TS )
                     	ADDSTRING  ( pak, "> " );        
                     	ADDSTRING  ( pak, text );
                     	ADDBYTE    ( pak, 0x00 );
-                    	GServer->SendToAll  ( &pak );                             
+                    	GServer->SendToAll  ( &pak );
+                        next_time=0;                             
                      }
                      else
                      {
+                        Log(MSG_INFO,"Union War canceled...");
                         char text[200];
                         sprintf( text, "Union War has been canceled since not enough players were there...");
                         BEGINPACKET( pak, 0x702 );
@@ -82,19 +92,30 @@ PVOID MapProcess( PVOID TS )
                     	ADDSTRING  ( pak, "> " );        
                     	ADDSTRING  ( pak, text );
                     	ADDBYTE    ( pak, 0x00 );
-                    	GServer->SendToAll  ( &pak );                            
+                    	GServer->SendToAll  ( &pak );
+                         //map->utime_begin+=86400;
+                         map->utime_begin=etime+5*60+10;
+                         next_time=map->utime_begin-5*60;
                      }
                      
                    }
                    else
                    {
                        //let's warn users :)
-                       if (nb_warn==0&&etime>(map->utime_begin-600))
-                          warn_union_war_begin=10;
-                       if (nb_warn==1&&etime>(map->utime_begin-300))
-                          warn_union_war_begin=5;
-                       if (nb_warn==3&&etime>(map->utime_begin-120))
-                          warn_union_war_begin=2;                          
+                       if(next_time>0&&etime>=next_time)
+                       {
+                           Log(MSG_INFO,"Message time for UW: %i",(UINT) ((map->utime_begin-etime)/60));
+                            char text[200];
+                            sprintf( text, "Union War will begin in %i minutes, Please join mayor of Junon Polis to protect your Emblem !!",(UINT) ((map->utime_begin-etime)/60));
+                            BEGINPACKET( pak, 0x702 );
+                    	    ADDSTRING  ( pak, "Mighty Lord" );
+                        	ADDSTRING  ( pak, "> " );        
+                        	ADDSTRING  ( pak, text );
+                        	ADDBYTE    ( pak, 0x00 );
+                        	GServer->SendToAll  ( &pak );
+                        	next_time=etime+60;                	
+                       }  
+                                                                       
                    }
                    
                }
@@ -104,8 +125,7 @@ PVOID MapProcess( PVOID TS )
                     if (etime>map->utime_end)
                     {
                        GServer->WarIsOver();
-                       warn_union_war_begin=0;
-                       nb_warn=0;
+                       Log(MSG_INFO,"Union War is over...");
                         char text[200];
                         //2do: who won?
                         sprintf( text, "Union War has ended with the victory of... Taki ^_^");
@@ -114,26 +134,33 @@ PVOID MapProcess( PVOID TS )
                     	ADDSTRING  ( pak, "> " );        
                     	ADDSTRING  ( pak, text );
                     	ADDBYTE    ( pak, 0x00 );
-                    	GServer->SendToAll  ( &pak );                       
+                    	GServer->SendToAll  ( &pak );
+                        map->is_union_fired=false;
+                        map->utime_end=0;
+                         //map->utime_begin+=86400;
+                         map->utime_begin=etime+5*60+10;
+                         next_time=map->utime_begin-5*60;
+                    }
+                    else
+                    {
+                       if(next_time>0&&etime>=next_time)
+                       {
+                          Log(MSG_INFO,"Message time for UW end: %i",(UINT) ((map->utime_end-etime)/60));
+                          char text[200];
+                            sprintf( text, "Make Haste, Union war will end in %i minutes !!!",(UINT) ((map->utime_end-etime)/60));
+                            BEGINPACKET( pak, 0x702 );
+                    	    ADDSTRING  ( pak, "Mighty Lord" );
+                        	ADDSTRING  ( pak, "> " );        
+                        	ADDSTRING  ( pak, text );
+                        	ADDBYTE    ( pak, 0x00 );
+                        	GServer->SendToAll  ( &pak );
+                        	next_time=etime+60;
+                       } 
+                       
                     }
                     
                 }               
-               
-            }
-            
-            //Let's warn players there's a war going on :)
-            if (i==2&&warn_union_war_begin>0)
-            {   
-                char text[200];
-                sprintf( text, "Union War will begin in %i minutes, Please join mayor of Junon Polis to protect your Emblem !!",warn_union_war_begin );        
-                BEGINPACKET( pak, 0x702 );
-        	    ADDSTRING  ( pak, "Mighty Lord" );
-            	ADDSTRING  ( pak, "> " );        
-            	ADDSTRING  ( pak, text );
-            	ADDBYTE    ( pak, 0x00 );
-            	GServer->SendToAll  ( &pak );
-            	nb_warn++;
-            	warn_union_war_begin=0;
+
             }            
             //END UW Code
             
