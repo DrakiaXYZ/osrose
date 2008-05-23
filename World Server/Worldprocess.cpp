@@ -31,7 +31,7 @@ bool CWorldServer::GiveExp( CMonster* thismon, UINT special_lvl, UINT special_ex
     // Give Experience Drops and Quest Items
     vector<CPartyExp*> PartyExp;    
     for(UINT i=0;i<thismon->PlayersDamage.size();i++)
-    {                     
+    {
         MonsterDamage* thisplayer = thismon->PlayersDamage.at(i);              
 		CPlayer* thisclient = GetClientByCID( thisplayer->charid, thismon->Position->Map );        		
 		if( thisplayer->damage>0 && thisclient!=NULL )

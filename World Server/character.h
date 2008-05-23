@@ -54,6 +54,7 @@ class CCharacter
         void UseDebuffSkill ( CCharacter* Enemy, CSkills* skill );//netwolf
         void UseBuffSkill( CCharacter* Target, CSkills* skill );
         void UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff= false );
+        void UWKill(CCharacter* Enemy);   //LMA: For Union War.
 
         //functions
         bool IsMonster( );

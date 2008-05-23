@@ -320,6 +320,7 @@ void CCharacter::NormalAttack( CCharacter* Enemy )
     {
         Enemy->AddDamage( this, hitpower );
     }
+    
     Enemy->Stats->HP -= hitpower;
      
     // actually the target was hit, if it was sleeping, set duration of
@@ -338,13 +339,13 @@ void CCharacter::NormalAttack( CCharacter* Enemy )
     ADDDWORD   ( pak, hitpower );
     if(Enemy->IsDead())
     {
-        Log(MSG_INFO,"Someone died");
-        
         //LMA: Union Wars
-        //if (Enemy->IsPlayer()&&Enemy->
-        //UW end
-        
-        
+        if (IsPlayer()&&Enemy->IsPlayer()&&Position->Map==MAP_UW)
+            UWKill(Enemy);
+        //
+                       
+        Log(MSG_INFO,"Someone died");
+
         CDrop* thisdrop = NULL;
         ADDDWORD   ( pak, critical?28:16 );
         if(!Enemy->IsSummon( ) && !Enemy->IsPlayer( ))
@@ -577,6 +578,11 @@ bool CCharacter::AoeSkill( CSkills* skill, CCharacter* Enemy )
     {
         if(!Enemy->IsDead( ))
         {
+            //LMA: Union Wars
+            if (IsPlayer()&&Enemy->IsPlayer()&&Position->Map==MAP_UW)
+                UWKill(Enemy);
+            //
+                           
             Battle->atktarget = Battle->target;
             Battle->atktype = NORMAL_ATTACK;
             Battle->skilltarget = 0;
@@ -775,6 +781,11 @@ void CCharacter::UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff )
     //If Enemy is killed
     if(Enemy->IsDead())
     {
+        //LMA: Union Wars
+        if (IsPlayer()&&Enemy->IsPlayer()&&Position->Map==MAP_UW)
+            UWKill(Enemy);
+        //
+                       
         CDrop* thisdrop = NULL;
         ADDDWORD   ( pak, 16 );
         if(!Enemy->IsSummon( ) && !Enemy->IsPlayer( ))
@@ -882,4 +893,55 @@ void CCharacter::UseDebuffSkill( CCharacter* Enemy, CSkills* skill )
     ADDWORD    ( pak, Battle->skillid);
     ADDWORD    ( pak, 1);
     GServer->SendToVisible( &pak, (CCharacter*)this );                          
+}
+
+//LMA: Union war kill
+void CCharacter::UWKill(CCharacter* Enemy)
+{
+    CMap* map = GServer->MapList.Index[Position->Map];
+    if (!map->is_union_fired)
+       return;
+    CPlayer* plkiller=GServer->GetClientByCID(clientid,MAP_UW);
+    CPlayer* plkilled=GServer->GetClientByCID(Enemy->clientid,MAP_UW);
+    if (plkiller!=NULL&&plkilled!=NULL)
+    {
+       Log(MSG_INFO,"[UWKILL] we've not found either killer %i or killed %i",clientid,Enemy->clientid);
+       return;
+    }
+    else
+    {
+        Log(MSG_INFO,"[UWKILL] it seems player %s (%i) killed player %s (%i)",plkiller->CharInfo->charname,clientid,plkilled->CharInfo->charname,Enemy->clientid);
+    }
+
+  //only counts if he killed someone from another side than his ;)
+  if (plkiller->CharInfo->unionid!=plkilled->CharInfo->unionid)
+  {
+     UINT temp_fame=0;
+     plkiller->CharInfo->union01++;  //Nb kills (total)
+     plkiller->CharInfo->union02++;  //Nb kills (this session)
+     plkiller->CharInfo->union05++;  //Nb kills (money?)
+     
+     //Fame if level difference is not far (not really cool to kill a noob).
+     temp_fame=GServer->GetColorExp(plkiller->Stats->Level,plkilled->Stats->Level,100);
+     
+     plkiller->CharInfo->unionfame=temp_fame; //fame...
+     
+     //Ok, let's send PM now :)
+     char msg[200];
+     sprintf(msg, "You've killed %s !",plkilled->CharInfo->charname);
+     GServer->SendPM(plkiller,msg);
+     sprintf(msg, "You've been killed by %s !",plkiller->CharInfo->charname);
+     GServer->SendPM(plkilled, msg);
+     
+     //let's update stats for the map session :)
+     map->nb_kills[plkiller->CharInfo->unionid]++;
+     map->nb_killed[plkilled->CharInfo->unionid]++;
+  }
+  else
+  {
+      Log(MSG_INFO,"[UWKILL] too bad,they were in same union");
+  }
+
+
+  return;      
 }

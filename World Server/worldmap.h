@@ -75,7 +75,10 @@ class CMap
     bool allowpat;     // pat allowed?
     bool is_union_fired;  //LMA: is union wars on?
     time_t utime_end;   //LMA: When ends Union War?
-    time_t utime_begin;  //LMA: when begins Union War?
+    time_t utime_begin;  //LMA: when begins Union War?    
+    int nb_kills[8];     //LMA: nb killed by this union
+    int nb_killed[8];     //LMA: how many times this union has been killed
+    
     
     //LMA BEGIN
     //20070621-211100

@@ -39,6 +39,8 @@
 #define NB_MAPS 120        //Nb maps (120 maps, including bad and non existant).
 #define NB_GRIDS 72        //nb active grids
 
+//LMA: UW
+#define MAP_UW 8           //Union wars map.
 
 //LMA TESTLOOP
 extern UINT lma_loop;
