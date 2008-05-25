@@ -74,8 +74,11 @@ void CWorldServer::pakPlayer( CPlayer *thisclient )
     ADDWORD    ( pak, 0x140f );
 	ADDWORD    ( pak, thisclient->CharInfo->Job );			     // Job
     ADDBYTE    ( pak, thisclient->CharInfo->unionid );           //LMA: Union ID
+
     ADDBYTE( pak, 0 );                                           //LMA: Union Fame
-    ADDBYTE( pak, thisclient->CharInfo->unionfame );             //LMA: Union Fame
+    ADDBYTE( pak, thisclient->CharInfo->unionfame );             //LMA: Union Fame    
+    //ADDWORD    ( pak, thisclient->CharInfo->unionfame );             //LMA: Union Fame
+    
     ADDWORD    ( pak, thisclient->Attr->Str );			         // Str
     ADDWORD    ( pak, thisclient->Attr->Dex );				     // Dex
     ADDWORD    ( pak, thisclient->Attr->Int );				     // Int
@@ -92,6 +95,7 @@ void CWorldServer::pakPlayer( CPlayer *thisclient )
 	ADDWORD    ( pak, 0x6464 );
     for(int i=0; i<4; i++)
        ADDWORD( pak,0);       //null
+
     //Union killed
     ADDWORD( pak, thisclient->CharInfo->union01 );
     ADDWORD( pak, thisclient->CharInfo->union02 );

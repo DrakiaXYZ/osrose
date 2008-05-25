@@ -730,14 +730,14 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
                 useitem->usetype = UseList.Index[useitem->itemnum]->useeffect[1];
                 useitem->usevalue = 0;
             }
- 
+
             else // cherry berrys
             if((useitem->itemnum >= 981 && useitem->itemnum <= 988) || (useitem->itemnum >= 1035 && useitem->itemnum <= 1039))
             {
                 useitem->usescript = 0;
                 useitem->usetype = UseList.Index[useitem->itemnum]->useeffect[0]; // don't really need this as it is zero
-                useitem->usevalue = UseList.Index[useitem->itemnum]->useeffect[1];                  
-            } 
+                useitem->usevalue = UseList.Index[useitem->itemnum]->useeffect[1];
+            }
 
             else //Return Scrolls
             if( (useitem->itemnum>349 && useitem->itemnum<355) ||
@@ -746,9 +746,9 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
                 (useitem->itemnum>1029 && useitem->itemnum<1035) )
             {
                 if( thisclient->Stats->MP < 33 )
-                { 
-                    delete useitem; 
-                    return NULL; 
+                {
+                    delete useitem;
+                    return NULL;
                 }
                 thisclient->Stats->MP -= 32;
                 useitem->usescript = 2;
@@ -781,31 +781,31 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
                     break;
                     //Goblin Cave - Mileage Scroll
                     case 360:
-                    case 1030:                         
+                    case 1030:
                         useitem->usetype = 22; //31 Value Before - rl2171
                         useitem->usevalue = 54105040; //55185444 Value Before - rl2171
                     break;
                     //Desert of the Dead - Mileage Scroll
                     case 361:
-                    case 1031:     
+                    case 1031:
                         useitem->usetype = 29;
                         useitem->usevalue = 51405160; //50825013 Value Before - rl2171
                     break;
                     //El Verloon - Mileage Scroll
                     case 362:
-                    case 1032:     
+                    case 1032:
                         useitem->usetype = 24;
                         useitem->usevalue = 55205370;
                     break;
                     //George of Silence - Mileage Scroll
                     case 363:
-                    case 1033:     
+                    case 1033:
                         useitem->usetype = 28;
                         useitem->usevalue = 53005100; //54674783 Value before - rl2171
                     break;
                     //Shady Jungle - Mileage Scroll
                     case 364:
-                    case 1034:     
+                    case 1034:
                         useitem->usetype = 62;
                         useitem->usevalue = 58405170; //57515196 Value before - rl2171
                     break;
@@ -833,7 +833,7 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
                 useitem->usescript = 0; //not correct script ?
                 useitem->usetype = UseList.Index[useitem->itemnum]->useeffect[1]; // not correct ?
             }
-            
+
             else //Dance Scroll
             if( (useitem->itemnum>370 && useitem->itemnum<377) ||
                 (useitem->itemnum>389 && useitem->itemnum<398) )
@@ -1706,23 +1706,24 @@ bool CWorldServer::CheckOkUnion()
 {
      //We look through player list to see if we have enough people for each union.
      int nb_union[8];
-     int nb_union_ok[8];     
-     
-     
+     int nb_union_ok[8];
+
+
      for (int k=0;k<8;k++)
      {
           nb_union[k]=0;
           nb_union_ok[k]=0;
      }
-                   
+
+     Log(MSG_INFO,"In CheckOkUnion");
      //We're in map 2 (Junon Polis), mayor is at 5200,5200
     CMap* map = MapList.Index[2];
     if (map->PlayerList.size()<Config.unionmin)
        return false;
-    
+
     vector<CPlayer*>  PlayerListToWarp;
     PlayerListToWarp.clear();
-    
+
     for(UINT i=0;i<map->PlayerList.size();i++)
     {
        //checking radius (player near mayor).
@@ -1733,22 +1734,22 @@ bool CWorldServer::CheckOkUnion()
            Log(MSG_INFO,"%s has no union id %i or is in shop %i.",otherclient->CharInfo->charname,otherclient->CharInfo->unionid==0,otherclient->Shop->open);
            continue;
         }
-        
+
         float dx = ( otherclient->Position->current.x - 5515 );
         float dy = ( otherclient->Position->current.y - 5215 );
-    
+
         if ( sqrt( (dx * dx) + (dy * dy) ) >= 50 )
         {
            Log(MSG_INFO,"%s is too far away.",otherclient->CharInfo->charname);
            continue;
         }
-        
+
         Log(MSG_INFO,"%s is near enough.",otherclient->CharInfo->charname);
         PlayerListToWarp.push_back(otherclient);
         nb_union[otherclient->CharInfo->unionid-1]++;
         if(nb_union[otherclient->CharInfo->unionid-1]>=Config.unionmin&&nb_union_ok[otherclient->CharInfo->unionid-1]==0)
-            nb_union_ok[otherclient->CharInfo->unionid-1]++;                   
-    }   
+            nb_union_ok[otherclient->CharInfo->unionid-1]++;
+    }
 
     //enough players around to fire union war? (more than one group)
     if ((nb_union_ok[0]+nb_union_ok[1]+nb_union_ok[2]+nb_union_ok[3]+nb_union_ok[4]+nb_union_ok[5]+nb_union_ok[6]+nb_union_ok[7])>1)
@@ -1758,7 +1759,7 @@ bool CWorldServer::CheckOkUnion()
        PlayerListToWarp.clear();
        return true;
     }
-    
+
     PlayerListToWarp.clear();
 
 
@@ -1766,37 +1767,38 @@ bool CWorldServer::CheckOkUnion()
 }
 
 
-//LMA: let's warp all those gentlemen for Union War :)
+//LMA: let's warp all those gentlemen for Union slaughter :)
 bool CWorldServer::GoUnionWar(vector<CPlayer*>  PlayerListToWarp)
 {
      //We look through player list to see if we have enough people for each union.
      //We're in map 2 (Junon Polis), mayor is at 5515,5215
      fPoint list_tele[8];
-     
+
      //union wars emplacement (each union has his own emplacement)
-     //2do: look for some places for the latest Union...
      list_tele[0].x=5507;
-     list_tele[0].y=5346;     
+     list_tele[0].y=5346;
      list_tele[1].x=5150;
      list_tele[1].y=5085;
      list_tele[2].x=5435;
      list_tele[2].y=5070;
      list_tele[3].x=5459;
      list_tele[3].y=4732;
-     list_tele[4].x=5459;
-     list_tele[4].y=4732;
-     list_tele[5].x=5459;
-     list_tele[5].y=4732;
-     list_tele[6].x=5459;
-     list_tele[6].y=4732;
-     list_tele[7].x=5459;
-     list_tele[7].y=4732;
-     
-     
+     list_tele[4].x=5289;
+     list_tele[4].y=4940;
+     list_tele[5].x=5182;
+     list_tele[5].y=4766;
+     list_tele[6].x=5271;
+     list_tele[6].y=4790;
+     list_tele[7].x=5410;
+     list_tele[7].y=4931;
+
+    char text[200];
+    sprintf( text, "Union War has Begun !!!");
+
     if (PlayerListToWarp.size()<Config.unionmin)
        return false;
-     
-    
+
+
     for(UINT i=0;i<PlayerListToWarp.size();i++)
     {
        //checking radius (player near mayor).
@@ -1807,21 +1809,52 @@ bool CWorldServer::GoUnionWar(vector<CPlayer*>  PlayerListToWarp)
            Log(MSG_INFO,"%s has no union id %i or is in shop %i.",otherclient->CharInfo->charname,otherclient->CharInfo->unionid==0,otherclient->Shop->open);
            continue;
         }
-           
+
         float dx = ( otherclient->Position->current.x - 5515 );
         float dy = ( otherclient->Position->current.y - 5215 );
-    
+
         if ( sqrt( (dx * dx) + (dy * dy) ) >= 50 )
         {
            Log(MSG_INFO,"%s is too far away to be warped.",otherclient->CharInfo->charname);
            continue;
         }
-        
+
+        otherclient->CharInfo->union02=0;
+        otherclient->CharInfo->union04=0;
+
+         //let's update values "live" ;)
+        BEGINPACKET( pak, 0x721 );
+        ADDWORD( pak, 82 );
+        ADDWORD( pak, 0 );
+        ADDWORD( pak, 0x0000 );
+        otherclient->client->SendPacket( &pak );
+        RESETPACKET( pak, 0x730 );
+        ADDWORD    ( pak, 0x0005 );
+        ADDDWORD   ( pak, 0x40b3a24d );
+        otherclient->client->SendPacket( &pak );
+        RESETPACKET( pak, 0x721 );
+        ADDWORD( pak, 84 );
+        ADDWORD( pak, 0 );
+        ADDWORD( pak, 0x0000 );
+        otherclient->client->SendPacket( &pak );
+        RESETPACKET( pak, 0x730 );
+        ADDWORD    ( pak, 0x0005 );
+        ADDDWORD   ( pak, 0x40b3a24d );
+        otherclient->client->SendPacket( &pak );
+
+        RESETPACKET( pak, 0x702 );
+        ADDSTRING  ( pak, "Mighty Lord" );
+    	ADDSTRING  ( pak, "> " );
+    	ADDSTRING  ( pak, text );
+    	ADDBYTE    ( pak, 0x00 );
+    	otherclient->client->SendPacket( &pak );
+    	//SendToAllInMap  ( &pak,8 );
+
         //Warp time.
         fPoint temp_point=GServer->RandInCircle(list_tele[otherclient->CharInfo->unionid-1],20);
         Log(MSG_INFO,"Warping %s",otherclient->CharInfo->charname);
-        GServer->pakGMTele(otherclient,8,temp_point.x,temp_point.y);        
-    }   
+        GServer->pakGMTele(otherclient,8,temp_point.x,temp_point.y);
+    }
 
 
      return true;
@@ -1830,22 +1863,353 @@ bool CWorldServer::GoUnionWar(vector<CPlayer*>  PlayerListToWarp)
 //LMA: Union War is over lads, let's come back to Junon :)
 bool CWorldServer::WarIsOver()
 {
-     //We look through player list to see if we have enough people for each union. 
+     //We look through player list to see if we have enough people for each union.
      //Come back in JP
      fPoint list_tele;
      list_tele.x=5540;
-     list_tele.y=5240;     
+     list_tele.y=5240;
+
     int nb_players=0;
     CMap* map = MapList.Index[8];
+
+    int umax=0;
+    int keymax=0;
+    int uless=0;
+    int keyless=0;
+    for (int k=0;k<8;k++)
+    {
+        //Who killed most people?
+        if (map->nb_kills[k]>umax)
+        {
+           keymax=k;
+           umax=map->nb_kills[k];
+        }
+
+        //Hum... the innocent lamb :)
+        if(map->nb_killed[k]>uless)
+        {
+           keyless=k;
+           uless=map->nb_killed[k];
+        }
+
+        Log(MSG_INFO,"Union %i: Kills %i, killed: %i",k,map->nb_kills[k],map->nb_killed[k]);
+    }
+
+    char text[200];
+    if (keymax==0)
+       sprintf( text, "Union War has been won by %s !!!","Junon Order");
+    if (keymax==1)
+       sprintf( text, "Union War has been won by %s !!!","Akram Kingdom");
+    if (keymax==2)
+       sprintf( text, "Union War has been won by %s !!!","Righteous Crusader");
+    if (keymax==3)
+       sprintf( text, "Union War has been won by %s !!!","Arumic");
+    if (keymax==4)
+       sprintf( text, "Union War has been won by %s !!!","Ferrel Guild");
+    if (keymax==5)
+       sprintf( text, "Union War has been won by %s !!!","Gypsies");
+    if (keymax==6)
+       sprintf( text, "Union War has been won by %s !!!","Ikaness");
+
+       Log(MSG_INFO,"keymax: %i, text %s",keymax,text);
+
+    keymax++;
+
     nb_players=map->PlayerList.size();
     for(UINT i=0;i<nb_players;i++)
     {
         CPlayer* otherclient = map->PlayerList.at(map->PlayerList.size()-1);
         if(otherclient == NULL) continue;
-        //Warp time.
+        //Warp time, after reward ;)
+
+        //extra points :)
+        if (otherclient->CharInfo->unionid==keymax)
+        {
+           otherclient->CharInfo->union05+=200;
+            BEGINPACKET( pak, 0x721 );
+            ADDWORD( pak, 85 );
+            ADDWORD( pak, otherclient->CharInfo->union05 );
+            ADDWORD( pak, 0x0000 );
+            otherclient->client->SendPacket( &pak );
+            RESETPACKET( pak, 0x730 );
+            ADDWORD    ( pak, 0x0005 );
+            ADDDWORD   ( pak, 0x40b3a24d );
+            otherclient->client->SendPacket( &pak );
+        }
+
+        //let's send the message to the right people only :)
+        BEGINPACKET( pak, 0x702 );
+        ADDSTRING  ( pak, "Mighty Lord" );
+    	ADDSTRING  ( pak, "> " );
+    	ADDSTRING  ( pak, text );
+    	ADDBYTE    ( pak, 0x00 );
+    	otherclient->client->SendPacket(&pak);
+    	//SendToAll  ( &pak );
+
         fPoint temp_point=GServer->RandInCircle(list_tele,20);
-        GServer->pakGMTele(otherclient,2,temp_point.x,temp_point.y);        
+        GServer->pakGMTele(otherclient,2,temp_point.x,temp_point.y);
     }
-    
+
      return true;
+}
+
+//LMA: Send a packet too all connected clients in a map.
+void CWorldServer::SendToAllInMap( CPacket* pak, int mapid)
+{
+    CMap* map = MapList.Index[mapid];
+
+    for(UINT i=0;i<map->PlayerList.size();i++)
+    {
+        CPlayer* otherclient = map->PlayerList.at(i);
+        if (otherclient->client == NULL) continue;
+        if (!otherclient->client->isActive) continue;
+
+        if (otherclient->Session->inGame)
+            otherclient->client->SendPacket( pak );
+    }
+
+}
+
+//LMA: Union War, let's summon the stones...
+void CWorldServer::UWstones()
+{
+     //Sunrise Crystal at 5075,5264, sunset crystal at 5319,5261     
+     //Are the previous still alive?
+    CMap* map = MapList.Index[9];
+    
+    //let's summon the stones ;)
+    fPoint position;
+    position.x=5075;
+    position.y=5264;
+    position.z=0;
+    map->AddMonster( 431, position, 0, NULL, NULL, 0 , true );     
+    position.x=5319;
+    position.y=5261;
+    position.z=0;
+    map->AddMonster( 432, position, 0, NULL, NULL, 0 , true );     
+     
+     
+     return;
+}
+
+//LMA: UW, we kill the stones.
+void CWorldServer::KillStones()
+{
+    CMap* map = MapList.Index[9];
+    int nb_killed=0;
+    
+    for(UINT i=0;i<map->MonsterList.size();i++)
+    {
+        CMonster* thismon=map->MonsterList.at(i);
+        if (thismon->montype!=432&&thismon->montype!=431)
+           continue;
+
+        thismon->Stats->HP = -1;
+        BEGINPACKET( pak, 0x799 );
+        ADDWORD    ( pak, thismon->clientid );
+        ADDWORD    ( pak, thismon->clientid );
+        ADDDWORD   ( pak, thismon->thisnpc->hp*thismon->thisnpc->level );
+        ADDDWORD   ( pak, 16 );
+        SendToVisible( &pak, thismon );
+        map->DeleteMonster( thismon );
+                                                                         
+       nb_killed++;
+       if (nb_killed==2)
+          return;
+    }   
+         
+     
+     return;     
+}
+ 
+ 
+ //LMA: Enough players for Union War? Don't forget there are alliances...
+ bool CWorldServer::CheckEnoughUW()
+ {
+       //2do: Is there enough players?
+       //comment compter??
+       //dans quêtes? Pour le moment on dit que c'est bon...
+
+
+
+
+       //Who teams with who?       
+       //team 1: union 123
+       //team 2: union 34567       
+       CMap* map = MapList.Index[9];
+     int no_attacker=2;
+     int no_defender=1;
+                     
+       if (GServer->RandNumber(1,2)==1)
+       {
+         no_attacker=1;
+         no_defender=2;
+       }
+       
+       map->attackers=no_attacker;
+       map->defenders=no_defender;
+       
+       char text[200];
+       if (map->defenders!=1)
+          sprintf( text, "Unions %s will defend !!!","Junon Order, Akram Kingdom, Righteous Crusader");
+       else
+           sprintf( text, "Unions %s will defend !!!","Arumic, Ferrel Guild, Gypsies, Ikaness");
+    
+    BEGINPACKET( pak, 0x702 );
+    ADDSTRING  ( pak, "Mighty Lord" );
+    ADDSTRING  ( pak, "> " );
+    ADDSTRING  ( pak, text );
+    ADDBYTE    ( pak, 0x00 );
+    GServer->SendToAllInMap  ( &pak,2);
+
+       if (map->attackers!=1)
+          sprintf( text, "Unions %s will attack !!!","Junon Order, Akram Kingdom, Righteous Crusader");
+       else
+           sprintf( text, "Unions %s will attack !!!","Arumic, Ferrel Guild, Gypsies, Ikaness");
+           
+    RESETPACKET( pak, 0x702 );
+    ADDSTRING  ( pak, "Mighty Lord" );
+    ADDSTRING  ( pak, "> " );
+    ADDSTRING  ( pak, text );
+    ADDBYTE    ( pak, 0x00 );
+    GServer->SendToAllInMap  ( &pak,2);
+      
+      map->sunrisekilled=false;
+      map->sunsetkilled=false;
+      
+      
+      return true;    
+ }
+
+//LMA: Summon NPC for UW :)
+UINT CWorldServer::SummonNPCUW(bool kill)
+ {
+
+    	CMap* map = MapList.Index[2];	
+     
+         if (kill)
+         {
+            CNPC* goodbye=map->GetNPCInMap(map->npc_id);
+            map->DeleteNPC(goodbye);
+            return 0;                
+         }
+         
+        //2do: complete it...
+        fPoint position;
+        position.x=5470;
+        position.y=5248;
+        position.z=0;
+        
+        UINT npcid=1189;
+        UINT dialogid=28;
+        UINT eventid=0;
+        
+     	CNPC* thisnpc = new CNPC;
+    	thisnpc->clientid = GetNewClientID();
+    	thisnpc->dir = 0;
+    	thisnpc->npctype = npcid;
+    	thisnpc->pos = position;
+    	thisnpc->posMap = 2;
+    	thisnpc->thisnpc = GetNPCDataByID( npcid );
+    	thisnpc->thisnpc->dialogid = dialogid;
+    	thisnpc->event=eventid;
+    	if( thisnpc->thisnpc==NULL ) return 0;
+    	map->AddNPC( thisnpc );      
+    
+      
+      return thisnpc->clientid;
+ }
+
+//LMA: UW is over, let's warp the lads back ;)
+void CWorldServer::UWOver()
+{
+     //We delete the NPC in Junon
+     SummonNPCUW(true);
+     
+     //we kill the stones.
+     KillStones();
+     
+     //Ok, timeout or someone won?
+     CMap* map = MapList.Index[9];
+     int winner[4];
+     
+     //defenders or attackers won?
+     //remember, there is always an alliance...
+     //2do: put alliance in 'map'?
+   winner[0]=4;
+   winner[1]=5;               
+   winner[2]=6;       
+   winner[3]=7;
+     
+     char text[200];
+     if (!map->sunrisekilled&&!map->sunsetkilled)
+     {
+       sprintf( text, "Union War has been won by %s !!!","the defenders");
+       if (map->defenders==1)
+       {
+           winner[0]=1;
+           winner[1]=2;
+           winner[2]=3;
+           winner[3]=0;           
+       }
+       
+     }
+     else
+     {
+         //attackers won.
+       sprintf( text, "Union War has been won by %s !!!","the attackers");
+       if (map->attackers==1)
+       {
+           winner[0]=1;
+           winner[1]=2;
+           winner[2]=3;
+           winner[3]=0;           
+       }
+               
+     }
+     
+     //let's warp everyone back.     
+     //Come back in JP
+     fPoint list_tele;
+     list_tele.x=5540;
+     list_tele.y=5240;
+
+    int nb_players=0;
+    nb_players=map->PlayerList.size();
+    for(UINT i=0;i<nb_players;i++)
+    {
+        CPlayer* otherclient = map->PlayerList.at(map->PlayerList.size()-1);
+        if(otherclient == NULL) continue;
+        //Warp time, after reward ;)
+
+        //extra points :)
+        if (otherclient->CharInfo->unionid==winner[0]||otherclient->CharInfo->unionid==winner[1]||otherclient->CharInfo->unionid==winner[2]||otherclient->CharInfo->unionid==winner[3])
+        {
+           otherclient->CharInfo->union05+=1000;
+            BEGINPACKET( pak, 0x721 );
+            ADDWORD( pak, 85 );
+            ADDWORD( pak, otherclient->CharInfo->union05 );
+            ADDWORD( pak, 0x0000 );
+            otherclient->client->SendPacket( &pak );
+            RESETPACKET( pak, 0x730 );
+            ADDWORD    ( pak, 0x0005 );
+            ADDDWORD   ( pak, 0x40b3a24d );
+            otherclient->client->SendPacket( &pak );
+        }
+
+        //let's send the message to the right people only :)
+        BEGINPACKET( pak, 0x702 );
+        ADDSTRING  ( pak, "Mighty Lord" );
+    	ADDSTRING  ( pak, "> " );
+    	ADDSTRING  ( pak, text );
+    	ADDBYTE    ( pak, 0x00 );
+    	otherclient->client->SendPacket(&pak);
+    	//SendToAll  ( &pak );
+
+        fPoint temp_point=GServer->RandInCircle(list_tele,20);
+        GServer->pakGMTele(otherclient,2,temp_point.x,temp_point.y);
+    }
+
+
+     return;     
 }

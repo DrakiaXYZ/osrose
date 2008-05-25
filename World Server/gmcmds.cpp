@@ -1903,6 +1903,106 @@ else if (strcmp(command, "give2")==0)
         ADDWORD( pak, 0x40b3 );
         thisclient->client->SendPacket( &pak );        
     }
+    /*
+    else if (strcmp(command, "killunion")==0)
+    {
+        if(Config.Command_Partylvl > thisclient->Session->accesslevel)
+	       return true;
+        if ((tmp = strtok(NULL, " "))==NULL) return true; int type_union= atoi( tmp );
+        if ((tmp = strtok(NULL, " "))==NULL) return true; int kill_union= atoi( tmp );
+        if ((tmp = strtok(NULL, " "))==NULL) return true; int test_union= atoi( tmp );
+        
+        Log( MSG_GMACTION, "killUnion type %i, value %i, loop or key %i by %s" ,type_union,kill_union, test_union, thisclient->CharInfo->charname);
+        
+        //LMA: changing union kill :)
+        //28 00 d0 8a ff ff
+        if (type_union==1)
+        {
+            BEGINPACKET( pak, 0x720 );
+            ADDWORD( pak, test_union );
+            ADDWORD( pak, kill_union );
+            //ADDWORD( pak, 0xFFFF );
+            ADDWORD( pak, 0x0 );
+            thisclient->client->SendPacket( &pak );
+            RESETPACKET( pak, 0x0730 );
+            ADDWORD( pak, 5 );
+            ADDWORD( pak, 0xa24d );
+            ADDWORD( pak, 0x40b3 );
+            thisclient->client->SendPacket( &pak );  
+            char buffer[200];
+            sprintf ( buffer, "killUnion 720 set to %i, test %i by %s" , kill_union, test_union, thisclient->CharInfo->charname);
+            SendPM(thisclient, buffer);
+                      
+            return true;
+        }
+        
+        if (type_union==101)
+        {
+            
+            Log(MSG_INFO,"721, test_union %i, value %i",test_union,kill_union);
+            for (int k=10;k<test_union;k++)
+            {                            
+                BEGINPACKET( pak, 0x721 );
+                RESETPACKET( pak, 0x721 );                
+                ADDWORD( pak, k );
+                ADDWORD( pak, kill_union );
+                ADDWORD( pak, 0x0000 );
+                thisclient->client->SendPacket( &pak );
+            	RESETPACKET( pak, 0x730 );
+                ADDWORD    ( pak, 0x0005 );
+                ADDDWORD   ( pak, 0x40b3a24d );
+                thisclient->client->SendPacket( &pak );
+                Log(MSG_INFO,"killUnion 721 set to %i, key %i by %s" , kill_union, k, thisclient->CharInfo->charname);
+                //char buffer[200];
+                //sprintf ( buffer, "killUnion 721 set to %i, test %i by %s" , kill_union, k, thisclient->CharInfo->charname);
+                //SendPM(thisclient, buffer);
+            }
+            
+            return true;
+        }
+        
+        if (type_union==102)
+        {
+            
+            for (int k=10;k<test_union;k++)
+            {
+                BEGINPACKET( pak, 0x720 );
+                ADDWORD( pak, k );
+                ADDWORD( pak, kill_union );
+                //ADDWORD( pak, 0xFFFF );
+                ADDWORD( pak, 0x0 );
+                thisclient->client->SendPacket( &pak );
+                RESETPACKET( pak, 0x0730 );
+                ADDWORD( pak, 5 );
+                ADDWORD( pak, 0xa24d );
+                ADDWORD( pak, 0x40b3 );
+                thisclient->client->SendPacket( &pak ); 
+                Log(MSG_INFO,"killUnion 720 set to %i, key %i by %s" , kill_union, k, thisclient->CharInfo->charname); 
+                //char buffer[200];
+                //sprintf ( buffer, "killUnion 720 set to %i, test %i by %s" , kill_union, k, thisclient->CharInfo->charname);
+                //SendPM(thisclient, buffer);
+            }
+            
+            return true;
+        }        
+        
+        BEGINPACKET( pak, 0x721 );
+        ADDWORD( pak, test_union );
+        ADDWORD( pak, kill_union );
+        ADDWORD( pak, 0x0000 );
+        thisclient->client->SendPacket( &pak );
+    	RESETPACKET( pak, 0x730 );
+        ADDWORD    ( pak, 0x0005 );
+        ADDDWORD   ( pak, 0x40b3a24d );
+        thisclient->client->SendPacket( &pak );                 
+        
+       char buffer[200];
+       sprintf ( buffer, "killUnion 721 set to %i, test %i by %s" , kill_union, test_union, thisclient->CharInfo->charname);
+       SendPM(thisclient, buffer);        
+       
+                        
+        return true;
+    }*/
     else if (strcmp(command, "union")==0)
     {
         if(Config.Command_Partylvl > thisclient->Session->accesslevel)
@@ -1923,12 +2023,11 @@ else if (strcmp(command, "give2")==0)
             ADDWORD( pak, 0x0000 );
             ADDWORD( pak, 0x0000 );
             thisclient->client->SendPacket( &pak );
-            //05 00 31 71 54 09     
-            RESETPACKET( pak, 0x0730 );
-            ADDWORD( pak, 5 );
-            ADDWORD( pak, 0x7131 );
-            ADDWORD( pak, 0x0954 );
-            thisclient->client->SendPacket( &pak );  
+            
+        	RESETPACKET( pak, 0x730 );
+            ADDWORD    ( pak, 0x0005 );
+            ADDDWORD   ( pak, 0x40b3a24d );
+            thisclient->client->SendPacket( &pak );            
                     
            char buffer[200];
            sprintf ( buffer, "You left the Union.");
@@ -1939,27 +2038,29 @@ else if (strcmp(command, "give2")==0)
         
         //LMA: changing union :)
         //28 00 d0 8a ff ff
+        //test (is it useful?)
+        /*
         BEGINPACKET( pak, 0x720 );
         ADDWORD( pak, 0x28 );
         ADDWORD( pak, 0x8AD0 );
         ADDWORD( pak, 0xFFFF );
         thisclient->client->SendPacket( &pak );   
-        RESETPACKET( pak, 0x721 );
+        */
+        //RESETPACKET( pak, 0x721 );
+        BEGINPACKET( pak, 0x721 );
         ADDWORD( pak, 0x05 );
         ADDWORD( pak, which_union );
         ADDWORD( pak, 0x0000 );
-        thisclient->client->SendPacket( &pak );            
-        //05 00 16 d4 50 09      
-        RESETPACKET( pak, 0x0730 );
-        ADDWORD( pak, 5 );
-        ADDWORD( pak, 0xD416 );
-        ADDWORD( pak, 0x0950 );
-        thisclient->client->SendPacket( &pak );  
+        thisclient->client->SendPacket( &pak );
+    	RESETPACKET( pak, 0x730 );
+        ADDWORD    ( pak, 0x0005 );
+        ADDDWORD   ( pak, 0x40b3a24d );
+        thisclient->client->SendPacket( &pak );                 
         
        char buffer[200];
        sprintf ( buffer, "Welcome to union %i, %s",which_union,thisclient->CharInfo->charname);
        SendPM(thisclient, buffer);        
-       thisclient->CharInfo->unionid=0;
+       thisclient->CharInfo->unionid=which_union;
        
                         
         return true;
@@ -2032,6 +2133,75 @@ else if (strcmp(command, "give2")==0)
 	    Log( MSG_GMACTION, " Test Grid set at %i by %s" , Config.testgrid, thisclient->CharInfo->charname);
 	    return true;
 	}	
+	else if(strcmp(command, "unionmode")==0)
+    {
+        if(Config.Command_grid > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)
+           {
+               Log( MSG_GMACTION, " %s : /unionmode NOT ALLOWED" , thisclient->CharInfo->charname);
+               char buffer[200];
+               sprintf ( buffer, "unionmode NOT ALLOWED");
+               SendPM(thisclient, buffer);
+	           return true;
+           }
+        int value=0;
+        if((tmp = strtok(NULL, " "))==NULL)
+                return true;
+
+       if (strcmp(tmp, "uw")==0)
+       {
+           //Union War
+           if((tmp = strtok(NULL, " "))==NULL)
+                   return true;
+           value=atoi(tmp);
+           if (value<0||value>1)
+              value=0;
+
+           if(value==0)
+           {
+             CMap* map = MapList.Index[9];
+             if (map->is_uw_fired)
+             {
+                SendPM(thisclient,"You can't cancel Union War now, a session is running...");
+                return true;
+             }
+             
+           }
+           
+           Config.unionwar=value;
+           char line0[200];
+           sprintf(line0,"We set Union War to %i .",Config.unionwar);
+            SendPM(thisclient,line0);
+    	    Log( MSG_GMACTION, " Union slaunghter set at %i by %s" , Config.unionwar, thisclient->CharInfo->charname);            
+       }
+       else
+       {
+           //Union Slaughter
+           if((tmp = strtok(NULL, " "))==NULL)
+                   return true;
+           value=atoi(tmp);               
+           if (value<0||value>1)
+              value=0;
+
+           if(value==0)
+           {
+             CMap* map = MapList.Index[8];
+             if (map->is_union_fired)
+             {
+                SendPM(thisclient,"You can't cancel Union Slaughter now, a session is running...");
+                return true;
+             }
+             
+           }
+              
+           Config.unionslaughter=value;
+           char line0[200];
+           sprintf(line0,"We set Union slaunghter to %i .",Config.unionslaughter);
+            SendPM(thisclient,line0);
+    	    Log( MSG_GMACTION, " Union slaunghter set at %i by %s" , Config.unionslaughter, thisclient->CharInfo->charname);                          
+        }
+
+	    return true;
+	}		
     else if(strcmp(command, "rules")==0)  // Rules Command by Matt
     {
         if(Config.Command_Rules > thisclient->Session->accesslevel)

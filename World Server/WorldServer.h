@@ -155,6 +155,15 @@ class CWorldServer : public CServerSocket
         CDrop* GetDrop( CMonster* thismon );
         CDrop* GetPYDrop( CMonster* thismon, UINT droptype );   //hidden
     	void SendToAll( CPacket* pak );
+    	void SendToAllInMap( CPacket* pak, int mapid);     //LMA: Send a message to all people in a given map
+    	
+    	//LMA: For Union War.
+    	void UWstones();
+    	void KillStones();
+   	    bool CheckEnoughUW();
+    	UINT SummonNPCUW(bool kill=false);
+    	void UWOver();
+    	
     	UINT GetNewClientID( );
     	void DisconnectAll();
     	CPlayer* GetClientByUserID( UINT userid );
@@ -174,7 +183,7 @@ class CWorldServer : public CServerSocket
         void TakeItemMallList(CPlayer* thisclient,int qty,int slot); //LMA: takes an item from Item Mall to player's inventory
         void RefreshFairy( );
         
-        //LMA: For Union War
+        //LMA: For Union Slaughter
         bool CheckOkUnion();
         bool GoUnionWar(vector<CPlayer*>  PlayerListToWarp);
         bool WarIsOver();

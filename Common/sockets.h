@@ -191,10 +191,13 @@ struct CROSEServerConfig
     int testgrid; //LMA: maps, testing grids...
     int jrose; //LMA: for handling jRose (163)
     
-    //For union wars
+    //For union wars and union slaughter
     int unionmin; //LMA: nb of min players / union
     char* uniontime; //LMA: union time
     int unionduration; //LMA: union duration (seconds)
+    int unionwar;      //LMA: is unionwar active?
+    int unionslaughter;       //is union slaughter active?
+    
                 
 
     // COMMAND LEVELS

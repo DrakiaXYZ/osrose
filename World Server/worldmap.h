@@ -73,11 +73,23 @@ class CMap
     UINT ghost;        // ghosttime?
     BYTE allowpvp;     // pvp allowed?
     bool allowpat;     // pat allowed?
-    bool is_union_fired;  //LMA: is union wars on?
-    time_t utime_end;   //LMA: When ends Union War?
-    time_t utime_begin;  //LMA: when begins Union War?    
+    
+    //LMA: Union slaughter (map 8)
+    bool is_union_fired;  //LMA: is union slaughter on?
+    time_t utime_end;   //LMA: When ends Union Slaughter?
+    time_t utime_begin;  //LMA: when begins Union Slaughter?
     int nb_kills[8];     //LMA: nb killed by this union
     int nb_killed[8];     //LMA: how many times this union has been killed
+    
+    //LMA: Union War (map 9)
+    bool is_uw_fired;     //LMA: UW started?
+    bool sunsetkilled;    //LMA: UW
+    bool sunrisekilled;   //LMA: UW
+    time_t uw_end;   //LMA: When ends Union war?
+    time_t uw_begin;  //LMA: when begins Union war?
+    UINT npc_id;      //LMA: NPC client ID for UW.
+    int defenders;    //LMA: who attacks?
+    int attackers;    //LMA: who defends?
     
     
     //LMA BEGIN

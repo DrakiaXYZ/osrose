@@ -442,7 +442,7 @@ bool CWorldServer::LoadRespawnData( )
 		thisrespawnpoint->destMap = atoi(row[3]);
 		thisrespawnpoint->radius = atoi(row[4]);
 		thisrespawnpoint->masterdest = (atoi(row[5]) == 1);
-		
+
         //LMA: check if out of memory.
         if (thisrespawnpoint->destMap>=MAX_MAP_DATA)
         {
@@ -450,7 +450,7 @@ bool CWorldServer::LoadRespawnData( )
            delete thisrespawnpoint;
            continue;
         }
-        		
+
 		MapList.Index[thisrespawnpoint->destMap]->RespawnList.push_back( thisrespawnpoint );
 	}
 	DB->QFree( );
@@ -533,7 +533,7 @@ bool CWorldServer::LoadChestData( )
         }
 
         newchest->probmax = 0;
-        value = 0;        
+        value = 0;
         // probability
         for(UINT j=0;j<newchest->Rewards.size();j++)
         {
@@ -582,13 +582,13 @@ bool CWorldServer::LoadMobGroups() {
     thisgroup->limit = atoi(row[6]);
     thisgroup->tacticalpoints = atoi(row[7]);
     char* mobList = row[8];
- 
+
     thisgroup->lastRespawnTime = clock();
     thisgroup->active = 0;
- 
+
     thisgroup->basicMobs.clear();
     thisgroup->tacMobs.clear();
- 
+
     // Fill in basic/tac mobs
     tmp = strtok(mobList, ",|");
     while (tmp != NULL) {
@@ -646,13 +646,13 @@ bool CWorldServer::LoadMobGroups() {
 bool CWorldServer::LoadMonsterSpawn( )
 {
 	Log( MSG_LOAD, "SpawnZones data             " );
-    //clear the respawns data first  
-    
+    //clear the respawns data first
+
     for(int i=0;i<MapList.Map.size();i++)
     {
         MapList.Index[i]->MonsterSpawnList.clear();
     }
-     
+
 	MYSQL_ROW row;
 	MYSQL_RES *result = DB->QStore("SELECT id,map,montype,min,max,respawntime,points,triggeramount,bossid FROM list_spawnareas");
 //    MYSQL_RES *result = DB->QStore("SELECT id, map, montype, min, max, respawntime, points, spawntype, triggermontype, triggerammount, agressive, areatrigger, lim, spawnk FROM list_spawnareas");
@@ -743,7 +743,7 @@ bool CWorldServer::LoadMonsterSpawn( )
                 delete thisspawn;
                 continue;
             }
-            
+
             //LMA: check if out of memory.
             if (thisspawn->map>=MAX_MAP_DATA)
             {
@@ -751,7 +751,7 @@ bool CWorldServer::LoadMonsterSpawn( )
                delete thisspawn;
                continue;
             }
-                    
+
     		MapList.Index[thisspawn->map]->MonsterSpawnList.push_back( thisspawn );
         }
 	}
@@ -792,7 +792,7 @@ bool CWorldServer::LoadNPCs( )
 
         thisnpc->dialog=thisnpc->thisnpc->dialogid;
         thisnpc->event=thisnpc->thisnpc->eventid; //LMA Event.
-        
+
         //LMA: check if out of memory.
         if (thisnpc->posMap>=MAX_MAP_DATA)
         {
@@ -800,7 +800,7 @@ bool CWorldServer::LoadNPCs( )
            delete thisnpc;
            continue;
         }
-                    
+
 		MapList.Index[thisnpc->posMap]->AddNPC( thisnpc );
 	}
 	DB->QFree( );
@@ -945,30 +945,30 @@ bool CWorldServer::LoadPYDropsData( )
 }
 
 //hidden
- 
+
 bool CWorldServer::LoadSkillBookDropsData( )
 {
     Log( MSG_INFO, "Loading Skillbook data" );
     MYSQL_ROW row;
     MYSQL_RES *result = DB->QStore("SELECT id,itemtype,min,max,prob FROM list_skillbooks");
-    if(result==NULL) 
+    if(result==NULL)
     {
         DB->QFree( );
         return false;
     }
     int c = 0;
     while(row = mysql_fetch_row(result))
-    {  
-        
+    {
+
         c++;
         CMDrops* newdrop = new (nothrow) CMDrops;
         assert(newdrop);
-        newdrop->itemnum = atoi(row[0]); 
-        newdrop->itemtype = atoi(row[1]);               
-        newdrop->level_min = atoi(row[2]); 
+        newdrop->itemnum = atoi(row[0]);
+        newdrop->itemtype = atoi(row[1]);
+        newdrop->level_min = atoi(row[2]);
         newdrop->level_max = atoi(row[3]);
-        newdrop->prob = atoi(row[4]);   
-        SkillbookList.push_back( newdrop );    
+        newdrop->prob = atoi(row[4]);
+        SkillbookList.push_back( newdrop );
     }
     DB->QFree( );
     Log( MSG_INFO, "Skillbook Data loaded" );
@@ -1094,8 +1094,8 @@ bool CWorldServer::LoadEquip( )
            Log(MSG_WARNING,"equip_data.csv, index overflow trapped %i>%i (increase MAX_EQUIP_DATA)",newequip->id,MAX_EQUIP_DATA);
            delete newequip;
            continue;
-        }        
-        
+        }
+
         newequip->equiptype = GetUIntValue(",");
         newequip->type = GetUIntValue(",");
         newequip->price = GetUIntValue(",");
@@ -1165,7 +1165,7 @@ bool CWorldServer::LoadJemItem( )
             continue;
         }
         thisjem->id = GetUIntValue(",", &line);
-        
+
         //LMA: check if out of memory.
         if (thisjem->id>=MAX_JEM_DATA)
         {
@@ -1173,7 +1173,7 @@ bool CWorldServer::LoadJemItem( )
            delete thisjem;
            continue;
         }
-                
+
         thisjem->type = GetUIntValue(",");
         thisjem->price = GetUIntValue(",");
         thisjem->pricerate = GetUIntValue(",");
@@ -1226,7 +1226,7 @@ bool CWorldServer::LoadNaturalItem( )
            delete thisnatural;
            continue;
         }
-                
+
         thisnatural->type = GetUIntValue(",");
         thisnatural->price = GetUIntValue(",");
         thisnatural->pricerate = GetUIntValue(",");
@@ -1273,7 +1273,7 @@ bool CWorldServer::LoadPatItem( )
            delete newpat;
            continue;
         }
-                
+
         newpat->type = GetUIntValue(",");
         newpat->price = GetUIntValue(",");
         newpat->pricerate = GetUIntValue(",");
@@ -1307,7 +1307,7 @@ bool CWorldServer::LoadProductItem( )
     }
     char line[500];
     fgets( line, 500, fh );// this is the column name
-    
+
     while(!feof(fh))
     {
         memset( &line, '\0', 500 );
@@ -1320,7 +1320,7 @@ bool CWorldServer::LoadProductItem( )
             return false;
         }
         newproduct->id = GetUIntValue(",", &line);
-        
+
         //LMA: check if out of memory.
         if (newproduct->id>=MAX_PRODUCT_DATA)
         {
@@ -1328,7 +1328,7 @@ bool CWorldServer::LoadProductItem( )
            delete newproduct;
            continue;
         }
-        
+
         char* items = GetStrValue(",");
         char* amount = GetStrValue(",");
         for(int i=0;i<50;i++)
@@ -1336,7 +1336,7 @@ bool CWorldServer::LoadProductItem( )
         for(int i=0;i<50;i++)
             newproduct->amount[i] = GetUIntValue("|",i==0?amount:NULL);
         ProductList.Data.push_back( newproduct );
-        ProductList.Index[newproduct->id] = newproduct;        
+        ProductList.Index[newproduct->id] = newproduct;
     }
     fclose(fh);
     Log( MSG_LOAD, "Product Data loaded" );
@@ -1367,7 +1367,7 @@ bool CWorldServer::LoadSellData( )
             return false;
         }
         newsell->id = GetUIntValue(",", &line);
-        
+
         //LMA: check if out of memory.
         if (newsell->id>=MAX_SELL_DATA)
         {
@@ -1375,7 +1375,7 @@ bool CWorldServer::LoadSellData( )
            delete newsell;
            continue;
         }
-                
+
         char *items = GetStrValue(",");
         for(int i=0;i<48;i++)
             newsell->item[i] = GetUIntValue("|",i==0?items:NULL);
@@ -1389,18 +1389,18 @@ bool CWorldServer::LoadSellData( )
 
 bool CWorldServer::LoadConsItem( )
 {
-    Log( MSG_LOAD, "Consumable Data             " );    
+    Log( MSG_LOAD, "Consumable Data             " );
     FILE* fh = NULL;
     fh = fopen("data/useitem_data.csv", "r");
     if(fh==NULL)
     {
         Log(MSG_ERROR, "\nError loading file data/useitem_data.csv" );
         return false;
-    }    
+    }
     char line[500];
-    fgets( line, 500, fh );// this is the column name    
+    fgets( line, 500, fh );// this is the column name
     while(!feof(fh))
-    {        
+    {
         memset( &line, '\0', 500 );
         fgets( line, 500, fh );
         CUseData* newuse = new (nothrow) CUseData;
@@ -1411,7 +1411,7 @@ bool CWorldServer::LoadConsItem( )
             return false;
         }
         newuse->id = GetUIntValue(",", &line);
-        
+
         //LMA: check if out of memory.
         if (newuse->id>=MAX_USE_DATA)
         {
@@ -1419,7 +1419,7 @@ bool CWorldServer::LoadConsItem( )
            delete newuse;
            continue;
         }
-                
+
         newuse->restriction = GetUIntValue(",");
         newuse->type = GetUIntValue(",");
         newuse->price = GetUIntValue(",");
@@ -1427,19 +1427,19 @@ bool CWorldServer::LoadConsItem( )
         newuse->weight = GetUIntValue(",");
         newuse->quality = GetUIntValue(",");
         newuse->material = GetUIntValue(","); //core
-        newuse->pricevalue = GetUIntValue(",");        
+        newuse->pricevalue = GetUIntValue(",");
         char* usecondition = GetStrValue(",");
-        char* useeffect = GetStrValue(",");  
+        char* useeffect = GetStrValue(",");
         for(int i=0;i<2;i++)
             newuse->usecondition[i] = GetUIntValue("|",i==0?usecondition:NULL);
         for(int i=0;i<2;i++)
             newuse->useeffect[i] = GetUIntValue("|",i==0?useeffect:NULL);
         UseList.Data.push_back( newuse );
-        UseList.Index[newuse->id] = newuse;           
-    }        
+        UseList.Index[newuse->id] = newuse;
+    }
     fclose(fh);
     Log( MSG_LOAD, "Consumable Data Loaded" );
-    return true;    
+    return true;
 }
 
 bool CWorldServer::LoadZoneData( )
@@ -1466,7 +1466,7 @@ bool CWorldServer::LoadZoneData( )
             return false;
         }
         newzone->id = GetUIntValue(",", &line);
-        
+
         //LMA: check if out of memory.
         if (newzone->id>=MAX_MAP_DATA)
         {
@@ -1474,7 +1474,7 @@ bool CWorldServer::LoadZoneData( )
            delete newzone;
            continue;
         }
-                
+
         newzone->dayperiod = GetUIntValue(",");
         newzone->morningtime = GetUIntValue(",");
         newzone->daytime = GetUIntValue(",");
@@ -1495,7 +1495,7 @@ bool CWorldServer::LoadZoneData( )
        newzone->mon_lvl = 0;
        newzone->mon_exp = 0;
        newzone->percent=0;
-       
+
        //LMA: Union Wars:
        newzone->utime_begin=0;
        newzone->utime_end=0;
@@ -1641,7 +1641,7 @@ bool CWorldServer::LoadItemStats( )
     return true;
 }
 
- 
+
 //PY stat lookup table
 bool CWorldServer::LoadStatLookup( )
 {
@@ -1654,18 +1654,20 @@ bool CWorldServer::LoadStatLookup( )
         return false;
     }
     UINT counter = 1;
+
     while( row = mysql_fetch_row(result) )
     {
         StatLookup[counter].id = atoi(row[0]);
         StatLookup[counter].statnumber = atoi(row[1]);
         counter++;
     }
+
     DB->QFree( );
     Log( MSG_INFO, "Stats Lookup Data Loaded" );
     return true;
 }
 //PY end
- 
+
 
 // geo edit for disassemble // 22 oct 07
 bool CWorldServer::LoadBreakList()
@@ -1686,7 +1688,7 @@ bool CWorldServer::LoadBreakList()
     {
       if(i<3000)
 // make sure above line is set higher than actual amount
-// In WorldServer.h change this one CBreakList BreakList[3000] to match above     
+// In WorldServer.h change this one CBreakList BreakList[3000] to match above
       {
         memset( &line, '\0', 500 );
         fgets( line, 500, fh );
@@ -1710,14 +1712,14 @@ bool CWorldServer::LoadBreakList()
     return true;
 }
 
- 
+
 bool CWorldServer::LoadCustomTeleGate()
 {
-    Log( MSG_LOAD, "Loading Custom Telegate data" );     
-    MYSQL_ROW row;    
-    MYSQL_RES *result = DB->QStore("SELECT id,sourcex,sourcey,sourcemap,destx,desty,destmap,radius,active FROM list_customgates");  
+    Log( MSG_LOAD, "Loading Custom Telegate data" );
+    MYSQL_ROW row;
+    MYSQL_RES *result = DB->QStore("SELECT id,sourcex,sourcey,sourcemap,destx,desty,destmap,radius,active FROM list_customgates");
     CustomGateList.clear();
-    if(result==NULL) 
+    if(result==NULL)
     {
         DB->QFree( );
         return false;
@@ -1729,51 +1731,51 @@ bool CWorldServer::LoadCustomTeleGate()
         {
             Log(MSG_ERROR, "Error allocing memory       " );
             DB->QFree( );
-            return false;          
+            return false;
         }
         thisgate->id = atoi(row[0]);
         thisgate->source.x = (float)atof(row[1]);
-        thisgate->source.y = (float)atof(row[2]); 
+        thisgate->source.y = (float)atof(row[2]);
         thisgate->sourcemap = atoi(row[3]);
         thisgate->dest.x = (float)atof(row[4]);
         thisgate->dest.y = (float)atof(row[5]);
         thisgate->destmap = atoi(row[6]);
         thisgate->radius = atoi(row[7]);
         thisgate->active = atoi(row[8]);
-        CustomGateList.push_back(thisgate);         
+        CustomGateList.push_back(thisgate);
     }
     DB->QFree( );
-    Log( MSG_LOAD, "Custom Telegate Data Loaded" );   
+    Log( MSG_LOAD, "Custom Telegate Data Loaded" );
     return true;
 }
 
- 
+
 bool CWorldServer::LoadCustomEvents( )
 {
-    Log( MSG_LOAD, "Custom Events data          " );     
+    Log( MSG_LOAD, "Custom Events data          " );
     MYSQL_ROW row;
     MYSQL_RES *result = DB->QStore("SELECT id,eventtype,npcname,x,y,map,radius,active,pc1,pc2,pc3,pc4,pc5,pc6,pc7,pc8,pc9,pc10,pt1,pt2,pt3,pt4,pt5,pt6,pt7,pt8,pt9,pt10,pi1,pi2,pi3,pi4,pi5,pi6,pi7,pi8,pi9,pi10,pn1,pn2,pn3,pn4,pn5,pn6,pn7,pn8,pn9,pn10,script1,script2,script3,script4,itemname,collecttype,collectnum,level FROM list_customevents");
     CustomEventList.clear();
-    if(result==NULL) 
+    if(result==NULL)
     {
         DB->QFree( );
         return false;
-    }  
-    int i;      
+    }
+    int i;
     while( row = mysql_fetch_row(result) )
-    {  
+    {
         CCustomEvent* thisevent = new (nothrow) CCustomEvent;
-        if(thisevent == NULL)  
-        { 
+        if(thisevent == NULL)
+        {
             Log(MSG_ERROR, "Error allocing memory" );
             DB->QFree( );
             return false;
         }
         thisevent->id = atoi(row[0]);
         thisevent->eventtype = atoi(row[1]);
-        strcpy(thisevent->npcname,row[2]); 
+        strcpy(thisevent->npcname,row[2]);
         thisevent->location.x = (float)atof(row[3]);
-        thisevent->location.y = (float)atof(row[4]); 
+        thisevent->location.y = (float)atof(row[4]);
         thisevent->map = atoi(row[5]);
         thisevent->radius = atoi(row[6]);
         thisevent->active = atoi(row[7]);
@@ -1804,6 +1806,6 @@ bool CWorldServer::LoadCustomEvents( )
         CustomEventList.push_back(thisevent);
     }
     DB->QFree( );
-    Log( MSG_LOAD, "Custom Events data loaded" ); 
-    return true; 
+    Log( MSG_LOAD, "Custom Events data loaded" );
+    return true;
 }

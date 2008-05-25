@@ -55,6 +55,24 @@ bool CMonster::OnDie( )
             }
         }
     }
+        
+    //LMA: Union Wars :)
+    //A stone has been killed?
+    if (map->id==9&&(this->montype==431||this->montype==432))
+    {
+       if (map->is_uw_fired)
+       {
+         if(this->montype==431)
+            map->sunsetkilled=true;
+         if(this->montype==432)
+            map->sunsetkilled=true;            
+       }
+                                                 
+    }
+    
+    //UW END
+    
+    
     
     //LMA begin
     //CF mode 1

@@ -17,7 +17,7 @@ CDatabase::CDatabase( char* server , char* username, char* password, char* datab
 // deconstructor
 CDatabase::~CDatabase( )
 {
-     Log(MSG_INFO,"deconstructor");                       
+     Log(MSG_INFO,"deconstructor");
 }
 
 // disconnect from mysql
@@ -39,7 +39,7 @@ int CDatabase::Connect( )
         Log( MSG_WARNING, "Can't change timeout session");
     else
         Log( MSG_INFO, "SQL timeout set to %i seconds", 2678400);
-            
+
     return 0;
 }
 
@@ -55,7 +55,7 @@ int CDatabase::Reconnect( )
         Log( MSG_WARNING, "Can't change timeout session");
     else
         Log( MSG_INFO, "SQL timeout set to %i seconds", 2678400);
-        
+
     return 0;
 }
 
@@ -65,20 +65,20 @@ int CDatabase::QExecuteUpdate( char *Format,... )
 {
     bool Qfail = true;
     char query[1024];
-	va_list ap; 
+	va_list ap;
     va_start( ap, Format );
-	vsprintf( query, Format, ap ); 
-	va_end  ( ap );    
-    Log( MSG_QUERY, query );	
+	vsprintf( query, Format, ap );
+	va_end  ( ap );
+    Log( MSG_QUERY, query );
     pthread_mutex_lock( &SQLMutex );
     while(Qfail)
     {
         if(mysql_query( Mysql, query )!=0)
         {
-            Log( MSG_FATALERROR, "Could not execute query: %s", mysql_error( Mysql ) );   
+            Log( MSG_FATALERROR, "Could not execute query: %s", mysql_error( Mysql ) );
             if(Reconnect( )==-1)
             {
-                Log( MSG_FATALERROR, "Could not execute query: %s", mysql_error( Mysql ) );   
+                Log( MSG_FATALERROR, "Could not execute query: %s", mysql_error( Mysql ) );
                 pthread_mutex_unlock( &SQLMutex );
                 return -1;
             }
@@ -86,7 +86,7 @@ int CDatabase::QExecuteUpdate( char *Format,... )
         }
         else Qfail = false;
     }
-    pthread_mutex_unlock( &SQLMutex );            
+    pthread_mutex_unlock( &SQLMutex );
     return mysql_affected_rows(Mysql);
 }
 
@@ -94,63 +94,66 @@ int CDatabase::QExecuteUpdate( char *Format,... )
 bool CDatabase::QExecute( char *Format,... )
 {
     bool Qfail = true;
-    char query[1024];
-	va_list ap; 
+    //char query[1024];
+    char query[1300];   //LMA: sometimes we need more...
+	va_list ap;
     va_start( ap, Format );
-	vsprintf( query, Format, ap ); 
-	va_end  ( ap );    
-    Log( MSG_QUERY, query );	
-    pthread_mutex_lock( &SQLMutex );
+	vsprintf( query, Format, ap );
+	va_end  ( ap );
+    Log( MSG_QUERY, query );
+
+    int no_err=0;
+    no_err=pthread_mutex_lock( &SQLMutex );
+
     while(Qfail)
     {
         if(mysql_query( Mysql, query )!=0)
         {
-            Log( MSG_FATALERROR, "Could not execute query: %s", mysql_error( Mysql ) );   
+            Log( MSG_FATALERROR, "Could not execute query: %s", mysql_error( Mysql ) );
             if(Reconnect( )==-1)
             {
-                Log( MSG_FATALERROR, "Could not execute query: %s", mysql_error( Mysql ) );   
-                pthread_mutex_unlock( &SQLMutex );        
+                Log( MSG_FATALERROR, "Could not execute query: %s", mysql_error( Mysql ) );
+                pthread_mutex_unlock( &SQLMutex );
                 return false;
             }
             else Qfail = false;
         }
         else Qfail = false;
     }
-    pthread_mutex_unlock( &SQLMutex );            
-    return true;    
+    pthread_mutex_unlock( &SQLMutex );
+    return true;
 }
 
 MYSQL_RES* CDatabase::QStore( char *Format, ...)
 {
-    bool Qfail = true;    
+    bool Qfail = true;
     char query[1024];
-	va_list ap; 
+	va_list ap;
     va_start( ap, Format );
-	vsprintf( query, Format, ap ); 
-	va_end  ( ap );  
-    //result = NULL;
-    MYSQL_RES *result=NULL;
-    Log( MSG_QUERY, query );    
-    pthread_mutex_lock( &SQLMutex ); 
-    
+	vsprintf( query, Format, ap );
+	va_end  ( ap );
+    result = NULL;
+    Log( MSG_QUERY, query );
+    pthread_mutex_lock( &SQLMutex );
+
     if (Mysql==NULL)
     {
       Log(MSG_INFO,"mysql is NULL");
     }
-     
+
     while(Qfail)
-    {    
+    {
         if(mysql_query( Mysql, query )!=0)
         {
-            Log( MSG_FATALERROR, "Could not execute query: %s", mysql_error( Mysql ) );   
+            Log( MSG_FATALERROR, "Could not execute query: %s", mysql_error( Mysql ) );
             if(Reconnect( )==-1)
             {
-                Log( MSG_FATALERROR, "Could not execute query: %s", mysql_error( Mysql ) );   
-                pthread_mutex_unlock( &SQLMutex );        
+                Log( MSG_FATALERROR, "Could not execute query: %s", mysql_error( Mysql ) );
+                pthread_mutex_unlock( &SQLMutex );
                 return false;
             }
             else Qfail = false;
-        }    
+        }
         else Qfail = false;
     }
     result = mysql_store_result( Mysql );
@@ -159,28 +162,28 @@ MYSQL_RES* CDatabase::QStore( char *Format, ...)
 
 MYSQL_RES* CDatabase::QUse( char *Format, ...)
 {
-    bool Qfail = true;    
+    bool Qfail = true;
     char query[1024];
-	va_list ap; 
+	va_list ap;
     va_start( ap, Format );
-	vsprintf( query, Format, ap ); 
-	va_end  ( ap );  
+	vsprintf( query, Format, ap );
+	va_end  ( ap );
     result = NULL;
-    Log( MSG_QUERY, query );    
-    pthread_mutex_lock( &SQLMutex );  
+    Log( MSG_QUERY, query );
+    pthread_mutex_lock( &SQLMutex );
     while(Qfail)
-    {    
+    {
         if(mysql_query( Mysql, query )!=0)
         {
-            Log( MSG_FATALERROR, "Could not execute query: %s", mysql_error( Mysql ) );   
+            Log( MSG_FATALERROR, "Could not execute query: %s", mysql_error( Mysql ) );
             if(Reconnect( )==-1)
             {
-                Log( MSG_FATALERROR, "Could not execute query: %s", mysql_error( Mysql ) );   
-                pthread_mutex_unlock( &SQLMutex );        
+                Log( MSG_FATALERROR, "Could not execute query: %s", mysql_error( Mysql ) );
+                pthread_mutex_unlock( &SQLMutex );
                 return false;
             }
             else Qfail = false;
-        }    
+        }
         else Qfail = false;
     }
     result = mysql_use_result( Mysql );
