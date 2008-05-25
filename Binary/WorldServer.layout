@@ -3,7 +3,7 @@ CursorCol=1
 CursorRow=1031
 TopLine=1020
 LeftChar=1
-Open=1
+Open=0
 Top=0
 [Editor_50]
 CursorCol=103
@@ -111,8 +111,8 @@ CursorRow=66
 TopLine=42
 LeftChar=1
 [Editor_16]
-Open=1
-Top=1
+Open=0
+Top=0
 CursorCol=6
 CursorRow=296
 TopLine=279
@@ -278,11 +278,11 @@ TopLine=701
 >>>>>>> .r85
 LeftChar=1
 [Editor_36]
-Open=0
-Top=0
-CursorCol=50
-CursorRow=2048
-TopLine=2036
+Open=1
+Top=1
+CursorCol=39
+CursorRow=58
+TopLine=37
 LeftChar=1
 [Editor_37]
 Open=0
