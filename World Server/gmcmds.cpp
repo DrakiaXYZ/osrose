@@ -2005,65 +2005,11 @@ else if (strcmp(command, "give2")==0)
     }*/
     else if (strcmp(command, "union")==0)
     {
-        if(Config.Command_Partylvl > thisclient->Session->accesslevel)
-	       return true;
+        if(Config.Command_Union > thisclient->Session->accesslevel)
+	       return true;        
+        if ((tmp = strtok(NULL, " "))==NULL) return true; char* name=tmp;
         if ((tmp = strtok(NULL, " "))==NULL) return true; int which_union= atoi( tmp );
-        
-        if(which_union<0||which_union>7)
-          return true;
-        
-        Log( MSG_GMACTION, "Union set to %i by %s" , which_union, thisclient->CharInfo->charname);
-        
-        if(which_union==0)
-        {
-           //leaving union.
-           //05 00 00 00 00 00
-            BEGINPACKET( pak, 0x721 );
-            ADDWORD( pak, 0x05 );
-            ADDWORD( pak, 0x0000 );
-            ADDWORD( pak, 0x0000 );
-            thisclient->client->SendPacket( &pak );
-            
-        	RESETPACKET( pak, 0x730 );
-            ADDWORD    ( pak, 0x0005 );
-            ADDDWORD   ( pak, 0x40b3a24d );
-            thisclient->client->SendPacket( &pak );            
-                    
-           char buffer[200];
-           sprintf ( buffer, "You left the Union.");
-           SendPM(thisclient, buffer);
-           thisclient->CharInfo->unionid=0;
-           return true;
-        }
-        
-        //LMA: changing union :)
-        //28 00 d0 8a ff ff
-        //test (is it useful?)
-        /*
-        BEGINPACKET( pak, 0x720 );
-        ADDWORD( pak, 0x28 );
-        ADDWORD( pak, 0x8AD0 );
-        ADDWORD( pak, 0xFFFF );
-        thisclient->client->SendPacket( &pak );   
-        */
-        //RESETPACKET( pak, 0x721 );
-        BEGINPACKET( pak, 0x721 );
-        ADDWORD( pak, 0x05 );
-        ADDWORD( pak, which_union );
-        ADDWORD( pak, 0x0000 );
-        thisclient->client->SendPacket( &pak );
-    	RESETPACKET( pak, 0x730 );
-        ADDWORD    ( pak, 0x0005 );
-        ADDDWORD   ( pak, 0x40b3a24d );
-        thisclient->client->SendPacket( &pak );                 
-        
-       char buffer[200];
-       sprintf ( buffer, "Welcome to union %i, %s",which_union,thisclient->CharInfo->charname);
-       SendPM(thisclient, buffer);        
-       thisclient->CharInfo->unionid=which_union;
-       
-                        
-        return true;
+        return pakGMUnion(thisclient,name,which_union);
     }    
     else if (strcmp(command, "partylvl")==0)
     {
@@ -2135,72 +2081,18 @@ else if (strcmp(command, "give2")==0)
 	}	
 	else if(strcmp(command, "unionmode")==0)
     {
-        if(Config.Command_grid > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)
-           {
-               Log( MSG_GMACTION, " %s : /unionmode NOT ALLOWED" , thisclient->CharInfo->charname);
-               char buffer[200];
-               sprintf ( buffer, "unionmode NOT ALLOWED");
-               SendPM(thisclient, buffer);
-	           return true;
-           }
-        int value=0;
-        if((tmp = strtok(NULL, " "))==NULL)
-                return true;
-
-       if (strcmp(tmp, "uw")==0)
+        if(Config.Command_UnionMode > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)
        {
-           //Union War
-           if((tmp = strtok(NULL, " "))==NULL)
-                   return true;
-           value=atoi(tmp);
-           if (value<0||value>1)
-              value=0;
-
-           if(value==0)
-           {
-             CMap* map = MapList.Index[9];
-             if (map->is_uw_fired)
-             {
-                SendPM(thisclient,"You can't cancel Union War now, a session is running...");
-                return true;
-             }
-             
-           }
-           
-           Config.unionwar=value;
-           char line0[200];
-           sprintf(line0,"We set Union War to %i .",Config.unionwar);
-            SendPM(thisclient,line0);
-    	    Log( MSG_GMACTION, " Union slaunghter set at %i by %s" , Config.unionwar, thisclient->CharInfo->charname);            
+           Log( MSG_GMACTION, " %s : /unionmode NOT ALLOWED" , thisclient->CharInfo->charname);
+           char buffer[200];
+           sprintf ( buffer, "unionmode NOT ALLOWED");
+           SendPM(thisclient, buffer);
+           return true;
        }
-       else
-       {
-           //Union Slaughter
-           if((tmp = strtok(NULL, " "))==NULL)
-                   return true;
-           value=atoi(tmp);               
-           if (value<0||value>1)
-              value=0;
-
-           if(value==0)
-           {
-             CMap* map = MapList.Index[8];
-             if (map->is_union_fired)
-             {
-                SendPM(thisclient,"You can't cancel Union Slaughter now, a session is running...");
-                return true;
-             }
-             
-           }
-              
-           Config.unionslaughter=value;
-           char line0[200];
-           sprintf(line0,"We set Union slaunghter to %i .",Config.unionslaughter);
-            SendPM(thisclient,line0);
-    	    Log( MSG_GMACTION, " Union slaunghter set at %i by %s" , Config.unionslaughter, thisclient->CharInfo->charname);                          
-        }
-
-	    return true;
+       
+        if ((tmp = strtok(NULL, " "))==NULL) return true; char* namemode=tmp;
+        if ((tmp = strtok(NULL, " "))==NULL) return true; int value= atoi( tmp );
+        return pakGMUnionMode(thisclient,namemode,value);
 	}		
     else if(strcmp(command, "rules")==0)  // Rules Command by Matt
     {
@@ -3765,6 +3657,115 @@ bool CWorldServer::pakGMZulygive(CPlayer* thisclient, char* name, int zuly)
 	otherclient->client->SendPacket(&pak);
 
 	return true;
+}
+
+//LMA: setting an union for a player
+bool CWorldServer::pakGMUnion(CPlayer* thisclient, char* name, int which_union)
+{
+    CPlayer* otherclient = GetClientByCharName (name);
+    if(otherclient==NULL)
+        return true;
+    if(which_union<0||which_union>7)
+      return true;        
+
+    if(which_union==0)
+    {
+       //leaving union.
+       //05 00 00 00 00 00
+        BEGINPACKET( pak, 0x721 );
+        ADDWORD( pak, 0x05 );
+        ADDWORD( pak, 0x0000 );
+        ADDWORD( pak, 0x0000 );
+        otherclient->client->SendPacket( &pak );
+        
+    	RESETPACKET( pak, 0x730 );
+        ADDWORD    ( pak, 0x0005 );
+        ADDDWORD   ( pak, 0x40b3a24d );
+        otherclient->client->SendPacket( &pak );            
+                
+       char buffer[200];
+       sprintf ( buffer, "GM %s made you left the Union.",thisclient->CharInfo->charname);
+       SendPM(otherclient, buffer);
+       
+       Log( MSG_GMACTION, "Union set to %i for %s by %s" , which_union,name,thisclient->CharInfo->charname);
+       
+       thisclient->CharInfo->unionid=0;
+       return true;
+    }
+    
+    //LMA: changing union :)
+    BEGINPACKET( pak, 0x721 );
+    ADDWORD( pak, 0x05 );
+    ADDWORD( pak, which_union );
+    ADDWORD( pak, 0x0000 );
+    otherclient->client->SendPacket( &pak );
+	RESETPACKET( pak, 0x730 );
+    ADDWORD    ( pak, 0x0005 );
+    ADDDWORD   ( pak, 0x40b3a24d );
+    otherclient->client->SendPacket( &pak );                 
+    
+   char buffer[200];
+   sprintf ( buffer, "Welcome to union %i, %s",which_union,thisclient->CharInfo->charname);
+   SendPM(otherclient, buffer);        
+   thisclient->CharInfo->unionid=which_union;
+   Log( MSG_GMACTION, "Union set to %i for %s by %s" , which_union,name,thisclient->CharInfo->charname);
+
+
+     return true;
+}
+
+//LMA: setting union war or union slaughter
+bool CWorldServer::pakGMUnionMode(CPlayer* thisclient, char* namemode, int value)
+{
+   if (strcmp(namemode, "uw")==0)
+   {
+       if (value<0||value>1)
+          value=0;
+
+       CMap* map = MapList.Index[9];       
+       if(value==0)
+       {         
+         if (map->is_uw_fired)
+         {
+            SendPM(thisclient,"You can't cancel Union War now, a session is running...");
+            return true;
+         }
+         
+       }
+       
+       map->uw_begin=0;
+       Config.unionwar=value;
+       char line0[200];
+       sprintf(line0,"We set Union War to %i .",Config.unionwar);
+        SendPM(thisclient,line0);
+	    Log( MSG_GMACTION, " Union slaunghter set at %i by %s" , Config.unionwar, thisclient->CharInfo->charname);
+        return true;          
+   }
+
+   //Union Slaughter
+   if (value<0||value>1)
+      value=0;
+
+   CMap* map = MapList.Index[8];
+   if(value==0)
+   {         
+     if (map->is_union_fired)
+     {
+        SendPM(thisclient,"You can't cancel Union Slaughter now, a session is running...");
+        return true;
+     }
+     
+   }
+   
+   map->utime_begin=0;
+   Config.unionslaughter=value;
+   char line0[200];
+   sprintf(line0,"We set Union slaunghter to %i .",Config.unionslaughter);
+    SendPM(thisclient,line0);
+    Log( MSG_GMACTION, " Union slaunghter set at %i by %s" , Config.unionslaughter, thisclient->CharInfo->charname);                          
+
+
+     return true;
 }
 
 // Spawn a NPC

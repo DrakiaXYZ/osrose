@@ -810,6 +810,8 @@ void CWorldServer::LoadCommandLevels( void )
     Config.Command_Tele = ConfigGetInt    ( "commands.ini", "tele", 299 );
     Config.Command_TeleToMe = ConfigGetInt    ( "commands.ini", "teletome", 299 );
     Config.Command_Transx = ConfigGetInt    ( "commands.ini", "transx", 299 );
+    Config.Command_Union = ConfigGetInt    ( "commands.ini", "union", 299 );        
+    Config.Command_UnionMode = ConfigGetInt    ( "commands.ini", "unionmode", 299 );        
     Config.Command_Who = ConfigGetInt    ( "commands.ini", "who", 299 );
     Config.Command_Who2 = ConfigGetInt    ( "commands.ini", "who2", 299 );
 }

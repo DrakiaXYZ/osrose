@@ -291,6 +291,8 @@ struct CROSEServerConfig
     int Command_Tele;
     int Command_TeleToMe;
     int Command_Transx;
+    int Command_Union;
+    int Command_UnionMode;
     int Command_Who;
     int Command_Who2;
 

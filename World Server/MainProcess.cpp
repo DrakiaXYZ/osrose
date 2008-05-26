@@ -54,6 +54,7 @@ PVOID MapProcess( PVOID TS )
                   //2do: use the time from Command
                   map->uw_begin=etime+5*60; //In 5 minutes...
                   next_timeuw=etime+60;
+                  GServer->UWNPCdialogs(1);
                }
 
                if (!map->is_uw_fired)
@@ -65,6 +66,7 @@ PVOID MapProcess( PVOID TS )
                      //We let the NPC "opened" until the end of UW?
                      if(GServer->CheckEnoughUW())
                      {
+                        GServer->UWNPCdialogs(3);                                                 
                         map->is_uw_fired=true;
                         //let's summon the Stones
                         GServer->UWstones();
@@ -80,6 +82,7 @@ PVOID MapProcess( PVOID TS )
                      }
                      else
                      {
+                        GServer->UWNPCdialogs(4);
                         Log(MSG_INFO,"UW canceled...");
                         char text[200];
                         sprintf( text, "Union War has been canceled since not enough players were there...");
@@ -128,7 +131,7 @@ PVOID MapProcess( PVOID TS )
                 else
                 {
                     //is it ended?
-                    if (etime>map->uw_end||map->sunrisekilled||map->sunsetkilled)
+                    if (etime>map->uw_end||map->sunsetkilled)
                     {
                        GServer->UWOver();
                        Log(MSG_INFO,"UW is over...");
@@ -140,6 +143,10 @@ PVOID MapProcess( PVOID TS )
                     }
                     else
                     {
+                        //sunrise killed? let's spawn sunset then :)
+                        if (map->sunrisekilled&&!map->sunsetspawned)
+                           GServer->UWstones(true);
+                        
                        if(next_timeuw>0&&etime>=next_timeuw)
                        {
                           UINT remaining_time=0;

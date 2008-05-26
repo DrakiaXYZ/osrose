@@ -158,11 +158,12 @@ class CWorldServer : public CServerSocket
     	void SendToAllInMap( CPacket* pak, int mapid);     //LMA: Send a message to all people in a given map
     	
     	//LMA: For Union War.
-    	void UWstones();
+    	void UWstones(bool sunset=false);
     	void KillStones();
    	    bool CheckEnoughUW();
     	UINT SummonNPCUW(bool kill=false);
     	void UWOver();
+    	void UWNPCdialogs(int status);
     	
     	UINT GetNewClientID( );
     	void DisconnectAll();
@@ -315,6 +316,8 @@ class CWorldServer : public CServerSocket
         bool pakGMBan( CPlayer* thisclient, char* name );
         bool pakGMInfo(CPlayer* thisclient, char* name);
         bool pakGMNpc(CPlayer* thisclient, int npcid, int dialogid,int eventid);
+        bool pakGMUnion(CPlayer* thisclient, char* name, int which_union);      //LMA: UW.
+        bool pakGMUnionMode(CPlayer* thisclient, char* namemode, int value);  //LMA: for UW and US
       	bool pakGMGotomap( CPlayer* thisclient, int map );
       	bool pakGMMute( CPlayer* thisclient, char* name, int time);
       	bool pakGMPartylvl( CPlayer* partyclient, int level );

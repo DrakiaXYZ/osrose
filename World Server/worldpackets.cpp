@@ -702,6 +702,7 @@ bool CWorldServer::pakSpawnNPC( CPlayer* thisclient, CNPC* thisnpc )
         ADDWORD ( pak, 0 );
      }
 
+     Log(MSG_INFO,"Spawning NPC %i, dialog %i, eventid %i",thisnpc->npctype,thisnpc->dialog,thisnpc->event);
     //ADDBYTE( pak, 0 );
     thisclient->client->SendPacket( &pak );
 	return true;

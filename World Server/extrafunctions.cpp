@@ -1971,23 +1971,33 @@ void CWorldServer::SendToAllInMap( CPacket* pak, int mapid)
 }
 
 //LMA: Union War, let's summon the stones...
-void CWorldServer::UWstones()
+void CWorldServer::UWstones(bool sunset)
 {
-     //Sunrise Crystal at 5075,5264, sunset crystal at 5319,5261     
-     //Are the previous still alive?
+     //2 sunrise at the middle of map, then one sunset appears when a sunrise is killed.     
     CMap* map = MapList.Index[9];
+    fPoint position;
     
     //let's summon the stones ;)
-    fPoint position;
-    position.x=5075;
-    position.y=5264;
+    //sunrise.
+    if (!sunset)
+    {        
+        position.x=5180;
+        position.y=5100;
+        position.z=0;
+        map->AddMonster( 432, position, 0, NULL, NULL, 0 , true );     
+        position.x=5220;
+        position.y=5100;
+        position.z=0;
+        map->AddMonster( 432, position, 0, NULL, NULL, 0 , true );     
+        return;
+    }
+
+    //sunset    
+    position.x=5200;
+    position.y=5120;
     position.z=0;
     map->AddMonster( 431, position, 0, NULL, NULL, 0 , true );     
-    position.x=5319;
-    position.y=5261;
-    position.z=0;
-    map->AddMonster( 432, position, 0, NULL, NULL, 0 , true );     
-     
+    
      
      return;
 }
@@ -2076,6 +2086,7 @@ void CWorldServer::KillStones()
       
       map->sunrisekilled=false;
       map->sunsetkilled=false;
+      map->sunsetspawned=false;
       
       
       return true;    
@@ -2116,6 +2127,8 @@ UINT CWorldServer::SummonNPCUW(bool kill)
     	if( thisnpc->thisnpc==NULL ) return 0;
     	map->AddNPC( thisnpc );      
     
+       Log(MSG_INFO,"Summoning UW NPC %i, id: %i",npcid,thisnpc->clientid);
+       
       
       return thisnpc->clientid;
  }
@@ -2212,4 +2225,75 @@ void CWorldServer::UWOver()
 
 
      return;     
+}
+
+//LMA: we change the status dialog from some NPC for UW
+void CWorldServer::UWNPCdialogs(int status)
+{
+     int eventid=0;
+     
+     
+     switch (status)
+     {
+         case 0:
+               //usual dialog
+               eventid=0;
+              break;
+         case 1:
+              //quest 1 (defend the stones)
+              eventid=1;
+              break;
+         case 2:
+         case 6:              
+              //Enough participants
+              eventid=2;
+              break;
+         case 3:
+         case 7:              
+              //UW underway
+              eventid=3;
+              break;
+         case 4:
+              //UW Canceled
+              eventid=4;
+              break;
+         case 5:
+              //quest 1 (attack the stones?)
+              eventid=5;
+              break;
+         default:
+                 eventid=0;
+                 break;
+     }
+     
+     int list_npc[4];
+     for (int k=0;k<4;k++)
+         list_npc[k]=0;
+         
+     //2do: complete the other NPC as well...
+     list_npc[0]=1089; //Arothel, Ferrel Guild
+     
+     for (int k=0;k<4;k++)
+     {
+         if (list_npc[k]==0)
+            continue;
+            
+        CNPC* thisnpc = GetNPCByType(list_npc[k]);
+        if(thisnpc == NULL)
+            continue;
+        thisnpc->event = eventid;
+        BEGINPACKET( pak, 0x790 );
+        ADDWORD    ( pak, thisnpc->clientid );
+        ADDWORD    ( pak, thisnpc->event );        
+        //thisclient->client->SendPacket(&pak);
+        GServer->SendToAllInMap  ( &pak,2);
+        
+        Log(MSG_INFO,"Changing dialog UW NPC %i, eventid: %i",list_npc[k],thisnpc->event);
+        
+        //Saving in database
+        DB->QExecute("UPDATE npc_data SET eventid=%i WHERE id=%i", eventid,list_npc[k]);                           
+     }
+     
+          
+   return;
 }

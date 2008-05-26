@@ -85,6 +85,7 @@ class CMap
     bool is_uw_fired;     //LMA: UW started?
     bool sunsetkilled;    //LMA: UW
     bool sunrisekilled;   //LMA: UW
+    bool sunsetspawned;   //LMA: UW
     time_t uw_end;   //LMA: When ends Union war?
     time_t uw_begin;  //LMA: when begins Union war?
     UINT npc_id;      //LMA: NPC client ID for UW.
