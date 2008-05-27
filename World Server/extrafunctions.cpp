@@ -814,6 +814,16 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
                         useitem->usetype = 63;
                         useitem->usevalue = 54004440;
                     break;
+                    //Marsh of Ghosts - Mileage Scroll - added by rl2171
+                    case 366:
+                        useitem->usetype = 64;
+                        useitem->usevalue = 50395326; // Temp value until actual value is found
+                    break;
+                    //Forgotten Temple B2 - Mileage Scroll - added by rl2171
+                    case 367:
+                        useitem->usetype = 57;
+                        useitem->usevalue = 55395155; // Temp value until actual value is found
+                    break;                    
                     //Junon's Order Return Scroll - Quest Scroll - added by rl2171
                     case 945:
                         useitem->usetype = 2;

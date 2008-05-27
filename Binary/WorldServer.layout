@@ -232,9 +232,9 @@ LeftChar=11
 [Editor_30]
 Open=0
 Top=0
-CursorCol=64
-CursorRow=1435
-TopLine=1391
+CursorCol=9
+CursorRow=370
+TopLine=379
 LeftChar=1
 [Editor_31]
 Open=0
@@ -265,12 +265,12 @@ CursorRow=878
 TopLine=858
 LeftChar=1
 [Editor_35]
-Open=0
-Top=0
+Open=1
+Top=1
 <<<<<<< .mine
-CursorCol=1
-CursorRow=420
-TopLine=404
+CursorCol=27
+CursorRow=826
+TopLine=812
 =======
 CursorCol=13
 CursorRow=712
@@ -278,8 +278,8 @@ TopLine=701
 >>>>>>> .r85
 LeftChar=1
 [Editor_36]
-Open=1
-Top=1
+Open=0
+Top=0
 CursorCol=39
 CursorRow=58
 TopLine=37
