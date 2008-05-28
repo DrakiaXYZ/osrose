@@ -320,6 +320,7 @@ class CWorldServer : public CServerSocket
         bool pakGMNpc(CPlayer* thisclient, int npcid, int dialogid,int eventid);
         bool pakGMUnion(CPlayer* thisclient, char* name, int which_union);      //LMA: UW.
         bool pakGMUnionMode(CPlayer* thisclient, char* namemode, int value);  //LMA: for UW and US
+        bool pakGMUnionPoints(CPlayer* thisclient, char* name, int nb_points);    //LMA: giving faction points
       	bool pakGMGotomap( CPlayer* thisclient, int map );
       	bool pakGMMute( CPlayer* thisclient, char* name, int time);
       	bool pakGMPartylvl( CPlayer* partyclient, int level );

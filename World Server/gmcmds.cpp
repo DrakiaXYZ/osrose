@@ -2093,7 +2093,23 @@ else if (strcmp(command, "give2")==0)
         if ((tmp = strtok(NULL, " "))==NULL) return true; char* namemode=tmp;
         if ((tmp = strtok(NULL, " "))==NULL) return true; int value= atoi( tmp );
         return pakGMUnionMode(thisclient,namemode,value);
-	}		
+	}
+	else if(strcmp(command, "unionpoints")==0)
+    {
+        if(Config.Command_UnionPoints > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)
+       {
+           Log( MSG_GMACTION, " %s : /unionpoints NOT ALLOWED" , thisclient->CharInfo->charname);
+           char buffer[200];
+           sprintf ( buffer, "unionpoints NOT ALLOWED");
+           SendPM(thisclient, buffer);
+           return true;
+       }
+       
+        if ((tmp = strtok(NULL, " "))==NULL) return true; char* namemode=tmp;
+        if ((tmp = strtok(NULL, " "))==NULL) return true; int value= atoi( tmp );
+        
+        return pakGMUnionPoints(thisclient, namemode, value);
+	}	
     else if(strcmp(command, "rules")==0)  // Rules Command by Matt
     {
         if(Config.Command_Rules > thisclient->Session->accesslevel)
@@ -3659,6 +3675,7 @@ bool CWorldServer::pakGMZulygive(CPlayer* thisclient, char* name, int zuly)
 	return true;
 }
 
+
 //LMA: setting an union for a player
 bool CWorldServer::pakGMUnion(CPlayer* thisclient, char* name, int which_union)
 {
@@ -3705,7 +3722,7 @@ bool CWorldServer::pakGMUnion(CPlayer* thisclient, char* name, int which_union)
     otherclient->client->SendPacket( &pak );                 
     
    char buffer[200];
-   sprintf ( buffer, "Welcome to union %i, %s",which_union,thisclient->CharInfo->charname);
+   sprintf ( buffer, "Welcome to union %i, %s",which_union,otherclient->CharInfo->charname);
    SendPM(otherclient, buffer);        
    thisclient->CharInfo->unionid=which_union;
    Log( MSG_GMACTION, "Union set to %i for %s by %s" , which_union,name,thisclient->CharInfo->charname);
@@ -3713,6 +3730,41 @@ bool CWorldServer::pakGMUnion(CPlayer* thisclient, char* name, int which_union)
 
      return true;
 }
+
+//LMA: Giving union points to a player.
+bool CWorldServer::pakGMUnionPoints(CPlayer* thisclient, char* name, int nb_points)
+{
+    CPlayer* otherclient = GetClientByCharName (name);
+    if(otherclient==NULL)
+    {
+        return true;
+    }
+    
+    if(nb_points<=0)
+    {
+      return true;        
+    }
+
+    otherclient->CharInfo->union05+=nb_points;
+    BEGINPACKET( pak, 0x721 );
+    ADDWORD( pak, 85 );
+    ADDWORD( pak, otherclient->CharInfo->union05 );
+    ADDWORD( pak, 0x0000 );
+    otherclient->client->SendPacket( &pak );
+    RESETPACKET( pak, 0x730 );
+    ADDWORD    ( pak, 0x0005 );
+    ADDDWORD   ( pak, 0x40b3a24d );
+    otherclient->client->SendPacket( &pak );
+           
+   char buffer[200];
+   sprintf ( buffer, "You have been given %i Faction Points by %s",nb_points,thisclient->CharInfo->charname);
+   SendPM(otherclient, buffer);
+   Log( MSG_GMACTION, "%i Faction points given to %s by %s" , nb_points,name,thisclient->CharInfo->charname);
+
+
+     return true;
+}
+
 
 //LMA: setting union war or union slaughter
 bool CWorldServer::pakGMUnionMode(CPlayer* thisclient, char* namemode, int value)

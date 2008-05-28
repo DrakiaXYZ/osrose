@@ -294,6 +294,7 @@ struct CROSEServerConfig
     int Command_Transx;
     int Command_Union;
     int Command_UnionMode;
+    int Command_UnionPoints;
     int Command_Who;
     int Command_Who2;
 

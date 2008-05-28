@@ -224,6 +224,26 @@ bool CWorldServer::DoQuestScript( CPlayer* thisclient, CQuest* thisquest )
                 TeleportTo ( thisclient, thisquest->value1, thispoint );
              }   
         break;
+          case 34:
+             {   
+                  //LMA BEGIN
+                 //Changing Union.
+                if(thisquest->value1<0||thisquest->value1>7)
+                {
+                    return true;           
+                }
+
+                BEGINPACKET( pak, 0x721 );
+                ADDWORD( pak, 0x05 );
+                ADDWORD( pak, thisquest->value1 );
+                ADDWORD( pak, 0x0000 );
+                thisclient->client->SendPacket( &pak );
+                RESETPACKET( pak, 0x730 );
+                ADDWORD    ( pak, 0x0005 );
+                ADDDWORD   ( pak, 0x40b3a24d );
+                thisclient->client->SendPacket( &pak );                                        
+             }   
+        break;        
         //LMA end
         case 666:
              {
