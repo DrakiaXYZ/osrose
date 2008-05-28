@@ -76,9 +76,9 @@ void CWorldServer::pakPlayer( CPlayer *thisclient )
     ADDBYTE    ( pak, thisclient->CharInfo->unionid );           //LMA: Union ID
 
     ADDBYTE( pak, 0 );                                           //LMA: Union Fame
-    ADDBYTE( pak, thisclient->CharInfo->unionfame );             //LMA: Union Fame    
+    ADDBYTE( pak, thisclient->CharInfo->unionfame );             //LMA: Union Fame
     //ADDWORD    ( pak, thisclient->CharInfo->unionfame );             //LMA: Union Fame
-    
+
     ADDWORD    ( pak, thisclient->Attr->Str );			         // Str
     ADDWORD    ( pak, thisclient->Attr->Dex );				     // Dex
     ADDWORD    ( pak, thisclient->Attr->Int );				     // Int
@@ -305,12 +305,12 @@ void CWorldServer::pakQuestData( CPlayer *thisclient )
         liste_flags[3]=1;            //Lunar language
 
     //Warp vessel
-    if(thisclient->canUseFlyingVessel)    
-    {      
-        liste_flags[1]=1;      
-        liste_flags[16]=1;       
-        liste_flags[37]=1;    
-    }       
+    if(thisclient->canUseFlyingVessel)
+    {
+        liste_flags[1]=1;
+        liste_flags[16]=1;
+        liste_flags[37]=1;
+    }
 
     //1: Stat reset already done
     //4: stat reset done (event ?)
@@ -390,17 +390,17 @@ void CWorldServer::pakQuestData( CPlayer *thisclient )
 		{
 			ADDDWORD( pak, atoi(row[1]) );
 			ADDDWORD( pak, atoi(row[2]) );
-			ADDDWORD( pak, 0 );			
+			ADDDWORD( pak, 0 );
 			ADDWORD( pak, 0 );
 			b++;
 		}
 		DB->QFree( );
-	}	
+	}
 	while(b<30)
 	{
 		ADDDWORD( pak, 0 );
 		ADDDWORD( pak, 0 );
-		ADDDWORD( pak, 0 );			
+		ADDDWORD( pak, 0 );
 		ADDWORD( pak, 0 );
 		b++;
 	}
@@ -674,11 +674,13 @@ bool CWorldServer::pakSpawnNPC( CPlayer* thisclient, CNPC* thisnpc )
         if (thisnpc->dialog!=0)
         {
             Log(MSG_INFO,"Special dialog %i for NPC %i",thisnpc->dialog, thisnpc->npctype);
+            Log(MSG_INFO,"Spawning NPC %i, dialog %i, eventid %i",thisnpc->npctype,thisnpc->dialog,thisnpc->event);
             ADDWORD( pak, thisnpc->dialog );
         }
         else
         {
             //Log(MSG_INFO,"Dialog %i for NPC %i",thisnpc->npctype - factor, thisnpc->npctype);
+            Log(MSG_INFO,"Spawning NPC %i, dialog (factor) %i, eventid %i",thisnpc->npctype,thisnpc->npctype - factor,thisnpc->event);
             ADDWORD( pak, thisnpc->npctype - factor );
         }
 
@@ -702,7 +704,6 @@ bool CWorldServer::pakSpawnNPC( CPlayer* thisclient, CNPC* thisnpc )
         ADDWORD ( pak, 0 );
      }
 
-     Log(MSG_INFO,"Spawning NPC %i, dialog %i, eventid %i",thisnpc->npctype,thisnpc->dialog,thisnpc->event);
     //ADDBYTE( pak, 0 );
     thisclient->client->SendPacket( &pak );
 	return true;
@@ -1585,7 +1586,7 @@ bool CWorldServer::pakCharSelect ( CPlayer* thisclient, CPacket* P )
    	thisclient->savedata();
   	if(!thisclient->Session->inGame) return true;
 	//Maxxon: Party crash when exit fix.
-	OnClientDisconnect(thisclient->client);  	
+	OnClientDisconnect(thisclient->client);
     thisclient->Session->isLoggedIn = false;
     if(thisclient->client!=NULL) thisclient->client->isActive = false;
     //send packet to change messenger status (offline)
@@ -1675,7 +1676,7 @@ bool CWorldServer::pakNPCBuy ( CPlayer* thisclient, CPacket* P )
                 GServer->SendPM(thisclient,"Sorry, there is a problem with this NPC, warn admin");
                 return true;
             }
-         
+
             unsigned newslot = thisclient->GetNewItemSlot( thisitem );
 			if ( newslot == 0xffff ) { ncount-=1; break; }
 			int thisslotcount = 999 - thisclient->items[newslot].count;
@@ -2548,9 +2549,9 @@ bool CWorldServer::pakUseItem ( CPlayer* thisclient, CPacket* P )
     {
        case 0: //  cherry berrys
             thisclient->StartAction( NULL, BUFF_SELF, thisuse->usevalue );
-            //thisclient->items[slot].count -= 1;        
-            //if( thisclient->items[slot].count == 0 )        
-            //    ClearItem( thisclient->items[slot] ); 
+            //thisclient->items[slot].count -= 1;
+            //if( thisclient->items[slot].count == 0 )
+            //    ClearItem( thisclient->items[slot] );
             flag = true;
         break;
         case 1: // Food
@@ -2566,21 +2567,21 @@ bool CWorldServer::pakUseItem ( CPlayer* thisclient, CPacket* P )
             flag = true;
         }
         break;
-        case 2: // Return Scroll        
-        {      
+        case 2: // Return Scroll
+        {
             BEGINPACKET( pak,0x7a3 );
             ADDWORD    ( pak,thisclient->clientid );
             ADDWORD    ( pak, thisuse->itemnum );
             ADDBYTE    ( pak,slot );
             thisclient->client->SendPacket( &pak );
-            //thisclient->items[slot].count -= 1;        
-            //if( thisclient->items[slot].count == 0 )        
-            //    ClearItem( thisclient->items[slot] );                           
+            //thisclient->items[slot].count -= 1;
+            //if( thisclient->items[slot].count == 0 )
+            //    ClearItem( thisclient->items[slot] );
             fPoint thispoint;
             thispoint.x = floor( thisuse->usevalue/10000 );
             thispoint.y = floor( thisuse->usevalue%10000 );
-            TeleportTo ( thisclient, thisuse->usetype, thispoint );                 
-            flag = true;            
+            TeleportTo ( thisclient, thisuse->usetype, thispoint );
+            flag = true;
         }
         break;
         case 3: // Charm Scroll
@@ -2734,10 +2735,10 @@ bool CWorldServer::pakUseItem ( CPlayer* thisclient, CPacket* P )
         break;
     }
     if(flag == true)
-    {    
-        thisclient->items[slot].count -= 1;        
-        if( thisclient->items[slot].count <= 0 )        
-            ClearItem( thisclient->items[slot] );          
+    {
+        thisclient->items[slot].count -= 1;
+        if( thisclient->items[slot].count <= 0 )
+            ClearItem( thisclient->items[slot] );
         BEGINPACKET( pak,0x7a3 );
         ADDWORD    ( pak, thisclient->clientid );
         ADDWORD    ( pak, thisuse->itemnum );
@@ -2749,27 +2750,27 @@ bool CWorldServer::pakUseItem ( CPlayer* thisclient, CPacket* P )
 }
 
 
- 
- 
- 
+
+
+
 // Level UP Skill
 bool  CWorldServer::pakLevelUpSkill( CPlayer *thisclient, CPacket* P )
-{       
+{
     WORD pos = GETWORD ((*P),0);   // number of skill. appears to be an array index
     WORD skill = GETWORD ((*P),2); // skill id
     if(pos >= MAX_SKILL)             //can't have more than 60 skills apparently
     {
         Log( MSG_HACK, "Invalid Skill id %i for %s ", pos, thisclient->CharInfo->charname );
         return false;
-    }        
+    }
     CSkills* thisskill = GetSkillByID( skill );
     if(thisskill==NULL)
         return true;
-    if(thisclient->cskills[pos].id != skill - thisclient->cskills[pos].level)                
+    if(thisclient->cskills[pos].id != skill - thisclient->cskills[pos].level)
         return true;
-        
- 
- 
+
+
+
 // checks made for prerequisite skills here.
     UINT hasPreskill = 0;
     for(int i=0;i<3;i++)
@@ -2780,10 +2781,10 @@ bool  CWorldServer::pakLevelUpSkill( CPlayer *thisclient, CPacket* P )
         if(preskill == 0)
         {
             hasPreskill ++; // no preskill defined in this element so give a credit then skip to the next preskill.
-            continue;            
+            continue;
         }
 //        Log( MSG_INFO, "[DEBUG] Checking %i / 3, preskill %i",i,preskill);
- 
+
    for(int skillid=0;skillid<MAX_SKILL;skillid++)
         {
             //Log( MSG_INFO, "[DEBUG] Skillid %i < %u",skillid,MAX_SKILL);
@@ -2794,47 +2795,47 @@ bool  CWorldServer::pakLevelUpSkill( CPlayer *thisclient, CPacket* P )
                 hasPreskill ++;
                 //Log( MSG_INFO, "[DEBUG] Skill matched to requirements");
                 break; // no need to carry on. Skill found
-            }          
+            }
         }
    }
 //    Log( MSG_INFO, "[DEBUG] hasPreskill state = %i",hasPreskill);
     if(hasPreskill != 3)
-    { 
-        Log( MSG_INFO, "Prerequisite skills not all found" ); 
+    {
+        Log( MSG_INFO, "Prerequisite skills not all found" );
         return true; //doesn't have the necessary prerequisite skill
     }
-    
+
     // is character a high enough level?
     if(thisskill->clevel > thisclient->Stats->Level)
     {
-        Log( MSG_INFO, "Character level too low" ); 
+        Log( MSG_INFO, "Character level too low" );
         return true; //not high enough level
     }
-        
+
     //check that it is the next skill in the series
     if(thisclient->cskills[pos].id != skill - thisclient->cskills[pos].level) //check that it is the next skill in the series
     {
-        Log( MSG_INFO, "Skill Id doesn't match next in the CSkills series" ); 
+        Log( MSG_INFO, "Skill Id doesn't match next in the CSkills series" );
         return true;
     }
-    
+
     if(thisclient->CharInfo->SkillPoints >= thisskill->sp)
     {
        thisclient->CharInfo->SkillPoints -= 1;
        BEGINPACKET( pak, 0x7b1 );
        ADDBYTE    ( pak, 0x00);
-       ADDWORD    ( pak, pos);  
+       ADDWORD    ( pak, pos);
        ADDWORD    ( pak, skill);
-       ADDWORD    ( pak, thisclient->CharInfo->SkillPoints);     
-       thisclient->client->SendPacket( &pak );       
-       thisclient->cskills[pos].level+=1; 
+       ADDWORD    ( pak, thisclient->CharInfo->SkillPoints);
+       thisclient->client->SendPacket( &pak );
+       thisclient->cskills[pos].level+=1;
        thisclient->cskills[pos].thisskill = thisskill;
        thisclient->SetStats( );
     }
     return true;
 }
- 
- 
+
+
 
 
 
@@ -2880,10 +2881,10 @@ bool CWorldServer::pakEquipABC ( CPlayer* thisclient, CPacket* P )
 /////////////////////////////////////////////////////////////////////////////////
 
 bool CWorldServer::pakCraft( CPlayer* thisclient, CPacket* P )
-{    
+{
 	if(thisclient->Shop->open==true)
         return true;
-	CItem item;        
+	CItem item;
 	item.count = 1;
 	// item durability randomizer
 	int lowest = thisclient->Attr->Con/ 10 + 17;
@@ -2896,7 +2897,7 @@ bool CWorldServer::pakCraft( CPlayer* thisclient, CPacket* P )
 	item.itemtype = (GETBYTE((*P), 0x2));
 	item.lifespan = 100; //Its new so 100%
 	item.refine = 0;
-	
+
 	// stats randomizer
 	int changeofstatslow = thisclient->Attr->Sen / 13 + 10;
 	int changeofstatshigh = thisclient->Attr->Sen / 13 + 50;
@@ -2906,7 +2907,7 @@ bool CWorldServer::pakCraft( CPlayer* thisclient, CPacket* P )
 	int statshighget = 256;
 	int setstatrange=(statshighget-statslowget)+1;
   	item.stats = statslowget+int(setstatrange*rand()/(RAND_MAX + 1.0));
-	item.appraised = 1;              
+	item.appraised = 1;
 	}else {
           item.stats = 0;
           item.appraised = 0;
@@ -2914,7 +2915,7 @@ bool CWorldServer::pakCraft( CPlayer* thisclient, CPacket* P )
 	// stats set
 	item.socketed = 0;
 	item.gem = 0;
-	
+
 	unsigned newslot= thisclient->GetNewItemSlot( item );
 	if (newslot !=0xffff)
     {
@@ -2933,7 +2934,7 @@ bool CWorldServer::pakCraft( CPlayer* thisclient, CPacket* P )
                 case 11:materialnumber = JemList.Index[item.itemnum]->material;break;
                 case 14:materialnumber = PatList.Index[item.itemnum]->material;break;
             }
-        }		
+        }
 		int	m = 0;
 		for(char used=5; used != 11; used +=2)
         {
@@ -2962,46 +2963,46 @@ bool CWorldServer::pakCraft( CPlayer* thisclient, CPacket* P )
         ADDWORD( pak, 0x0100);
         ADDWORD( pak, item.itemnum);// item id not shifted
         thisclient->client->SendPacket(&pak);
-     
+
         RESETPACKET( pak, 0x07af);
         ADDBYTE( pak, 0x00);//00
-        ADDWORD( pak, newslot); 
-        
+        ADDWORD( pak, newslot);
+
         // Make craft bars
-        int bar1 = item.durability * 9;                                  
+        int bar1 = item.durability * 9;
         int bar2 = changeofstatsrange * 9;
         int bar3 = item.durability + changeofstatsrange * 6;
-        int bar4 = item.durability + changeofstatsrange + bar3 / 3;                   
-        
+        int bar4 = item.durability + changeofstatsrange + bar3 / 3;
+
         ADDWORD( pak, bar1);//progress bar1 0 is empty 0x0400 is full bar
         ADDWORD( pak, bar2);//progress bar2 0 is empty 0x0400 is full bar
         if ((GETWORD((*P),  9))==0){ ADDWORD( pak, 0x99a0);}else{ ADDWORD( pak, bar3);}//progress bar3 0 is empty 0x0400 is full bar
         if ((GETWORD((*P), 11))==0){ ADDWORD( pak, 0x99a0);}else{ ADDWORD( pak, bar4);}//progress bar4 0 is empty 0x0400 is full bar
-        ADDDWORD(pak, BuildItemHead(item)); 
+        ADDDWORD(pak, BuildItemHead(item));
 
      if (item.itemtype == 11){
 	     ADDWORD( pak, 0x0001);// amount
 	     ADDWORD( pak, 0x0000);
      }
      else{
-	     ADDDWORD(pak, BuildItemData(item));  
+	     ADDDWORD(pak, BuildItemData(item));
      }
         ADDDWORD( pak, 0x00000000 );
         ADDWORD ( pak, 0x0000 );
         int crafting_exp = item.durability + changeofstatsrange * (thisclient->Stats->Level/ 15);
-		thisclient->CharInfo->Exp += crafting_exp;//  add exp		
+		thisclient->CharInfo->Exp += crafting_exp;//  add exp
 		thisclient->client->SendPacket(&pak);
         RESETPACKET( pak, 0x79b );
         ADDDWORD   ( pak, thisclient->CharInfo->Exp );
         ADDWORD    ( pak, thisclient->CharInfo->stamina );
         ADDWORD    ( pak, 0 );
-        thisclient->client->SendPacket( &pak );	
+        thisclient->client->SendPacket( &pak );
      }
      else
      {
-         BEGINPACKET (pak, 0x702); 
-         ADDSTRING(pak, "No free slot !"); 
-         ADDBYTE(pak, 0); 
+         BEGINPACKET (pak, 0x702);
+         ADDSTRING(pak, "No free slot !");
+         ADDBYTE(pak, 0);
          thisclient->client->SendPacket(&pak);
      }
      return true;
@@ -3242,20 +3243,20 @@ bool CWorldServer::pakChangeStorage( CPlayer* thisclient, CPacket* P)
                     storageprice = -1;
                     break;
             }
- 
+
             if (storageprice < 0) {
                 Log(MSG_HACK, "pakChangeStorage: crappy persons did try to hack your server");
                 return false;
             }
- 
+
             if (storageprice <= thisclient->CharInfo->Zulies) {
                 thisclient->CharInfo->Zulies -= storageprice;
             } else {
                 // not enough zulies
                 return true;
             }
-			//End of deposit Fee.           
-            
+			//End of deposit Fee.
+
             if(newitem.itemtype>9 && newitem.itemtype<14)
             {
                 WORD count = GETWORD((*P),6);
@@ -3272,8 +3273,8 @@ bool CWorldServer::pakChangeStorage( CPlayer* thisclient, CPacket* P)
             }
             int newslot = thisclient->GetNewStorageItemSlot ( newitem );
             if(newslot==0xffff)
-                return true;            
-            //Log(MSG_INFO,"New (?) slot for deposit: %i",newslot);           
+                return true;
+            //Log(MSG_INFO,"New (?) slot for deposit: %i",newslot);
 
             //LMA: New code (stackables?)
             if (thisclient->storageitems[newslot].itemnum!=0)
@@ -4051,7 +4052,7 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
                 }
             }
             unsigned int rewardmax = RandNumber( 1, thischest->rewardposs ); //test
-      
+
             //if (rewardCount > 1)
             if (rewardmax >1)
             {
@@ -4155,8 +4156,8 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
             unsigned int prefine = rand()%100;
             bool success = false;
            if( prefine <= upgrade[nextlevel] )
-                success = true;      
- 
+                success = true;
+
             BEGINPACKET( pak, 0x7bc );
             if( success )
             {
@@ -4174,7 +4175,7 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
             }
             thisclient->items[material].count--; // geo edit, moved this up two lines
             if(thisclient->items[material].count<1)
-                ClearItem( thisclient->items[material] );                    
+                ClearItem( thisclient->items[material] );
             ADDBYTE    ( pak, 0x03 );//items a actualizar
             ADDBYTE    ( pak, material );
             ADDDWORD   ( pak, BuildItemHead( thisclient->items[material] ) );
@@ -4574,9 +4575,9 @@ bool CWorldServer::pakAddWishList( CPlayer* thisclient , CPacket* P )
 	// check if is a valid item
 	if(testitem.itemtype>14 || testitem.itemtype<1) return false;
 	// save to the database
-	DB->QExecute( "DELETE FROM wishlist WHERE itemowner=%u AND slot=%i", 
+	DB->QExecute( "DELETE FROM wishlist WHERE itemowner=%u AND slot=%i",
 		thisclient->CharInfo->charid, slot );
-	DB->QExecute( "INSERT INTO wishlist (itemowner,slot,itemhead,itemdata) VALUES (%u,%i,%u,%u)", 
+	DB->QExecute( "INSERT INTO wishlist (itemowner,slot,itemhead,itemdata) VALUES (%u,%i,%u,%u)",
 		thisclient->CharInfo->charid, slot, head, data );
 	return true;
 }
