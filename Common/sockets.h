@@ -192,11 +192,12 @@ struct CROSEServerConfig
     int jrose; //LMA: for handling jRose (163)
     
     //For union wars and union slaughter
-    int unionmin; //LMA: nb of min players / union
-    char* uniontime; //LMA: union time
-    int unionduration; //LMA: union duration (seconds)
+    int unionmin; //LMA: nb of min players / union (union slaughter)
+    char* uniontime; //LMA: union slaughter time
+    int unionduration; //LMA: union slaughter duration (seconds)
     int unionwar;      //LMA: is unionwar active?
-    int unionslaughter;       //is union slaughter active?
+    int unionslaughter;       //LMA: is union slaughter active?
+    int unionwarmin;          //LMA: number of players needed for UW (attackers and defenders)
     
                 
 

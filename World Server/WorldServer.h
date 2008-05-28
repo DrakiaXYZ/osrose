@@ -158,12 +158,14 @@ class CWorldServer : public CServerSocket
     	void SendToAllInMap( CPacket* pak, int mapid);     //LMA: Send a message to all people in a given map
     	
     	//LMA: For Union War.
-    	void UWstones(bool sunset=false);
+    	void UWstones(int type=0);
     	void KillStones();
    	    bool CheckEnoughUW();
     	UINT SummonNPCUW(bool kill=false);
     	void UWOver();
     	void UWNPCdialogs(int status);
+    	void UWWarpAttackers();
+    	void UWDecide();
     	
     	UINT GetNewClientID( );
     	void DisconnectAll();

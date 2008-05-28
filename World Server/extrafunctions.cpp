@@ -1711,7 +1711,7 @@ void CWorldServer::TakeItemMallList(CPlayer* thisclient,int qty,int slot)
     return;
 }
 
-//LMA: Check if it's ok for Union Wars.
+//LMA: Check if it's ok for Union Slaughter.
 bool CWorldServer::CheckOkUnion()
 {
      //We look through player list to see if we have enough people for each union.
@@ -1870,10 +1870,9 @@ bool CWorldServer::GoUnionWar(vector<CPlayer*>  PlayerListToWarp)
      return true;
 }
 
-//LMA: Union War is over lads, let's come back to Junon :)
+//LMA: Union Slaughter is over lads, let's come back to Junon :)
 bool CWorldServer::WarIsOver()
 {
-     //We look through player list to see if we have enough people for each union.
      //Come back in JP
      fPoint list_tele;
      list_tele.x=5540;
@@ -1907,19 +1906,19 @@ bool CWorldServer::WarIsOver()
 
     char text[200];
     if (keymax==0)
-       sprintf( text, "Union War has been won by %s !!!","Junon Order");
+       sprintf( text, "Union Slaughter has been won by %s !!!","Junon Order");
     if (keymax==1)
-       sprintf( text, "Union War has been won by %s !!!","Akram Kingdom");
+       sprintf( text, "Union Slaughter has been won by %s !!!","Akram Kingdom");
     if (keymax==2)
-       sprintf( text, "Union War has been won by %s !!!","Righteous Crusader");
+       sprintf( text, "Union Slaughter has been won by %s !!!","Righteous Crusader");
     if (keymax==3)
-       sprintf( text, "Union War has been won by %s !!!","Arumic");
+       sprintf( text, "Union Slaughter has been won by %s !!!","Arumic");
     if (keymax==4)
-       sprintf( text, "Union War has been won by %s !!!","Ferrel Guild");
+       sprintf( text, "Union Slaughter has been won by %s !!!","Ferrel Guild");
     if (keymax==5)
-       sprintf( text, "Union War has been won by %s !!!","Gypsies");
+       sprintf( text, "Union Slaughter has been won by %s !!!","Gypsies");
     if (keymax==6)
-       sprintf( text, "Union War has been won by %s !!!","Ikaness");
+       sprintf( text, "Union Slaughter has been won by %s !!!","Ikaness");
 
        Log(MSG_INFO,"keymax: %i, text %s",keymax,text);
 
@@ -1981,7 +1980,7 @@ void CWorldServer::SendToAllInMap( CPacket* pak, int mapid)
 }
 
 //LMA: Union War, let's summon the stones...
-void CWorldServer::UWstones(bool sunset)
+void CWorldServer::UWstones(int type)
 {
      //2 sunrise at the middle of map, then one sunset appears when a sunrise is killed.     
     CMap* map = MapList.Index[9];
@@ -1989,7 +1988,7 @@ void CWorldServer::UWstones(bool sunset)
     
     //let's summon the stones ;)
     //sunrise.
-    if (!sunset)
+    if (type==1)
     {        
         position.x=5180;
         position.y=5100;
@@ -2001,6 +2000,20 @@ void CWorldServer::UWstones(bool sunset)
         map->AddMonster( 432, position, 0, NULL, NULL, 0 , true );     
         return;
     }
+    
+    //Dusk killed :)
+    if (type==2)
+    {        
+        position.x=5200;
+        position.y=5050;
+        position.z=0;
+        map->AddMonster( 433, position, 0, NULL, NULL, 0 , true );          
+        map->duskkilled=false;
+        
+        //We must warp attackers to their respawn point in map 9
+        UWWarpAttackers();
+        return;
+    }  
 
     //sunset    
     position.x=5200;
@@ -2012,6 +2025,58 @@ void CWorldServer::UWstones(bool sunset)
      return;
 }
 
+//LMA: UW, warp attackers to their respawn point in map 9
+void CWorldServer::UWWarpAttackers()
+{
+    fPoint list_tele;
+    list_tele.x=5200;
+    list_tele.y=4868;     
+    CMap* map = MapList.Index[9];
+    int nb_players=0;
+    nb_players=map->PlayerList.size();
+    
+    //temp list.    
+    vector<CPlayer*>  PlayerListToWarp;
+    PlayerListToWarp.clear();
+
+    for(UINT i=0;i<map->PlayerList.size();i++)
+    {
+       //checking radius (player near mayor).
+        CPlayer* otherclient = map->PlayerList.at(i);
+        if(otherclient == NULL) continue;
+        //attackers 1 means Junon Order (1) and Arumic (4)
+        //attackers 2 means Righteous Crusaders (3) and Ferrell Guide (5)
+        if (map->attackers==1&&!(otherclient->CharInfo->unionid==1||otherclient->CharInfo->unionid==4))
+           continue;
+        if (map->attackers==2&&!(otherclient->CharInfo->unionid==3||otherclient->CharInfo->unionid==5))
+           continue;
+        PlayerListToWarp.push_back(otherclient);
+    }
+    
+    for(UINT i=0;i<PlayerListToWarp.size();i++)
+    {
+        CPlayer* otherclient = PlayerListToWarp.at(i);
+        if(otherclient == NULL) continue;
+
+        //let's send the message to the right people only :)
+        char text[200];
+        BEGINPACKET( pak, 0x702 );
+        ADDSTRING  ( pak, "Mighty Lord" );
+    	ADDSTRING  ( pak, "> Your Dusk Crystal has been killed, you've been sent to your respawn point!" );
+    	ADDSTRING  ( pak, text );
+    	ADDBYTE    ( pak, 0x00 );
+    	otherclient->client->SendPacket(&pak);
+
+        fPoint temp_point=GServer->RandInCircle(list_tele,20);
+        GServer->pakGMTele(otherclient,2,temp_point.x,temp_point.y);
+    }
+    
+    PlayerListToWarp.clear();
+    
+
+     return ;    
+}
+
 //LMA: UW, we kill the stones.
 void CWorldServer::KillStones()
 {
@@ -2021,7 +2086,7 @@ void CWorldServer::KillStones()
     for(UINT i=0;i<map->MonsterList.size();i++)
     {
         CMonster* thismon=map->MonsterList.at(i);
-        if (thismon->montype!=432&&thismon->montype!=431)
+        if (thismon->montype!=432&&thismon->montype!=431&&thismon->montype!=433)
            continue;
 
         thismon->Stats->HP = -1;
@@ -2034,7 +2099,7 @@ void CWorldServer::KillStones()
         map->DeleteMonster( thismon );
                                                                          
        nb_killed++;
-       if (nb_killed==2)
+       if (nb_killed==3)
           return;
     }   
          
@@ -2046,57 +2111,48 @@ void CWorldServer::KillStones()
  //LMA: Enough players for Union War? Don't forget there are alliances...
  bool CWorldServer::CheckEnoughUW()
  {
-       //2do: Is there enough players?
-       //comment compter??
-       //dans quêtes? Pour le moment on dit que c'est bon...
-
-
-
-
-       //Who teams with who?       
-       //team 1: union 123
-       //team 2: union 34567       
-       CMap* map = MapList.Index[9];
-     int no_attacker=2;
-     int no_defender=1;
-                     
-       if (GServer->RandNumber(1,2)==1)
-       {
-         no_attacker=1;
-         no_defender=2;
-       }
-       
-       map->attackers=no_attacker;
-       map->defenders=no_defender;
-       
-       char text[200];
-       if (map->defenders!=1)
-          sprintf( text, "Unions %s will defend !!!","Junon Order, Akram Kingdom, Righteous Crusader");
-       else
-           sprintf( text, "Unions %s will defend !!!","Arumic, Ferrel Guild, Gypsies, Ikaness");
-    
-    BEGINPACKET( pak, 0x702 );
-    ADDSTRING  ( pak, "Mighty Lord" );
-    ADDSTRING  ( pak, "> " );
-    ADDSTRING  ( pak, text );
-    ADDBYTE    ( pak, 0x00 );
-    GServer->SendToAllInMap  ( &pak,2);
-
-       if (map->attackers!=1)
-          sprintf( text, "Unions %s will attack !!!","Junon Order, Akram Kingdom, Righteous Crusader");
-       else
-           sprintf( text, "Unions %s will attack !!!","Arumic, Ferrel Guild, Gypsies, Ikaness");
-           
-    RESETPACKET( pak, 0x702 );
-    ADDSTRING  ( pak, "Mighty Lord" );
-    ADDSTRING  ( pak, "> " );
-    ADDSTRING  ( pak, text );
-    ADDBYTE    ( pak, 0x00 );
-    GServer->SendToAllInMap  ( &pak,2);
+    //attackers 1 means Junon Order (1) and Arumic (4)
+    //attackers 2 means Righteous Crusaders (3) and Ferrell Guide (5)             
+      CMap* map = MapList.Index[9];
+      int quest_attack[2];
+      int quest_defend[2];
+      int nb_attackers=0;
+      int nb_defenders=0;
+      
+      quest_attack[0]=2853;
+      quest_attack[1]=2857;
+      quest_defend[0]=2582;
+      quest_defend[1]=2586;
+      
+      if (map->attackers==1)
+      {
+        quest_attack[0]=2851;
+        quest_attack[1]=2855;                          
+        quest_defend[0]=2584;
+        quest_defend[1]=2588;        
+      }
+      
+    //let's do some SQL :)
+    MYSQL_ROW row;
+    MYSQL_RES *result = GServer->DB->QStore("SELECT COUNT(questid) FROM list_quest WHERE questid=%i OR questid=%i",quest_attack[0],quest_attack[1]);
+    if(result==NULL) return false;
+    row = mysql_fetch_row(result);
+    nb_attackers=atoi(row[0]);
+    GServer->DB->QFree( );
+    MYSQL_RES *result2 = GServer->DB->QStore("SELECT COUNT(questid) FROM list_quest WHERE questid=%i OR questid=%i",quest_defend[0],quest_defend[1]);
+    if(result2==NULL) return false;
+    row = mysql_fetch_row(result2);
+    nb_defenders=atoi(row[0]);
+    GServer->DB->QFree( );    
+      
+      //not enough people :(
+      if (nb_defenders<=Config.unionwarmin||nb_attackers<Config.unionwarmin)
+         return false;      
       
       map->sunrisekilled=false;
       map->sunsetkilled=false;
       map->sunsetspawned=false;
+      map->duskkilled=false;
       
       
       return true;    
@@ -2250,7 +2306,7 @@ void CWorldServer::UWNPCdialogs(int status)
                eventid=0;
               break;
          case 1:
-              //quest 1 (defend the stones)
+              //quest 1 (defend the stones for JO and Arumic, attack for Ferrel and RC)
               eventid=1;
               break;
          case 2:
@@ -2268,7 +2324,7 @@ void CWorldServer::UWNPCdialogs(int status)
               eventid=4;
               break;
          case 5:
-              //quest 1 (attack the stones?)
+              //quest 2 (attack the stones for JO and Arumic, defend for Ferrel and RC)
               eventid=5;
               break;
          default:
@@ -2282,6 +2338,9 @@ void CWorldServer::UWNPCdialogs(int status)
          
      //2do: complete the other NPC as well...
      list_npc[0]=1089; //Arothel, Ferrel Guild
+     list_npc[1]=1090; //Gawain, Righteous crusader
+     list_npc[2]=1091; //Chelsie, Arumic
+     list_npc[3]=1088; //Raw, Junon order
      
      for (int k=0;k<4;k++)
      {
@@ -2306,4 +2365,52 @@ void CWorldServer::UWNPCdialogs(int status)
      
           
    return;
+}
+
+//LMA: UW, who attacks, who defends?
+void CWorldServer::UWDecide()
+{
+       //Who teams with who?       
+       CMap* map = MapList.Index[9];
+        //attackers 1 means Junon Order (1) and Arumic (4)
+        //attackers 2 means Righteous Crusaders (3) and Ferrell Guild (5)       
+     int no_attacker=2;
+     int no_defender=1;
+                     
+       if (GServer->RandNumber(1,2)==1)
+       {
+         no_attacker=1;
+         no_defender=2;
+       }
+       
+       map->attackers=no_attacker;
+       map->defenders=no_defender;
+       
+       char text[200];
+       if (map->defenders!=1)
+          sprintf( text, "UW will begin soon, Unions %s will defend, fetch the quest at your Union Master !!!","Junon Order and Arumic");
+       else
+           sprintf( text, "UW will begin soon, Unions %s will defend, fetch the quest at your Union Master !!!","Righteous Crusaders and Ferrell Guild");
+    
+    BEGINPACKET( pak, 0x702 );
+    ADDSTRING  ( pak, "Mighty Lord" );
+    ADDSTRING  ( pak, "> " );
+    ADDSTRING  ( pak, text );
+    ADDBYTE    ( pak, 0x00 );
+    GServer->SendToAllInMap  ( &pak,2);
+
+       if (map->attackers!=1)
+          sprintf( text, "UW will begin soon, Unions %s will attack, fetch the quest at your Union Master !!!","Junon Order and Arumic");
+       else
+           sprintf( text, "UW will begin soon, Unions %s will attack, fetch the quest at your Union Master !!!","Righteous Crusaders and Ferrell Guild");
+           
+    RESETPACKET( pak, 0x702 );
+    ADDSTRING  ( pak, "Mighty Lord" );
+    ADDSTRING  ( pak, "> " );
+    ADDSTRING  ( pak, text );
+    ADDBYTE    ( pak, 0x00 );
+    GServer->SendToAllInMap  ( &pak,2);     
+     
+     
+     return;     
 }

@@ -54,9 +54,18 @@ PVOID MapProcess( PVOID TS )
                   //2do: use the time from Command
                   map->uw_begin=etime+5*60; //In 5 minutes...
                   next_timeuw=etime+60;
-                  GServer->UWNPCdialogs(1);
+                  GServer->UWDecide();
+                  if(map->attackers==1)
+                  {
+                      GServer->UWNPCdialogs(5);
+                  }
+                  else
+                  {
+                      GServer->UWNPCdialogs(1);
+                  }
+                  
                }
-
+               
                if (!map->is_uw_fired)
                {
                    if(etime>map->uw_begin)
@@ -140,12 +149,24 @@ PVOID MapProcess( PVOID TS )
                          //map->utime_begin+=86400;
                          map->uw_begin=etime+5*60+10;
                          next_timeuw=map->uw_begin-5*60;
+                          GServer->UWDecide();
+                          if(map->attackers==1)
+                          {
+                              GServer->UWNPCdialogs(5);
+                          }
+                          else
+                          {
+                              GServer->UWNPCdialogs(1);
+                          }
+                          
                     }
                     else
                     {
                         //sunrise killed? let's spawn sunset then :)
                         if (map->sunrisekilled&&!map->sunsetspawned)
-                           GServer->UWstones(true);
+                           GServer->UWstones(1);
+                        if(map->duskkilled)
+                           GServer->UWstones(2);
                         
                        if(next_timeuw>0&&etime>=next_timeuw)
                        {

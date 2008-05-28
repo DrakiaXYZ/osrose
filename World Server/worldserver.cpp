@@ -693,9 +693,10 @@ void CWorldServer::LoadConfigurations( char* file )
     Config.jrose                = ConfigGetInt    ( file, "jrose", 0); //LMA: Special code for jRose handling (163)            
     Config.unionwar             = ConfigGetInt    ( file, "unionwar", 0); //LMA: is Union War active?
     Config.unionslaughter       = ConfigGetInt    ( file, "unionslaughter", 0); //LMA: is Union Slaughter active?
-    Config.unionmin             = ConfigGetInt    ( file, "unionmin", 1); //LMA: union wars (nb players / union, min)
-    Config.uniontime            = ConfigGetString    ( file, "uniontime", "030000"); //LMA: time when to launch union wars (03:00:00, 24 hours mode)
-    Config.unionduration        = ConfigGetInt    ( file, "unionduration", 12000); //LMA: duration of union wars in sec
+    Config.unionmin             = ConfigGetInt    ( file, "unionmin", 1); //LMA: union Slaughter (nb players / union, min)
+    Config.uniontime            = ConfigGetString    ( file, "uniontime", "030000"); //LMA: time when to launch union Slaughter (03:00:00, 24 hours mode)
+    Config.unionduration        = ConfigGetInt    ( file, "unionduration", 12000); //LMA: duration of union Slaughter in sec
+    Config.unionwarmin        = ConfigGetInt    ( file, "unionduration", 1); //LMA: min amount of players for UW (attacker or defenders)   
 
     //LMA
 
@@ -810,8 +811,8 @@ void CWorldServer::LoadCommandLevels( void )
     Config.Command_Tele = ConfigGetInt    ( "commands.ini", "tele", 299 );
     Config.Command_TeleToMe = ConfigGetInt    ( "commands.ini", "teletome", 299 );
     Config.Command_Transx = ConfigGetInt    ( "commands.ini", "transx", 299 );
-    Config.Command_Union = ConfigGetInt    ( "commands.ini", "union", 299 );        
-    Config.Command_UnionMode = ConfigGetInt    ( "commands.ini", "unionmode", 299 );        
+    Config.Command_Union = ConfigGetInt    ( "commands.ini", "union", 299 );
+    Config.Command_UnionMode = ConfigGetInt    ( "commands.ini", "unionmode", 299 );    
     Config.Command_Who = ConfigGetInt    ( "commands.ini", "who", 299 );
     Config.Command_Who2 = ConfigGetInt    ( "commands.ini", "who2", 299 );
 }

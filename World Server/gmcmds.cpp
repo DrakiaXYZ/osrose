@@ -3733,6 +3733,7 @@ bool CWorldServer::pakGMUnionMode(CPlayer* thisclient, char* namemode, int value
          
        }
        
+       GServer->UWNPCdialogs(0);
        map->uw_begin=0;
        Config.unionwar=value;
        char line0[200];

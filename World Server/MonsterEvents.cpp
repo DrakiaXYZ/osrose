@@ -65,7 +65,9 @@ bool CMonster::OnDie( )
          if(this->montype==431)
             map->sunsetkilled=true;
          if(this->montype==432)
-            map->sunrisekilled=true;            
+            map->sunrisekilled=true;
+         if(this->montype==433)
+            map->duskkilled=true;            
        }
 
     }
