@@ -2109,6 +2109,54 @@ else if (strcmp(command, "give2")==0)
         if ((tmp = strtok(NULL, " "))==NULL) return true; int value= atoi( tmp );
         
         return pakGMUnionPoints(thisclient, namemode, value);
+	}
+	else if(strcmp(command, "tquest")==0)
+    {
+        if(Config.Command_UnionPoints > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)
+       {
+           Log( MSG_GMACTION, " %s : /unionpoints NOT ALLOWED" , thisclient->CharInfo->charname);
+           char buffer[200];
+           sprintf ( buffer, "unionpoints NOT ALLOWED");
+           SendPM(thisclient, buffer);
+           return true;
+       }
+       
+       if ((tmp = strtok(NULL, " "))==NULL) return true; int action= atoi( tmp );
+       if ((tmp = strtok(NULL, " "))==NULL) return true; int questpart= atoi( tmp );
+       if ((tmp = strtok(NULL, " "))==NULL) return true; int test= atoi( tmp );
+       //DWORD questid=3628754895;
+       
+        BEGINPACKET( pak, 0x730);
+        ADDBYTE    (pak, action);
+        ADDBYTE    (pak, questpart);
+        switch (test)
+        {
+               case 1:
+                    {
+                         ADDDWORD   (pak, 0xD84A67CF );
+                     }
+                     break;
+               case 2:
+                      {
+                           ADDDWORD   (pak, 0x67CFD84A );
+                     }
+                     break;                  
+                case 3:
+                      {
+                          ADDDWORD   (pak, 0xCF674AD8);
+                     }
+                     break;
+               case 4:
+                      {
+                           ADDDWORD   (pak, 0xD84A67CF );
+                     }
+                     break;                                                  
+        }
+        
+    	thisclient->client->SendPacket( &pak );     
+       
+        
+        return true;
 	}	
     else if(strcmp(command, "rules")==0)  // Rules Command by Matt
     {

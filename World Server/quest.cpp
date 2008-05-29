@@ -245,6 +245,8 @@ bool CWorldServer::DoQuestScript( CPlayer* thisclient, CQuest* thisquest )
              }   
         break;        
         //LMA end
+        //LMA: Used for Santa and Union rewards.
+        case 665:
         case 666:
              {
               //Don't ever touch this one.

@@ -1332,9 +1332,25 @@ bool CPlayer::DelQuest( unsigned long int questid )
 
 
 bool CPlayer::GiveQuestReward( CQuest* thisquest )
-{
-     
+{    
+     //Go on :)
+    if( thisquest==0 )
+        return false;
+              
      //LMA: Check for direct quests rewards.
+     //Union Wars.
+     if (thisquest->script==665&&thisquest->value1>0)
+     {
+        if(CharInfo->union05<thisquest->value1)
+        {
+            Log(MSG_HACK, "[UREWARD] player %s, Quest %i, points needed/have %i/%i", CharInfo->charname,thisquest->id, thisquest->value1,CharInfo->union05);
+            return false;            
+        }
+        
+        CharInfo->union05-=thisquest->value1;        
+     }
+     
+     //LMA: Santa.    
      if (thisquest->script==666&&thisquest->value1!=0)
      {
         //check if the parent quest exists.
@@ -1378,9 +1394,6 @@ bool CPlayer::GiveQuestReward( CQuest* thisquest )
      }
      //End of Checks.
      
-     //Go on :)
-    if( thisquest==0 )
-        return false;
     if( thisquest->ExpReward>0 )//Give Exp
     {
         CharInfo->Exp += thisquest->ExpReward;

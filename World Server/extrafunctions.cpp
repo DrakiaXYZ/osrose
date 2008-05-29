@@ -2210,26 +2210,24 @@ void CWorldServer::UWOver()
      
      //Ok, timeout or someone won?
      CMap* map = MapList.Index[9];
-     int winner[4];
+     int winner[2];
      
      //defenders or attackers won?
      //remember, there is always an alliance...
-     //2do: put alliance in 'map'?
-   winner[0]=4;
-   winner[1]=5;               
-   winner[2]=6;       
-   winner[3]=7;
-     
+    //attackers / defenders 1 means Junon Order (1) and Arumic (4)
+    //attackers / defenders 2 means Righteous Crusaders (3) and Ferrell Guide (5)    
+    
+     winner[0]=3;
+     winner[1]=5;               
+
      char text[200];
-     if (!map->sunrisekilled&&!map->sunsetkilled)
+     if (!map->sunsetkilled)
      {
        sprintf( text, "Union War has been won by %s !!!","the defenders");
        if (map->defenders==1)
        {
            winner[0]=1;
-           winner[1]=2;
-           winner[2]=3;
-           winner[3]=0;           
+           winner[1]=4;
        }
        
      }
@@ -2240,11 +2238,19 @@ void CWorldServer::UWOver()
        if (map->attackers==1)
        {
            winner[0]=1;
-           winner[1]=2;
-           winner[2]=3;
-           winner[3]=0;           
+           winner[1]=4;          
        }
                
+     }
+     
+     //2do: send correct eventid to tell who won...
+     if(winner[0]==1)
+     {
+        GServer->UWNPCdialogs(3);
+     }
+     else
+     {
+        GServer->UWNPCdialogs(3); 
      }
      
      //let's warp everyone back.     
@@ -2262,7 +2268,7 @@ void CWorldServer::UWOver()
         //Warp time, after reward ;)
 
         //extra points :)
-        if (otherclient->CharInfo->unionid==winner[0]||otherclient->CharInfo->unionid==winner[1]||otherclient->CharInfo->unionid==winner[2]||otherclient->CharInfo->unionid==winner[3])
+        if (otherclient->CharInfo->unionid==winner[0]||otherclient->CharInfo->unionid==winner[1])
         {
            otherclient->CharInfo->union05+=1000;
             BEGINPACKET( pak, 0x721 );
@@ -2289,6 +2295,8 @@ void CWorldServer::UWOver()
         GServer->pakGMTele(otherclient,2,temp_point.x,temp_point.y);
     }
 
+    //2do: delete quest from quest list.
+    
 
      return;     
 }
@@ -2376,16 +2384,35 @@ void CWorldServer::UWDecide()
         //attackers 2 means Righteous Crusaders (3) and Ferrell Guild (5)       
      int no_attacker=2;
      int no_defender=1;
-                     
-       if (GServer->RandNumber(1,2)==1)
-       {
-         no_attacker=1;
-         no_defender=2;
-       }
-       
+     
+     switch(map->attackers==0)
+     {      
+       case 1:
+            {
+             no_attacker=2;
+             no_defender=1;                              
+            }
+            break;
+       case 2:
+            {
+             no_attacker=1;
+             no_defender=2;
+            }
+            break;
+       default:
+            {                    
+               if (GServer->RandNumber(1,2)==1)
+               {
+                 no_attacker=1;
+                 no_defender=2;
+               }
+
+            }
+            break;
+     } 
+     
        map->attackers=no_attacker;
-       map->defenders=no_defender;
-       
+       map->defenders=no_defender;     
        char text[200];
        if (map->defenders!=1)
           sprintf( text, "UW will begin soon, Unions %s will defend, fetch the quest at your Union Master !!!","Junon Order and Arumic");
@@ -2403,7 +2430,7 @@ void CWorldServer::UWDecide()
           sprintf( text, "UW will begin soon, Unions %s will attack, fetch the quest at your Union Master !!!","Junon Order and Arumic");
        else
            sprintf( text, "UW will begin soon, Unions %s will attack, fetch the quest at your Union Master !!!","Righteous Crusaders and Ferrell Guild");
-           
+
     RESETPACKET( pak, 0x702 );
     ADDSTRING  ( pak, "Mighty Lord" );
     ADDSTRING  ( pak, "> " );

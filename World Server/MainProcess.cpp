@@ -146,19 +146,8 @@ PVOID MapProcess( PVOID TS )
                        Log(MSG_INFO,"UW is over...");
                         map->is_uw_fired=false;
                         map->uw_end=0;
-                         //map->utime_begin+=86400;
-                         map->uw_begin=etime+5*60+10;
-                         next_timeuw=map->uw_begin-5*60;
-                          GServer->UWDecide();
-                          if(map->attackers==1)
-                          {
-                              GServer->UWNPCdialogs(5);
-                          }
-                          else
-                          {
-                              GServer->UWNPCdialogs(1);
-                          }
-                          
+                        map->uw_begin=0;
+                        GServer->Config.unionwar=0;                          
                     }
                     else
                     {
