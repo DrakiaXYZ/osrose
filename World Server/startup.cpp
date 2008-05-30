@@ -1496,10 +1496,41 @@ bool CWorldServer::LoadZoneData( )
        newzone->mon_exp = 0;
        newzone->percent=0;
 
-       //LMA: Union Wars:
+       //LMA: Union Wars and union slaughter:
        newzone->utime_begin=0;
        newzone->utime_end=0;
        newzone->is_union_fired=false;
+       newzone->us_loop=false;
+        newzone->us_duration=0;
+        newzone->us_delay_loop=0;
+        newzone->is_uw_fired=false;
+        newzone->sunsetkilled=false;
+        newzone->sunrisekilled=false;
+        newzone->sunsetspawned=false;
+        newzone->duskkilled=false;
+        newzone->uw_end=0;
+        newzone->uw_begin=0;
+        newzone->uw_loop=false;
+        newzone->uw_duration=0;
+        newzone->uw_delay_loop=0;
+        newzone->announce_done=false;
+        newzone->npc_id=0;
+        newzone->defenders=0;
+        newzone->attackers=0;
+
+        if (newzone->id==8)
+        {
+            newzone->us_loop=GServer->Config.unionslaughterloop;
+            newzone->us_duration=GServer->Config.unionduration;
+            newzone->us_delay_loop=GServer->Config.unionslaughterdelay_loop;
+        }
+
+        if(newzone->id==9)
+        {
+            newzone->uw_loop=GServer->Config.unionwarloop;
+            newzone->uw_duration=GServer->Config.unionwarduration;
+            newzone->uw_delay_loop=GServer->Config.unionwardelay_loop;
+        }
 
        //mode 1: one monster temporarily, then the "real" one :)
         if (newzone->is_cf==1)

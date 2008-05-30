@@ -84,7 +84,7 @@ bool CMonster::PlayerInGrid()
     //Still here? Special case for very little maps or special maps.
     if (map->PlayerList.size()>0&&GServer->allmaps[map->id].always_on==true)
     {
-        Log(MSG_INFO,"monster in cell %i (AUTO)",coords);
+        //Log(MSG_INFO,"monster in cell %i (AUTO)",coords);
         return true;
     }
 

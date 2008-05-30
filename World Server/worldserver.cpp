@@ -478,7 +478,7 @@ bool CWorldServer::OnServerReady( )
     LoadItemStats( );
     // PY new Stat Lookup table
     LoadStatLookup( );
-    // PY end 
+    // PY end
     LoadBreakList( );     // geo edit for disassemble // 22 oct 07
     LoadSkillData( );
 
@@ -601,7 +601,7 @@ void CWorldServer::DisconnectAll()
 
 /**
 	* check on the database if a client is banned
-	* @param ClientInfo sockaddr_in structure 
+	* @param ClientInfo sockaddr_in structure
 	* @return true if the client is banned else false
 */
 bool CWorldServer::isBanned( sockaddr_in* ClientInfo )
@@ -690,14 +690,17 @@ void CWorldServer::LoadConfigurations( char* file )
     Config.Cfmode               = ConfigGetInt    ( file, "cfmode", 0);
     Config.osRoseVer            = ConfigGetString    ( file, "osRoseVer", "79.999");
     Config.testgrid             = ConfigGetInt    ( file, "testgrid", 0); //LMA: maps tests grids (0=usual, 1=grid)
-    Config.jrose                = ConfigGetInt    ( file, "jrose", 0); //LMA: Special code for jRose handling (163)            
-    Config.unionwar             = ConfigGetInt    ( file, "unionwar", 0); //LMA: is Union War active?
+    Config.jrose                = ConfigGetInt    ( file, "jrose", 0); //LMA: Special code for jRose handling (163)
     Config.unionslaughter       = ConfigGetInt    ( file, "unionslaughter", 0); //LMA: is Union Slaughter active?
     Config.unionmin             = ConfigGetInt    ( file, "unionmin", 1); //LMA: union Slaughter (nb players / union, min)
-    Config.uniontime            = ConfigGetString    ( file, "uniontime", "030000"); //LMA: time when to launch union Slaughter (03:00:00, 24 hours mode)
-    Config.unionduration        = ConfigGetInt    ( file, "unionduration", 12000); //LMA: duration of union Slaughter in sec
-    Config.unionwarmin        = ConfigGetInt    ( file, "unionduration", 1); //LMA: min amount of players for UW (attacker or defenders)   
-
+    Config.unionduration        = ConfigGetInt    ( file, "unionduration", 12000); //LMA: duration of union Slaughter in minutes
+    Config.unionslaughterloop        = ConfigGetInt    ( file, "unionslaughterloop", 1); //LMA: does US loops?
+    Config.unionslaughterdelay_loop        = ConfigGetInt    ( file, "unionslaughterdelay_loop", 1440); //LMA: delay between 2 US (in minutes)
+    Config.unionwar             = ConfigGetInt    ( file, "unionwar", 0); //LMA: is Union War active?
+    Config.unionwarmin        = ConfigGetInt    ( file, "unionwarmin", 1); //LMA: min amount of players for UW (attacker or defenders)
+    Config.unionwarduration        = ConfigGetInt    ( file, "unionwarduration", 1); //LMA: duration in min for UW
+    Config.unionwarloop        = ConfigGetInt    ( file, "unionwarloop", 1); //LMA: do we loop UW?
+    Config.unionwardelay_loop        = ConfigGetInt    ( file, "unionwardelay_loop", 1); //LMA: delay between 2 loops (minutes)
     //LMA
 
     Log (MSG_INFO, "osRose Revision %s", Config.osRoseVer );
@@ -812,8 +815,8 @@ void CWorldServer::LoadCommandLevels( void )
     Config.Command_TeleToMe = ConfigGetInt    ( "commands.ini", "teletome", 299 );
     Config.Command_Transx = ConfigGetInt    ( "commands.ini", "transx", 299 );
     Config.Command_Union = ConfigGetInt    ( "commands.ini", "union", 299 );
-    Config.Command_UnionMode = ConfigGetInt    ( "commands.ini", "unionmode", 299 );    
-    Config.Command_UnionPoints = ConfigGetInt    ( "commands.ini", "unionpoints", 299 );        
+    Config.Command_UnionMode = ConfigGetInt    ( "commands.ini", "unionmode", 299 );
+    Config.Command_UnionPoints = ConfigGetInt    ( "commands.ini", "unionpoints", 299 );
     Config.Command_Who = ConfigGetInt    ( "commands.ini", "who", 299 );
     Config.Command_Who2 = ConfigGetInt    ( "commands.ini", "who2", 299 );
 }

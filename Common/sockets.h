@@ -190,16 +190,23 @@ struct CROSEServerConfig
     char* osRoseVer ; //Revision of server
     int testgrid; //LMA: maps, testing grids...
     int jrose; //LMA: for handling jRose (163)
-    
+
     //For union wars and union slaughter
-    int unionmin; //LMA: nb of min players / union (union slaughter)
-    char* uniontime; //LMA: union slaughter time
-    int unionduration; //LMA: union slaughter duration (seconds)
-    int unionwar;      //LMA: is unionwar active?
+    //char* uniontime; //LMA: union slaughter time
+    int unionduration; //LMA: union slaughter duration (minutes)
     int unionslaughter;       //LMA: is union slaughter active?
+    int unionmin; //LMA: nb of min players / union (union slaughter)
+   int unionslaughterloop;     //LMA: is UW looping?
+   int unionslaughterdelay_loop;   //LMA: delay between 2 loops (minutes)
+
+    //LMA: Union Wars
+    int unionwar;      //LMA: is unionwar active?
+   int unionwarloop;     //LMA: is UW looping?
+   int unionwardelay_loop;   //LMA: delay between 2 loops (minutes)
+   int unionwarduration;    //LMA: duration or CW (minutes)
     int unionwarmin;          //LMA: number of players needed for UW (attackers and defenders)
-    
-                
+
+
 
     // COMMAND LEVELS
     int Command_AllSkill; // by crashinside
@@ -347,7 +354,7 @@ class CServerSocket : public CBaseSocket
     	void AddUser( SOCKET sock, sockaddr_in* ClientInfo ); // Add User
     	void DisconnectClient( CClientSocket* thisclient );   // Disconnect Client
         unsigned long int GetServerTime( ); // return server time
-        
+
         // Virtual Functions
        	virtual void ServerLoop( );                  // Main Loop
         virtual CClientSocket* CreateClientSocket( ); // Create a client
@@ -359,7 +366,7 @@ class CServerSocket : public CBaseSocket
     	virtual bool OnClientConnect( CClientSocket* thisclient );
     	virtual void OnClientDisconnect( CClientSocket* thisclient );
         virtual bool isBanned( sockaddr_in* ClientInfo );
-        
+
     	//LMA BEGIN
     	//20070623, 224500
     	virtual bool Ping();             //MySQL Ping
@@ -373,12 +380,12 @@ class CServerSocket : public CBaseSocket
     	unsigned short				port;
     	pthread_t                   threads[65535];
     	pthread_t consoleThread;
-    	
+
     	// console thread function
     	void startConsole( );
         static void *Console( PVOID );
         virtual bool handleCommand( char* );
-        
+
 };
 
 PVOID ClientMainThread( PVOID ); // Handle clients

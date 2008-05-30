@@ -1,22 +1,22 @@
 /*
     Rose Online Server Emulator
     Copyright (C) 2006,2007,2008 OSRose Team http://www.dev-osrose.com
-    
+
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
     as published by the Free Software Foundation; either version 2
     of the License, or (at your option) any later version.
-    
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-    
+
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-    depeloped with Main erose/hrose source server + some change from the original eich source        
+    depeloped with Main erose/hrose source server + some change from the original eich source
 */
 #include "worldserver.h"
 
@@ -24,14 +24,14 @@
 // Parse our commands to their appropriate function
 bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
 {
-            
+
 	char* tmp;
 	char* command = strtok( (char*)&(*P).Buffer[1] , " ");
 	if (command==NULL) return true;
 	if (strcmp(command, "here")==0)
 	{
-        if(Config.Command_Here > thisclient->Session->accesslevel)  
-            return true;    
+        if(Config.Command_Here > thisclient->Session->accesslevel)
+            return true;
 
         return pakGMTele(thisclient, thisclient->Position->Map, thisclient->Position->current.x, thisclient->Position->current.y);
     }
@@ -43,7 +43,7 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
 		if ((tmp = strtok(NULL, " "))==NULL) return true; unsigned map=atoi(tmp);
 		if ((tmp = strtok(NULL, " "))==NULL) return true; float x=(float)atoi(tmp);
 		if ((tmp = strtok(NULL, " "))==NULL) return true; float y=(float)atoi(tmp);
-        
+
         Log( MSG_GMACTION, " %s : /tele %i,%.2f,%.2f" , thisclient->CharInfo->charname, map, x, y);
         return pakGMTele(thisclient, map, x, y);
     }
@@ -64,27 +64,27 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
         return pakGMDelSkills(thisclient, name);
         }
 /* GM List {By CrAshInSiDe} */
-    else if(strcmp(command, "gmlist")==0) 
+    else if(strcmp(command, "gmlist")==0)
     {
         if(Config.Command_GmList > thisclient->Session->accesslevel)
-            return true;       
+            return true;
         SendPM(thisclient, "The currently GM connected is:");
         int count=1;
         int hiddenam=0;
         char line0[200];
-        while(count <= (ClientList.size()-1)) 
+        while(count <= (ClientList.size()-1))
         {
             CPlayer* whoclient = (CPlayer*)ClientList.at(count)->player;
-            if(whoclient->Session->accesslevel > 100) 
+            if(whoclient->Session->accesslevel > 100)
             {
-                sprintf(line0, "%s - GM[%i]", whoclient->CharInfo->charname, whoclient->Session->accesslevel);                                      
-            } 
- 
-            if(whoclient->isInvisibleMode != true) 
+                sprintf(line0, "%s - GM[%i]", whoclient->CharInfo->charname, whoclient->Session->accesslevel);
+            }
+
+            if(whoclient->isInvisibleMode != true)
             {
                 SendPM(thisclient, line0 );
-            } 
-            else 
+            }
+            else
             {
                 hiddenam++;
             }
@@ -95,7 +95,7 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
         SendPM(thisclient, line0 );
         return true;
     }
- 
+
     /// geo edit for /savetown // 30 sep 07
     else if (strcmp(command, "savetown")==0)
     {
@@ -107,35 +107,35 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
             {
                 spot = 1;
                 break;
-            }           
+            }
             case 2:  //Zant
             {
                 spot = 2;
                 break;
-            }           
+            }
             case 3:  //Junon
             {
                 spot = 4;
                 break;
-            }           
+            }
             case 4:  //Eucar
             {
                 spot = 5;
                 break;
-            }           
+            }
             case 5:  //Xita
             {
                 spot = 68;
                 break;
-            }           
-        }   
+            }
+        }
         if(spot>0)
         {
             thisclient->Position->saved = spot;
             SendPM(thisclient, "Saved in Town");
         }
         else
-        {      
+        {
             SendPM(thisclient, "Please input a number after the savetown command, below is a list of places and their appropriate number");
             SendPM(thisclient, "1 = Adventurers plains");
             SendPM(thisclient, "2 = The city of Zant");
@@ -144,7 +144,7 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
             SendPM(thisclient, "5 = Xita Refuge");
             SendPM(thisclient, "Example; /savetown 3");
         }
-           
+
         return true;
     }
     /// end geo edit
@@ -153,47 +153,47 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
         if(Config.Command_Mute > thisclient->Session->accesslevel)
 	                    return true;
         if ((tmp = strtok(NULL, " "))==NULL)
-                return true; 
+                return true;
         char* id=tmp;
         if ((tmp = strtok(NULL, " "))==NULL)
-                return true;  
+                return true;
         int min=atoi(tmp);
         Log( MSG_GMACTION, " %s : /mute %s %i" , thisclient->CharInfo->charname, id, min);
-        return pakGMMute(thisclient, id, min);       
+        return pakGMMute(thisclient, id, min);
     }
     else if (strcmp(command, "reborn")==0) //==== Reborn ==== (By Core)
    {
          if(Config.Command_Reborn > thisclient->Session->accesslevel)
                         return true;
- 
-        Log( MSG_GMACTION, " %s : /reborn" , thisclient->CharInfo->charname);   
-        return pakGMReborn(thisclient);  
+
+        Log( MSG_GMACTION, " %s : /reborn" , thisclient->CharInfo->charname);
+        return pakGMReborn(thisclient);
    }
    else if (strcmp(command, "event")==0) //==== Trigger Events (credit Welson)
    {
         if(Config.Command_Event > thisclient->Session->accesslevel)
 	                    return true;
         if ((tmp = strtok(NULL, " "))==NULL)
-                return true; 
+                return true;
         int npctype=atoi(tmp);
         if ((tmp = strtok(NULL, " "))==NULL)
-                return true;  
-        int dialog=atoi(tmp);        
+                return true;
+        int dialog=atoi(tmp);
         if ((tmp = strtok(NULL, " "))==NULL)
-                return true;  
+                return true;
         long int type=atoi(tmp);
         Log( MSG_GMACTION, " %s : /event %i %i %i" ,thisclient->CharInfo->charname, npctype,dialog,type);
         return pakGMEventType(thisclient,npctype,dialog,type);
-    }    
+    }
     else if (strcmp(command, "save")==0) // *** SAVE USER DATA *****
-    {        
+    {
              if(Config.Command_Save > thisclient->Session->accesslevel)
 	                    return true;
            thisclient->savedata();
-           return true;		
+           return true;
 	}
     else if (strcmp(command, "reload")==0) // *** RELOAD CONFIG.INI ******
-    { 
+    {
 //         if(Config.Command_Reload > thisclient->Session->accesslevel )
            if(Config.Command_Reload > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)
            {
@@ -218,8 +218,8 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
          else if(strcmp(tmp, "cquests")==0)
          {
              LoadCustomEvents( );
-             LoadCustomTeleGate( );     
-         }    
+             LoadCustomTeleGate( );
+         }
          else if(strcmp(tmp, "events")==0)
          {
              GServer->LoadCustomEvents( );
@@ -232,7 +232,7 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
          }
          else if(strcmp(tmp, "spawns")==0)
          {
-             GServer->LoadMonsterSpawn();    
+             GServer->LoadMonsterSpawn();
          }
          //else if(strcmp(tmp, "equip")==0)
          //{
@@ -253,7 +253,7 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
     {
          if ((tmp = strtok(NULL, " "))==NULL)return true;
          {
-             UINT prizeid = atoi(tmp); 
+             UINT prizeid = atoi(tmp);
              thisclient->PrizeExchange(thisclient, prizeid);
              return true;
          }
@@ -262,12 +262,12 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
     {
         if(Config.Command_Ann > thisclient->Session->accesslevel)
 	       return true;
-        Log( MSG_GMACTION, " %s : /ann %s" , thisclient->CharInfo->charname, &P->Buffer[5] );        
+        Log( MSG_GMACTION, " %s : /ann %s" , thisclient->CharInfo->charname, &P->Buffer[5] );
 		return pakGMAnn(thisclient, P);
     }
-    /*else if(strcmp(command, "bodysize")==0)    
+    /*else if(strcmp(command, "bodysize")==0)
     {
-        if ((tmp = strtok(NULL, " ")) == NULL) return true; UINT size=atoi(tmp);  
+        if ((tmp = strtok(NULL, " ")) == NULL) return true; UINT size=atoi(tmp);
         BEGINPACKET(pak, 0x721);
         ADDWORD(pak, 36);
         ADDWORD(pak, size);
@@ -278,11 +278,11 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
         ADDWORD(pak, 0xa24d);
         ADDWORD(pak, 0x40b3);
         thisclient->client->SendPacket(&pak);
-        SendSysMsg(thisclient, "Body size changed!");                  
+        SendSysMsg(thisclient, "Body size changed!");
     }*/
-    /*else if(strcmp(command, "headsize")==0)    
+    /*else if(strcmp(command, "headsize")==0)
     {
-        if ((tmp = strtok(NULL, " ")) == NULL) return true; UINT size=atoi(tmp);  
+        if ((tmp = strtok(NULL, " ")) == NULL) return true; UINT size=atoi(tmp);
         BEGINPACKET(pak, 0x721);
         ADDWORD(pak, 35);
         ADDWORD(pak, size);
@@ -293,7 +293,7 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
         ADDWORD(pak, 0xa24d);
         ADDWORD(pak, 0x40b3);
         thisclient->client->SendPacket(&pak);
-        SendSysMsg(thisclient, "Head size changed!");                  
+        SendSysMsg(thisclient, "Head size changed!");
     }*/
     else if(strcmp(command, "face")==0)
     {
@@ -338,7 +338,7 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
         DB->QExecute("UPDATE characters SET hairStyle=%i WHERE id=%i", thisclient->CharInfo->Hair, thisclient->CharInfo->charid);
         SendPM(thisclient, "Hair changed!");
     }
-    else if(strcmp(command, "pvp")==0)    
+    else if(strcmp(command, "pvp")==0)
     {
         if(Config.Command_Pvp > thisclient->Session->accesslevel)
 	       return true;
@@ -347,31 +347,31 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
         ADDWORD(pak, 34);
         if(map->allowpvp!=0)
         {
-            map->allowpvp = 0;        
+            map->allowpvp = 0;
             ADDWORD(pak, 2);
-            SendSysMsg(thisclient, "PVP off");  
-        } 
-        else 
+            SendSysMsg(thisclient, "PVP off");
+        }
+        else
         {
             map->allowpvp = 1;
             ADDWORD(pak, 51);
-            SendSysMsg(thisclient, "PVP on");        
+            SendSysMsg(thisclient, "PVP on");
         }
         ADDWORD(pak, 0);
-        SendToMap(&pak, thisclient->Position->Map); 
+        SendToMap(&pak, thisclient->Position->Map);
         RESETPACKET(pak, 0x0730);
         ADDWORD(pak, 5);
         ADDWORD(pak, 0xa24d);
         ADDWORD(pak, 0x40b3);
-        SendToMap(&pak, thisclient->Position->Map);         
+        SendToMap(&pak, thisclient->Position->Map);
     }
-    else if(strcmp(command, "pvpnew")==0)    
+    else if(strcmp(command, "pvpnew")==0)
     {
         if(Config.Command_Pvp > thisclient->Session->accesslevel)
 	       return true;
-        if ((tmp = strtok(NULL, " ")) == NULL) tmp = 0; int testvalue=atoi(tmp);        
+        if ((tmp = strtok(NULL, " ")) == NULL) tmp = 0; int testvalue=atoi(tmp);
         CMap* map = MapList.Index[thisclient->Position->Map];
-        
+
         switch (testvalue)
         {
            case 0:
@@ -379,9 +379,9 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
             BEGINPACKET(pak, 0x0730);
             ADDWORD(pak, 5);
             ADDWORD(pak, 0xa24d);
-            ADDWORD(pak, 0x40b3);             
-            SendSysMsg(thisclient, "PVP 0");   
-            SendToMap(&pak, thisclient->Position->Map); 
+            ADDWORD(pak, 0x40b3);
+            SendSysMsg(thisclient, "PVP 0");
+            SendToMap(&pak, thisclient->Position->Map);
             }
             break;
             case 1:
@@ -389,22 +389,22 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
                 BEGINPACKET(pak, 0x0730);
                 ADDWORD(pak, 0x0101);
                 ADDWORD(pak, 0x0b03);
-                ADDWORD(pak, 0x0000);                 
+                ADDWORD(pak, 0x0000);
                  SendSysMsg(thisclient, "PVP 1");
-                 SendToMap(&pak, thisclient->Position->Map); 
+                 SendToMap(&pak, thisclient->Position->Map);
              }
              break;
             case 2:
             {
-                //0x813 - 05 00 
-                //0x814 - 04 00                  
+                //0x813 - 05 00
+                //0x814 - 04 00
                 BEGINPACKET(pak, 0x0813);
-                ADDWORD(pak, 0x0005);                
+                ADDWORD(pak, 0x0005);
                  SendToMap(&pak, thisclient->Position->Map);
                  RESETPACKET(pak, 0x0814);
                 ADDWORD(pak, 0x0004);
-                 SendSysMsg(thisclient, "PVP 2"); 
-                 SendToMap(&pak, thisclient->Position->Map);                
+                 SendSysMsg(thisclient, "PVP 2");
+                 SendToMap(&pak, thisclient->Position->Map);
              }
              break;
             default:
@@ -413,10 +413,10 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
             }
             break;
         }
-        
-                
-    }    
-    else if(strcmp(command, "who")==0) 
+
+
+    }
+    else if(strcmp(command, "who")==0)
     {
         if(Config.Command_Who > thisclient->Session->accesslevel)
             return true;
@@ -424,16 +424,16 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
         int gmcount=0;
         int playercount=0;
         char line0[200];
-        while(count <= (ClientList.size()-1)) 
+        while(count <= (ClientList.size()-1))
         {
             CPlayer* whoclient = (CPlayer*)ClientList.at(count)->player;
-            if(whoclient->isInvisibleMode != true) 
+            if(whoclient->isInvisibleMode != true)
             {
-                    if(whoclient->Session->accesslevel > 100) 
+                    if(whoclient->Session->accesslevel > 100)
                     {
-                        gmcount++;                                      
-                    } 
-                    else 
+                        gmcount++;
+                    }
+                    else
                     {
                         playercount++;
                     }
@@ -443,8 +443,8 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
         sprintf(line0, "There are currently %i players and %i game moderators currently connected.", playercount, gmcount);
         Log( MSG_GMACTION, " %s : /who" , thisclient->CharInfo->charname);
         SendPM(thisclient, line0 );
-        return true;                                              
-    } 
+        return true;
+    }
     else if (strcmp(command, "go")==0) // AtCommandGo
     {
         if(Config.Command_go > thisclient->Session->accesslevel)
@@ -536,7 +536,7 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
             map = 41;
             x = 5105; // 5165 if jRose Client
             y = 5246; // 5207 if jRose Client
-        } 
+        }
         else if (loc == 11) // Sikuku Underground Prison
         {
              if (thisclient->Stats->Level<160) // by Terr0risT
@@ -549,7 +549,7 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
                 map = 65;
                 x = 5485;
                 y = 5285;
-             }                 
+             }
         }
         else if (loc == 12) // Oro
         {
@@ -564,7 +564,7 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
                 x = 5163;
                 y = 5236;
              }
-        }         
+        }
         else
         {
             SendPM(thisclient, "Please input a number after the go command, below is a list of places and their appropriate number");
@@ -602,7 +602,7 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
     else if (strcmp(command, "SSPAWN")==0)
     { //STARTPOINT IDMOB CANTMIN CANTMAX RESPAWNTIME(s)  (3 points minimum)
         if(Config.Command_SSpawn > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)
-          { 
+          {
            Log( MSG_GMACTION, " %s : /SSPAWN NOT ALLOWED" , thisclient->CharInfo->charname);
            char buffer[200];
            sprintf ( buffer, "SSPAWN NOT ALLOWED");
@@ -610,41 +610,41 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
 	                    return true;
            }
         Log( MSG_GMACTION, " %s : /SSPAWN", thisclient->CharInfo->charname);
-        thisclient->GMRespawnPoints.map = thisclient->Position->Map;                
+        thisclient->GMRespawnPoints.map = thisclient->Position->Map;
         if ((tmp = strtok(NULL, " "))==NULL)
         {
-            thisclient->GMRespawnPoints.b=0;    
-            return true; 
+            thisclient->GMRespawnPoints.b=0;
+            return true;
         }
-        thisclient->GMRespawnPoints.mobID=atoi(tmp); 
+        thisclient->GMRespawnPoints.mobID=atoi(tmp);
         if ((tmp = strtok(NULL, " "))==NULL)
         {
-            thisclient->GMRespawnPoints.b=0;    
-            return true; 
+            thisclient->GMRespawnPoints.b=0;
+            return true;
         }
-        thisclient->GMRespawnPoints.min=atoi(tmp);  
+        thisclient->GMRespawnPoints.min=atoi(tmp);
         if ((tmp = strtok(NULL, " "))==NULL)
         {
-            thisclient->GMRespawnPoints.b=0;    
-            return true; 
+            thisclient->GMRespawnPoints.b=0;
+            return true;
         }
-        thisclient->GMRespawnPoints.max=atoi(tmp);   
+        thisclient->GMRespawnPoints.max=atoi(tmp);
         if ((tmp = strtok(NULL, " "))==NULL)
         {
-            thisclient->GMRespawnPoints.b=0;    
-            return true; 
+            thisclient->GMRespawnPoints.b=0;
+            return true;
         }
-        thisclient->GMRespawnPoints.n=0;        
-        thisclient->GMRespawnPoints.respawntime=atoi(tmp);                  
+        thisclient->GMRespawnPoints.n=0;
+        thisclient->GMRespawnPoints.respawntime=atoi(tmp);
         thisclient->GMRespawnPoints.b=1;
 		BEGINPACKET( pak, 0x702 );
 		ADDSTRING( pak, "STARTPOINT" );
-		ADDBYTE( pak, 0 );            
+		ADDBYTE( pak, 0 );
 		thisclient->client->SendPacket(&pak);
 		thisclient->GMRespawnPoints.d=0;
         return true;
     }
-    else if (strcmp(command, "SET")==0) 
+    else if (strcmp(command, "SET")==0)
     {
         if(Config.Command_Set > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)
            {
@@ -655,23 +655,23 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
 	                    return true;
            }
         Log( MSG_GMACTION, " %s : /SET" , thisclient->CharInfo->charname);
-        if(thisclient->GMRespawnPoints.b==1 && thisclient->GMRespawnPoints.n<50)        
-        {         
-            int n=thisclient->GMRespawnPoints.n;   
+        if(thisclient->GMRespawnPoints.b==1 && thisclient->GMRespawnPoints.n<50)
+        {
+            int n=thisclient->GMRespawnPoints.n;
             thisclient->GMRespawnPoints.points[n].x=floor(thisclient->Position->destiny.x);
-            thisclient->GMRespawnPoints.points[n].y=floor(thisclient->Position->destiny.y);            
+            thisclient->GMRespawnPoints.points[n].y=floor(thisclient->Position->destiny.y);
             thisclient->GMRespawnPoints.n++;
             char text[10];
             sprintf(text,"--POINT #%i",thisclient->GMRespawnPoints.n);
 		    BEGINPACKET( pak, 0x702 );
 		    ADDSTRING( pak,text );
-		    ADDBYTE( pak, 0 );            
+		    ADDBYTE( pak, 0 );
 		    thisclient->client->SendPacket(&pak);
             return true;
         }
         return true;
     }
-    else if (strcmp(command, "ESPAWN")==0) 
+    else if (strcmp(command, "ESPAWN")==0)
     {
         if(Config.Command_ESpawn > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)
            {
@@ -685,36 +685,36 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
         if(thisclient->GMRespawnPoints.n>3 && thisclient->GMRespawnPoints.b==1)
         {
             if ((tmp = strtok(NULL, " "))==NULL)
-                return true; 
+                return true;
             int id=atoi(tmp);
             if ((tmp = strtok(NULL, " "))==NULL)
-                return true; 
-            int agressive=atoi(tmp);            
+                return true;
+            int agressive=atoi(tmp);
             int n=thisclient->GMRespawnPoints.n;
             char points[1000] = "";
             sprintf(&points[0],"%i",n);
             for(int i=0;i<n;i++)
             {
-                sprintf(&points[strlen(points)],"|%.0f,%.0f",thisclient->GMRespawnPoints.points[i].x,thisclient->GMRespawnPoints.points[i].y);                
+                sprintf(&points[strlen(points)],"|%.0f,%.0f",thisclient->GMRespawnPoints.points[i].x,thisclient->GMRespawnPoints.points[i].y);
             }
             DB->QExecute("INSERT into list_spawnareas (id,map,montype,respawntime,points,min,max,agressive) values (%i,%i,%i,%i,'%s',%i,%i,%i)",
             id,thisclient->GMRespawnPoints.map, thisclient->GMRespawnPoints.mobID,thisclient->GMRespawnPoints.respawntime,
             points,thisclient->GMRespawnPoints.min,thisclient->GMRespawnPoints.max,agressive);
             thisclient->GMRespawnPoints.b=0;
-            thisclient->GMRespawnPoints.d=1;    
+            thisclient->GMRespawnPoints.d=1;
 		    BEGINPACKET( pak, 0x702 );
 		    ADDSTRING( pak,"ENDSPAWN" );
-		    ADDBYTE( pak, 0 );       
+		    ADDBYTE( pak, 0 );
 		    thisclient->client->SendPacket(&pak);
 		    ReloadMobSpawn(thisclient, id );
             return true;
-        }        
+        }
         return true;
-    }    
-    else if (strcmp(command, "DSPAWN")==0) 
+    }
+    else if (strcmp(command, "DSPAWN")==0)
       {
         if(Config.Command_DSpawn > thisclient->Session->accesslevel)
-//        if(Config.Command_DSpawn > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)         
+//        if(Config.Command_DSpawn > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)
            {
            Log( MSG_GMACTION, " %s : /DSPAWN NOT ALLOWED" , thisclient->CharInfo->charname);
            char buffer[200];
@@ -724,23 +724,23 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
            }
         Log( MSG_GMACTION, " %s : /DSPAWN" , thisclient->CharInfo->charname);
         if ((tmp = strtok(NULL, " "))==NULL)
-            return true; 
-        int id=atoi(tmp);         
+            return true;
+        int id=atoi(tmp);
         if ((tmp = strtok(NULL, " "))==NULL)
-            return true; 
-        thisclient->GMRespawnPoints.mobID=atoi(tmp); 
+            return true;
+        thisclient->GMRespawnPoints.mobID=atoi(tmp);
         if ((tmp = strtok(NULL, " "))==NULL)
-            return true; 
-        thisclient->GMRespawnPoints.min=atoi(tmp);  
+            return true;
+        thisclient->GMRespawnPoints.min=atoi(tmp);
         if ((tmp = strtok(NULL, " "))==NULL)
-            return true; 
-        thisclient->GMRespawnPoints.max=atoi(tmp);    
+            return true;
+        thisclient->GMRespawnPoints.max=atoi(tmp);
         if ((tmp = strtok(NULL, " "))==NULL)
-            return true; 
-        thisclient->GMRespawnPoints.respawntime=atoi(tmp);                  
+            return true;
+        thisclient->GMRespawnPoints.respawntime=atoi(tmp);
         if ((tmp = strtok(NULL, " "))==NULL)
-            return true; 
-        int agressive = atoi(tmp);        
+            return true;
+        int agressive = atoi(tmp);
         if(thisclient->GMRespawnPoints.n>3 && thisclient->GMRespawnPoints.d==1)
         {
             int n=thisclient->GMRespawnPoints.n;
@@ -748,7 +748,7 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
             sprintf(&points[0],"%i",n);
             for(int i=0;i<n;i++)
             {
-                sprintf(&points[strlen(points)],"|%.0f,%.0f",thisclient->GMRespawnPoints.points[i].x,thisclient->GMRespawnPoints.points[i].y);                
+                sprintf(&points[strlen(points)],"|%.0f,%.0f",thisclient->GMRespawnPoints.points[i].x,thisclient->GMRespawnPoints.points[i].y);
             }
             DB->QExecute("INSERT into list_spawnareas (id,map,montype,respawntime,points,min,max,agressive) values (%i,%i,%i,%i,'%s',%i,%i,%i)",
             id,thisclient->GMRespawnPoints.map,
@@ -757,13 +757,13 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
             thisclient->GMRespawnPoints.b=0;
 		    BEGINPACKET( pak, 0x702 );
 		    ADDSTRING( pak, "DUPESPAWN" );
-		    ADDBYTE( pak, 0 );              
+		    ADDBYTE( pak, 0 );
 		    thisclient->client->SendPacket(&pak);
 		    ReloadMobSpawn(thisclient, id );
             return true;
-        }        
+        }
         return true;
-    }  
+    }
     else if(strcmp(command, "DELETESPAWN")==0)
     {
          if(Config.Command_DelSpawn > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)
@@ -775,20 +775,20 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
 	                    return true;
            }
         if ((tmp = strtok(NULL, " "))==NULL)
-             return true; 
-        int id=atoi(tmp);    
+             return true;
+        int id=atoi(tmp);
         DB->QExecute("DELETE from list_spawnareas where id=%i",id);
 //		BEGINPACKET( pak, 0x702 );
         char buffer[200];
         sprintf( buffer, "DELETESPAWN %i", id);
         BEGINPACKET ( pak, 0x702 );
-        ADDSTRING( pak, buffer );		
+        ADDSTRING( pak, buffer );
 //		ADDSTRING( pak, "DELETESPAWN" );
-		ADDBYTE( pak, 0 );             
-        thisclient->client->SendPacket(&pak);  
-        CSpawnArea* thisspawn = GetSpawnArea( id );  
+		ADDBYTE( pak, 0 );
+        thisclient->client->SendPacket(&pak);
+        CSpawnArea* thisspawn = GetSpawnArea( id );
         if(thisspawn==NULL)
-            return true;        
+            return true;
         CMap* map = MapList.Index[thisspawn->map];
         for(UINT i=0;i<map->MonsterList.size();i++)
         {
@@ -797,9 +797,9 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
             ADDWORD    ( pak, thismon->clientid );
             SendToVisible( &pak, thismon );
             MapList.Index[thisspawn->map]->DeleteMonster( thismon );
-        }  
+        }
         DeleteSpawn( thisspawn );
-        Log( MSG_GMACTION, " %s : /deletespawn %i" , thisclient->CharInfo->charname, id);               
+        Log( MSG_GMACTION, " %s : /deletespawn %i" , thisclient->CharInfo->charname, id);
     }//******************************** FINISH RESPAWN ***************************
     else if(strcmp(command, "p")==0)  //*** READ THE PACKET.TXT AND SEND IT
     {
@@ -812,12 +812,12 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
 	                    return true;
            }
          if ((tmp = strtok(NULL, " "))==NULL)
-             return true; 	        
-            char buffer;              
+             return true;
+            char buffer;
             std::string filename = "packet/packet";
             filename += tmp;
-            filename += ".txt";               
-            FILE *packet1 = fopen(filename.c_str(),"r");                                            
+            filename += ".txt";
+            FILE *packet1 = fopen(filename.c_str(),"r");
             if(packet1==NULL)
             {
                 printf("Error opening packet.txt!\n");
@@ -828,9 +828,9 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
             BEGINPACKET(pak,command);
             while((fscanf(packet1,"%c",&buffer))!=EOF)
                     ADDBYTE(pak,buffer);
-    		thisclient->client->SendPacket( &pak );    
-            fclose(packet1);     
-    }     
+    		thisclient->client->SendPacket( &pak );
+            fclose(packet1);
+    }
     else if (strcmp(command, "level")==0)
     {
          if(Config.Command_Level > thisclient->Session->accesslevel)
@@ -841,14 +841,14 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
         Log( MSG_GMACTION, " %s : /level %i %s" , thisclient->CharInfo->charname, level, name);
         return pakGMLevel( thisclient, level, name );
     }
-    else if (strcmp(command, "info")==0) 
-    {       
+    else if (strcmp(command, "info")==0)
+    {
             if(Config.Command_Info > thisclient->Session->accesslevel)
 	                    return true;
-            Log( MSG_GMACTION, " %s : /info" , thisclient->CharInfo->charname);        
-            thisclient->GetPlayerInfo( );		    
+            Log( MSG_GMACTION, " %s : /info" , thisclient->CharInfo->charname);
+            thisclient->GetPlayerInfo( );
             return true;
-	}	
+	}
     else if (strcmp(command, "exp")==0)
     {
          if(Config.Command_Exp > thisclient->Session->accesslevel)
@@ -877,22 +877,22 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
 		if ((tmp = strtok(NULL, " "))==NULL) return true; unsigned moncount=atoi(tmp);
 		Log( MSG_GMACTION, " %s : /mon %i,%i" , thisclient->CharInfo->charname, montype, moncount);
 		return pakGMMon( thisclient, montype, moncount );
-	}	
+	}
     else if (strcmp(command, "mon2")==0)
     {    //Spawn "x" monsters
          if(Config.Command_Mon2 > thisclient->Session->accesslevel)
 	                    return true;
 		if ((tmp = strtok(NULL, " "))==NULL) return true; unsigned montype=atoi(tmp);
 		if ((tmp = strtok(NULL, " "))==NULL) return true; unsigned moncount=atoi(tmp);
-		
+
 		for (int k=0;k<moncount;k++)
 	    {
-             Log( MSG_GMACTION, " %s : /mon2 %i,%i" , thisclient->CharInfo->charname, montype+k, moncount); 
-             pakGMMon( thisclient, montype+k, 1 );            
+             Log( MSG_GMACTION, " %s : /mon2 %i,%i" , thisclient->CharInfo->charname, montype+k, moncount);
+             pakGMMon( thisclient, montype+k, 1 );
         }
-				
+
 		return true;
-	} 
+	}
     else if (strcmp(command, "kick")==0)
     {
         if(Config.Command_Kick > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)
@@ -904,11 +904,11 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
 	                    return true;
            }
         if ((tmp = strtok(NULL, " "))==NULL) return true; char* name=tmp;
-        Log( MSG_GMACTION, " %s : /kick %s" , thisclient->CharInfo->charname, name);        
+        Log( MSG_GMACTION, " %s : /kick %s" , thisclient->CharInfo->charname, name);
         return pakGMKick( thisclient, name );
     }
     else if (strcmp(command, "job")==0) // *** Change Job *****
-    { 
+    {
          if(Config.Command_Job > thisclient->Session->accesslevel)
 	       return true;
                char* tmp;
@@ -926,11 +926,11 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
 
                     RESETPACKET( pak, 0x730);
                     ADDBYTE(pak, 0x05);
-                    ADDBYTE(pak, 0x00);    
+                    ADDBYTE(pak, 0x00);
                     ADDWORD(pak, 0xf52f);
                     ADDWORD(pak, 0x2964);
-                	thisclient->client->SendPacket( &pak );                                            
-                    thisclient->CharInfo->Job=111;                       
+                	thisclient->client->SendPacket( &pak );
+                    thisclient->CharInfo->Job=111;
                }
                else
                if(strcmp(job,"muse")==0)
@@ -939,16 +939,16 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
                     ADDWORD    (pak, 0x0004);
                     ADDWORD    (pak, 0x00D3);
                     ADDWORD    (pak, 0x0000);
-                    thisclient->client->SendPacket(&pak); 
+                    thisclient->client->SendPacket(&pak);
 
                     RESETPACKET( pak, 0x730);
                     ADDBYTE(pak, 0x05);
-                    ADDBYTE(pak, 0x00);    
+                    ADDBYTE(pak, 0x00);
                     ADDWORD(pak, 0xdc3b);
                     ADDWORD(pak, 0x20cd);
-                	thisclient->client->SendPacket( &pak );                       
-                    thisclient->CharInfo->Job=211;                                            
-               }   
+                	thisclient->client->SendPacket( &pak );
+                    thisclient->CharInfo->Job=211;
+               }
                else
                if(strcmp(job,"hawker")==0)
                {
@@ -956,50 +956,50 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
                      ADDWORD    (pak, 0x0004);
                      ADDWORD    (pak, 0x0137);
                      ADDWORD    (pak, 0x0000);
-                     thisclient->client->SendPacket(&pak);  
+                     thisclient->client->SendPacket(&pak);
 
                      RESETPACKET( pak, 0x730);
                      ADDBYTE(pak, 0x05);
-                     ADDBYTE(pak, 0x00);    
+                     ADDBYTE(pak, 0x00);
                      ADDWORD(pak, 0x1104);
                      ADDWORD(pak, 0x5150);
-                	 thisclient->client->SendPacket( &pak );                                             
-                     thisclient->CharInfo->Job=311;                                      
-               }                                            
-               else               
+                	 thisclient->client->SendPacket( &pak );
+                     thisclient->CharInfo->Job=311;
+               }
+               else
                if(strcmp(job,"dealer")==0)
                {
                     BEGINPACKET(pak, 0x721);
                     ADDWORD    (pak, 0x0004);
                     ADDWORD    (pak, 0x019b);
                     ADDWORD    (pak, 0x0000);
-                    thisclient->client->SendPacket(&pak); 
+                    thisclient->client->SendPacket(&pak);
 
                     RESETPACKET( pak, 0x730);
                     ADDBYTE(pak, 0x05);
-                    ADDBYTE(pak, 0x00);    
+                    ADDBYTE(pak, 0x00);
                     ADDWORD(pak, 0x4c1c);
                     ADDWORD(pak, 0xef69);
-                	thisclient->client->SendPacket( &pak );                        
-                    thisclient->CharInfo->Job=411;                                            
-          }             
-     }        
-     else if (strcmp(command, "set")==0) 
-     {      
+                	thisclient->client->SendPacket( &pak );
+                    thisclient->CharInfo->Job=411;
+          }
+     }
+     else if (strcmp(command, "set")==0)
+     {
         if(Config.Command_Set > thisclient->Session->accesslevel)
-                    return true; 
+                    return true;
         int refine;
-        if ((tmp = strtok(NULL, " "))==NULL) 
-            return true; 
-        int id=atoi(tmp);                         
-        if ((tmp = strtok(NULL, " "))==NULL) 
-            refine = 0; 
+        if ((tmp = strtok(NULL, " "))==NULL)
+            return true;
+        int id=atoi(tmp);
+        if ((tmp = strtok(NULL, " "))==NULL)
+            refine = 0;
         else
-            refine=atoi(tmp); 
+            refine=atoi(tmp);
         refine *= 16;
         BEGINPACKET( pak, 0);
         if(EquipList[2].Index[id]!=NULL)
-        {  
+        {
             thisclient->items[2].itemnum = id;
     		thisclient->items[2].itemtype = 2;
     		thisclient->items[2].refine =refine;
@@ -1008,17 +1008,17 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
     		thisclient->items[2].count = 1;
     		thisclient->items[2].stats = 0;
     		thisclient->items[2].socketed = false;
-    		thisclient->items[2].appraised = true;	
-        	thisclient->items[2].gem = 0;   
-            thisclient->UpdateInventory( 2 );                  	
-            
-    	    RESETPACKET( pak, 0x7a5);     
+    		thisclient->items[2].appraised = true;
+        	thisclient->items[2].gem = 0;
+            thisclient->UpdateInventory( 2 );
+
+    	    RESETPACKET( pak, 0x7a5);
     	    ADDWORD( pak, thisclient->clientid );
-    	    ADDWORD( pak, 0x0002);							
+    	    ADDWORD( pak, 0x0002);
     	    ADDWORD( pak, id);	// ITEM NUM
     	    ADDWORD( pak, BuildItemRefine( thisclient->items[2] ) );	// REFINE
     	    ADDWORD( pak, thisclient->Stats->Move_Speed );	// REFINE
-    	    SendToVisible( &pak,thisclient );             
+    	    SendToVisible( &pak,thisclient );
         }
     	if(EquipList[3].Index[id]!=NULL)
     	{
@@ -1030,17 +1030,17 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
     		thisclient->items[3].count = 1;
     		thisclient->items[3].stats = 0;
     		thisclient->items[3].socketed = false;
-    		thisclient->items[3].appraised = true;	
-        	thisclient->items[3].gem = 0;    
-            thisclient->UpdateInventory( 3 );               
-            
-	        RESETPACKET( pak, 0x7a5);     
+    		thisclient->items[3].appraised = true;
+        	thisclient->items[3].gem = 0;
+            thisclient->UpdateInventory( 3 );
+
+	        RESETPACKET( pak, 0x7a5);
     	    ADDWORD( pak, thisclient->clientid );
-    	    ADDWORD( pak, 0x0003);							
+    	    ADDWORD( pak, 0x0003);
     	    ADDWORD( pak, id);	// ITEM NUM
     	    ADDWORD( pak, BuildItemRefine( thisclient->items[3] ));	// REFINE
     	    ADDWORD( pak, thisclient->Stats->Move_Speed );	// REFINE
-    	    SendToVisible( &pak,thisclient );                
+    	    SendToVisible( &pak,thisclient );
         }
         if(EquipList[4].Index[id]!=NULL)
         {
@@ -1052,20 +1052,20 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
     		thisclient->items[5].count = 1;
     		thisclient->items[5].stats = 0;
     		thisclient->items[5].socketed = false;
-    		thisclient->items[5].appraised = true;	
-        	thisclient->items[5].gem = 0;   
-                   		
-            thisclient->UpdateInventory( 4 );	
-            
-    	    RESETPACKET( pak, 0x7a5);     
-     	    ADDWORD( pak, thisclient->clientid );            	               
-	        ADDWORD( pak, 5);							
+    		thisclient->items[5].appraised = true;
+        	thisclient->items[5].gem = 0;
+
+            thisclient->UpdateInventory( 4 );
+
+    	    RESETPACKET( pak, 0x7a5);
+     	    ADDWORD( pak, thisclient->clientid );
+	        ADDWORD( pak, 5);
     	    ADDWORD( pak, id);	// ITEM NUM
     	    ADDWORD( pak, BuildItemRefine( thisclient->items[5] ));	// REFINE
     	    ADDWORD( pak, thisclient->Stats->Move_Speed );	// REFINE 2602
-    	    SendToVisible( &pak,thisclient );             		
+    	    SendToVisible( &pak,thisclient );
         }
-        if(EquipList[5].Index[id]!=NULL)		
+        if(EquipList[5].Index[id]!=NULL)
         {
     		thisclient->items[6].itemnum = id;
     		thisclient->items[6].itemtype = 5;
@@ -1075,22 +1075,22 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
     		thisclient->items[6].count = 1;
       		thisclient->items[6].stats = 0;
     		thisclient->items[6].socketed = false;
-    		thisclient->items[6].appraised = true;	
-        	thisclient->items[6].gem = 0;  
-                             
-            thisclient->UpdateInventory( 6 );            
+    		thisclient->items[6].appraised = true;
+        	thisclient->items[6].gem = 0;
 
-    	    RESETPACKET( pak, 0x7a5);     
+            thisclient->UpdateInventory( 6 );
+
+    	    RESETPACKET( pak, 0x7a5);
     	    ADDWORD( pak, thisclient->clientid );
-    	    ADDWORD( pak, 6);							
+    	    ADDWORD( pak, 6);
     	    ADDWORD( pak, id);	// ITEM NUM
     	    ADDWORD( pak, BuildItemRefine( thisclient->items[6] ));	// REFINE
     	    ADDWORD( pak, thisclient->Stats->Move_Speed);	// REFINE
     	    SendToVisible( &pak,thisclient );
-        }  	        
-        thisclient->SetStats( );	         	   
+        }
+        thisclient->SetStats( );
     }
-    else if (strcmp(command, "cha")==0) 
+    else if (strcmp(command, "cha")==0)
     {
          if(Config.Command_Cha > thisclient->Session->accesslevel)
 	                    return true;
@@ -1103,67 +1103,67 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
         if ((tmp = strtok(NULL, " "))==NULL)return true;
         if(strcmp(tmp, "mask")==0)
         {
-            slot=1;    
+            slot=1;
             tipo=1;
         }
-        else                    
+        else
         if(strcmp(tmp, "cap")==0)
         {
-            slot=2;                    
+            slot=2;
             tipo=2;
         }
-        else            
+        else
         if(strcmp(tmp, "suit")==0)
         {
-            slot=3; 
+            slot=3;
             tipo=3;
         }
-        else            
+        else
         if(strcmp(tmp, "back")==0)
         {
-            slot=4;                                   
+            slot=4;
             tipo=6;
         }
-        else            
+        else
         if(strcmp(tmp, "glov")==0)
         {
-            slot=5;              
+            slot=5;
             tipo=4;
         }
-        else            
+        else
         if(strcmp(tmp, "shoe")==0)
         {
-            slot=6;                                                         
+            slot=6;
             tipo=5;
         }
-        else                            
+        else
         if(strcmp(tmp, "weap")==0)
         {
-            slot=7;           
+            slot=7;
             tipo=8;
         }
-        else            
+        else
         if(strcmp(tmp, "shield")==0)
         {
-            slot=8;     
+            slot=8;
             tipo=9;
         }
         else
-            return true;                                                                                            
+            return true;
         if ((tmp = strtok(NULL, " "))==NULL)return true;
-            id=atoi(tmp);       
+            id=atoi(tmp);
         if ((tmp = strtok(NULL, " "))==NULL)
             stats=0;
         else
-            stats=atoi(tmp);      
+            stats=atoi(tmp);
         if ((tmp = strtok(NULL, " "))==NULL)
             socket=0;
         else
-            socket=1;                            
+            socket=1;
         if ((tmp = strtok(NULL, " "))==NULL)
             refine=0;
         else
-            refine=atoi(tmp);                                        
+            refine=atoi(tmp);
 	   thisclient->items[slot].itemnum = id;
 	   thisclient->items[slot].itemtype = tipo;
 	   thisclient->items[slot].refine = refine;
@@ -1172,20 +1172,20 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
 	   thisclient->items[slot].count = 1;
 	   thisclient->items[slot].stats = stats;
 	   thisclient->items[slot].socketed = socket;
-	   thisclient->items[slot].appraised = true; 
-	   thisclient->items[slot].gem = 0;               
-	   BEGINPACKET( pak, 0x7a5);     
+	   thisclient->items[slot].appraised = true;
+	   thisclient->items[slot].gem = 0;
+	   BEGINPACKET( pak, 0x7a5);
 	   ADDWORD( pak, thisclient->clientid );
-	   ADDWORD( pak, slot);							
+	   ADDWORD( pak, slot);
 	   ADDWORD( pak, id);	// ITEM NUM
 	   ADDWORD( pak, BuildItemRefine(  thisclient->items[slot] ));	// REFINE
-	   ADDWORD( pak, thisclient->Stats->Move_Speed );	// REFINE 2602	   
-	   SendToVisible( &pak,thisclient );        	         
-	   
-      thisclient->UpdateInventory( slot );	   	   
-       thisclient->SetStats( );                                  
-		return true;	
-    }    
+	   ADDWORD( pak, thisclient->Stats->Move_Speed );	// REFINE 2602
+	   SendToVisible( &pak,thisclient );
+
+      thisclient->UpdateInventory( slot );
+       thisclient->SetStats( );
+		return true;
+    }
     else if (strcmp(command, "item")==0)//Modified by Hiei (added refine/socket/stats)
     {
          if(Config.Command_Item > thisclient->Session->accesslevel)
@@ -1193,7 +1193,7 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
         UINT itemrefine, itemstats, itemls, itemsocket;
         if ((tmp = strtok(NULL, " "))==NULL) return true; UINT itemid =atoi(tmp);
         if ((tmp = strtok(NULL, " "))==NULL) return true; UINT itemtype =atoi(tmp);
-        if ((tmp = strtok(NULL, " "))==NULL) return true; UINT itemamount =atoi(tmp);            
+        if ((tmp = strtok(NULL, " "))==NULL) return true; UINT itemamount =atoi(tmp);
         if ((tmp = strtok(NULL, " "))==NULL)
             itemrefine =0;
         else
@@ -1211,16 +1211,16 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
         else
             itemstats =atoi(tmp);
         Log( MSG_GMACTION, " %s : /item %i,%i,%i,%i,%i,%i" , thisclient->CharInfo->charname, itemid, itemtype, itemamount , itemrefine , itemsocket ,itemstats);
-        return pakGMItem( thisclient , itemid , itemtype , itemamount , itemrefine , itemls, itemstats , itemsocket );        
+        return pakGMItem( thisclient , itemid , itemtype , itemamount , itemrefine , itemls, itemstats , itemsocket );
     }
-    else if (strcmp(command, "levelup")==0) 
+    else if (strcmp(command, "levelup")==0)
     {
          if(Config.Command_LevelUp > thisclient->Session->accesslevel)
 	            return true;
         Log( MSG_GMACTION, " %s : /levelup" , thisclient->CharInfo->charname);
 		thisclient->CharInfo->Exp += thisclient->GetLevelEXP();
-	} 
-    else if (strcmp(command, "drop")==0) 
+	}
+    else if (strcmp(command, "drop")==0)
     {
          if(Config.Command_Drop > thisclient->Session->accesslevel)
 	             return true;
@@ -1231,7 +1231,7 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
 		CDrop* thisdrop = new CDrop;
 		assert(thisdrop);
 		thisdrop->clientid = GetNewClientID();
-		thisdrop->type = 2; 
+		thisdrop->type = 2;
 		thisdrop->pos.x = thisclient->Position->current.x;
 		thisdrop->pos.y = thisclient->Position->current.y;
 		thisdrop->posMap = thisclient->Position->Map;
@@ -1253,31 +1253,31 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
 		thisdrop->owner = 0;
 		CMap* map = MapList.Index[thisdrop->posMap];
 		map->AddDrop( thisdrop );
-	}    
-    else if(strcmp(command, "givezuly")==0) 
+	}
+    else if(strcmp(command, "givezuly")==0)
     {
          if(Config.Command_GiveZuly > thisclient->Session->accesslevel)
 	                    return true;
         if ((tmp = strtok(NULL, " "))==NULL) return true; char* name=tmp;
 		if((tmp = strtok(NULL, " "))==NULL) return true; int zuly=atoi(tmp);
-        Log( MSG_GMACTION, " %s : /givezuly %s, %i" , thisclient->CharInfo->charname, name, zuly);		
+        Log( MSG_GMACTION, " %s : /givezuly %s, %i" , thisclient->CharInfo->charname, name, zuly);
 		  return pakGMZulygive(thisclient, name, zuly);
 	}
-    else if(strcmp(command, "npc")==0) 
+    else if(strcmp(command, "npc")==0)
     {
          if(Config.Command_Npc > thisclient->Session->accesslevel)
 	                    return true;
 		if((tmp = strtok(NULL, " "))==NULL) return true; unsigned npcid=atoi(tmp);
 		unsigned npcdialog = 0;
 		unsigned eventid=0;
-		if((tmp = strtok(NULL, " "))!=NULL) 
+		if((tmp = strtok(NULL, " "))!=NULL)
             npcdialog=atoi(tmp);
-		if((tmp = strtok(NULL, " "))!=NULL) 
-            eventid=atoi(tmp);            
+		if((tmp = strtok(NULL, " "))!=NULL)
+            eventid=atoi(tmp);
         Log( MSG_GMACTION, " %s : /npc %i, %i" , thisclient->CharInfo->charname, npcid, npcdialog);
         return pakGMNpc(thisclient, npcid, npcdialog,eventid);
 	}
-    else if(strcmp(command, "giveclanrp")==0) 
+    else if(strcmp(command, "giveclanrp")==0)
     {
          if(Config.Command_GiveClanRp > thisclient->Session->accesslevel)
 	                    return true;
@@ -1285,8 +1285,8 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
 	    if((tmp = strtok(NULL, " "))==NULL) return true; int points=atoi(tmp);
 	    Log( MSG_GMACTION, " %s : /giveclanrp %s, %i" , thisclient->CharInfo->charname, name, points);
 	    return pakGMClanRewardPoints(thisclient, name, points);
-	}		
-    else if(strcmp(command, "givefairy")==0) 
+	}
+    else if(strcmp(command, "givefairy")==0)
     {
          if(Config.Command_GiveFairy > thisclient->Session->accesslevel)
 	                    return true;
@@ -1295,15 +1295,15 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
 	    Log( MSG_GMACTION, " %s : /givefairy %s, %i" , thisclient->CharInfo->charname, name, mode);
 	    return pakGMFairyto(thisclient, name, mode);
 	}
-    else if(strcmp(command, "hurthim")==0) 
+    else if(strcmp(command, "hurthim")==0)
     {
          if(Config.Command_HurtHim > thisclient->Session->accesslevel)
 	                    return true;
         if ((tmp = strtok(NULL, " "))==NULL) return true; char* name=tmp;
 	    Log( MSG_GMACTION, " %s : /hurthim %s" , thisclient->CharInfo->charname, name);
 	    return pakGMHurtHim(thisclient, name);
-	}	
-	else if(strcmp(command, "fairymode")==0) 
+	}
+	else if(strcmp(command, "fairymode")==0)
     {
         if(Config.Command_ManageFairy > thisclient->Session->accesslevel)
 	                    return true;
@@ -1311,7 +1311,7 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
 	    Log( MSG_GMACTION, " %s : /fairymode mode: %i" , thisclient->CharInfo->charname, mode);
 	    return pakGMManageFairy(thisclient, mode);
 	}
-	else if(strcmp(command, "fairywait")==0) 
+	else if(strcmp(command, "fairywait")==0)
     {
         if(Config.Command_ChangeFairyWait > thisclient->Session->accesslevel)
 	                    return true;
@@ -1319,7 +1319,7 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
 	    Log( MSG_GMACTION, " %s : /fairywait value: %i" , thisclient->CharInfo->charname, value);
 	    return pakGMChangeFairyWait(thisclient, value);
 	}
-	else if(strcmp(command, "fairystay")==0) 
+	else if(strcmp(command, "fairystay")==0)
     {
         if(Config.Command_ChangeFairyStay > thisclient->Session->accesslevel)
 	                    return true;
@@ -1327,7 +1327,7 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
 	    Log( MSG_GMACTION, " %s : /fairystay value: %i" , thisclient->CharInfo->charname, value);
 	    return pakGMChangeFairyStay(thisclient, value);
 	}
-	else if(strcmp(command, "fairytestmode")==0) 
+	else if(strcmp(command, "fairytestmode")==0)
     {
         if(Config.Command_ChangeFairyTestMode > thisclient->Session->accesslevel)
 	                    return true;
@@ -1335,7 +1335,7 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
 	    Log( MSG_GMACTION, " %s : /fairytestmode mode: %i" , thisclient->CharInfo->charname, mode);
 	    return pakGMChangeFairyTestMode(thisclient, mode);
 	}
-    else if (strcmp(command, "move")==0) 
+    else if (strcmp(command, "move")==0)
     {
          if(Config.Command_Move > thisclient->Session->accesslevel)
 	                    return true;
@@ -1344,9 +1344,9 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
 		if ((tmp = strtok(NULL, " "))==NULL) return true; float x=(float)atoi(tmp);
 		if ((tmp = strtok(NULL, " "))==NULL) return true; float y=(float)atoi(tmp);
 		Log( MSG_GMACTION, " %s : /move %s,%i,%i,%i" , thisclient->CharInfo->charname, name, map, x, y);
-		return pakGMTeleOtherPlayer(thisclient, name, map, x, y); 
+		return pakGMTeleOtherPlayer(thisclient, name, map, x, y);
 	}
-    else if (strcmp(command, "goto")==0) 
+    else if (strcmp(command, "goto")==0)
     {
          if(Config.Command_Goto > thisclient->Session->accesslevel)
 	                    return true;
@@ -1360,13 +1360,13 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
 	                    return true;
 		if ((tmp = strtok(NULL, " "))==NULL) return true; char* name=tmp;
 		Log( MSG_GMACTION, " %s : /teletome %s" , thisclient->CharInfo->charname, name);
-        if(strcmp(name,"all")==0) 
+        if(strcmp(name,"all")==0)
         {
-            return pakGMTeleAllHere(thisclient);    
-        }		        
+            return pakGMTeleAllHere(thisclient);
+        }
 		return pakGMTelePlayerHere(thisclient, name);
     }
-    else if(strcmp(command, "CharInfo")==0) 
+    else if(strcmp(command, "CharInfo")==0)
     {
          if(Config.Command_Item > thisclient->Session->accesslevel)
 	                    return true;
@@ -1375,14 +1375,14 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
 			return pakGMInfo(thisclient, name);
 	}
 else if (strcmp(command, "give2")==0)
-{   
+{
              if(Config.Command_Item > thisclient->Session->accesslevel)
                       return true;
         UINT itemrefine, itemstats, itemls, itemsocket;
         if ((tmp = strtok(NULL, " "))==NULL) return true; char* name=tmp;
         if ((tmp = strtok(NULL, " "))==NULL) return true; UINT itemid =atoi(tmp);
         if ((tmp = strtok(NULL, " "))==NULL) return true; UINT itemtype =atoi(tmp);
-        if ((tmp = strtok(NULL, " "))==NULL) return true; UINT itemamount =atoi(tmp);            
+        if ((tmp = strtok(NULL, " "))==NULL) return true; UINT itemamount =atoi(tmp);
         if ((tmp = strtok(NULL, " "))==NULL)
             itemrefine =0;
         else
@@ -1398,9 +1398,9 @@ else if (strcmp(command, "give2")==0)
         if ((tmp = strtok(NULL, " "))==NULL)
             itemstats =0;
         else
-            itemstats =atoi(tmp); 
-        Log( MSG_GMACTION, " %s : /give2 %s,%i,%i,%i,%i,%i,%i,%i" , thisclient->CharInfo->charname, name, itemid , itemtype , itemamount , itemrefine , itemls, itemstats , itemsocket); 
-        return pakGMItemtoplayer( thisclient , name , itemid , itemtype , itemamount , itemrefine , itemls, itemstats , itemsocket ); 
+            itemstats =atoi(tmp);
+        Log( MSG_GMACTION, " %s : /give2 %s,%i,%i,%i,%i,%i,%i,%i" , thisclient->CharInfo->charname, name, itemid , itemtype , itemamount , itemrefine , itemls, itemstats , itemsocket);
+        return pakGMItemtoplayer( thisclient , name , itemid , itemtype , itemamount , itemrefine , itemls, itemstats , itemsocket );
 }
     else if (strcmp(command, "ban")==0)
     {
@@ -1415,12 +1415,12 @@ else if (strcmp(command, "give2")==0)
         if ((tmp = strtok(NULL, " "))==NULL) return true; char* name=tmp;
         Log( MSG_GMACTION, " %s : /ban %s" , thisclient->CharInfo->charname, name);
         return pakGMBan( thisclient, name );
-	}            
+	}
     else if (strcmp(command, "ani")==0)
     {
          if(Config.Command_Ani > thisclient->Session->accesslevel)
 	                    return true;
-        if ((tmp = strtok(NULL, " "))==NULL) return true; 
+        if ((tmp = strtok(NULL, " "))==NULL) return true;
             unsigned anid =atoi(tmp);
             Log( MSG_GMACTION, " %s : /ani %i" , thisclient->CharInfo->charname, anid);
             pakGMDoEmote( thisclient, anid );
@@ -1430,24 +1430,24 @@ else if (strcmp(command, "give2")==0)
          //forcing a skill (for test)
          if(Config.Command_fskill > thisclient->Session->accesslevel)
 	                    return true;
-        if ((tmp = strtok(NULL, " "))==NULL) return true; 
+        if ((tmp = strtok(NULL, " "))==NULL) return true;
             unsigned monstertype =atoi(tmp);
-        if ((tmp = strtok(NULL, " "))==NULL) return true; 
-            unsigned skilltype =atoi(tmp);            
-        if ((tmp = strtok(NULL, " "))==NULL) return true; 
+        if ((tmp = strtok(NULL, " "))==NULL) return true;
+            unsigned skilltype =atoi(tmp);
+        if ((tmp = strtok(NULL, " "))==NULL) return true;
             unsigned skillvalue =atoi(tmp);
         fmmonstertype=monstertype;         //montype
         ftypeskill=skilltype;              //1=attack, 2=debuff, 3=self buff
         fskill=skillvalue;                 //skill value.
         Log( MSG_GMACTION, " %s : /fskill monter %i type %i skill %i" , thisclient->CharInfo->charname, monstertype,skilltype,skillvalue);
         return true;
-    }    
+    }
     else if(strcmp(command,"summon")==0)
     {
         if(Config.Command_Summon > thisclient->Session->accesslevel)
 	                    return true;
-        if ((tmp = strtok(NULL, " "))==NULL) return true; 
-        unsigned int summon = atoi(tmp);   
+        if ((tmp = strtok(NULL, " "))==NULL) return true;
+        unsigned int summon = atoi(tmp);
         Log( MSG_GMACTION, " %s : /summon %i" , thisclient->CharInfo->charname, summon);
         fPoint position = RandInCircle( thisclient->Position->current, 5 );
         CMap* map = MapList.Index[thisclient->Position->Map];
@@ -1455,18 +1455,18 @@ else if (strcmp(command, "give2")==0)
         //Start Animation
         BEGINPACKET( pak, 0x7b2 );
         ADDWORD    ( pak, thisclient->clientid );
-        ADDWORD    ( pak, 2802 );                        
+        ADDWORD    ( pak, 2802 );
         SendToVisible( &pak, thisclient );
         //Finish Animation
         RESETPACKET( pak, 0x7bb );
         ADDWORD    ( pak, thisclient->clientid );
-        SendToVisible( &pak, thisclient );    
+        SendToVisible( &pak, thisclient );
         //????
         RESETPACKET( pak, 0x7b9);
         ADDWORD    ( pak, thisclient->clientid);
         ADDWORD    ( pak, 1286 );
-	    SendToVisible( &pak, thisclient );   
-	    // Add our Mob to the mobs list                       
+	    SendToVisible( &pak, thisclient );
+	    // Add our Mob to the mobs list
     }
     else if (strcmp(command, "reloadquest")==0)
     {
@@ -1474,11 +1474,11 @@ else if (strcmp(command, "give2")==0)
 	                    return true;
         QuestList.clear( );
         LoadQuestData( );
-        Log( MSG_GMACTION, " %s : /reloadquest" , thisclient->CharInfo->charname);        
+        Log( MSG_GMACTION, " %s : /reloadquest" , thisclient->CharInfo->charname);
         return true;
     }
 	else if (strcmp(command, "shutdown")==0)
-	{        
+	{
              if(Config.Command_Shutdown > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)
            {
            Log( MSG_GMACTION, " %s : /showdown NOT ALLOWED" , thisclient->CharInfo->charname);
@@ -1487,22 +1487,22 @@ else if (strcmp(command, "give2")==0)
            SendPM(thisclient, buffer);
 	                    return true;
            }
-        if ((tmp = strtok(NULL, " "))==NULL) return true; 
-            unsigned int minutes =atoi(tmp);        
+        if ((tmp = strtok(NULL, " "))==NULL) return true;
+            unsigned int minutes =atoi(tmp);
         char text[200];
         sprintf( text, "Server will shutdown in %i minutes, Please logout NOW to be sure your information is saved correctly.",
-           minutes );        
+           minutes );
         BEGINPACKET( pak, 0x702 );
 	    ADDSTRING  ( pak, thisclient->CharInfo->charname );
-    	ADDSTRING  ( pak, "> " );        
+    	ADDSTRING  ( pak, "> " );
     	ADDSTRING  ( pak, text );
     	ADDBYTE    ( pak, 0x00 );
     	SendToAll  ( &pak );
-        pthread_create( &WorldThread[SHUTDOWN_THREAD], NULL, ShutdownServer, (PVOID)minutes); 
-        Log( MSG_GMACTION, " %s : /shutdown %u" , thisclient->CharInfo->charname, shutdown);        
-    }     
+        pthread_create( &WorldThread[SHUTDOWN_THREAD], NULL, ShutdownServer, (PVOID)minutes);
+        Log( MSG_GMACTION, " %s : /shutdown %u" , thisclient->CharInfo->charname, shutdown);
+    }
     else if(strcmp(command, "dquest")==0)
-    {                          
+    {
          if(Config.Command_DQuest > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)
            {
            Log( MSG_GMACTION, " %s : /dquest NOT ALLOWED" , thisclient->CharInfo->charname);
@@ -1512,7 +1512,7 @@ else if (strcmp(command, "give2")==0)
 	                    return true;
            }
         char line0[200];
-                        
+
         if( thisclient->questdebug )
         {
             Log(MSG_INFO,"Quest Debug deactivated");
@@ -1525,10 +1525,10 @@ else if (strcmp(command, "give2")==0)
             sprintf(line0, "Quest Debug activated");
             thisclient->questdebug = true;
         }
-        
-        SendPM(thisclient, line0 );             
-    }     
-    else if(strcmp(command, "iquest")==0)    
+
+        SendPM(thisclient, line0 );
+    }
+    else if(strcmp(command, "iquest")==0)
     {
          if(Config.Command_IQuest > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)
            {
@@ -1539,8 +1539,8 @@ else if (strcmp(command, "give2")==0)
 	                    return true;
            }
         int n=1;
-        if ((tmp = strtok(NULL, " "))==NULL) return true; 
-        unsigned int itemquest =atoi(tmp); 
+        if ((tmp = strtok(NULL, " "))==NULL) return true;
+        unsigned int itemquest =atoi(tmp);
         if ((tmp = strtok(NULL, " "))!=NULL)
             n=atoi(tmp);
         if( thisclient->questdebug )
@@ -1549,45 +1549,45 @@ else if (strcmp(command, "give2")==0)
             {
                 BEGINPACKET( pak, 0x731 )
                 ADDWORD    ( pak, itemquest );
-                thisclient->client->SendPacket( &pak );            
+                thisclient->client->SendPacket( &pak );
             }
         }
-    } 
+    }
 	else if (strcmp(command, "shoptype")==0)
-	{    
+	{
          if(Config.Command_ShopType > thisclient->Session->accesslevel)
-	                    return true;    
-        if ((tmp = strtok(NULL, " "))==NULL) return true; 
-            unsigned int shoptype =atoi(tmp);           
+	                    return true;
+        if ((tmp = strtok(NULL, " "))==NULL) return true;
+            unsigned int shoptype =atoi(tmp);
         thisclient->Shop->ShopType = shoptype;
-        Log( MSG_GMACTION, " %s : /shoptype %i" , thisclient->CharInfo->charname, shoptype);        
+        Log( MSG_GMACTION, " %s : /shoptype %i" , thisclient->CharInfo->charname, shoptype);
     }
 	else if (strcmp(command, "bonusxp")==0)
-	{    
+	{
          if(Config.Command_BonusXp > thisclient->Session->accesslevel)
-	                    return true;    
-        if ((tmp = strtok(NULL, " "))==NULL) return true; 
+	                    return true;
+        if ((tmp = strtok(NULL, " "))==NULL) return true;
         char* name = tmp;
-        if ((tmp = strtok(NULL, " "))==NULL) return true; 
+        if ((tmp = strtok(NULL, " "))==NULL) return true;
         unsigned int bonus =atoi(tmp);
-        if ((tmp = strtok(NULL, " "))==NULL) return true; 
+        if ((tmp = strtok(NULL, " "))==NULL) return true;
         unsigned int time_min =atoi(tmp);
-        if ((tmp = strtok(NULL, " "))==NULL) return true; 
+        if ((tmp = strtok(NULL, " "))==NULL) return true;
         unsigned int to_save =atoi(tmp);
 
         CPlayer* otherclient = GetClientByCharName(name);
         if (otherclient == NULL)
             return true;
-        
+
         char buffer2[200];
         if (bonus==0)
         {
            otherclient->bonusxp=1;
            otherclient->timerxp=0;
            otherclient->wait_validation=0;
-           otherclient->Saved=false;            
+           otherclient->Saved=false;
             sprintf ( buffer2, "Your Bonus Xp has been deactivated.");
-            SendPM(otherclient, buffer2);           
+            SendPM(otherclient, buffer2);
         }
         else
         {
@@ -1599,12 +1599,12 @@ else if (strcmp(command, "give2")==0)
            if (to_save!=0)
               otherclient->Saved=true;
             sprintf ( buffer2, "You have a bonus xp (*%i) for %i minutes.",bonus,time_min);
-            SendPM(otherclient, buffer2);              
+            SendPM(otherclient, buffer2);
         }
-                      
+
         Log( MSG_GMACTION, " %s : /bonusxp %s %i %i %i" ,thisclient->CharInfo->charname, otherclient->CharInfo->charname,bonus,time_min,to_save );
         return true;
-    }      
+    }
     else if (strcmp(command, "stat")==0) /// Code By Minoc
     {
          if(Config.Command_Stat > thisclient->Session->accesslevel)
@@ -1683,30 +1683,30 @@ else if (strcmp(command, "give2")==0)
         if ((tmp = strtok(NULL, " "))==NULL) return true; unsigned range=atoi(tmp);
         Log( MSG_GMACTION, " %s : /killinrange %i" , thisclient->CharInfo->charname, range);
         return pakGMKillInRange( thisclient, range );
-    }    
+    }
     else if (strcmp(command, "gotomap")==0) // *** TELEPORT WITH MAP ID *****
 	{	 // credits to Blackie
 	   if(Config.Command_GoToMap > thisclient->Session->accesslevel)
 	                    return true;
         if ((tmp = strtok(NULL, " "))==NULL) return true; unsigned map=atoi(tmp);
-        Log( MSG_GMACTION, " %s : /gotomap %i" , thisclient->CharInfo->charname, map);        
+        Log( MSG_GMACTION, " %s : /gotomap %i" , thisclient->CharInfo->charname, map);
 		return pakGMGotomap(thisclient, map);
-    }     
-    else if(strcmp(command, "heal")==0) 
+    }
+    else if(strcmp(command, "heal")==0)
     {
         if(Config.Command_Heal > thisclient->Session->accesslevel)
 	                    return true;
         Log( MSG_GMACTION, " %s : /heal", thisclient->CharInfo->charname );
         return pakGMHeal( thisclient );
-    }     
-    else if(strcmp(command, "serverinfo")==0) 
+    }
+    else if(strcmp(command, "serverinfo")==0)
     {
          if(Config.Command_ServerInfo > thisclient->Session->accesslevel)
 	                    return true;
-        Log( MSG_GMACTION, " %s : /serverinfo" , thisclient->CharInfo->charname);        
+        Log( MSG_GMACTION, " %s : /serverinfo" , thisclient->CharInfo->charname);
 		return pakGMServerInfo( thisclient );
-    }       
-    else if(strcmp(command, "targetinfo")==0) 
+    }
+    else if(strcmp(command, "targetinfo")==0)
     {
          if(Config.Command_TargetInfo > thisclient->Session->accesslevel)
 	                    return true;
@@ -1716,58 +1716,58 @@ else if (strcmp(command, "give2")==0)
     {
          if(Config.Command_Hide > thisclient->Session->accesslevel)
 	                    return true;
-        if ((tmp = strtok(NULL, " "))==NULL) 
-            return true; 
+        if ((tmp = strtok(NULL, " "))==NULL)
+            return true;
         int mode= atoi( tmp );
         return pakGMHide( thisclient, mode );
-    }    
+    }
     else if (strcmp(command, "class")==0)
     {
          if(Config.Command_Class > thisclient->Session->accesslevel)
 	                    return true;
-        if ((tmp = strtok(NULL, " "))==NULL) 
-            return true; 
+        if ((tmp = strtok(NULL, " "))==NULL)
+            return true;
         char* classid=(char*)tmp;
         Log( MSG_GMACTION, " %s : /class %s" , thisclient->CharInfo->charname, classid);
         return pakGMClass( thisclient, classid );
-    }        
-    else if(strcmp(command, "convert")==0)    
+    }
+    else if(strcmp(command, "convert")==0)
     {
-        if(Config.Command_Convert > thisclient->Session->accesslevel) 
+        if(Config.Command_Convert > thisclient->Session->accesslevel)
 	       return true;
 	    if(thisclient->Battle->target==0) return true;
         if ((tmp = strtok(NULL, " " ))==NULL)
             return true;
         UINT newmon = atoi(tmp);
         if(newmon==0) return true;
-        CMonster* thismon = GetMonsterByID( thisclient->Battle->target, thisclient->Position->Map );	
+        CMonster* thismon = GetMonsterByID( thisclient->Battle->target, thisclient->Position->Map );
         if(thismon==NULL)
         {
             CNPC* thisnpc = GetNPCByID( thisclient->Battle->target, thisclient->Position->Map );
             if(thisnpc==NULL) return true;
-            MapList.Index[thisclient->Position->Map]->ConverToMonster( thisnpc, newmon );    
+            MapList.Index[thisclient->Position->Map]->ConverToMonster( thisnpc, newmon );
         }
         else
         {
-            MapList.Index[thisclient->Position->Map]->ConverToMonster( thismon, newmon );    
+            MapList.Index[thisclient->Position->Map]->ConverToMonster( thismon, newmon );
         }
         return true;
     }
-    else if (strcmp(command, "b")==0) 
+    else if (strcmp(command, "b")==0)
     {
-        if(Config.Command_Broadcast > thisclient->Session->accesslevel) 
+        if(Config.Command_Broadcast > thisclient->Session->accesslevel)
             return true;
         time_t seconds;
         seconds = time (NULL);
-        if((thisclient->CharInfo->LastGlobal+Config.Command_GlobalTime) <= seconds) 
+        if((thisclient->CharInfo->LastGlobal+Config.Command_GlobalTime) <= seconds)
         {
             thisclient->CharInfo->LastGlobal = time (NULL);
             char outputmsg[200];
             sprintf( outputmsg, "%s %s", Config.Command_GlobalPrefix, &P->Buffer[3] );
             Log( MSG_INFO, "%s> %s %s", thisclient->CharInfo->charname, Config.Command_GlobalPrefix, &P->Buffer[3]);
             SendGlobalMSG(thisclient, outputmsg);
-        } 
-        else 
+        }
+        else
         {
             long int remaining = (Config.Command_GlobalTime-(seconds-thisclient->CharInfo->LastGlobal));
             char buffer2[200];
@@ -1775,45 +1775,45 @@ else if (strcmp(command, "give2")==0)
             SendPM(thisclient, buffer2);
         }
         return true;
-    } 
-    else if(strcmp(command, "who2")==0) 
+    }
+    else if(strcmp(command, "who2")==0)
     {
         if(Config.Command_Who2 > thisclient->Session->accesslevel)
-            return true;       
+            return true;
         SendPM(thisclient, "The following players are currently connected;");
         int count=1;
         int hiddenam=0;
         char line0[200];
-        while(count <= (ClientList.size()-1)) 
+        while(count <= (ClientList.size()-1))
         {
             CPlayer* whoclient = (CPlayer*)ClientList.at(count)->player;
-            if(whoclient->Session->accesslevel > 100) 
+            if(whoclient->Session->accesslevel > 100)
             {
-//                sprintf(line0, "%s - GM[%i]", whoclient->CharInfo->charname, whoclient->Session->accesslevel);                                      
+//                sprintf(line0, "%s - GM[%i]", whoclient->CharInfo->charname, whoclient->Session->accesslevel);
                 sprintf(line0, "%s - (GM %i, lvl %u), map %u[%.2f,%.2f]", whoclient->CharInfo->charname, whoclient->Session->accesslevel,
                 whoclient->Stats->Level,
                 whoclient->Position->Map,
                 whoclient->Position->current.x,
-                whoclient->Position->current.y);                                                      
+                whoclient->Position->current.y);
 
-            } 
-            else 
+            }
+            else
             {
 //                sprintf(line0, "%s", whoclient->CharInfo->charname);
- 
+
         sprintf(line0, "%s (job %u, lvl %u), map %u[%.2f,%.2f]", whoclient->CharInfo->charname,
         whoclient->CharInfo->Job,
         whoclient->Stats->Level,
         whoclient->Position->Map,
         whoclient->Position->current.x,
         whoclient->Position->current.y);
- 
+
             }
-            if(!whoclient->isInvisibleMode || thisclient->Session->accesslevel >= whoclient->Session->accesslevel) 
+            if(!whoclient->isInvisibleMode || thisclient->Session->accesslevel >= whoclient->Session->accesslevel)
             {
                 SendPM(thisclient, line0 );
-            } 
-            else 
+            }
+            else
             {
                 hiddenam++;
             }
@@ -1821,45 +1821,45 @@ else if (strcmp(command, "give2")==0)
         }
         sprintf(line0, "There are currently %i players connected!", ((ClientList.size()-1)-hiddenam));
         Log( MSG_GMACTION, " %s : /who2" , thisclient->CharInfo->charname);
-        
+
 
         return true;
     }
     else if(strcmp(command, "rate")==0) //incomplete
     {
-        if(Config.Command_Rate > thisclient->Session->accesslevel)  
-           return true;  
+        if(Config.Command_Rate > thisclient->Session->accesslevel)
+           return true;
         if ((tmp = strtok(NULL, " "))==NULL) return true;
-        char* type = tmp;            
+        char* type = tmp;
         if(strcmp(type,"drop")==0)
         {
-            if ((tmp = strtok(NULL, " "))==NULL) return true;            
+            if ((tmp = strtok(NULL, " "))==NULL) return true;
             Config.DROP_RATE = atoi(tmp);
         }
         else
         if(strcmp(type,"exp")==0)
         {
-            if ((tmp = strtok(NULL, " "))==NULL) return true;            
+            if ((tmp = strtok(NULL, " "))==NULL) return true;
             Config.EXP_RATE = atoi(tmp);
-        }        
+        }
     }
-    else if(strcmp(command, "moveto")==0)    
+    else if(strcmp(command, "moveto")==0)
     {
-        if(Config.Command_Moveto > thisclient->Session->accesslevel)  
-            return true;  
+        if(Config.Command_Moveto > thisclient->Session->accesslevel)
+            return true;
         fPoint position;
-        if ((tmp = strtok(NULL, " "))==NULL) return true;  
+        if ((tmp = strtok(NULL, " "))==NULL) return true;
         position.x = atof(tmp);
-        if ((tmp = strtok(NULL, " "))==NULL) return true;          
-        position.y = atof(tmp);        
-        if ((tmp = strtok(NULL, " "))==NULL) return true;          
-        position.z = atof(tmp);        
-        pakGMMoveTo( thisclient, position );    
+        if ((tmp = strtok(NULL, " "))==NULL) return true;
+        position.y = atof(tmp);
+        if ((tmp = strtok(NULL, " "))==NULL) return true;
+        position.z = atof(tmp);
+        pakGMMoveTo( thisclient, position );
     }
     else if(strcmp(command, "settime")==0)
     {
-        if(Config.Command_Settime > thisclient->Session->accesslevel)  
-            return true;  
+        if(Config.Command_Settime > thisclient->Session->accesslevel)
+            return true;
         if ((tmp = strtok(NULL, " "))==NULL) return true;
         unsigned int time = atoi(tmp);
         if(MapList.Index[thisclient->Position->Map]!=NULL)
@@ -1872,25 +1872,25 @@ else if (strcmp(command, "give2")==0)
                 break;
                 case DAY:
                     MapList.Index[thisclient->Position->Map]->MapTime = MapList.Index[thisclient->Position->Map]->daytime;
-                    SendSysMsg( thisclient, "Time changed!, rejoin to see change [DAY]" );                    
+                    SendSysMsg( thisclient, "Time changed!, rejoin to see change [DAY]" );
                 break;
                 case EVENING:
                     MapList.Index[thisclient->Position->Map]->MapTime = MapList.Index[thisclient->Position->Map]->eveningtime;
-                    SendSysMsg( thisclient, "Time changed!, rejoin to see change [EVENING]" );                    
+                    SendSysMsg( thisclient, "Time changed!, rejoin to see change [EVENING]" );
                 break;
                 case NIGHT:
                     MapList.Index[thisclient->Position->Map]->MapTime = MapList.Index[thisclient->Position->Map]->nighttime;
-                    SendSysMsg( thisclient, "Time changed!, rejoin to see change [NIGHT]" );                    
+                    SendSysMsg( thisclient, "Time changed!, rejoin to see change [NIGHT]" );
                 break;
                 default:
                     SendSysMsg( thisclient, "Time: 0=MORNING | 1=DAY | 2=EVENING | 3=NIGHT" );
             }
-        }             
+        }
     }
     else if(strcmp(command, "transx")==0)
     {
-        if(Config.Command_Transx > thisclient->Session->accesslevel)  
-            return true; 
+        if(Config.Command_Transx > thisclient->Session->accesslevel)
+            return true;
         thisclient->CharInfo->Sex = thisclient->CharInfo->Sex==0?1:0;
         BEGINPACKET( pak, 0x720 );
         ADDWORD( pak, 2 );
@@ -1901,7 +1901,7 @@ else if (strcmp(command, "give2")==0)
         ADDWORD( pak, 5 );
         ADDWORD( pak, 0xa24d );
         ADDWORD( pak, 0x40b3 );
-        thisclient->client->SendPacket( &pak );        
+        thisclient->client->SendPacket( &pak );
     }
     /*
     else if (strcmp(command, "killunion")==0)
@@ -1911,9 +1911,9 @@ else if (strcmp(command, "give2")==0)
         if ((tmp = strtok(NULL, " "))==NULL) return true; int type_union= atoi( tmp );
         if ((tmp = strtok(NULL, " "))==NULL) return true; int kill_union= atoi( tmp );
         if ((tmp = strtok(NULL, " "))==NULL) return true; int test_union= atoi( tmp );
-        
+
         Log( MSG_GMACTION, "killUnion type %i, value %i, loop or key %i by %s" ,type_union,kill_union, test_union, thisclient->CharInfo->charname);
-        
+
         //LMA: changing union kill :)
         //28 00 d0 8a ff ff
         if (type_union==1)
@@ -1928,22 +1928,22 @@ else if (strcmp(command, "give2")==0)
             ADDWORD( pak, 5 );
             ADDWORD( pak, 0xa24d );
             ADDWORD( pak, 0x40b3 );
-            thisclient->client->SendPacket( &pak );  
+            thisclient->client->SendPacket( &pak );
             char buffer[200];
             sprintf ( buffer, "killUnion 720 set to %i, test %i by %s" , kill_union, test_union, thisclient->CharInfo->charname);
             SendPM(thisclient, buffer);
-                      
+
             return true;
         }
-        
+
         if (type_union==101)
         {
-            
+
             Log(MSG_INFO,"721, test_union %i, value %i",test_union,kill_union);
             for (int k=10;k<test_union;k++)
-            {                            
+            {
                 BEGINPACKET( pak, 0x721 );
-                RESETPACKET( pak, 0x721 );                
+                RESETPACKET( pak, 0x721 );
                 ADDWORD( pak, k );
                 ADDWORD( pak, kill_union );
                 ADDWORD( pak, 0x0000 );
@@ -1957,13 +1957,13 @@ else if (strcmp(command, "give2")==0)
                 //sprintf ( buffer, "killUnion 721 set to %i, test %i by %s" , kill_union, k, thisclient->CharInfo->charname);
                 //SendPM(thisclient, buffer);
             }
-            
+
             return true;
         }
-        
+
         if (type_union==102)
         {
-            
+
             for (int k=10;k<test_union;k++)
             {
                 BEGINPACKET( pak, 0x720 );
@@ -1976,16 +1976,16 @@ else if (strcmp(command, "give2")==0)
                 ADDWORD( pak, 5 );
                 ADDWORD( pak, 0xa24d );
                 ADDWORD( pak, 0x40b3 );
-                thisclient->client->SendPacket( &pak ); 
-                Log(MSG_INFO,"killUnion 720 set to %i, key %i by %s" , kill_union, k, thisclient->CharInfo->charname); 
+                thisclient->client->SendPacket( &pak );
+                Log(MSG_INFO,"killUnion 720 set to %i, key %i by %s" , kill_union, k, thisclient->CharInfo->charname);
                 //char buffer[200];
                 //sprintf ( buffer, "killUnion 720 set to %i, test %i by %s" , kill_union, k, thisclient->CharInfo->charname);
                 //SendPM(thisclient, buffer);
             }
-            
+
             return true;
-        }        
-        
+        }
+
         BEGINPACKET( pak, 0x721 );
         ADDWORD( pak, test_union );
         ADDWORD( pak, kill_union );
@@ -1994,23 +1994,23 @@ else if (strcmp(command, "give2")==0)
     	RESETPACKET( pak, 0x730 );
         ADDWORD    ( pak, 0x0005 );
         ADDDWORD   ( pak, 0x40b3a24d );
-        thisclient->client->SendPacket( &pak );                 
-        
+        thisclient->client->SendPacket( &pak );
+
        char buffer[200];
        sprintf ( buffer, "killUnion 721 set to %i, test %i by %s" , kill_union, test_union, thisclient->CharInfo->charname);
-       SendPM(thisclient, buffer);        
-       
-                        
+       SendPM(thisclient, buffer);
+
+
         return true;
     }*/
     else if (strcmp(command, "union")==0)
     {
         if(Config.Command_Union > thisclient->Session->accesslevel)
-	       return true;        
+	       return true;
         if ((tmp = strtok(NULL, " "))==NULL) return true; char* name=tmp;
         if ((tmp = strtok(NULL, " "))==NULL) return true; int which_union= atoi( tmp );
         return pakGMUnion(thisclient,name,which_union);
-    }    
+    }
     else if (strcmp(command, "partylvl")==0)
     {
         if(Config.Command_Partylvl > thisclient->Session->accesslevel)
@@ -2062,9 +2062,9 @@ else if (strcmp(command, "give2")==0)
                SendPM(thisclient,"[Info] We are in Range Mode.");
             else
                SendPM(thisclient,"[Info] We are in Grid Mode.");
-               
+
             return true;
-        }	                    
+        }
         if (Config.testgrid!=0)
         {
            Config.testgrid=0;
@@ -2073,12 +2073,12 @@ else if (strcmp(command, "give2")==0)
         else
         {
            Config.testgrid=1;
-           SendPM(thisclient,"We are in Grid Mode.");         
+           SendPM(thisclient,"We are in Grid Mode.");
         }
-        
+
 	    Log( MSG_GMACTION, " Test Grid set at %i by %s" , Config.testgrid, thisclient->CharInfo->charname);
 	    return true;
-	}	
+	}
 	else if(strcmp(command, "unionmode")==0)
     {
         if(Config.Command_UnionMode > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)
@@ -2089,10 +2089,58 @@ else if (strcmp(command, "give2")==0)
            SendPM(thisclient, buffer);
            return true;
        }
-       
-        if ((tmp = strtok(NULL, " "))==NULL) return true; char* namemode=tmp;
-        if ((tmp = strtok(NULL, " "))==NULL) return true; int value= atoi( tmp );
-        return pakGMUnionMode(thisclient,namemode,value);
+
+        if ((tmp = strtok(NULL, " "))==NULL)
+        {
+            char line0[200];
+            sprintf(line0,"UW %i, dur %i min, loop? %i, loopdelay=%i, min players %i.",Config.unionwar,Config.unionwarduration,Config.unionwarloop,Config.unionwardelay_loop,Config.unionwarmin);
+            SendPM(thisclient,line0);
+            sprintf(line0,"Us %i, dur %i min, loop? %i, loopdelay=%i, min players %i.",Config.unionslaughter,Config.unionduration,Config.unionslaughterloop,Config.unionslaughterdelay_loop,Config.unionmin);
+            SendPM(thisclient,line0);
+
+            return true;
+        }
+
+        char* namemode=tmp;
+         int value_loop_delay=0;
+         int value_begin=0;
+         int value_duration=0;
+         int value_nb_players=0;
+         int value_loop=0;
+
+        if ((tmp = strtok(NULL, " "))==NULL)
+        {
+            return true;
+        }
+        int value_on_off= atoi( tmp );
+
+        if ((tmp = strtok(NULL, " "))!=NULL)
+        {
+            value_begin= atoi( tmp );
+        }
+
+        if ((tmp = strtok(NULL, " "))!=NULL)
+        {
+            value_duration= atoi( tmp );
+        }
+
+        if ((tmp = strtok(NULL, " "))!=NULL)
+        {
+            value_nb_players= atoi( tmp );
+        }
+
+        if ((tmp = strtok(NULL, " "))!=NULL)
+        {
+            value_loop= atoi( tmp );
+        }
+
+        if ((tmp = strtok(NULL, " "))!=NULL)
+        {
+            value_loop_delay= atoi( tmp );
+        }
+
+
+        return pakGMUnionMode(thisclient,namemode,value_on_off,value_begin,value_duration,value_nb_players,value_loop,value_loop_delay);
 	}
 	else if(strcmp(command, "unionpoints")==0)
     {
@@ -2104,10 +2152,10 @@ else if (strcmp(command, "give2")==0)
            SendPM(thisclient, buffer);
            return true;
        }
-       
+
         if ((tmp = strtok(NULL, " "))==NULL) return true; char* namemode=tmp;
         if ((tmp = strtok(NULL, " "))==NULL) return true; int value= atoi( tmp );
-        
+
         return pakGMUnionPoints(thisclient, namemode, value);
 	}
 	else if(strcmp(command, "tquest")==0)
@@ -2120,44 +2168,54 @@ else if (strcmp(command, "give2")==0)
            SendPM(thisclient, buffer);
            return true;
        }
-       
+
+        if ((tmp = strtok(NULL, " "))==NULL) return true; int action= atoi( tmp );
+        if ((tmp = strtok(NULL, " "))==NULL) return true; int headerid= atoi( tmp );
+
+       //810-01 00 00 00 fd 1a 00 00 66 00 d0 07
+        BEGINPACKET( pak, 0x810);
+        ADDBYTE    (pak, headerid);
+        ADDBYTE    (pak, 0x00);
+        ADDBYTE    (pak, 0x00);
+        ADDBYTE    (pak, 0x00);
+        ADDBYTE    (pak, thisclient->CharInfo->unionid);
+        ADDBYTE    (pak, 0x00);
+        ADDBYTE    (pak, 0x00);
+        ADDBYTE    (pak, 0x00);
+        ADDBYTE    (pak, 0x9);  //Map
+        ADDBYTE    (pak, 0x00);
+        if (action==1)
+        {
+            ADDBYTE    (pak, 0xd0);
+            ADDBYTE    (pak, 0x07);
+        }
+        else
+        {
+            ADDBYTE    (pak, 0xE8);
+            ADDBYTE    (pak, 0x03);
+        }
+        thisclient->client->SendPacket( &pak );
+        return true;
+
+       /*
        if ((tmp = strtok(NULL, " "))==NULL) return true; int action= atoi( tmp );
        if ((tmp = strtok(NULL, " "))==NULL) return true; int questpart= atoi( tmp );
-       if ((tmp = strtok(NULL, " "))==NULL) return true; int test= atoi( tmp );
+       if ((tmp = strtok(NULL, " "))==NULL) return true; int questid= atoi( tmp );
        //DWORD questid=3628754895;
-       
+
+       //03 01 23 0b 00 00
         BEGINPACKET( pak, 0x730);
         ADDBYTE    (pak, action);
         ADDBYTE    (pak, questpart);
-        switch (test)
-        {
-               case 1:
-                    {
-                         ADDDWORD   (pak, 0xD84A67CF );
-                     }
-                     break;
-               case 2:
-                      {
-                           ADDDWORD   (pak, 0x67CFD84A );
-                     }
-                     break;                  
-                case 3:
-                      {
-                          ADDDWORD   (pak, 0xCF674AD8);
-                     }
-                     break;
-               case 4:
-                      {
-                           ADDDWORD   (pak, 0xD84A67CF );
-                     }
-                     break;                                                  
-        }
-        
-    	thisclient->client->SendPacket( &pak );     
-       
-        
+        //03 01 00 00 0b 23
+        //ADDDWORD   (pak, 0x00000b23);
+        ADDWORD   (pak, questid);
+        ADDWORD   (pak, 0x0000);
+    	thisclient->client->SendPacket( &pak );
+        */
+
         return true;
-	}	
+	}
     else if(strcmp(command, "rules")==0)  // Rules Command by Matt
     {
         if(Config.Command_Rules > thisclient->Session->accesslevel)
@@ -2210,7 +2268,7 @@ else if (strcmp(command, "give2")==0)
 	    return pakGMChangeMSpeedModif(thisclient, mSpeedModif);
 	}
 	// buff - debuff by Drakia
-    else if (strcmp(command, "buff")==0) 
+    else if (strcmp(command, "buff")==0)
     {
         if(Config.Command_Buff > thisclient->Session->accesslevel)
 //        if (thisclient->Session->accesslevel < 300)
@@ -2224,7 +2282,7 @@ else if (strcmp(command, "give2")==0)
         pakGMBuff(thisclient, strength);
         return true;
      }
-     else if ( strcmp(command, "debuff")==0) 
+     else if ( strcmp(command, "debuff")==0)
      {
         if(Config.Command_Debuff > thisclient->Session->accesslevel)
 //        if (thisclient->Session->accesslevel < 300)
@@ -2234,7 +2292,7 @@ else if (strcmp(command, "give2")==0)
         return true;
      }
     // MaxStats - by rl2171
-    else if(strcmp(command, "maxstats")==0) 
+    else if(strcmp(command, "maxstats")==0)
     {
         if(Config.Command_MaxStats > thisclient->Session->accesslevel)
             return true;
@@ -2248,7 +2306,7 @@ else if (strcmp(command, "give2")==0)
             return true;
          char buffer[200];
              sprintf ( buffer, "osRose Version %s", Config.osRoseVer);
-             SendPM(thisclient, buffer);  
+             SendPM(thisclient, buffer);
       }
 
     // myloc - by PurpleYouko
@@ -2256,9 +2314,9 @@ else if (strcmp(command, "give2")==0)
     {
          char buffer[200];
          sprintf ( buffer, "My location. Map = %i X = %f Y = %f", thisclient->Position->Map, thisclient->Position->current.x, thisclient->Position->current.y);
-         SendPM(thisclient, buffer);   
+         SendPM(thisclient, buffer);
     }
-    
+
     // mystat - by PurpleYouko
     else if(strcmp(command, "mystat")==0)
     {
@@ -2274,7 +2332,7 @@ else if (strcmp(command, "give2")==0)
             SendPM(thisclient, "Example; /mystat ap");
          return true;
         }
-         
+
          char buffer[200];
          if(strcmp(tmp, "ap")==0)
          {
@@ -2284,31 +2342,31 @@ else if (strcmp(command, "give2")==0)
          else if(strcmp(tmp, "acc")==0)
          {
              sprintf ( buffer, "My Accuracy is %i", thisclient->Stats->Accury );
-             SendPM(thisclient, buffer); 
+             SendPM(thisclient, buffer);
          }
-         else if(strcmp(tmp, "dodge")==0) 
+         else if(strcmp(tmp, "dodge")==0)
          {
              sprintf ( buffer, "My dodge is %i", thisclient->Stats->Dodge);
-             SendPM(thisclient, buffer);  
+             SendPM(thisclient, buffer);
          }
-         else if(strcmp(tmp, "def")==0) 
+         else if(strcmp(tmp, "def")==0)
          {
              sprintf ( buffer, "My defense is %i", thisclient->Stats->Defense);
-             SendPM(thisclient, buffer);  
+             SendPM(thisclient, buffer);
          }
-         else if(strcmp(tmp, "crit")==0) 
+         else if(strcmp(tmp, "crit")==0)
          {
              sprintf ( buffer, "My critical is %i", thisclient->Stats->Critical);
-             SendPM(thisclient, buffer);  
+             SendPM(thisclient, buffer);
          }
-         else if(strcmp(tmp, "mspd")==0) 
+         else if(strcmp(tmp, "mspd")==0)
          {
              sprintf ( buffer, "My move speed is %i", thisclient->Stats->Move_Speed);
-             SendPM(thisclient, buffer);  
+             SendPM(thisclient, buffer);
          }
     }
 
- 
+
 
      // get all castlegear parts
     else if (strcmp(command, "cg")==0)
@@ -2341,7 +2399,7 @@ else if (strcmp(command, "give2")==0)
             ADDWORD( pak, BuildItemRefine( thisclient->items[124] ));   // REFINE
             ADDWORD( pak, thisclient->Stats->Move_Speed );  // REFINE 2602
             SendToVisible( &pak,thisclient );
- 
+
             //Fornef Engine
             thisclient->items[125].itemnum = 131;
             thisclient->items[125].itemtype = 14;
@@ -2361,7 +2419,7 @@ else if (strcmp(command, "give2")==0)
             ADDWORD( pak, BuildItemRefine( thisclient->items[125] ));   // REFINE
             ADDWORD( pak, thisclient->Stats->Move_Speed );  // REFINE 2602
             SendToVisible( &pak,thisclient );
- 
+
             //Stand Leg
             thisclient->items[126].itemnum = 231;
             thisclient->items[126].itemtype = 14;
@@ -2381,7 +2439,7 @@ else if (strcmp(command, "give2")==0)
             ADDWORD( pak, BuildItemRefine( thisclient->items[126] ));   // REFINE
             ADDWORD( pak, thisclient->Stats->Move_Speed );  // REFINE 2602
             SendToVisible( &pak,thisclient );
- 
+
             // Punch Arms
             thisclient->items[127].itemnum = 331;
             thisclient->items[127].itemtype = 14;
@@ -2401,7 +2459,7 @@ else if (strcmp(command, "give2")==0)
             ADDWORD( pak, BuildItemRefine( thisclient->items[127] ));   // REFINE
             ADDWORD( pak, thisclient->Stats->Move_Speed );  // REFINE 2602
             SendToVisible( &pak,thisclient );
- 
+
             //Drill Arms
             thisclient->items[128].itemnum = 332;
             thisclient->items[128].itemtype = 14;
@@ -2421,7 +2479,7 @@ else if (strcmp(command, "give2")==0)
             ADDWORD( pak, BuildItemRefine( thisclient->items[128] ));   // REFINE
             ADDWORD( pak, thisclient->Stats->Move_Speed );  // REFINE 2602
             SendToVisible( &pak,thisclient );
- 
+
             //Sword Wheel Arms
             thisclient->items[129].itemnum = 333;
             thisclient->items[129].itemtype = 14;
@@ -2441,7 +2499,7 @@ else if (strcmp(command, "give2")==0)
             ADDWORD( pak, BuildItemRefine( thisclient->items[129] ));   // REFINE
             ADDWORD( pak, thisclient->Stats->Move_Speed );  // REFINE 2602
             SendToVisible( &pak,thisclient );
- 
+
             //Cannon Arms
             thisclient->items[130].itemnum = 334;
             thisclient->items[130].itemtype = 14;
@@ -2461,7 +2519,7 @@ else if (strcmp(command, "give2")==0)
             ADDWORD( pak, BuildItemRefine( thisclient->items[131] ));   // REFINE
             ADDWORD( pak, thisclient->Stats->Move_Speed );  // REFINE 2602
             SendToVisible( &pak,thisclient );
- 
+
             //Spear Arms
             thisclient->items[131].itemnum = 335;
             thisclient->items[131].itemtype = 14;
@@ -2486,7 +2544,7 @@ else if (strcmp(command, "give2")==0)
         thisclient->SetStats( );
               return true;
      }
-     
+
 // get cart parts
     else if (strcmp(command, "cart")==0)
      {
@@ -2518,7 +2576,7 @@ else if (strcmp(command, "give2")==0)
             ADDWORD( pak, BuildItemRefine( thisclient->items[123] ));   // REFINE
             ADDWORD( pak, thisclient->Stats->Move_Speed );  // REFINE 2602
             SendToVisible( &pak,thisclient );
- 
+
             //Sporty R Frame
             thisclient->items[122].itemnum = 6;
             thisclient->items[122].itemtype = 14;
@@ -2538,7 +2596,7 @@ else if (strcmp(command, "give2")==0)
             ADDWORD( pak, BuildItemRefine( thisclient->items[122] ));   // REFINE
             ADDWORD( pak, thisclient->Stats->Move_Speed );  // REFINE 2602
             SendToVisible( &pak,thisclient );
- 
+
             //Dural Engines
             thisclient->items[121].itemnum = 103;
             thisclient->items[121].itemtype = 14;
@@ -2558,7 +2616,7 @@ else if (strcmp(command, "give2")==0)
             ADDWORD( pak, BuildItemRefine( thisclient->items[121] ));   // REFINE
             ADDWORD( pak, thisclient->Stats->Move_Speed );  // REFINE 2602
             SendToVisible( &pak,thisclient );
- 
+
             // Rapid Wheels
             thisclient->items[120].itemnum = 203;
             thisclient->items[120].itemtype = 14;
@@ -2578,7 +2636,7 @@ else if (strcmp(command, "give2")==0)
             ADDWORD( pak, BuildItemRefine( thisclient->items[120] ));   // REFINE
             ADDWORD( pak, thisclient->Stats->Move_Speed );  // REFINE 2602
             SendToVisible( &pak,thisclient );
- 
+
             //Spike Wheel
             thisclient->items[119].itemnum = 401;
             thisclient->items[119].itemtype = 14;
@@ -2598,7 +2656,7 @@ else if (strcmp(command, "give2")==0)
             ADDWORD( pak, BuildItemRefine( thisclient->items[119] ));   // REFINE
             ADDWORD( pak, thisclient->Stats->Move_Speed );  // REFINE 2602
             SendToVisible( &pak,thisclient );
- 
+
             //Speed Wing
             thisclient->items[118].itemnum = 402;
             thisclient->items[118].itemtype = 14;
@@ -2618,7 +2676,7 @@ else if (strcmp(command, "give2")==0)
             ADDWORD( pak, BuildItemRefine( thisclient->items[118] ));   // REFINE
             ADDWORD( pak, thisclient->Stats->Move_Speed );  // REFINE 2602
             SendToVisible( &pak,thisclient );
- 
+
             //Wind Booster
             thisclient->items[117].itemnum = 403;
             thisclient->items[117].itemtype = 14;
@@ -2638,7 +2696,7 @@ else if (strcmp(command, "give2")==0)
             ADDWORD( pak, BuildItemRefine( thisclient->items[117] ));   // REFINE
             ADDWORD( pak, thisclient->Stats->Move_Speed );  // REFINE 2602
             SendToVisible( &pak,thisclient );
- 
+
             //Jet Booster
             thisclient->items[116].itemnum = 404;
             thisclient->items[116].itemtype = 14;
@@ -2658,7 +2716,7 @@ else if (strcmp(command, "give2")==0)
             ADDWORD( pak, BuildItemRefine( thisclient->items[116] ));   // REFINE
             ADDWORD( pak, thisclient->Stats->Move_Speed );  // REFINE 2602
             SendToVisible( &pak,thisclient );
- 
+
             //Sun Roof
             thisclient->items[115].itemnum = 405;
             thisclient->items[115].itemtype = 14;
@@ -2678,7 +2736,7 @@ else if (strcmp(command, "give2")==0)
             ADDWORD( pak, BuildItemRefine( thisclient->items[115] ));   // REFINE
             ADDWORD( pak, thisclient->Stats->Move_Speed );  // REFINE 2602
             SendToVisible( &pak,thisclient );
- 
+
             //Meister W Frame
             thisclient->items[114].itemnum = 421;
             thisclient->items[114].itemtype = 14;
@@ -2698,7 +2756,7 @@ else if (strcmp(command, "give2")==0)
             ADDWORD( pak, BuildItemRefine( thisclient->items[114] ));   // REFINE
             ADDWORD( pak, thisclient->Stats->Move_Speed );  // REFINE 2602
             SendToVisible( &pak,thisclient );
- 
+
             //Meister R Frame
             thisclient->items[113].itemnum = 422;
             thisclient->items[113].itemtype = 14;
@@ -2718,7 +2776,7 @@ else if (strcmp(command, "give2")==0)
             ADDWORD( pak, BuildItemRefine( thisclient->items[113] ));   // REFINE
             ADDWORD( pak, thisclient->Stats->Move_Speed );  // REFINE 2602
             SendToVisible( &pak,thisclient );
- 
+
             //Meister B Frame
             thisclient->items[112].itemnum = 423;
             thisclient->items[112].itemtype = 14;
@@ -2738,7 +2796,7 @@ else if (strcmp(command, "give2")==0)
             ADDWORD( pak, BuildItemRefine( thisclient->items[112] ));   // REFINE
             ADDWORD( pak, thisclient->Stats->Move_Speed );  // REFINE 2602
             SendToVisible( &pak,thisclient );
- 
+
             //Meister Y Frame
             thisclient->items[111].itemnum = 424;
             thisclient->items[111].itemtype = 14;
@@ -2758,7 +2816,7 @@ else if (strcmp(command, "give2")==0)
             ADDWORD( pak, BuildItemRefine( thisclient->items[111] ));   // REFINE
             ADDWORD( pak, thisclient->Stats->Move_Speed );  // REFINE 2602
             SendToVisible( &pak,thisclient );
- 
+
             //Meister Pink Frame
             thisclient->items[110].itemnum = 425;
             thisclient->items[110].itemtype = 14;
@@ -2778,8 +2836,8 @@ else if (strcmp(command, "give2")==0)
             ADDWORD( pak, BuildItemRefine( thisclient->items[110] ));   // REFINE
             ADDWORD( pak, thisclient->Stats->Move_Speed );  // REFINE 2602
             SendToVisible( &pak,thisclient );
- 
- 
+
+
             //Chaser Engine
             thisclient->items[109].itemnum = 451;
             thisclient->items[109].itemtype = 14;
@@ -2799,7 +2857,7 @@ else if (strcmp(command, "give2")==0)
             ADDWORD( pak, BuildItemRefine( thisclient->items[109] ));   // REFINE
             ADDWORD( pak, thisclient->Stats->Move_Speed );  // REFINE 2602
             SendToVisible( &pak,thisclient );
- 
+
             //Meister Wheels
             thisclient->items[108].itemnum = 471;
             thisclient->items[108].itemtype = 14;
@@ -2819,7 +2877,7 @@ else if (strcmp(command, "give2")==0)
             ADDWORD( pak, BuildItemRefine( thisclient->items[108] ));   // REFINE
             ADDWORD( pak, thisclient->Stats->Move_Speed );  // REFINE 2602
             SendToVisible( &pak,thisclient );
- 
+
             //P.I.G. Frame
             thisclient->items[107].itemnum = 21;
             thisclient->items[107].itemtype = 14;
@@ -2839,7 +2897,7 @@ else if (strcmp(command, "give2")==0)
             ADDWORD( pak, BuildItemRefine( thisclient->items[107] ));   // REFINE
             ADDWORD( pak, thisclient->Stats->Move_Speed );  // REFINE 2602
             SendToVisible( &pak,thisclient );
- 
+
             //P.I.G. Engine
             thisclient->items[106].itemnum = 121;
             thisclient->items[106].itemtype = 14;
@@ -2859,7 +2917,7 @@ else if (strcmp(command, "give2")==0)
             ADDWORD( pak, BuildItemRefine( thisclient->items[106] ));   // REFINE
             ADDWORD( pak, thisclient->Stats->Move_Speed );  // REFINE 2602
             SendToVisible( &pak,thisclient );
- 
+
             //P.I.G. Wheels
             thisclient->items[105].itemnum = 221;
             thisclient->items[105].itemtype = 14;
@@ -2879,7 +2937,7 @@ else if (strcmp(command, "give2")==0)
             ADDWORD( pak, BuildItemRefine( thisclient->items[105] ));   // REFINE
             ADDWORD( pak, thisclient->Stats->Move_Speed );  // REFINE 2602
             SendToVisible( &pak,thisclient );
- 
+
             //P.I.G Balloon
             thisclient->items[104].itemnum = 321;
             thisclient->items[104].itemtype = 14;
@@ -2899,7 +2957,7 @@ else if (strcmp(command, "give2")==0)
             ADDWORD( pak, BuildItemRefine( thisclient->items[104] ));   // REFINE
             ADDWORD( pak, thisclient->Stats->Move_Speed );  // REFINE 2602
             SendToVisible( &pak,thisclient );
- 
+
             //Wooden Backseat
             thisclient->items[103].itemnum = 600;
             thisclient->items[103].itemtype = 14;
@@ -2919,7 +2977,7 @@ else if (strcmp(command, "give2")==0)
             ADDWORD( pak, BuildItemRefine( thisclient->items[103] ));   // REFINE
             ADDWORD( pak, thisclient->Stats->Move_Speed );  // REFINE 2602
             SendToVisible( &pak,thisclient );
- 
+
             //Steel Backseat
             thisclient->items[102].itemnum = 601;
             thisclient->items[102].itemtype = 14;
@@ -2945,14 +3003,14 @@ else if (strcmp(command, "give2")==0)
               return true;
     }
 
-   
+
     else
     {
 		Log( MSG_WARNING, "Invalid GM Command '%s' by '%s'", command, thisclient->CharInfo->charname);
 		//Wrong Command Alert {By CrAshInSiDe}
         SendPM(thisclient, "Invalid Command");
-	}    
-	return true;	
+	}
+	return true;
 }
 
 // GM: Announcment
@@ -2970,13 +3028,13 @@ bool CWorldServer::pakGMAnn( CPlayer* thisclient, CPacket *P )
 
 // GM: Spawn x mobs
 bool CWorldServer::pakGMMon( CPlayer* thisclient, int montype, int moncount )
-{  
-	for (int i=0; i<moncount; i++) 
+{
+	for (int i=0; i<moncount; i++)
     {
         fPoint position = RandInCircle( thisclient->Position->current, 10 );
         CMap* map = MapList.Index[thisclient->Position->Map];
         map->AddMonster( montype, position, 0, NULL, NULL, 0 , true );
-	}	
+	}
 	return true;
 }
 
@@ -2993,14 +3051,14 @@ bool CWorldServer::pakGMTele( CPlayer* thisclient, int map, float x, float y )
 // [by Paul_T] [Thanks to AridTag for the packet :D]
 bool CWorldServer::pakGMMute( CPlayer* thisclient, char* name, int time)
 {
-    CPlayer* otherclient = GetClientByCharName ( name ); 
+    CPlayer* otherclient = GetClientByCharName ( name );
     BEGINPACKET( pak, 0x70d );
     ADDBYTE    ( pak, 0 );
     ADDWORD    ( pak, time );
     ADDSTRING  ( pak, thisclient->CharInfo->charname );
     ADDBYTE    ( pak, 0 );
     otherclient->client->SendPacket( &pak );
-    return true;     
+    return true;
 }
 
 // GM: Item   - Modified by Hiei (added refine/socket/stats)
@@ -3019,10 +3077,10 @@ bool CWorldServer::pakGMItem( CPlayer* thisclient, UINT itemid, UINT itemtype, U
     item.gem = 0;
     item.sp_value=0;
     unsigned newslot = thisclient->GetNewItemSlot( item );
-    if (newslot != 0xffff) 
+    if (newslot != 0xffff)
     {
         thisclient->items[newslot] = item;
-        thisclient->UpdateInventory( newslot );        
+        thisclient->UpdateInventory( newslot );
         char buffer[200];
         sprintf( buffer, "Item added! (ID: %i) (Type: %i) (Refine: %i) (Socket: %i)", item.itemnum, item.itemtype, item.refine, item.socketed );
         BEGINPACKET ( pak, 0x702 );
@@ -3032,7 +3090,7 @@ bool CWorldServer::pakGMItem( CPlayer* thisclient, UINT itemid, UINT itemtype, U
 
     }else{
         BEGINPACKET( pak, 0x7a7 );
-        ADDWORD( pak, thisclient->clientid );        
+        ADDWORD( pak, thisclient->clientid );
         ADDBYTE( pak, 5 );
         thisclient->client->SendPacket( &pak );
 
@@ -3057,12 +3115,12 @@ bool CWorldServer::pakGMItemQuest( CPlayer* thisclient, UINT itemid, UINT itemty
     item.stats            = itemstats;
     item.socketed        = itemsocket;
     item.appraised        = 1;
-    item.gem = 0;          
+    item.gem = 0;
     unsigned newslot = thisclient->GetNewItemSlot( item );
-    if (newslot != 0xffff) 
+    if (newslot != 0xffff)
     {
         thisclient->items[newslot] = item;
-        thisclient->UpdateInventory( newslot );        
+        thisclient->UpdateInventory( newslot );
         char buffer[200];
         sprintf( buffer, "%s", buffer2);
         BEGINPACKET ( pak, 0x702 );
@@ -3072,7 +3130,7 @@ bool CWorldServer::pakGMItemQuest( CPlayer* thisclient, UINT itemid, UINT itemty
 
     }else{
         BEGINPACKET( pak, 0x7a7 );
-        ADDWORD( pak, thisclient->clientid );        
+        ADDWORD( pak, thisclient->clientid );
         ADDBYTE( pak, 5 );
         thisclient->client->SendPacket( &pak );
 
@@ -3128,34 +3186,34 @@ bool CWorldServer::pakGMBan( CPlayer* thisclient, char* name )
 
 // Reborn command credits Core
 bool CWorldServer::pakGMReborn(CPlayer* thisclient)
-{  
+{
      if(thisclient->Stats->Level < 250) //Level 250 can be changed to any level you want
      {
         GServer->SendPM(thisclient, "You have to be lvl 250 to reborn !");
-     }  
-     
+     }
+
      else
-     { 
+     {
         for(int i=0;i<MAX_SKILL;i++)  //For keeping the skills, remove this line
         {  //For keeping the skills, remove this line
             thisclient->cskills[i].id = 0;  //For keeping the skills, remove this line
             thisclient->cskills[i].level = 1;  //For keeping the skills, remove this line
         }  //For keeping the skills, remove this line
-    
+
         for(int i=0;i<MAX_QUICKBAR;i++)
             thisclient->quickbar[i] = 0;
-     
+
          thisclient->p_skills = 0;  //For keeping the skills, remove
-         thisclient->CharInfo->SkillPoints = 0; 
-         thisclient->CharInfo->StatPoints = 0; 
-         thisclient->CharInfo->Job = 0; 
-     
+         thisclient->CharInfo->SkillPoints = 0;
+         thisclient->CharInfo->StatPoints = 0;
+         thisclient->CharInfo->Job = 0;
+
          thisclient->Stats->Level = 1;
          thisclient->CharInfo->Exp = 0;
-     
+
          thisclient->ActiveQuest = 0;
          thisclient->MyQuest.clear();
-         
+
 /*Update Reborn Command {By CrAshInSiDe*/
         int x = 5098;
         int y = 5322;
@@ -3167,28 +3225,28 @@ bool CWorldServer::pakGMReborn(CPlayer* thisclient)
             coord.y = y;
             MapList.Index[map]->TeleportPlayer( thisclient, coord, false );
             }
-         
+
 
  // Uncomment below if you want to use the Nobles part
- /*        
+ /*
          char newcharname[65];
          strcpy (newcharname,"[Nobles]");
          strcat (newcharname, thisclient->CharInfo->charname);
          GServer->DB->QExecute(" UPDATE characters SET char_name = '%s' WHERE id = '%i' ",newcharname, thisclient->CharInfo->charid);
 */
-     
+
          BEGINPACKET( pak, 0x702 );
          ADDSTRING( pak, "You were disconnected from the server !" );
          ADDBYTE( pak, 0 );
          thisclient->client->SendPacket( &pak );
- 
+
          RESETPACKET( pak, 0x707 );
          ADDWORD( pak, 0 );
          thisclient->client->SendPacket( &pak );
- 
+
          thisclient->client->isActive = false;
       }
- 
+
      return true;
 }
 
@@ -3218,11 +3276,11 @@ bool CWorldServer::pakGMEventType(CPlayer* thisclient, int npctype, int dialog, 
     ADDWORD    ( pak, thisnpc->clientid );
     ADDWORD    ( pak, thisnpc->event );	  //LMA: Welcome in the real Word ^_^
     thisclient->client->SendPacket(&pak);
-    
+
     //Saving in database
     DB->QExecute("UPDATE npc_data SET dialog=%i, eventid=%i WHERE id=%i", dialog, type,npctype);
 
-    
+
 	return true;
 }
 
@@ -3275,7 +3333,7 @@ bool CWorldServer::pakGMZuly( CPlayer* thisclient, int mode, int amount, char* c
 	return true;
 }
 
-// Change player Level 
+// Change player Level
 bool CWorldServer::pakGMLevel( CPlayer* thisclient, int level, char* name )
 {
     CPlayer* otherclient = GetClientByCharName( name );
@@ -3285,8 +3343,8 @@ bool CWorldServer::pakGMLevel( CPlayer* thisclient, int level, char* name )
         otherclient->Stats->Level += level;
     else
         otherclient->Stats->Level = 1;
-    if (otherclient->Stats->Level > 250)  
-        otherclient->Stats->Level = 250;  
+    if (otherclient->Stats->Level > 250)
+        otherclient->Stats->Level = 250;
     otherclient->CharInfo->Exp = 0;
     if (level < 0) {
         otherclient->CharInfo->StatPoints = 0;
@@ -3348,24 +3406,24 @@ bool CWorldServer::ReloadMobSpawn( CPlayer* thisclient, int id )
     if(thisspawn->thisnpc==NULL)
     {
         SendSysMsg( thisclient, "Invalid Respawn" );
-        return true;	
+        return true;
     }
 	thisspawn->id = id;
 	thisspawn->map = thisclient->GMRespawnPoints.map;
 	thisspawn->montype = thisclient->GMRespawnPoints.mobID;
 	thisspawn->min = thisclient->GMRespawnPoints.min;
 	thisspawn->max = thisclient->GMRespawnPoints.max;
-	thisspawn->respawntime = thisclient->GMRespawnPoints.respawntime;		
+	thisspawn->respawntime = thisclient->GMRespawnPoints.respawntime;
 	thisspawn->pcount = thisclient->GMRespawnPoints.n;
-	thisspawn->points = thisclient->GMRespawnPoints.points;  
+	thisspawn->points = thisclient->GMRespawnPoints.points;
     CMap* map = MapList.Index[thisspawn->map];
-	for(int j=0; j<thisspawn->max; j++) 
-    {        
-        fPoint position = RandInPoly( thisspawn->points, thisspawn->pcount );             
-        map->AddMonster( thisspawn->montype, position, 0, thisspawn->mobdrop, thisspawn->mapdrop, thisspawn->id, true );                
+	for(int j=0; j<thisspawn->max; j++)
+    {
+        fPoint position = RandInPoly( thisspawn->points, thisspawn->pcount );
+        map->AddMonster( thisspawn->montype, position, 0, thisspawn->mobdrop, thisspawn->mapdrop, thisspawn->id, true );
 	}
-	thisspawn->lastRespawnTime=clock();	
-    return true;    
+	thisspawn->lastRespawnTime=clock();
+    return true;
 }
 
 // Teleport To player to other place
@@ -3394,7 +3452,7 @@ bool CWorldServer::pakGMTeleToPlayer( CPlayer* thisclient, char* name )
 	{
         MapList.Index[otherclient->Position->Map]->TeleportPlayer( thisclient, otherclient->Position->current, false );
 	}
-    else 
+    else
 	{
         SendSysMsg( thisclient, "User does not exist or is not online!" );
 	}
@@ -3406,11 +3464,11 @@ bool CWorldServer::pakGMTelePlayerHere( CPlayer* thisclient, char* name )
 {
 	CPlayer* otherclient = GetClientByCharName( name );
 	if (otherclient != NULL)
-	{        
+	{
         CMap* map = MapList.Index[thisclient->Position->Map];
         map->TeleportPlayer( otherclient, thisclient->Position->current, false );
 	}
-    else 
+    else
 	{
         SendSysMsg( thisclient, "User does not exist or is not online!");
 	}
@@ -3481,23 +3539,23 @@ bool CWorldServer::pakGMInfo(CPlayer* thisclient, char* name)
 bool CWorldServer::pakGMClanRewardPoints(CPlayer* thisclient, char* name, int points)
 {
   	CPlayer* otherclient = GetClientByCharName (name);
-	if(otherclient==NULL){ 
+	if(otherclient==NULL){
         BEGINPACKET(pak, 0x702);
 		ADDSTRING(pak, "User does not exist or is not online.");
 		ADDBYTE(pak, 0);
 		thisclient->client->SendPacket(&pak);
         return true;
-    }   
-     
+    }
+
      if (otherclient->Clan->clanid==0)
      {
         BEGINPACKET(pak, 0x702);
 		ADDSTRING(pak, "User does not have a clan.");
 		ADDBYTE(pak, 0);
 		thisclient->client->SendPacket(&pak);
-        return true;                                      
+        return true;
      }
-     
+
      //adding points if needed
      //Asking CharServer to refresh the player's informations.
     if (points>0)
@@ -3509,13 +3567,13 @@ bool CWorldServer::pakGMClanRewardPoints(CPlayer* thisclient, char* name, int po
         ADDSTRING( pak, buffer );
         ADDBYTE( pak, 0 );
         otherclient->client->SendPacket( &pak );
-        
-        RESETPACKET( pak, 0x7e0 );	
+
+        RESETPACKET( pak, 0x7e0 );
      	ADDBYTE    ( pak, 0xff );
     	ADDWORD    ( pak, otherclient->CharInfo->charid);  //charid
     	ADDDWORD    ( pak, thisclient->CharInfo->rewardpoints);  //reward points (TOTAL)
     	cryptPacket( (char*)&pak, GServer->cct );
-    	send( csock, (char*)&pak, pak.Size, 0 );         
+    	send( csock, (char*)&pak, pak.Size, 0 );
     }
     else
     {
@@ -3524,11 +3582,11 @@ bool CWorldServer::pakGMClanRewardPoints(CPlayer* thisclient, char* name, int po
     	ADDWORD    ( pak, otherclient->CharInfo->charid);  //charid
     	ADDDWORD    ( pak, thisclient->CharInfo->rewardpoints);  //reward points (TOTAL)
     	cryptPacket( (char*)&pak, GServer->cct );
-    	send( csock, (char*)&pak, pak.Size, 0 );        
+    	send( csock, (char*)&pak, pak.Size, 0 );
     }
 
 
-     return true;     
+     return true;
 }
 
 // Add Fairy
@@ -3538,11 +3596,11 @@ bool CWorldServer::pakGMFairyto(CPlayer* thisclient, char* name, int mode)
         BEGINPACKET(pak, 0x702);
 		ADDSTRING(pak, "Fairy feature is de-activated.");
 		ADDBYTE(pak, 0);
-		thisclient->client->SendPacket(&pak);                            
+		thisclient->client->SendPacket(&pak);
         return true;
     }
 	CPlayer* otherclient = GetClientByCharName (name);
-	if(otherclient==NULL){ 
+	if(otherclient==NULL){
         BEGINPACKET(pak, 0x702);
 		ADDSTRING(pak, "User does not exist or is not online.");
 		ADDBYTE(pak, 0);
@@ -3556,7 +3614,7 @@ bool CWorldServer::pakGMFairyto(CPlayer* thisclient, char* name, int mode)
 		thisclient->client->SendPacket(&pak);
         return true;
     }
-    if(mode == 1 && otherclient->Fairy == true){ 
+    if(mode == 1 && otherclient->Fairy == true){
         BEGINPACKET(pak, 0x702);
 		ADDSTRING(pak, "User already fairied.");
 		ADDBYTE(pak, 0);
@@ -3564,32 +3622,32 @@ bool CWorldServer::pakGMFairyto(CPlayer* thisclient, char* name, int mode)
         return true;
     }
     if(!otherclient->Fairy && mode == 1){
-          int FairyIndex=100;                  
+          int FairyIndex=100;
           for (int i=0; i<GServer->Config.FairyMax; i++){
                if (GServer->FairyList.at(i)->assigned == false){
                    FairyIndex=i;
                    i=GServer->Config.FairyMax;
                }
-          } 
+          }
           if (FairyIndex == 100){
               BEGINPACKET(pak, 0x702);
 		      ADDSTRING(pak, "No free Fairy.");
 		      ADDBYTE(pak, 0);
 		      thisclient->client->SendPacket(&pak);
 		      return true;
-          }  
+          }
           BEGINPACKET(pak, 0x702);
 		  ADDSTRING(pak, "User fairied.");
 		  ADDBYTE(pak, 0);
-		  thisclient->client->SendPacket(&pak);                                           
+		  thisclient->client->SendPacket(&pak);
           int ListIndex;
           for (int i=0; i<ClientList.size(); i++){
-              if (GServer->ClientList.at(i)->player == otherclient){ 
-                 ListIndex = i; 
+              if (GServer->ClientList.at(i)->player == otherclient){
+                 ListIndex = i;
                  i = GServer->ClientList.size();
-              }  
+              }
           }
-          otherclient->Fairy = true; 
+          otherclient->Fairy = true;
           otherclient->FairyListIndex = FairyIndex;
           GServer->FairyList.at(FairyIndex)->ListIndex = ListIndex;
           GServer->FairyList.at(FairyIndex)->assigned = true;
@@ -3599,7 +3657,7 @@ bool CWorldServer::pakGMFairyto(CPlayer* thisclient, char* name, int mode)
           otherclient->SetStats();
           Log( MSG_INFO, "HP: %i  MP: %i  ATK: %i   DEF: %i   CRI: %i  MSPD: %i", otherclient->Stats->MaxHP, otherclient->Stats->MaxMP, otherclient->Stats->Attack_Power, otherclient->Stats->Defense, otherclient->Stats->Critical, otherclient->Stats->Move_Speed);
     }
-    if(otherclient->Fairy && mode == 0){               
+    if(otherclient->Fairy && mode == 0){
           GServer->DoFairyFree(otherclient->FairyListIndex);
           GServer->FairyList.at(otherclient->FairyListIndex)->WaitTime = GServer->Config.FairyWait;
           otherclient->Fairy = false;
@@ -3608,10 +3666,10 @@ bool CWorldServer::pakGMFairyto(CPlayer* thisclient, char* name, int mode)
           BEGINPACKET(pak, 0x702);
 		  ADDSTRING(pak, "User unfairied.");
 		  ADDBYTE(pak, 0);
-		  otherclient->client->SendPacket(&pak); 
+		  otherclient->client->SendPacket(&pak);
           otherclient->SetStats();
-          Log( MSG_INFO, "HP: %i  MP: %i  ATK: %i   DEF: %i   CRI: %i  MSPD: %i", otherclient->Stats->MaxHP, otherclient->Stats->MaxMP, otherclient->Stats->Attack_Power, otherclient->Stats->Defense, otherclient->Stats->Critical, otherclient->Stats->Move_Speed);  
-    }      
+          Log( MSG_INFO, "HP: %i  MP: %i  ATK: %i   DEF: %i   CRI: %i  MSPD: %i", otherclient->Stats->MaxHP, otherclient->Stats->MaxMP, otherclient->Stats->Attack_Power, otherclient->Stats->Defense, otherclient->Stats->Critical, otherclient->Stats->Move_Speed);
+    }
     otherclient->SetStats();
 	return true;
 }
@@ -3621,14 +3679,14 @@ bool CWorldServer::pakGMFairyto(CPlayer* thisclient, char* name, int mode)
 bool CWorldServer::pakGMHurtHim(CPlayer* thisclient, char* name)
 {
 	CPlayer* otherclient = GetClientByCharName (name);
-	if(otherclient==NULL){ 
+	if(otherclient==NULL){
         BEGINPACKET(pak, 0x702);
 		ADDSTRING(pak, "User does not exist or is not online.");
 		ADDBYTE(pak, 0);
 		thisclient->client->SendPacket(&pak);
         return true;
     }
-    
+
     otherclient->Stats->HP=(long int) 10*otherclient->Stats->MaxHP/100;
     otherclient->Stats->MP=(long int) 10*otherclient->Stats->MaxMP/100;
     otherclient->SetStats();
@@ -3638,30 +3696,30 @@ bool CWorldServer::pakGMHurtHim(CPlayer* thisclient, char* name)
 // Activate de-activate Fairy mode in game
 bool CWorldServer::pakGMManageFairy(CPlayer* thisclient, int mode)
 {
-    BEGINPACKET (pak, 0x702); 
+    BEGINPACKET (pak, 0x702);
 	if(mode == 0){
         if (GServer->Config.FairyMode != mode){
 	        GServer->Config.FairyMode = 0;
-            ADDSTRING(pak, "You have de-activated the Fairy mode ingame."); 
-        }else{  
+            ADDSTRING(pak, "You have de-activated the Fairy mode ingame.");
+        }else{
             ADDSTRING(pak, "The Fairy mode is already de-activated.");
-        } 
-    }else{       
+        }
+    }else{
       	if (GServer->Config.FairyMode != mode){
 	        GServer->Config.FairyMode = 1;
             for (int i=0; i<GServer->Config.FairyMax; i++)
             {
                 GServer->DoFairyFree(i);
-                GServer->FairyList.at(i)->WaitTime = GServer->Config.FairyWait;    
+                GServer->FairyList.at(i)->WaitTime = GServer->Config.FairyWait;
             }
-            ADDSTRING(pak, "You have activated the Fairy mode ingame."); 
-        }else{  
+            ADDSTRING(pak, "You have activated the Fairy mode ingame.");
+        }else{
             ADDSTRING(pak, "The Fairy mode is already activated.");
-        }  
-    } 	
-    ADDBYTE(pak, 0); 
+        }
+    }
+    ADDBYTE(pak, 0);
     thisclient->client->SendPacket(&pak);
-     
+
 	return true;
 }
 
@@ -3672,34 +3730,34 @@ bool CWorldServer::pakGMChangeFairyWait(CPlayer* thisclient, int newvalue)
     for (int i=0; i<GServer->FairyList.size(); i++){
         GServer->FairyList.at(i)->WaitTime = newvalue;
     }
-    BEGINPACKET (pak, 0x702); 
+    BEGINPACKET (pak, 0x702);
     ADDSTRING(pak, "You have changed the time between each Fairies");
-    ADDBYTE(pak, 0); 
-    thisclient->client->SendPacket(&pak);   
+    ADDBYTE(pak, 0);
+    thisclient->client->SendPacket(&pak);
 	return true;
 }
 
 // Change FairyStay
 bool CWorldServer::pakGMChangeFairyStay(CPlayer* thisclient, int newvalue)
 {
-    GServer->Config.FairyStay = newvalue; 
-    BEGINPACKET (pak, 0x702); 
+    GServer->Config.FairyStay = newvalue;
+    BEGINPACKET (pak, 0x702);
     ADDSTRING(pak, "You have changed the time of Fairies for Buffing ");
-    ADDBYTE(pak, 0); 
-    thisclient->client->SendPacket(&pak);   
+    ADDBYTE(pak, 0);
+    thisclient->client->SendPacket(&pak);
 	return true;
 }
 
-// Change Fairy Test mode. 
+// Change Fairy Test mode.
 // 0 -> normal random x * Fairywait
 // 1 -> Test mode activated: 1 * Fairywait only
 bool CWorldServer::pakGMChangeFairyTestMode(CPlayer* thisclient, int mode)
 {
-    GServer->Config.FairyTestMode = mode; 
-    BEGINPACKET (pak, 0x702); 
+    GServer->Config.FairyTestMode = mode;
+    BEGINPACKET (pak, 0x702);
     ADDSTRING(pak, "You have changed the Fairy test mode.");
-    ADDBYTE(pak, 0); 
-    thisclient->client->SendPacket(&pak);   
+    ADDBYTE(pak, 0);
+    thisclient->client->SendPacket(&pak);
 	return true;
 }
 
@@ -3731,7 +3789,7 @@ bool CWorldServer::pakGMUnion(CPlayer* thisclient, char* name, int which_union)
     if(otherclient==NULL)
         return true;
     if(which_union<0||which_union>7)
-      return true;        
+      return true;
 
     if(which_union==0)
     {
@@ -3742,22 +3800,22 @@ bool CWorldServer::pakGMUnion(CPlayer* thisclient, char* name, int which_union)
         ADDWORD( pak, 0x0000 );
         ADDWORD( pak, 0x0000 );
         otherclient->client->SendPacket( &pak );
-        
+
     	RESETPACKET( pak, 0x730 );
         ADDWORD    ( pak, 0x0005 );
         ADDDWORD   ( pak, 0x40b3a24d );
-        otherclient->client->SendPacket( &pak );            
-                
+        otherclient->client->SendPacket( &pak );
+
        char buffer[200];
        sprintf ( buffer, "GM %s made you left the Union.",thisclient->CharInfo->charname);
        SendPM(otherclient, buffer);
-       
+
        Log( MSG_GMACTION, "Union set to %i for %s by %s" , which_union,name,thisclient->CharInfo->charname);
-       
+
        thisclient->CharInfo->unionid=0;
        return true;
     }
-    
+
     //LMA: changing union :)
     BEGINPACKET( pak, 0x721 );
     ADDWORD( pak, 0x05 );
@@ -3767,11 +3825,11 @@ bool CWorldServer::pakGMUnion(CPlayer* thisclient, char* name, int which_union)
 	RESETPACKET( pak, 0x730 );
     ADDWORD    ( pak, 0x0005 );
     ADDDWORD   ( pak, 0x40b3a24d );
-    otherclient->client->SendPacket( &pak );                 
-    
+    otherclient->client->SendPacket( &pak );
+
    char buffer[200];
    sprintf ( buffer, "Welcome to union %i, %s",which_union,otherclient->CharInfo->charname);
-   SendPM(otherclient, buffer);        
+   SendPM(otherclient, buffer);
    thisclient->CharInfo->unionid=which_union;
    Log( MSG_GMACTION, "Union set to %i for %s by %s" , which_union,name,thisclient->CharInfo->charname);
 
@@ -3787,10 +3845,10 @@ bool CWorldServer::pakGMUnionPoints(CPlayer* thisclient, char* name, int nb_poin
     {
         return true;
     }
-    
+
     if(nb_points<=0)
     {
-      return true;        
+      return true;
     }
 
     otherclient->CharInfo->union05+=nb_points;
@@ -3803,7 +3861,7 @@ bool CWorldServer::pakGMUnionPoints(CPlayer* thisclient, char* name, int nb_poin
     ADDWORD    ( pak, 0x0005 );
     ADDDWORD   ( pak, 0x40b3a24d );
     otherclient->client->SendPacket( &pak );
-           
+
    char buffer[200];
    sprintf ( buffer, "You have been given %i Faction Points by %s",nb_points,thisclient->CharInfo->charname);
    SendPM(otherclient, buffer);
@@ -3815,32 +3873,90 @@ bool CWorldServer::pakGMUnionPoints(CPlayer* thisclient, char* name, int nb_poin
 
 
 //LMA: setting union war or union slaughter
-bool CWorldServer::pakGMUnionMode(CPlayer* thisclient, char* namemode, int value)
+bool CWorldServer::pakGMUnionMode(CPlayer* thisclient, char* namemode, int value_on_off, int value_begin, int value_duration,int value_nb_players, int value_loop, int value_loop_delay)
 {
+   int value=0;
+
+
+    value=value_on_off;
+
    if (strcmp(namemode, "uw")==0)
    {
        if (value<0||value>1)
           value=0;
 
-       CMap* map = MapList.Index[9];       
+       CMap* map = MapList.Index[9];
        if(value==0)
-       {         
+       {
          if (map->is_uw_fired)
          {
             SendPM(thisclient,"You can't cancel Union War now, a session is running...");
             return true;
          }
-         
+
        }
-       
+       else
+       {
+         if (map->announce_done)
+         {
+            SendPM(thisclient,"You can't enable Union War now, it is already on...");
+            return true;
+         }
+
+        }
+
+        if(value==0)
+        {
+           GServer->UWNPCdialogs(0);
+           map->uw_end=0;
+           map->is_uw_fired=false;
+           map->uw_begin=0;
+           map->announce_done=false;
+           map->uw_loop=false;
+           map->uw_delay_loop=0;
+           map->uw_duration=0;
+           Config.unionwar=value;
+           Config.unionwarloop=0;
+           Config.unionwardelay_loop=0;
+           Config.unionwarduration=0;
+           Config.unionwarmin=0;
+           char line0[200];
+           sprintf(line0,"We set Union War to OFF .");
+            SendPM(thisclient,line0);
+            Log( MSG_GMACTION, " Union War set to OFF by %s" ,thisclient->CharInfo->charname);
+            return true;
+        }
+
+        //We want to set it on :)
+        if(value_duration==0||(value_loop!=0&&value_loop_delay==0)||value_begin==0||value_nb_players<=0)
+        {
+             char line0[200];
+           sprintf(line0,"Uncorrect values for Union wars, duration is 0 or delay loop is 0 when loop is enabled...");
+            SendPM(thisclient,line0);
+            return true;
+        }
+
+       time_t etime=time(NULL);
        GServer->UWNPCdialogs(0);
-       map->uw_begin=0;
+       map->uw_end=0;
+       map->is_uw_fired=false;
+       map->uw_begin=etime+(60*value_begin);
+       map->announce_done=false;
+       map->uw_loop=value_loop;
+       map->uw_delay_loop=value_loop_delay;
+       map->uw_duration=value_duration;
        Config.unionwar=value;
+       Config.unionwarloop=value_loop;
+       Config.unionwardelay_loop=value_loop_delay;
+       Config.unionwarduration=value_duration;
+       Config.unionwarmin=value_nb_players;
        char line0[200];
-       sprintf(line0,"We set Union War to %i .",Config.unionwar);
+       sprintf(line0,"UW ON in %i min, dur %i min, nb players %i, loop? %i, loopdelay=%i.",value_begin,value_duration,value_nb_players,value_loop,value_loop_delay);
         SendPM(thisclient,line0);
-	    Log( MSG_GMACTION, " Union slaunghter set at %i by %s" , Config.unionwar, thisclient->CharInfo->charname);
-        return true;          
+        Log( MSG_GMACTION, "UW ON in %i min, dur %i min, nb players %i, loop? %i, loopdelay=%i by %s.",value_begin,value_duration,value_nb_players,value_loop,value_loop_delay,thisclient->CharInfo->charname);
+
+
+        return true;
    }
 
    //Union Slaughter
@@ -3849,21 +3965,50 @@ bool CWorldServer::pakGMUnionMode(CPlayer* thisclient, char* namemode, int value
 
    CMap* map = MapList.Index[8];
    if(value==0)
-   {         
+   {
      if (map->is_union_fired)
      {
         SendPM(thisclient,"You can't cancel Union Slaughter now, a session is running...");
         return true;
      }
-     
+
    }
-   
-   map->utime_begin=0;
-   Config.unionslaughter=value;
-   char line0[200];
-   sprintf(line0,"We set Union slaunghter to %i .",Config.unionslaughter);
-    SendPM(thisclient,line0);
-    Log( MSG_GMACTION, " Union slaunghter set at %i by %s" , Config.unionslaughter, thisclient->CharInfo->charname);                          
+
+    if(value==0)
+    {
+        map->utime_begin=0;
+        Config.unionslaughter=value;
+        char line0[200];
+        sprintf(line0,"We set Union slaughter to OFF .");
+        SendPM(thisclient,line0);
+        Log( MSG_GMACTION, " Union slaughter set OFF by %s" , thisclient->CharInfo->charname);
+        return true;
+    }
+
+        //We want to set it on :)
+        if(value_duration==0||(value_loop!=0&&value_loop_delay==0)||value_begin==0||value_nb_players<=0)
+        {
+             char line0[200];
+           sprintf(line0,"Uncorrect values for Union Slaughter, duration is 0 or delay loop is 0 when loop is enabled...");
+            SendPM(thisclient,line0);
+            return true;
+        }
+
+       time_t etime=time(NULL);
+       map->utime_end=0;
+       map->utime_begin=etime+(60*value_begin);
+       map->us_loop=value_loop;
+       map->us_delay_loop=value_loop_delay;
+       map->us_duration=value_duration;
+       Config.unionslaughter=value;
+       Config.unionslaughterloop=value_loop;
+       Config.unionslaughterdelay_loop=value_loop_delay;
+       Config.unionduration=value_duration;
+       Config.unionmin=value_nb_players;
+       char line0[200];
+       sprintf(line0,"US ON in %i min, dur %i min, nb players %i, loop? %i, loopdelay=%i.",value_begin,value_duration,value_nb_players,value_loop,value_loop_delay);
+        SendPM(thisclient,line0);
+        Log( MSG_GMACTION, "US ON in %i min, dur %i min, nb players %i, loop? %i, loopdelay=%i by %s.",value_begin,value_duration,value_nb_players,value_loop,value_loop_delay,thisclient->CharInfo->charname);
 
 
      return true;
@@ -3883,20 +4028,20 @@ bool CWorldServer::pakGMNpc(CPlayer* thisclient, int npcid,int dialogid,int even
 	thisnpc->thisnpc->dialogid = dialogid;
 	thisnpc->event=eventid;
 	if( thisnpc->thisnpc==NULL ) return true;
-	CMap* map = MapList.Index[thisclient->Position->Map];	
+	CMap* map = MapList.Index[thisclient->Position->Map];
 	map->AddNPC( thisnpc );
     char buffer[200];
     sprintf( buffer, "NPC Spawned! (NPC: %i) (Dialog: %i) (Event: %i)", npcid, dialogid,eventid );
     BEGINPACKET ( pak, 0x702 );
     ADDSTRING( pak, buffer );
     ADDBYTE( pak, 0 );
-    thisclient->client->SendPacket( &pak );	
+    thisclient->client->SendPacket( &pak );
 	return true;
 }
 
 // Give Item to Player
-bool CWorldServer::pakGMItemtoplayer(CPlayer* thisclient, char* name , UINT itemid, UINT itemtype, UINT itemamount, UINT itemrefine, UINT itemls, UINT itemstats, UINT itemsocket) 
-{ 
+bool CWorldServer::pakGMItemtoplayer(CPlayer* thisclient, char* name , UINT itemid, UINT itemtype, UINT itemamount, UINT itemrefine, UINT itemls, UINT itemstats, UINT itemsocket)
+{
     CItem item;
     item.count            = itemamount;
     item.durability        = 40;
@@ -3907,35 +4052,35 @@ bool CWorldServer::pakGMItemtoplayer(CPlayer* thisclient, char* name , UINT item
     item.stats            = itemstats;
     item.socketed        = itemsocket;
     item.appraised        = 1;
-    item.gem = 0;  
-    
-   CPlayer* otherclient = GetClientByCharName ( name ); 
- 
-   if(otherclient != NULL) { 
-      unsigned newslot = otherclient->GetNewItemSlot( item ); 
-      if(newslot != 0xffff) { 
-         otherclient->items[newslot] = item; 
+    item.gem = 0;
+
+   CPlayer* otherclient = GetClientByCharName ( name );
+
+   if(otherclient != NULL) {
+      unsigned newslot = otherclient->GetNewItemSlot( item );
+      if(newslot != 0xffff) {
+         otherclient->items[newslot] = item;
          otherclient->UpdateInventory( newslot );
- 
-         BEGINPACKET (pak, 0x702); 
-         ADDSTRING(pak, "You have recieved an item from a GM !"); 
-         ADDBYTE(pak, 0); 
-         otherclient->client->SendPacket(&pak); 
- 
-         RESETPACKET (pak, 0x702); 
-         ADDSTRING(pak, "Item has been given!"); 
-         ADDBYTE(pak, 0); 
-         thisclient->client->SendPacket(&pak); 
-      } 
-      else { 
-         BEGINPACKET (pak, 0x702); 
-         ADDSTRING(pak, "No free slot !"); 
-         ADDBYTE(pak, 0); 
-         thisclient->client->SendPacket(&pak); 
-      } 
-   } 
- 
-   return true; 
+
+         BEGINPACKET (pak, 0x702);
+         ADDSTRING(pak, "You have recieved an item from a GM !");
+         ADDBYTE(pak, 0);
+         otherclient->client->SendPacket(&pak);
+
+         RESETPACKET (pak, 0x702);
+         ADDSTRING(pak, "Item has been given!");
+         ADDBYTE(pak, 0);
+         thisclient->client->SendPacket(&pak);
+      }
+      else {
+         BEGINPACKET (pak, 0x702);
+         ADDSTRING(pak, "No free slot !");
+         ADDBYTE(pak, 0);
+         thisclient->client->SendPacket(&pak);
+      }
+   }
+
+   return true;
 }
 
 // Do Emotion
@@ -3999,10 +4144,10 @@ bool CWorldServer::pakGMStat( CPlayer* thisclient, char* statname, int statvalue
 bool CWorldServer::pakGMGotomap( CPlayer* thisclient, int map )
 {
     CRespawnPoint* thisrespawn = MapList.Index[map]->GetFirstRespawn( );
-    if(thisrespawn==NULL) 
+    if(thisrespawn==NULL)
     {
         SendSysMsg( thisclient, "This map have no respawn" );
-        return true;    
+        return true;
     }
     MapList.Index[map]->TeleportPlayer( thisclient, thisrespawn->dest, false );
 	return true;
@@ -4010,7 +4155,7 @@ bool CWorldServer::pakGMGotomap( CPlayer* thisclient, int map )
 
 // Heal a player ( by rl2171 )
 // need to double check function - no errors compiling, but not healing MP and stamina
-// playerdata.cpp has this value - CharInfo->MaxStamina = 5000;  
+// playerdata.cpp has this value - CharInfo->MaxStamina = 5000;
 // chartype.h has this value -  unsigned int MaxStamina;
 bool CWorldServer::pakGMHeal( CPlayer* thisclient )
 {
@@ -4034,14 +4179,14 @@ bool CWorldServer::pakGMServerInfo( CPlayer* thisclient )
 	ADDSTRING( pak, "[SYS]ServerInfo" );
 	ADDBYTE( pak, 0 );
 	ADDSTRING( pak, "SERVER INFORMATION" );
-	ADDBYTE( pak, 0 );                    
-	thisclient->client->SendPacket( &pak );    
+	ADDBYTE( pak, 0 );
+	thisclient->client->SendPacket( &pak );
 	sprintf( buffer, "Online Players: %i", (int)ClientList.size()-1 );// -1 (we don't count charserver)
 	RESETPACKET( pak, 0x0784 );
 	ADDSTRING( pak, "[SYS]ServerInfo" );
 	ADDBYTE( pak, 0 );
 	ADDSTRING( pak, buffer );
-	ADDBYTE( pak, 0 );                    
+	ADDBYTE( pak, 0 );
 	thisclient->client->SendPacket( &pak );
     // Exp / Zulies / Drop rates
 	sprintf( buffer, "Exp %i | Zulies %i | Drops %i", Config.EXP_RATE, Config.ZULY_RATE, Config.DROP_RATE );
@@ -4049,106 +4194,106 @@ bool CWorldServer::pakGMServerInfo( CPlayer* thisclient )
 	ADDSTRING( pak, "[SYS]ServerInfo" );
 	ADDBYTE( pak, 0 );
 	ADDSTRING( pak, buffer );
-	ADDBYTE( pak, 0 );                    
+	ADDBYTE( pak, 0 );
 	thisclient->client->SendPacket( &pak );
 	// Send map time
 	if(MapList.Index[thisclient->Position->Map]!=NULL)
 	{
     	RESETPACKET( pak, 0x0784 );
-    	ADDSTRING( pak, "[SYS]ServerInfo" );	
+    	ADDSTRING( pak, "[SYS]ServerInfo" );
     	ADDBYTE( pak, 0 );
     	switch(MapList.Index[thisclient->Position->Map]->CurrentTime)
     	{
             case MORNING:
                 sprintf( buffer, "The Time is: Morning[%i]", MapList.Index[thisclient->Position->Map]->MapTime%MapList.Index[thisclient->Position->Map]->dayperiod );
                 ADDSTRING( pak, buffer );
-            break;            
+            break;
             case DAY:
                 sprintf( buffer, "The Time is: Day[%i]", MapList.Index[thisclient->Position->Map]->MapTime%MapList.Index[thisclient->Position->Map]->dayperiod );
                 ADDSTRING( pak, buffer );
             break;
             case EVENING:
                 sprintf( buffer, "The Time is: Evening[%i]", MapList.Index[thisclient->Position->Map]->MapTime%MapList.Index[thisclient->Position->Map]->dayperiod );
-                ADDSTRING( pak, buffer );                
+                ADDSTRING( pak, buffer );
             break;
             case NIGHT:
                 sprintf( buffer, "The Time is: Night[%i]", MapList.Index[thisclient->Position->Map]->MapTime%MapList.Index[thisclient->Position->Map]->dayperiod );
-                ADDSTRING( pak, buffer );                
+                ADDSTRING( pak, buffer );
             break;
             default:
                 sprintf( buffer, "Invalid Time is the End of world [%i]", MapList.Index[thisclient->Position->Map]->MapTime );
-                ADDSTRING( pak, buffer );                
+                ADDSTRING( pak, buffer );
         }
-    	ADDBYTE( pak, 0 );                    
-    	thisclient->client->SendPacket( &pak );	
+    	ADDBYTE( pak, 0 );
+    	thisclient->client->SendPacket( &pak );
     }
 	return true;
 }
 
 // Show Target Info
 bool CWorldServer::GMShowTargetInfo( CPlayer* thisclient )
-{    
+{
     if(thisclient->Battle->target==0) return true;
     char buffer[200];
     CMonster* monster = GetMonsterByID( thisclient->Battle->target, thisclient->Position->Map );
     if(monster==NULL) return true;
     float dist = distance( thisclient->Position->current, monster->Position->current );
-    sprintf( buffer, "Target Position: %.4f, %.4f", monster->Position->current.x, monster->Position->current.y ); 
+    sprintf( buffer, "Target Position: %.4f, %.4f", monster->Position->current.x, monster->Position->current.y );
     BEGINPACKET( pak, 0x784 );
     ADDSTRING  ( pak, "[SYS]TargetInfo" );
     ADDBYTE    ( pak, 0 );
     ADDSTRING  ( pak, buffer );
-	ADDBYTE( pak, 0 );     
-    thisclient->client->SendPacket( &pak );    
+	ADDBYTE( pak, 0 );
+    thisclient->client->SendPacket( &pak );
     sprintf( buffer, "Distance: %.0f",	dist );
     RESETPACKET( pak, 0x784 );
     ADDSTRING  ( pak, "[SYS]TargetInfo" );
     ADDBYTE    ( pak, 0 );
     ADDSTRING  ( pak, buffer );
-	ADDBYTE( pak, 0 );         
-    thisclient->client->SendPacket( &pak ); 
+	ADDBYTE( pak, 0 );
+    thisclient->client->SendPacket( &pak );
     sprintf( buffer, "Target Defense: %i", monster->Stats->Defense );
     RESETPACKET( pak, 0x784 );
     ADDSTRING  ( pak, "[SYS]TargetInfo" );
     ADDBYTE    ( pak, 0 );
     ADDSTRING  ( pak, buffer );
-	ADDBYTE( pak, 0 );         
-    thisclient->client->SendPacket( &pak );      
+	ADDBYTE( pak, 0 );
+    thisclient->client->SendPacket( &pak );
     sprintf( buffer, "Target Level: %i", monster->thisnpc->level );
     RESETPACKET( pak, 0x784 );
     ADDSTRING  ( pak, "[SYS]TargetInfo" );
     ADDBYTE    ( pak, 0 );
     ADDSTRING  ( pak, buffer );
-	ADDBYTE( pak, 0 );         
-    thisclient->client->SendPacket( &pak );     
+	ADDBYTE( pak, 0 );
+    thisclient->client->SendPacket( &pak );
     sprintf( buffer, "Target Attack Power: %i", monster->Stats->Attack_Power );
     RESETPACKET( pak, 0x784 );
     ADDSTRING  ( pak, "[SYS]TargetInfo" );
     ADDBYTE    ( pak, 0 );
     ADDSTRING  ( pak, buffer );
-	ADDBYTE( pak, 0 );         
-    thisclient->client->SendPacket( &pak );             
+	ADDBYTE( pak, 0 );
+    thisclient->client->SendPacket( &pak );
     sprintf( buffer, "Target Attack Speed: %.0f", monster->Stats->Attack_Speed );
     RESETPACKET( pak, 0x784 );
     ADDSTRING  ( pak, "[SYS]TargetInfo" );
     ADDBYTE    ( pak, 0 );
     ADDSTRING  ( pak, buffer );
-	ADDBYTE( pak, 0 );         
-    thisclient->client->SendPacket( &pak );   
+	ADDBYTE( pak, 0 );
+    thisclient->client->SendPacket( &pak );
     sprintf( buffer, "Target Move Speed: %i", monster->Stats->Move_Speed );
     RESETPACKET( pak, 0x784 );
     ADDSTRING  ( pak, "[SYS]TargetInfo" );
     ADDBYTE    ( pak, 0 );
     ADDSTRING  ( pak, buffer );
-	ADDBYTE( pak, 0 );         
-    thisclient->client->SendPacket( &pak );       
+	ADDBYTE( pak, 0 );
+    thisclient->client->SendPacket( &pak );
     sprintf( buffer, "Target HP/MAXHP: %i/%i", monster->Stats->HP, monster->Stats->MaxHP );
     RESETPACKET( pak, 0x784 );
     ADDSTRING  ( pak, "[SYS]TargetInfo" );
     ADDBYTE    ( pak, 0 );
     ADDSTRING  ( pak, buffer );
-	ADDBYTE( pak, 0 );         
-    thisclient->client->SendPacket( &pak );           
+	ADDBYTE( pak, 0 );
+    thisclient->client->SendPacket( &pak );
 // added Database & Monster ID by rl2171 with help from lmame
     sprintf( buffer, "Target Database ID: %i", monster->Position->respawn );
     RESETPACKET( pak, 0x784 );
@@ -4156,7 +4301,7 @@ bool CWorldServer::GMShowTargetInfo( CPlayer* thisclient )
     ADDBYTE    ( pak, 0 );
     ADDSTRING  ( pak, buffer );
     ADDBYTE( pak, 0 );
-    thisclient->client->SendPacket( &pak ); 
+    thisclient->client->SendPacket( &pak );
     sprintf( buffer, "Target Monster ID: %i", monster->montype );
     RESETPACKET( pak, 0x784 );
     ADDSTRING  ( pak, "[SYS]TargetInfo" );
@@ -4175,13 +4320,13 @@ bool CWorldServer::pakGMHide( CPlayer* thisclient, int mode )
     {
         thisclient -> isInvisibleMode = true;
         ADDSTRING( pak, "You are now invisible !" );
-        Log( MSG_GMACTION, " %s : /hide invisible" , thisclient->CharInfo->charname); 
+        Log( MSG_GMACTION, " %s : /hide invisible" , thisclient->CharInfo->charname);
     }
     else
     {
         thisclient -> isInvisibleMode = false;
         ADDSTRING( pak, "You are now visible !" );
-        Log( MSG_GMACTION, " %s : /hide visible" , thisclient->CharInfo->charname); 
+        Log( MSG_GMACTION, " %s : /hide visible" , thisclient->CharInfo->charname);
     }
     ADDBYTE( pak, 0 );
     thisclient->client->SendPacket ( &pak );
@@ -4190,7 +4335,7 @@ bool CWorldServer::pakGMHide( CPlayer* thisclient, int mode )
 // GM : Change the party lvl
 bool CWorldServer::pakGMPartylvl( CPlayer* partyclient, int level )
 {
-    if (partyclient->Party->party == NULL) return true;    
+    if (partyclient->Party->party == NULL) return true;
     if (level < 0 || level >50) return true;
     partyclient->Party->party->PartyLevel = level;
     if( partyclient->Party->party->PartyLevel == 50)
@@ -4206,12 +4351,12 @@ bool CWorldServer::pakGMPartylvl( CPlayer* partyclient, int level )
 // GM: Kill all mobs in a range of x-Fields
 bool CWorldServer::pakGMKillInRange( CPlayer* thisclient, int range )
 {
-    for(UINT j = 0; j < MapList.Index[thisclient->Position->Map]->MonsterList.size(); j++) 
+    for(UINT j = 0; j < MapList.Index[thisclient->Position->Map]->MonsterList.size(); j++)
     {
         CMonster* thismon = MapList.Index[thisclient->Position->Map]->MonsterList.at(j);
         if( IsMonInCircle( thisclient, thismon, (float)range ))
         {
-            //Kill the mob    
+            //Kill the mob
             thismon->Stats->HP = -1;
             BEGINPACKET( pak, 0x799 );
             ADDWORD    ( pak, thismon->clientid );
@@ -4285,7 +4430,7 @@ bool CWorldServer::pakGMClass( CPlayer* thisclient, char* classid )
     }
     else if ( strcmp ( classid , "Dealer" ) == 0 || strcmp ( classid , "dealer" ) == 0)
     {
-         if ( GM || ((thisclient->Stats->Level >= 10) && (classid_new == 0 ))) // visitor         
+         if ( GM || ((thisclient->Stats->Level >= 10) && (classid_new == 0 ))) // visitor
                classid_new = 411;
     }
     else if ( strcmp ( classid , "Bourgeois" ) == 0 || strcmp ( classid , "bourgeois" ) == 0)
@@ -4297,7 +4442,7 @@ bool CWorldServer::pakGMClass( CPlayer* thisclient, char* classid )
     {
         if ( GM || ((thisclient->Stats->Level >= 100) && (classid_new == 411)))  // dealer
                 classid_new = 422;
-    }    
+    }
     else
     {
         return true;
@@ -4316,30 +4461,30 @@ bool CWorldServer::pakGMClass( CPlayer* thisclient, char* classid )
     ADDWORD(pak, 0xa24d);
     ADDWORD(pak, 0x40b3);
     thisclient->client->SendPacket(&pak);
-    
+
     if ( changed )
     {
-       SendPM(thisclient, "Class changed!" ); 
-    } 
+       SendPM(thisclient, "Class changed!" );
+    }
     else
     {
        if ( thisclient->Stats->Level < 10 )
-          SendPM(thisclient, "Class change failed! You must be at least lvl 10 to change your job." ); 
+          SendPM(thisclient, "Class change failed! You must be at least lvl 10 to change your job." );
        else if (classid_new == 0) // visitor
-          SendPM(thisclient, "Class change failed! Pick a first job, muse, dealer, hawker, or solder" ); 
-       else  
-          SendPM(thisclient, "Class change failed!" );        
+          SendPM(thisclient, "Class change failed! Pick a first job, muse, dealer, hawker, or solder" );
+       else
+          SendPM(thisclient, "Class change failed!" );
     }
-     
+
     return true;
 }
- 
+
 
 
 bool CWorldServer::pakGMTeleAllHere( CPlayer* thisclient )
 {
     int count=1;
-    while(count <= (ClientList.size()-1)) 
+    while(count <= (ClientList.size()-1))
     {
         CPlayer* otherclient = (CPlayer*)ClientList.at(count)->player;
         if ((otherclient != NULL) && (otherclient != thisclient))
@@ -4357,17 +4502,17 @@ bool CWorldServer::pakGMMoveTo( CPlayer* thisclient, fPoint position )
     if( thisclient->Shop->open || (!thisclient->Ride->Drive && thisclient->Ride->Ride) || !thisclient->Status->CanMove )
         return true;
     if( thisclient->Status->Stance==1 )
-        thisclient->Status->Stance=3;    
+        thisclient->Status->Stance=3;
     thisclient->Position->destiny = position; // PAKGMMOVETO
     ClearBattle( thisclient->Battle );
 	BEGINPACKET( pak, 0x79a );
 	ADDWORD    ( pak, thisclient->clientid );
-	ADDWORD    ( pak, thisclient->Battle->target );	
+	ADDWORD    ( pak, thisclient->Battle->target );
 	ADDWORD    ( pak, thisclient->Stats->Move_Speed );
 	ADDFLOAT   ( pak, thisclient->Position->destiny.x*100 );
-	ADDFLOAT   ( pak, thisclient->Position->destiny.y*100 );	
-	ADDFLOAT   ( pak, thisclient->Position->destiny.z*100 );	
-    SendToVisible( &pak, thisclient );      	
+	ADDFLOAT   ( pak, thisclient->Position->destiny.y*100 );
+	ADDFLOAT   ( pak, thisclient->Position->destiny.z*100 );
+    SendToVisible( &pak, thisclient );
     return true;
 }
 
@@ -4407,14 +4552,14 @@ bool CWorldServer::pakGMChangeCfmode(CPlayer* thisclient, int mode)
 bool CWorldServer::pakGMWhoAttacksMe(CPlayer* thisclient)
 {
      std::cout << "You are attacked by these Mobs: ";
-     CMap* map = GServer->MapList.Index[thisclient->Position->Map]; 
+     CMap* map = GServer->MapList.Index[thisclient->Position->Map];
      for(UINT i=0;i<map->MonsterList.size();i++)
     {
         CMonster* thismon = map->MonsterList.at( i );
-		float distance = GServer->distance ( thisclient->Position->current, thismon->Position->current );        		
+		float distance = GServer->distance ( thisclient->Position->current, thismon->Position->current );
 		if (thismon->Battle->target == thisclient->clientid)
            std::cout <<"ID: "<<thismon->clientid<< "  / " <<thismon->montype<<" I "<< (GServer->IsVisible(thisclient, thismon) ? "Visible\n":"Invisible\n");
-	} 
+	}
 	return true;
 }
 
@@ -4474,13 +4619,13 @@ bool CWorldServer::pakGMDebuff(CPlayer* thisClient)
     }
     return true;
 }
- 
+
 // GM Buff players in sight. by Drakia
 bool CWorldServer::pakGMBuff( CPlayer* thisClient, int strength )
 {
     // Buff the GM
     pakGMDebuff(thisClient);
- 
+
     pakGMGiveBuff( thisClient, thisClient, 3906, strength); // Attack   (300s) (18)
     pakGMGiveBuff( thisClient, thisClient, 3905, strength); // Defense  (300s) (19)
     pakGMGiveBuff( thisClient, thisClient, 3908, strength); // Accuracy (420s) (20)
@@ -4521,13 +4666,13 @@ bool CWorldServer::pakGMBuff( CPlayer* thisClient, int strength )
     }
     return true;
 }
- 
+
 // Find the skill, add the buff, and send the packet. This is where the magic happens
 // And what took me so freakin long to figure out x.x
 bool CWorldServer::pakGMGiveBuff(CPlayer* thisClient, CPlayer* targetClient, int skillID, int strength)
 {
     CSkills* skill = GServer->GetSkillByID(skillID);
- 
+
     GServer->AddBuffs( skill, targetClient, strength );
     BEGINPACKET( pak, 0x7b5 );
     ADDWORD    ( pak, targetClient->clientid );
@@ -4538,22 +4683,22 @@ bool CWorldServer::pakGMGiveBuff(CPlayer* thisClient, CPlayer* targetClient, int
     GServer->SendToVisible( &pak, targetClient );
     return true;
 }
- 
-// GM Give yourself all stats maxed 
+
+// GM Give yourself all stats maxed
 bool CWorldServer::pakGMMaxStats( CPlayer* thisclient )
-{ 
- 
+{
+
         pakGMStat(thisclient, "str", 300);
         pakGMStat(thisclient, "dex", 300);
         pakGMStat(thisclient, "con", 300);
         pakGMStat(thisclient, "int", 300);
         pakGMStat(thisclient, "cha", 300);
         pakGMStat(thisclient, "sen", 300);
- 
-    return true;
-} 
 
- 
+    return true;
+}
+
+
 //GM: All Skills {By CrAshInSiDe} - Skills and levels updated by rl2171 & Devilking
 bool CWorldServer::pakGMAllSkill(CPlayer* thisclient, char* name)
 {
@@ -4561,7 +4706,7 @@ bool CWorldServer::pakGMAllSkill(CPlayer* thisclient, char* name)
     CPlayer* otherclient = GetClientByCharName( name );
     if(otherclient==NULL)
     return true;
- 
+
 if ( classid == 121 ) //Knight
 {
 otherclient->cskills[0].id = 201;//Physical Training
@@ -4633,11 +4778,11 @@ otherclient->cskills[31].level = 4;
 //Immortal Form
 //otherclient->cskills[32].id = 426;
 //otherclient->cskills[32].level = 1;
- 
- 
+
+
 SendPM (thisclient, "Relogin For Get All Skills");
 }
- 
+
 else if ( classid == 122 ) //Champion
 {
 otherclient->cskills[0].id = 201;//Physical Training
@@ -4753,12 +4898,12 @@ otherclient->cskills[52].level = 1;
 otherclient->cskills[53].id = 4211; // 569
 otherclient->cskills[53].level = 4;
 //Sword Master Form
-//otherclient->cskills[54].id = 526; 
+//otherclient->cskills[54].id = 526;
 //otherclient->cskills[54].level = 1;
- 
+
 SendPM (thisclient, "Relogin For Get All Skills");
 }
- 
+
 else if ( classid == 221 ) //Mage
 {
 otherclient->cskills[0].id = 851;//Mana Bolt
@@ -4847,7 +4992,7 @@ otherclient->cskills[38].level = 1;
 
 SendPM (thisclient, "Relogin For Get All Skills");
 }
- 
+
 else if ( classid == 222 ) //Cleric
 {
 otherclient->cskills[0].id = 931;//Wand Mastery
@@ -4931,10 +5076,10 @@ otherclient->cskills[38].level = 1;
 // Unique Item - Soul Recall
 otherclient->cskills[39].id = 4401; // 560
 otherclient->cskills[39].level = 3;
- 
+
 SendPM (thisclient, "Relogin For Get All Skills");
 }
- 
+
 else if ( classid == 321 ) //Raider
 {
 otherclient->cskills[0].id = 1401;//Combat Mastery
@@ -5041,10 +5186,10 @@ otherclient->cskills[49].id = 5805; // 863
 otherclient->cskills[49].level = 1;
 otherclient->cskills[50].id = 5806; // 864
 otherclient->cskills[50].level = 1;
- 
+
 SendPM (thisclient, "Relogin For Get All Skills");
 }
- 
+
 else if ( classid == 322 ) //Scout
 {
 otherclient->cskills[0].id = 1401;//Combat Mastery
@@ -5115,10 +5260,10 @@ otherclient->cskills[31].level = 1;
 // Unique Items - hawker
 otherclient->cskills[32].id = 4601; // call beast // 565
 otherclient->cskills[32].level = 9;
- 
+
 SendPM (thisclient, "Relogin For Get All Skills");
 }
- 
+
 else if ( classid == 421 ) //Bourgeois
 {
 otherclient->cskills[0].id = 2001;//Trigger Finger
@@ -5207,7 +5352,7 @@ otherclient->cskills[40].id = 2461;//aimed triple shot
 otherclient->cskills[40].level = 5;
 SendPM (thisclient, "Relogin For Get All Skills");
 }
- 
+
 else if ( classid == 422 ) //Artisan
 {
 //Common Tab
@@ -5338,7 +5483,7 @@ otherclient->cskills[59].level = 9;
 
 SendPM (thisclient, "Relogin For Get All Skills");
 }
- 
+
 /*
 // Mileage Items - For which jobs?
 otherclient->cskills[xx].id = 5501; // 590 - all
@@ -5359,23 +5504,23 @@ otherclient->cskills[xx].level = x;
 otherclient->cskills[xx].id = xxxx; // 566 - dealer
 otherclient->cskills[xx].level = x;
 */
- 
+
 else
 {
     SendPM(thisclient, "Can't add skills for this class");
 }
- 
+
     return true;
 }
- 
+
 //GM: DeleteSkills {modified from allskill command - rl2171}
     bool CWorldServer::pakGMDelSkills(CPlayer* thisclient, char* name)
 {
- 
+
     CPlayer* otherclient = GetClientByCharName( name );
     if(otherclient==NULL)
     return true;
- 
+
 {
 otherclient->cskills[0].id = 0;
 otherclient->cskills[0].level = 1;
@@ -5499,7 +5644,7 @@ otherclient->cskills[58].id = 0;
 otherclient->cskills[58].level = 1;
 otherclient->cskills[59].id = 0;
 otherclient->cskills[59].level = 1;
- 
+
 SendPM (thisclient, "Relogin to remove All Skills");
 }
     return true;

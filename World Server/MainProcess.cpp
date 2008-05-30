@@ -28,6 +28,7 @@ PVOID MapProcess( PVOID TS )
     clock_t time_skill=0;
     time_t next_time=0;
     time_t next_timeuw=0;
+    int no_dial[2]={5,1};
 
 
     while(GServer->ServerOnline)
@@ -49,42 +50,37 @@ PVOID MapProcess( PVOID TS )
             //LMA: Union War
             if(map->id==9&&GServer->Config.unionwar==1)
             {
+                /*
                if(map->uw_begin==0)
                {
                   //2do: use the time from Command
+                  map->uw_end=0;
+                  map->is_uw_fired=false;
                   map->uw_begin=etime+5*60; //In 5 minutes...
                   next_timeuw=etime+60;
                   GServer->UWDecide();
-                  if(map->attackers==1)
-                  {
-                      GServer->UWNPCdialogs(5);
-                  }
-                  else
-                  {
-                      GServer->UWNPCdialogs(1);
-                  }
-                  
+                  GServer->UWNPCdialogs(no_dial[map->attackers-1]);
                }
-               
+               */
+
+               if(!map->announce_done)
+               {
+                   next_timeuw=1;
+               }
+
                if (!map->is_uw_fired)
                {
                    if(etime>map->uw_begin)
                    {
-                     //2do: summon NPC who warps to good map.
-                     //don't forget then to see where warp the guys...
-                     //We let the NPC "opened" until the end of UW?
                      if(GServer->CheckEnoughUW())
                      {
-                        GServer->UWNPCdialogs(3);                                                 
+                        GServer->UWNPCdialogs(3);
                         map->is_uw_fired=true;
-                        //let's summon the Stones
-                        GServer->UWstones();
-                        //The NPC.
+                        //let's summon the Stones and NPC
+                        GServer->UWstones(1);
                         map->npc_id=GServer->SummonNPCUW();
 
-                        //FOR TESTS:
-                        //map->utime_end=map->utime_begin+Config.unionduration;
-                        map->uw_end=etime+180; //3 minutes...
+                        map->uw_end=etime+(GServer->Config.unionwarduration*60);
                         next_timeuw=etime+60;
 
                         Log(MSG_INFO,"Union War has begun...");
@@ -96,14 +92,23 @@ PVOID MapProcess( PVOID TS )
                         char text[200];
                         sprintf( text, "Union War has been canceled since not enough players were there...");
                         BEGINPACKET( pak, 0x702 );
-                	    ADDSTRING  ( pak, "Mighty Lord" );
+                	    ADDSTRING  ( pak, "Mighty Fairy" );
                     	ADDSTRING  ( pak, "> " );
                     	ADDSTRING  ( pak, text );
                     	ADDBYTE    ( pak, 0x00 );
                     	GServer->SendToAllInMap  ( &pak,2);
-                         //map->utime_begin+=86400;
-                         map->uw_begin=etime+5*60+10;
-                         next_timeuw=map->uw_begin-5*60;
+                    	map->uw_begin=0;
+                    	map->announce_done=false;
+                    	GServer->Config.unionwar=0;
+
+                    	if(GServer->Config.unionwarloop)
+                    	{
+                            map->uw_begin=etime+(GServer->Config.unionwardelay_loop*60);
+                            next_timeuw=etime+60;;
+                            GServer->Config.unionwar=1;
+                            Log(MSG_INFO,"We loop after cancel, it'll be in %i",GServer->Config.unionwardelay_loop);
+                    	}
+
                      }
 
                    }
@@ -114,22 +119,40 @@ PVOID MapProcess( PVOID TS )
                        {
                           UINT remaining_time=0;
                           remaining_time=(UINT) ((map->uw_begin-etime)/60);
+                          next_timeuw=0;
                           if(remaining_time>0)
                           {
-                               Log(MSG_INFO,"Message time for USW: %i",remaining_time);
-                                char text[200];
-                                sprintf( text, "Union War will begin in %i minutes, Please wait near Mayor !!",remaining_time);
-                                BEGINPACKET( pak, 0x702 );
-                        	    ADDSTRING  ( pak, "Mighty Lord" );
-                            	ADDSTRING  ( pak, "> " );
-                            	ADDSTRING  ( pak, text );
-                            	ADDBYTE    ( pak, 0x00 );
-                            	GServer->SendToAllInMap  ( &pak,2);
-                            	next_timeuw=etime+60;
-                          }
-                          else
-                          {
-                              next_timeuw=0;
+                                //We change the NPC dialog.
+                                if (!map->announce_done)
+                                {
+                                    GServer->UWDecide();
+                                    GServer->UWNPCdialogs(no_dial[map->attackers-1]);
+                                    char text[200];
+                                    sprintf( text, "UW will begin in %i minutes, fetch the quest at your Union Master and wait near me !!!",remaining_time);
+
+                                    BEGINPACKET( pak, 0x702 );
+                                    ADDSTRING  ( pak, "Mighty Fairy" );
+                                    ADDSTRING  ( pak, "> " );
+                                    ADDSTRING  ( pak, text );
+                                    ADDBYTE    ( pak, 0x00 );
+                                    GServer->SendToAllInMap  ( &pak,2);
+                                    Log(MSG_INFO,"Message time for USW (annouce): %i",remaining_time);
+                                }
+                                else
+                                {
+                                   Log(MSG_INFO,"Message time for USW: %i",remaining_time);
+                                    char text[200];
+                                    sprintf( text, "Union War will begin in %i minutes, Please wait near Mayor !!",remaining_time);
+                                    BEGINPACKET( pak, 0x702 );
+                                    ADDSTRING  ( pak, "Mighty Fairy" );
+                                    ADDSTRING  ( pak, "> " );
+                                    ADDSTRING  ( pak, text );
+                                    ADDBYTE    ( pak, 0x00 );
+                                    GServer->SendToAllInMap  ( &pak,2);
+                                }
+
+                            	//next_timeuw=etime+60;
+                                next_timeuw=etime+GServer->UWNextTime(remaining_time);
                           }
 
                        }
@@ -147,36 +170,50 @@ PVOID MapProcess( PVOID TS )
                         map->is_uw_fired=false;
                         map->uw_end=0;
                         map->uw_begin=0;
-                        GServer->Config.unionwar=0;                          
+                        GServer->Config.unionwar=0;
+                        next_timeuw=0;
+                        map->announce_done=false;
+
+                        if (map->uw_loop)
+                        {
+                            map->uw_begin=etime+(GServer->Config.unionwardelay_loop*60);
+                            next_timeuw=etime+60;
+                            GServer->Config.unionwar=1;
+                            Log(MSG_INFO,"UW: Looping %i",GServer->Config.unionwardelay_loop);
+                        }
+
                     }
                     else
                     {
                         //sunrise killed? let's spawn sunset then :)
                         if (map->sunrisekilled&&!map->sunsetspawned)
-                           GServer->UWstones(1);
+                        {
+                           GServer->UWstones();
+                        }
+
                         if(map->duskkilled)
+                        {
                            GServer->UWstones(2);
-                        
+                        }
+
                        if(next_timeuw>0&&etime>=next_timeuw)
                        {
                           UINT remaining_time=0;
                           remaining_time=(UINT) ((map->uw_end-etime)/60);
                           Log(MSG_INFO,"Message time for UW end: %i",remaining_time);
+                          next_timeuw=0;
                           if (remaining_time>0)
                           {
                               char text[200];
                                 sprintf( text, "Make Haste, Union War will end in %i minutes !!!",remaining_time);
                                 BEGINPACKET( pak, 0x702 );
-                        	    ADDSTRING  ( pak, "Mighty Lord" );
+                        	    ADDSTRING  ( pak, "Mighty Fairy" );
                             	ADDSTRING  ( pak, "> " );
                             	ADDSTRING  ( pak, text );
                             	ADDBYTE    ( pak, 0x00 );
                             	GServer->SendToAllInMap  ( &pak,9);
-                            	next_timeuw=etime+60;
-                          }
-                          else
-                          {
-                              next_timeuw=0;
+                            	//next_timeuw=etime+60;
+                            	next_timeuw=etime+GServer->UWNextTime(remaining_time);
                           }
 
                        }
@@ -186,17 +223,19 @@ PVOID MapProcess( PVOID TS )
                 }
 
             }
-            
-            
+
+
             //LMA: Union Slaughter...
             if (map->id==8&&GServer->Config.unionslaughter==1)
             {
+                /*
                if(map->utime_begin==0)
                {
                   //2do: use the time from Command
                   map->utime_begin=etime+5*60; //In 5 minutes...
                   next_time=etime+60;
                }
+                */
 
                if (!map->is_union_fired)
                {
@@ -211,11 +250,8 @@ PVOID MapProcess( PVOID TS )
                             map->nb_kills[kmap]=0;
                         }
 
-                        //FOR TESTS:
-                        //map->utime_end=map->utime_begin+Config.unionduration;
-                        map->utime_end=etime+180; //3 minutes...
+                        map->utime_end=etime+(GServer->Config.unionduration*60);
                         next_time=etime+60;
-
                         Log(MSG_INFO,"Union Slaughter has begun...");
                      }
                      else
@@ -224,14 +260,23 @@ PVOID MapProcess( PVOID TS )
                         char text[200];
                         sprintf( text, "Union Slaughter has been canceled since not enough players were there...");
                         BEGINPACKET( pak, 0x702 );
-                	    ADDSTRING  ( pak, "Mighty Lord" );
+                	    ADDSTRING  ( pak, "Mighty Fairy" );
                     	ADDSTRING  ( pak, "> " );
                     	ADDSTRING  ( pak, text );
                     	ADDBYTE    ( pak, 0x00 );
                     	GServer->SendToAllInMap  ( &pak,2);
-                         //map->utime_begin+=86400;
-                         map->utime_begin=etime+5*60+10;
-                         next_time=map->utime_begin-5*60;
+                         map->utime_begin=0;
+                         map->utime_end=0;
+                         next_time=0;
+                    	GServer->Config.unionslaughter=0;
+
+                        if(GServer->Config.unionslaughterloop)
+                        {
+                             map->utime_begin=etime+(GServer->Config.unionslaughterdelay_loop*60);
+                             next_time=etime+60;
+                            GServer->Config.unionslaughter=1;
+                        }
+
                      }
 
                    }
@@ -242,22 +287,20 @@ PVOID MapProcess( PVOID TS )
                        {
                           UINT remaining_time=0;
                           remaining_time=(UINT) ((map->utime_begin-etime)/60);
+                          next_time=0;
                           if(remaining_time>0)
                           {
                                Log(MSG_INFO,"Message time for US: %i",remaining_time);
                                 char text[200];
                                 sprintf( text, "Union Slaughter will begin in %i minutes, Please join mayor of Junon Polis to protect your Emblem !!",remaining_time);
                                 BEGINPACKET( pak, 0x702 );
-                        	    ADDSTRING  ( pak, "Mighty Lord" );
+                        	    ADDSTRING  ( pak, "Mighty Fairy" );
                             	ADDSTRING  ( pak, "> " );
                             	ADDSTRING  ( pak, text );
                             	ADDBYTE    ( pak, 0x00 );
                             	GServer->SendToAllInMap  ( &pak,2);
-                            	next_time=etime+60;
-                          }
-                          else
-                          {
-                              next_time=0;
+                            	//next_time=etime+60;
+                            	next_time=etime+GServer->UWNextTime(remaining_time);
                           }
 
                        }
@@ -273,10 +316,18 @@ PVOID MapProcess( PVOID TS )
                        GServer->WarIsOver();
                        Log(MSG_INFO,"US is over...");
                         map->is_union_fired=false;
-                        map->utime_end=0;
-                         //map->utime_begin+=86400;
-                         map->utime_begin=etime+5*60+10;
-                         next_time=map->utime_begin-5*60;
+                         map->utime_begin=0;
+                         map->utime_end=0;
+                         next_time=0;
+                    	GServer->Config.unionslaughter=0;
+
+                        if(GServer->Config.unionslaughterloop)
+                        {
+                             map->utime_begin=etime+(GServer->Config.unionslaughterdelay_loop*60);
+                             next_time=etime+60;
+                            GServer->Config.unionslaughter=1;
+                        }
+
                     }
                     else
                     {
@@ -285,21 +336,19 @@ PVOID MapProcess( PVOID TS )
                           UINT remaining_time=0;
                           remaining_time=(UINT) ((map->utime_end-etime)/60);
                           Log(MSG_INFO,"Message time for US end: %i",remaining_time);
+                          next_time=0;
                           if (remaining_time>0)
                           {
                               char text[200];
                                 sprintf( text, "Make Haste, Union Slaughter will end in %i minutes !!!",remaining_time);
                                 BEGINPACKET( pak, 0x702 );
-                        	    ADDSTRING  ( pak, "Mighty Lord" );
+                        	    ADDSTRING  ( pak, "Mighty Fairy" );
                             	ADDSTRING  ( pak, "> " );
                             	ADDSTRING  ( pak, text );
                             	ADDBYTE    ( pak, 0x00 );
                             	GServer->SendToAllInMap  ( &pak,8);
-                            	next_time=etime+60;
-                          }
-                          else
-                          {
-                              next_time=0;
+                            	//next_time=etime+60;
+                            	next_time=etime+GServer->UWNextTime(remaining_time);
                           }
 
                        }
@@ -309,7 +358,7 @@ PVOID MapProcess( PVOID TS )
                 }
 
             }
-            //END UW Code
+            //END UW and US Code
 
             if( map->PlayerList.size()<1 )
                 continue;

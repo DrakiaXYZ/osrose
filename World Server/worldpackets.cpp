@@ -562,13 +562,32 @@ bool CWorldServer::pakDoID( CPlayer* thisclient, CPacket* P )
     if(map->allowpvp==1){ ADDWORD(pak, 51 );} // pvp all vs all
     else if(map->allowpvp==2) // pvp group vs group
     {
+        //LMA: for UW
+        if (map->id==9&&thisclient->CharInfo->unionid>0)
+        {
+            int lma_alliance=0x07D0;
+            if (thisclient->CharInfo->unionid==3||thisclient->CharInfo->unionid==5)
+            {
+                lma_alliance=0x03E8;
+            }
+
+            ADDWORD(pak, lma_alliance);
+            Log(MSG_INFO,"0x753 %i",lma_alliance);
+        }
+        else
+        {
+            ADDWORD(pak, 51);
+        }
         /*ADDWORD(pak, thisclient->Clan->clanid );*/
-        ADDWORD(pak, 51);
+
     }
     else
     {
         ADDWORD(pak, 2 );
     }
+
+    //LMA: Update.
+    ADDWORD(pak, 0x0000 );
     thisclient->client->SendPacket( &pak );
     // set weight
     RESETPACKET( pak, 0x762 );
