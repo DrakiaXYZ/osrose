@@ -1365,11 +1365,21 @@ bool CPlayer::GiveQuestReward( CQuest* thisquest )
      {
         if(CharInfo->union05<thisquest->value1)
         {
-            Log(MSG_HACK, "[UREWARD] player %s, Quest %i, points needed/have %i/%i", CharInfo->charname,thisquest->id, thisquest->value1,CharInfo->union05);
+            Log(MSG_HACK, "[UREWARD] player %s, Quest %i, Faction points needed/have %i/%i", CharInfo->charname,thisquest->id, thisquest->value1,CharInfo->union05);
             return false;
         }
 
+        //taking away Union points.
         CharInfo->union05-=thisquest->value1;
+        BEGINPACKET( pak, 0x721 );
+        ADDWORD( pak, 85 );
+        ADDWORD( pak, CharInfo->union05 );
+        ADDWORD( pak, 0x0000 );
+        client->SendPacket( &pak );
+        RESETPACKET( pak, 0x730 );
+        ADDWORD    ( pak, 0x0005 );
+        ADDDWORD   ( pak, 0x40b3a24d );
+        client->SendPacket( &pak );
      }
 
      //LMA: Santa.

@@ -1,22 +1,22 @@
 /*
     Rose Online Server Emulator
     Copyright (C) 2006,2007 OSRose Team http://www.dev-osrose.com
-    
+
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
     as published by the Free Software Foundation; either version 2
     of the License, or (at your option) any later version.
-    
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-    
+
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-    depeloped with Main erose/hrose source server + some change from the original eich source        
+    depeloped with Main erose/hrose source server + some change from the original eich source
 */
 #include "worldserver.h"
 
@@ -32,15 +32,15 @@ bool CWorldServer::DoQuestScript( CPlayer* thisclient, CQuest* thisquest )
                	BEGINPACKET( pak, 0x71e );
                 ADDQWORD   ( pak, thisclient->CharInfo->Zulies );
                 ADDBYTE    ( pak, 0x00 );
-                thisclient->client->SendPacket( &pak );             
+                thisclient->client->SendPacket( &pak );
             }
             fPoint thispoint;
             thispoint.x = floor( thisquest->value2/10000 );
             thispoint.y = floor( thisquest->value2%10000 );
-            TeleportTo ( thisclient, thisquest->value1, thispoint );       
+            TeleportTo ( thisclient, thisquest->value1, thispoint );
             thisclient->DelQuest( thisquest->questid );
         }
-        break;    
+        break;
         case 2: // Change Job
         {
             if( thisclient->CharInfo->Job == 0 )
@@ -50,10 +50,10 @@ bool CWorldServer::DoQuestScript( CPlayer* thisclient, CQuest* thisquest )
                 ADDWORD    (pak, 0x0004 );
                 ADDWORD    (pak, thisclient->CharInfo->Job );
                 ADDWORD    (pak, 0x0000 );
-                thisclient->client->SendPacket(&pak);                                  
-            }          
+                thisclient->client->SendPacket(&pak);
+            }
         }
-        break;  
+        break;
         case 20: // 2nd Change Job
         {   //Credits to tomiz
             if(thisquest->value3>0 && thisclient->CharInfo->Zulies>= thisquest->value3) // zuly need for second job
@@ -77,27 +77,27 @@ bool CWorldServer::DoQuestScript( CPlayer* thisclient, CQuest* thisquest )
             if(thisquest->value2>0) //which quest to delete
             {
                 CQuest* athisquest = GetQuestByID( thisquest->value2 );
-                QUESTS* myquest = thisclient->GetQuestByQuestID( athisquest->questid ); 
+                QUESTS* myquest = thisclient->GetQuestByQuestID( athisquest->questid );
                 if( myquest!=0 )
                 {
                     Log(MSG_INFO,"deleting quest id %u",myquest->thisquest->id);
                     myquest->active = false;
                     thisclient->ActiveQuest--;
                 }
-                
+
             }
         }
-        break;          
+        break;
         case 3: //Give Stats/Skill points
         {
             switch( thisquest->value1 )
             {
                 case 1: // Give Stats points
-                    thisclient->CharInfo->StatPoints += thisquest->value2;                
+                    thisclient->CharInfo->StatPoints += thisquest->value2;
                     BEGINPACKET( pak, 0x720 );
                     ADDWORD    ( pak, 0x0020 );
                     ADDDWORD   ( pak, thisquest->value2 );
-                    thisclient->client->SendPacket( &pak );                
+                    thisclient->client->SendPacket( &pak );
                 break;
                 case 2: // Give Skill points
                     thisclient->CharInfo->SkillPoints += thisquest->value2;
@@ -117,12 +117,12 @@ bool CWorldServer::DoQuestScript( CPlayer* thisclient, CQuest* thisquest )
                     thisclient->Attr->Int = 15;
                     thisclient->Attr->Con = 15;
                     thisclient->Attr->Cha = 10;
-                    thisclient->Attr->Sen = 10;                    
+                    thisclient->Attr->Sen = 10;
                 break;
                 case 2: // Skill points
 
                 break;
-            }         
+            }
         break;
         case 5: //Do spawn a monster
              GServer->pakGMMon(thisclient, thisquest->value1, thisquest->value2 );
@@ -130,11 +130,11 @@ bool CWorldServer::DoQuestScript( CPlayer* thisclient, CQuest* thisquest )
        case 10: //Delete a quest
              {
                 if( thisquest->value1==0 )
-                    return true;    
+                    return true;
                 CQuest* athisquest = GetQuestByID( thisquest->value1 );
-                QUESTS* myquest = thisclient->GetQuestByQuestID( athisquest->questid ); 
+                QUESTS* myquest = thisclient->GetQuestByQuestID( athisquest->questid );
                 if( myquest!=0 )
-                    myquest->active = false;               
+                    myquest->active = false;
             }
         break;
         case 30:
@@ -149,8 +149,8 @@ bool CWorldServer::DoQuestScript( CPlayer* thisclient, CQuest* thisquest )
                  {
                     break;
                  }
-                 
-                 CMap* map = MapList.Index[thisclient->Position->Map];                 
+
+                 CMap* map = MapList.Index[thisclient->Position->Map];
                  UINT montype = (UINT) thisquest->value2;
                  fPoint position_cf = GServer->RandInCircle( thisclient->Position->current,10 );
                  CMonster* monster2=map->AddMonster( montype, position_cf, 0, NULL, NULL, 0, true );
@@ -168,16 +168,16 @@ bool CWorldServer::DoQuestScript( CPlayer* thisclient, CQuest* thisquest )
                  {
                     break;
                  }
-                 
+
                  CMap* map = MapList.Index[thisclient->Position->Map];
-                  int montype = (int) thisquest->value1;                 
+                  int montype = (int) thisquest->value1;
                   BYTE monaction= (BYTE) thisquest->value2;
                  int nb_monsters=1;
                  if (thisquest->value3==119)
                  {
                     nb_monsters=10;
                  }
-                 
+
                  for (int k=0;k<nb_monsters;k++)
                  {
                      Log(MSG_INFO,"a monster is summoned, %i, nb: %i / %i",montype,k,nb_monsters);
@@ -186,11 +186,11 @@ bool CWorldServer::DoQuestScript( CPlayer* thisclient, CQuest* thisquest )
                      //the monster does something (see define, 9=nothing)...
                      monster2->StartAction( (CCharacter*)thisclient, monaction, 0 );
                  }
-                 
+
              }
         break;
           case 32:
-             {   
+             {
                  //LMA BEGIN
                  //learning a skill automatically, for cart skill mainly :)
                  //20070621-211100
@@ -198,42 +198,47 @@ bool CWorldServer::DoQuestScript( CPlayer* thisclient, CQuest* thisquest )
                  {
                     break;
                  }
-                 
+
                  UINT skillID=UINT (thisquest->value1);
                  //Let's add the player an additionnal sp, just in case.
                  thisclient->CharInfo->SkillPoints++;
                  GServer->LearnSkill(thisclient,skillID);
-             }   
+             }
         break;
           case 33:
-             {   
+             {
                   //LMA BEGIN
                  //teleport, but this time at the end of the quest
-                 //20070622-214100                
+                 //20070622-214100
                 if(thisquest->value3>0)
                 {
                     thisclient->CharInfo->Zulies -= 0;
                    	BEGINPACKET( pak, 0x71e );
                     ADDQWORD   ( pak, thisclient->CharInfo->Zulies );
                     ADDBYTE    ( pak, 0x00 );
-                    thisclient->client->SendPacket( &pak );             
+                    thisclient->client->SendPacket( &pak );
                 }
                 fPoint thispoint;
                 thispoint.x = floor( thisquest->value2/10000 );
                 thispoint.y = floor( thisquest->value2%10000 );
                 TeleportTo ( thisclient, thisquest->value1, thispoint );
-             }   
+             }
         break;
           case 34:
-             {   
+             {
                   //LMA BEGIN
                  //Changing Union.
-                if(thisquest->value1<0||thisquest->value1>7)
+                if(thisquest->value1<0||thisquest->value1>7||thisclient->CharInfo->Zulies<30000)
                 {
-                    return true;           
+                    return true;
                 }
 
-                BEGINPACKET( pak, 0x721 );
+                thisclient->CharInfo->Zulies -= 30000;
+               	BEGINPACKET( pak, 0x71e );
+                ADDQWORD   ( pak, thisclient->CharInfo->Zulies );
+                ADDBYTE    ( pak, 0x00 );
+                thisclient->client->SendPacket( &pak );
+                RESETPACKET( pak, 0x721 );
                 ADDWORD( pak, 0x05 );
                 ADDWORD( pak, thisquest->value1 );
                 ADDWORD( pak, 0x0000 );
@@ -241,9 +246,9 @@ bool CWorldServer::DoQuestScript( CPlayer* thisclient, CQuest* thisquest )
                 RESETPACKET( pak, 0x730 );
                 ADDWORD    ( pak, 0x0005 );
                 ADDDWORD   ( pak, 0x40b3a24d );
-                thisclient->client->SendPacket( &pak );                                        
-             }   
-        break;        
+                thisclient->client->SendPacket( &pak );
+             }
+        break;
         //LMA end
         //LMA: Used for Santa and Union rewards.
         case 665:
@@ -252,6 +257,6 @@ bool CWorldServer::DoQuestScript( CPlayer* thisclient, CQuest* thisquest )
               //Don't ever touch this one.
              }
              break;
-    }    
+    }
     return true;
 }
