@@ -1829,6 +1829,7 @@ bool CWorldServer::GoUnionWar(vector<CPlayer*>  PlayerListToWarp)
            continue;
         }
 
+        /*
         otherclient->CharInfo->union02=0;
         otherclient->CharInfo->union04=0;
 
@@ -1851,8 +1852,9 @@ bool CWorldServer::GoUnionWar(vector<CPlayer*>  PlayerListToWarp)
         ADDWORD    ( pak, 0x0005 );
         ADDDWORD   ( pak, 0x40b3a24d );
         otherclient->client->SendPacket( &pak );
+        */
 
-        RESETPACKET( pak, 0x702 );
+        BEGINPACKET( pak, 0x702 );
         ADDSTRING  ( pak, "Mighty Fairy" );
     	ADDSTRING  ( pak, "> " );
     	ADDSTRING  ( pak, text );
@@ -1920,10 +1922,46 @@ bool CWorldServer::WarIsOver()
         //extra points :)
         if (otherclient->CharInfo->unionid==keymax)
         {
-           otherclient->CharInfo->union05+=200;
+            int new_amount=0;
+            int new_offset=80+otherclient->CharInfo->unionid;
+            switch(new_offset)
+            {
+                case 81:
+                {
+                    otherclient->CharInfo->union01+=20;
+                    new_amount=otherclient->CharInfo->union01;
+                }
+                break;
+                case 82:
+                {
+                    otherclient->CharInfo->union02+=20;
+                    new_amount=otherclient->CharInfo->union02;
+                }
+                break;
+                case 83:
+                {
+                    otherclient->CharInfo->union03+=20;
+                    new_amount=otherclient->CharInfo->union03;
+                }
+                break;
+                case 84:
+                {
+                    otherclient->CharInfo->union04+=20;
+                    new_amount=otherclient->CharInfo->union04;
+                }
+                break;
+                case 85:
+                {
+                    otherclient->CharInfo->union05+=20;
+                    new_amount=otherclient->CharInfo->union05;
+                }
+                break;
+            }
+
+           //otherclient->CharInfo->union05+=200;
             BEGINPACKET( pak, 0x721 );
-            ADDWORD( pak, 85 );
-            ADDWORD( pak, otherclient->CharInfo->union05 );
+            ADDWORD( pak, new_offset );
+            ADDWORD( pak, new_amount);
             ADDWORD( pak, 0x0000 );
             otherclient->client->SendPacket( &pak );
             RESETPACKET( pak, 0x730 );
@@ -2291,10 +2329,45 @@ void CWorldServer::UWOver()
         //extra points :)
         if (otherclient->CharInfo->unionid==winner[0]||otherclient->CharInfo->unionid==winner[1])
         {
-           otherclient->CharInfo->union05+=1000;
+            int new_amount=0;
+            int new_offset=80+otherclient->CharInfo->unionid;
+            switch(new_offset)
+            {
+                case 81:
+                {
+                    otherclient->CharInfo->union01+=20;
+                    new_amount=otherclient->CharInfo->union01;
+                }
+                break;
+                case 82:
+                {
+                    otherclient->CharInfo->union02+=20;
+                    new_amount=otherclient->CharInfo->union02;
+                }
+                break;
+                case 83:
+                {
+                    otherclient->CharInfo->union03+=20;
+                    new_amount=otherclient->CharInfo->union03;
+                }
+                break;
+                case 84:
+                {
+                    otherclient->CharInfo->union04+=20;
+                    new_amount=otherclient->CharInfo->union04;
+                }
+                break;
+                case 85:
+                {
+                    otherclient->CharInfo->union05+=20;
+                    new_amount=otherclient->CharInfo->union05;
+                }
+                break;
+            }
+
             BEGINPACKET( pak, 0x721 );
-            ADDWORD( pak, 85 );
-            ADDWORD( pak, otherclient->CharInfo->union05 );
+            ADDWORD( pak, new_offset );
+            ADDWORD( pak, new_amount );
             ADDWORD( pak, 0x0000 );
             otherclient->client->SendPacket( &pak );
             RESETPACKET( pak, 0x730 );

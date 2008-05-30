@@ -257,6 +257,60 @@ bool CWorldServer::DoQuestScript( CPlayer* thisclient, CQuest* thisquest )
               //Don't ever touch this one.
              }
              break;
+        case 667:
+             {
+                //Giving Union Points
+                if(thisquest->value1<0||thisquest->value1<=0||thisquest->value2<=80||thisquest->value2>=86)
+                {
+                    return true;
+                }
+
+                int new_amount=0;
+                switch(thisquest->value2)
+                {
+                    case 81:
+                    {
+                        thisclient->CharInfo->union01+=thisquest->value1;
+                        new_amount=thisclient->CharInfo->union01;
+                    }
+                    break;
+                    case 82:
+                    {
+                        thisclient->CharInfo->union02+=thisquest->value1;
+                        new_amount=thisclient->CharInfo->union02;
+                    }
+                    break;
+                    case 83:
+                    {
+                        thisclient->CharInfo->union03+=thisquest->value1;
+                        new_amount=thisclient->CharInfo->union03;
+                    }
+                    break;
+                    case 84:
+                    {
+                        thisclient->CharInfo->union04+=thisquest->value1;
+                        new_amount=thisclient->CharInfo->union04;
+                    }
+                    break;
+                    case 85:
+                    {
+                        thisclient->CharInfo->union05+=thisquest->value1;
+                        new_amount=thisclient->CharInfo->union05;
+                    }
+                    break;
+                }
+
+                BEGINPACKET( pak, 0x721 );
+                ADDWORD( pak, thisquest->value2 );
+                ADDWORD( pak, new_amount );
+                ADDWORD( pak, 0x0000 );
+                thisclient->client->SendPacket( &pak );
+                RESETPACKET( pak, 0x730 );
+                ADDWORD    ( pak, 0x0005 );
+                ADDDWORD   ( pak, 0x40b3a24d );
+                thisclient->client->SendPacket( &pak );
+             }
+             break;
     }
     return true;
 }

@@ -1363,17 +1363,51 @@ bool CPlayer::GiveQuestReward( CQuest* thisquest )
      //Union Wars.
      if (thisquest->script==665&&thisquest->value1>0)
      {
-        if(CharInfo->union05<thisquest->value1)
+        if(CharInfo->union05<thisquest->value1||(thisquest->value2<=80||thisquest->value2>=86))
         {
-            Log(MSG_HACK, "[UREWARD] player %s, Quest %i, Faction points needed/have %i/%i", CharInfo->charname,thisquest->id, thisquest->value1,CharInfo->union05);
+            Log(MSG_HACK, "[UREWARD] player %s, Quest %i, Faction %i points needed/have %i/%i", CharInfo->charname,thisquest->value2,thisquest->id, thisquest->value1,CharInfo->union05);
             return false;
         }
 
+        int new_amount=0;
+        switch(thisquest->value2)
+        {
+            case 81:
+            {
+                CharInfo->union01-=thisquest->value1;
+                new_amount=CharInfo->union01;
+            }
+            break;
+            case 82:
+            {
+                CharInfo->union02-=thisquest->value1;
+                new_amount=CharInfo->union02;
+            }
+            break;
+            case 83:
+            {
+                CharInfo->union03-=thisquest->value1;
+                new_amount=CharInfo->union03;
+            }
+            break;
+            case 84:
+            {
+                CharInfo->union04-=thisquest->value1;
+                new_amount=CharInfo->union04;
+            }
+            break;
+            case 85:
+            {
+                CharInfo->union05-=thisquest->value1;
+                new_amount=CharInfo->union05;
+            }
+            break;
+        }
+
         //taking away Union points.
-        CharInfo->union05-=thisquest->value1;
         BEGINPACKET( pak, 0x721 );
-        ADDWORD( pak, 85 );
-        ADDWORD( pak, CharInfo->union05 );
+        ADDWORD( pak, thisquest->value2 );
+        ADDWORD( pak, new_amount );
         ADDWORD( pak, 0x0000 );
         client->SendPacket( &pak );
         RESETPACKET( pak, 0x730 );
