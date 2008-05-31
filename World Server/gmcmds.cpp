@@ -3846,15 +3846,51 @@ bool CWorldServer::pakGMUnionPoints(CPlayer* thisclient, char* name, int nb_poin
         return true;
     }
 
-    if(nb_points<=0)
+    if(nb_points<=0||thisclient->CharInfo->unionid==0)
     {
       return true;
     }
 
-    otherclient->CharInfo->union05+=nb_points;
+    int new_amount=0;
+    int new_offset=80+thisclient->CharInfo->unionid;
+    switch(new_offset)
+    {
+        case 81:
+        {
+            thisclient->CharInfo->union01+=nb_points;
+            new_amount=thisclient->CharInfo->union01;
+        }
+        break;
+        case 82:
+        {
+            thisclient->CharInfo->union02+=nb_points;
+            new_amount=thisclient->CharInfo->union02;
+        }
+        break;
+        case 83:
+        {
+            thisclient->CharInfo->union03+=nb_points;
+            new_amount=thisclient->CharInfo->union03;
+        }
+        break;
+        case 84:
+        {
+            thisclient->CharInfo->union04+=nb_points;
+            new_amount=thisclient->CharInfo->union04;
+        }
+        break;
+        case 85:
+        {
+            thisclient->CharInfo->union05+=nb_points;
+            new_amount=thisclient->CharInfo->union05;
+        }
+        break;
+    }
+
+    //otherclient->CharInfo->union05+=nb_points;
     BEGINPACKET( pak, 0x721 );
-    ADDWORD( pak, 85 );
-    ADDWORD( pak, otherclient->CharInfo->union05 );
+    ADDWORD( pak, new_offset );
+    ADDWORD( pak, new_amount );
     ADDWORD( pak, 0x0000 );
     otherclient->client->SendPacket( &pak );
     RESETPACKET( pak, 0x730 );

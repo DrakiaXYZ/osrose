@@ -1112,9 +1112,17 @@ bool CPlayer::AddQuest( unsigned long int questid )
 
        //LMA: We have to delete the reward quest on some cases...
        //[8000,8003] = Santa Rewards.
+       //Same for UW rewards
        if (finalquest->id>=8000&&finalquest->id<=8003)
        {
           LogQuest("Reward Santa, deleting Quest %i",finalquest->id);
+          DelInactiveQuest(questid);
+       }
+
+       if ((finalquest->id>=9600&&finalquest->id<=9607)||(finalquest->id>=9610&&finalquest->id<=9616)||(finalquest->id>=9630&&finalquest->id<=9636)||(finalquest->id>=9640&&finalquest->id<=9646)||(finalquest->id>=9650&&finalquest->id<=9656))
+       {
+          GServer->DoQuestScript( this, finalquest );
+          LogQuest("UW Reward, deleting Quest %i",finalquest->id);
           DelInactiveQuest(questid);
        }
 
@@ -1492,6 +1500,15 @@ bool CPlayer::GiveQuestReward( CQuest* thisquest )
         item.socketed = 0;
         item.appraised = 0;
         item.gem = 0;
+
+        //LMA: For UW
+        if(thisquest->value3>1&&thisquest->script==665)
+        {
+            item.stats=thisquest->value3;
+            item.appraised = 1;
+            Log(MSG_INFO,"UW Stats item: %i",item.stats);
+        }
+
         unsigned int newslot = GetNewItemSlot( item );
         if(newslot==0xffff)
             continue;
@@ -1499,6 +1516,7 @@ bool CPlayer::GiveQuestReward( CQuest* thisquest )
             items[newslot].count += item.count;
         else
             items[newslot] = item;
+
         BEGINPACKET( pak, 0x71f ); // Give Item
         ADDBYTE    ( pak, 0x01 );
         ADDBYTE    ( pak, newslot );

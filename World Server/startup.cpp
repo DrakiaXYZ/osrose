@@ -345,6 +345,12 @@ bool CWorldServer::LoadQuestData( )
         {
             thisquest->Itemreward[0] = atoi(tmp)%1000;
             thisquest->ItemType[0] = atoi(tmp)/1000;
+            if(atoi(tmp)>0&&thisquest->ItemType[0]==0)
+            {
+                Log(MSG_WARNING,"quest %i:: problem reward object %s(%i:%i) ",thisquest->id,tmp,thisquest->ItemType[0],thisquest->Itemreward[0]);
+            }
+
+
         }
         for(int i=1;i<10; i++)
         {
@@ -357,6 +363,12 @@ bool CWorldServer::LoadQuestData( )
             {
                 thisquest->Itemreward[i] = atoi(tmp)%1000;
                 thisquest->ItemType[i] = atoi(tmp)/1000;
+
+                if(atoi(tmp)>0&&thisquest->ItemType[i]==0)
+                {
+                    Log(MSG_WARNING,"quest %i:: problem reward object %s(%i:%i) ",thisquest->id,tmp,thisquest->ItemType[i],thisquest->Itemreward[i]);
+                }
+
             }
         }
        //Load our items

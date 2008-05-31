@@ -692,14 +692,14 @@ bool CWorldServer::pakSpawnNPC( CPlayer* thisclient, CNPC* thisnpc )
 
         if (thisnpc->dialog!=0)
         {
-            Log(MSG_INFO,"Special dialog %i for NPC %i",thisnpc->dialog, thisnpc->npctype);
-            Log(MSG_INFO,"Spawning NPC %i, dialog %i, eventid %i",thisnpc->npctype,thisnpc->dialog,thisnpc->event);
+            //Log(MSG_INFO,"Special dialog %i for NPC %i",thisnpc->dialog, thisnpc->npctype);
+            //Log(MSG_INFO,"Spawning NPC %i, dialog %i, eventid %i",thisnpc->npctype,thisnpc->dialog,thisnpc->event);
             ADDWORD( pak, thisnpc->dialog );
         }
         else
         {
             //Log(MSG_INFO,"Dialog %i for NPC %i",thisnpc->npctype - factor, thisnpc->npctype);
-            Log(MSG_INFO,"Spawning NPC %i, dialog (factor) %i, eventid %i",thisnpc->npctype,thisnpc->npctype - factor,thisnpc->event);
+            //Log(MSG_INFO,"Spawning NPC %i, dialog (factor) %i, eventid %i",thisnpc->npctype,thisnpc->npctype - factor,thisnpc->event);
             ADDWORD( pak, thisnpc->npctype - factor );
         }
 

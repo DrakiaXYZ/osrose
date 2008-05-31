@@ -228,17 +228,29 @@ bool CWorldServer::DoQuestScript( CPlayer* thisclient, CQuest* thisquest )
              {
                   //LMA BEGIN
                  //Changing Union.
-                if(thisquest->value1<0||thisquest->value1>7||thisclient->CharInfo->Zulies<30000)
+                if(thisquest->value1<0||thisquest->value1>7)
                 {
+                    Log(MSG_HACK,"Player %s Quest %i uw value uncorrect %i",thisclient->CharInfo->charname,thisquest->id,thisquest->value1);
                     return true;
                 }
 
-                thisclient->CharInfo->Zulies -= 30000;
-               	BEGINPACKET( pak, 0x71e );
-                ADDQWORD   ( pak, thisclient->CharInfo->Zulies );
-                ADDBYTE    ( pak, 0x00 );
-                thisclient->client->SendPacket( &pak );
-                RESETPACKET( pak, 0x721 );
+                if(thisquest->value1>0)
+                {
+                    thisclient->CharInfo->Zulies -= 30000;
+                    BEGINPACKET( pak, 0x71e );
+                    ADDQWORD   ( pak, thisclient->CharInfo->Zulies );
+                    ADDBYTE    ( pak, 0x00 );
+                    thisclient->client->SendPacket( &pak );
+                    return true;
+                }
+
+                if(thisclient->CharInfo->Zulies<30000)
+                {
+                    Log(MSG_HACK,"Player %s Quest %i not enough Zuly %i/30000",thisclient->CharInfo->charname,thisquest->id,thisclient->CharInfo->Zulies);
+                    return true;
+                }
+
+                BEGINPACKET( pak, 0x721 );
                 ADDWORD( pak, 0x05 );
                 ADDWORD( pak, thisquest->value1 );
                 ADDWORD( pak, 0x0000 );
