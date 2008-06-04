@@ -139,7 +139,7 @@ void CCharacter::DoAttack( )
                      }
                      if(IsTargetReached( Enemy, skill ) && CanAttack( ))
                      {
-                        Log(MSG_INFO,"%i Buff time for %i",clientid,Enemy->clientid);
+                        Log(MSG_INFO,"%i:: DeBuff time for %i",clientid,Enemy->clientid);
                         DebuffSkill( Enemy, skill );
                      }
                     }break;
@@ -153,7 +153,7 @@ void CCharacter::DoAttack( )
                             }
                             if(IsTargetReached( Target, skill ) && CanAttack( ))
                             {
-                               Log(MSG_INFO,"%i Buff time for %i",clientid,Target->clientid);
+                               Log(MSG_INFO,"%i:: Buff time for %i",clientid,Target->clientid);
                                BuffSkill( Target, skill );
                             }
                     }break;
@@ -213,9 +213,14 @@ void CCharacter::DoAttack( )
             else
             {
                 if(Enemy==NULL)
+                {
                    Log(MSG_INFO,"player %i: default AOE attack (%i/%i) %i for ennemy NULL ", clientid,Battle->atktype,AOE_TARGET,skill->id);
+                }
                 else
+                {
                    Log(MSG_INFO,"player %i: default AOE attack (%i/%i) %i for ennemy %i ", clientid,Battle->atktype,AOE_TARGET,skill->id,Enemy->clientid);
+                }
+
                 AoeSkill( skill, Enemy );
             }
         }
@@ -352,7 +357,7 @@ void CCharacter::NormalAttack( CCharacter* Enemy )
         }
         //
 
-        Log(MSG_INFO,"Someone died");
+        Log(MSG_INFO,"Someone died.");
 
         CDrop* thisdrop = NULL;
         ADDDWORD   ( pak, critical?28:16 );
@@ -443,18 +448,30 @@ bool CCharacter::BuffSkill( CCharacter* Target, CSkills* skill )
         ADDWORD    ( pak, clientid );
         GServer->SendToVisible( &pak, (CCharacter*)this );
         Battle->castTime = clock();
+        //Log(MSG_INFO,"7bb battle casttime==0");
         return true;
     }
     else
     {
         clock_t etime = clock() - Battle->castTime;
         if(etime<SKILL_DELAY)
+        {
+            //Log(MSG_INFO,"etime<SKILL_DELAY: %i<%i",etime,SKILL_DELAY);
             return true;
+        }
+
     }
+
+    //Log(MSG_INFO,"new stat MP %i",Stats->MP);
+
     Battle->castTime = 0;
     UseBuffSkill( Target, skill );
     Stats->MP -= (skill->mp - (skill->mp * Stats->MPReduction / 100));
-    if(Stats->MP<0) Stats->MP=0;
+    if(Stats->MP<0)
+    {
+        Stats->MP=0;
+    }
+
     ClearBattle( Battle );
     GServer->DoSkillScript( this, skill );
     Battle->lastAtkTime = clock( );
@@ -500,7 +517,7 @@ bool CCharacter::SummonBuffSkill( CCharacter* Target, CSkills* skill )
         ADDWORD    ( pak, clientid );
         GServer->SendToVisible( &pak, (CCharacter*)this );
         Battle->castTime = clock();
-        Log(MSG_INFO,"0x7bb");
+        //Log(MSG_INFO,"0x7bb");
         return true;
     }
     else
@@ -511,7 +528,7 @@ bool CCharacter::SummonBuffSkill( CCharacter* Target, CSkills* skill )
     }
 
     //LMA: For now, it seems the summon buff only one time :(
-    Log(MSG_INFO,"Real buff skill");
+    //Log(MSG_INFO,"Real buff skill");
     Battle->castTime = 0;
     UseBuffSkill( Target, skill );
     ClearBattle( Battle );

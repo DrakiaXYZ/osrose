@@ -2159,6 +2159,9 @@ bool CWorldServer::pakStartSkill ( CPlayer* thisclient, CPacket* P )
         Log( MSG_HACK, "Invalid Skill id %i for %s ", skillnum, thisclient->CharInfo->charname );
         return false;
     }
+
+    Log( MSG_INFO, "pakStartSkill for %s (%i)", thisclient->CharInfo->charname,skillnum);
+
     unsigned int skillid = thisclient->cskills[skillnum].id+thisclient->cskills[skillnum].level-1;
     CMap* map = MapList.Index[thisclient->Position->Map];
     CCharacter* character = map->GetCharInMap( targetid );
@@ -2520,6 +2523,9 @@ bool CWorldServer::pakSkillSelf( CPlayer* thisclient, CPacket* P )
         Log( MSG_HACK, "Invalid Skill id %i for %s ", num, thisclient->CharInfo->charname );
         return false;
     }
+
+    Log( MSG_INFO, "pakSkillSelf for %s (%i)", thisclient->CharInfo->charname,num);
+
 	unsigned int skillid = thisclient->cskills[num].id+thisclient->cskills[num].level-1;
 	CSkills* thisskill = GetSkillByID( skillid );
 	if(thisskill == NULL)
@@ -3062,6 +3068,9 @@ bool CWorldServer::pakSkillAOE( CPlayer* thisclient, CPacket* P)
         Log( MSG_HACK, "Invalid Skill id %i for %s ", num, thisclient->CharInfo->charname );
         return false;
     }
+
+    Log( MSG_INFO, "pakSkillAOE for %s (%i)", thisclient->CharInfo->charname,num);
+
     unsigned int skillid = thisclient->cskills[num].id+thisclient->cskills[num].level-1;
     //Log(MSG_INFO,"[pakSkillAOE] skillid=%i",skillid);
     CSkills* thisskill = GetSkillByID( skillid );
