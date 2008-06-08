@@ -822,7 +822,7 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
                     //Forgotten Temple B2 - Mileage Scroll - added by rl2171
                     case 367:
                         useitem->usetype = 57;
-                        useitem->usevalue = 55395155; // Temp value until actual value is found
+                        useitem->usevalue = 55405148; 
                     break;
                     //Junon's Order Return Scroll - Quest Scroll - added by rl2171
                     case 945:
