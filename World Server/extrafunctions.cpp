@@ -724,7 +724,7 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
         case 313://Magic Item [scrolls/summons/fireworks/etc]
         {
             // scrolls [maxhp,attackpower up, ... ]
-            if((useitem->itemnum>79 && useitem->itemnum<93) || (useitem->itemnum=145) ||(useitem->itemnum>300 && useitem->itemnum<320) || (useitem->itemnum>960 && useitem->itemnum<965))
+            if((useitem->itemnum>79 && useitem->itemnum<93) || (useitem->itemnum==145) ||(useitem->itemnum>300 && useitem->itemnum<320) || (useitem->itemnum>960 && useitem->itemnum<965))
             {
                 useitem->usescript = 7;
                 useitem->usetype = UseList.Index[useitem->itemnum]->useeffect[1];
