@@ -741,7 +741,7 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
 
             else //Return Scrolls
             if( (useitem->itemnum>349 && useitem->itemnum<355) ||
-                (useitem->itemnum>359 && useitem->itemnum<365) ||
+                (useitem->itemnum>359 && useitem->itemnum<368) ||
                 (useitem->itemnum==945 )  ||
                 (useitem->itemnum>1029 && useitem->itemnum<1035) )
             {
