@@ -762,6 +762,8 @@ struct CMobGroup {
   UINT tacticalpoints;
   UINT respawntime;
   UINT basicKills;
+  UINT curTac;
+  UINT curBasic;
   fPoint point;
   UINT range;
   clock_t lastRespawnTime;

@@ -597,6 +597,10 @@ bool CWorldServer::LoadMobGroups() {
 
     thisgroup->lastRespawnTime = clock();
     thisgroup->active = 0;
+    thisgroup->basicKills = 0;
+    thisgroup->curTac = 0;
+    thisgroup->curBasic = 0;
+
 
     thisgroup->basicMobs.clear();
     thisgroup->tacMobs.clear();

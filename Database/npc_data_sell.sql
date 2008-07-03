@@ -780,7 +780,7 @@ UPDATE npc_data SET tab1 = '0', tab2 = '0', tab3 = '0', specialtab = '0' WHERE i
 UPDATE npc_data SET tab1 = '0', tab2 = '0', tab3 = '0', specialtab = '0' WHERE id =1052 ;
 UPDATE npc_data SET tab1 = '0', tab2 = '0', tab3 = '0', specialtab = '0' WHERE id =1053 ;
 UPDATE npc_data SET tab1 = '382', tab2 = '0', tab3 = '0', specialtab = '0' WHERE id =1061 ;
-UPDATE npc_data SET tab1 = '386', tab2 = '387', tab3 = '0', specialtab = '0' WHERE id =1062 ;
+UPDATE npc_data SET tab1 = '386', tab2 = '387', tab3 = '388', specialtab = '389' WHERE id =1062 ;
 UPDATE npc_data SET tab1 = '390', tab2 = '0', tab3 = '0', specialtab = '0' WHERE id =1063 ;
 UPDATE npc_data SET tab1 = '394', tab2 = '395', tab3 = '0', specialtab = '397' WHERE id =1064 ;
 UPDATE npc_data SET tab1 = '422', tab2 = '0', tab3 = '0', specialtab = '0' WHERE id =1071 ;
@@ -801,7 +801,7 @@ UPDATE npc_data SET tab1 = '474', tab2 = '475', tab3 = '0', specialtab = '0' WHE
 UPDATE npc_data SET tab1 = '478', tab2 = '479', tab3 = '480', specialtab = '481' WHERE id =1093 ;
 UPDATE npc_data SET tab1 = '482', tab2 = '483', tab3 = '484', specialtab = '485' WHERE id =1094 ;
 UPDATE npc_data SET tab1 = '486', tab2 = '487', tab3 = '488', specialtab = '489' WHERE id =1095 ;
-UPDATE npc_data SET tab1 = '490', tab2 = '491', tab3 = '492', specialtab = '0' WHERE id =1096 ;
+UPDATE npc_data SET tab1 = '490', tab2 = '491', tab3 = '0', specialtab = '0' WHERE id =1096 ;
 UPDATE npc_data SET tab1 = '494', tab2 = '495', tab3 = '0', specialtab = '0' WHERE id =1097 ;
 UPDATE npc_data SET tab1 = '498', tab2 = '0', tab3 = '0', specialtab = '0' WHERE id =1098 ;
 UPDATE npc_data SET tab1 = '0', tab2 = '0', tab3 = '0', specialtab = '0' WHERE id =1099 ;
@@ -850,9 +850,9 @@ UPDATE npc_data SET tab1 = '0', tab2 = '0', tab3 = '0', specialtab = '0' WHERE i
 UPDATE npc_data SET tab1 = '512', tab2 = '513', tab3 = '514', specialtab = '515' WHERE id =1173 ;
 UPDATE npc_data SET tab1 = '516', tab2 = '0', tab3 = '0', specialtab = '0' WHERE id =1180 ;
 UPDATE npc_data SET tab1 = '520', tab2 = '521', tab3 = '522', specialtab = '523' WHERE id =1181 ;
-UPDATE npc_data SET tab1 = '524', tab2 = '525', tab3 = '526', specialtab = '0' WHERE id =1184 ;
+UPDATE npc_data SET tab1 = '524', tab2 = '525', tab3 = '526', specialtab = '527' WHERE id =1184 ;
 UPDATE npc_data SET tab1 = '528', tab2 = '529', tab3 = '0', specialtab = '0' WHERE id =1185 ;
-UPDATE npc_data SET tab1 = '532', tab2 = '533', tab3 = '0', specialtab = '0' WHERE id =1186 ;
+UPDATE npc_data SET tab1 = '532', tab2 = '533', tab3 = '534', specialtab = '535' WHERE id =1186 ;
 UPDATE npc_data SET tab1 = '0', tab2 = '0', tab3 = '0', specialtab = '0' WHERE id =1188 ;
 UPDATE npc_data SET tab1 = '0', tab2 = '0', tab3 = '0', specialtab = '0' WHERE id =1191 ;
 UPDATE npc_data SET tab1 = '0', tab2 = '0', tab3 = '0', specialtab = '0' WHERE id =1192 ;
@@ -868,14 +868,14 @@ UPDATE npc_data SET tab1 = '0', tab2 = '0', tab3 = '0', specialtab = '0' WHERE i
 UPDATE npc_data SET tab1 = '0', tab2 = '0', tab3 = '0', specialtab = '0' WHERE id =1209 ;
 UPDATE npc_data SET tab1 = '0', tab2 = '0', tab3 = '0', specialtab = '0' WHERE id =1211 ;
 UPDATE npc_data SET tab1 = '551', tab2 = '0', tab3 = '0', specialtab = '0' WHERE id =1212 ;
-UPDATE npc_data SET tab1 = '559', tab2 = '560', tab3 = '0', specialtab = '0' WHERE id =1213 ;
+UPDATE npc_data SET tab1 = '559', tab2 = '560', tab3 = '561', specialtab = '562' WHERE id =1213 ;
 UPDATE npc_data SET tab1 = '0', tab2 = '0', tab3 = '0', specialtab = '0' WHERE id =1214 ;
 UPDATE npc_data SET tab1 = '0', tab2 = '0', tab3 = '0', specialtab = '0' WHERE id =1215 ;
 UPDATE npc_data SET tab1 = '0', tab2 = '0', tab3 = '0', specialtab = '0' WHERE id =1219 ;
 UPDATE npc_data SET tab1 = '0', tab2 = '0', tab3 = '0', specialtab = '0' WHERE id =1220 ;
 UPDATE npc_data SET tab1 = '0', tab2 = '0', tab3 = '0', specialtab = '0' WHERE id =1221 ;
-UPDATE npc_data SET tab1 = '563', tab2 = '0', tab3 = '0', specialtab = '0' WHERE id =1222 ;
-UPDATE npc_data SET tab1 = '0', tab2 = '0', tab3 = '0', specialtab = '0' WHERE id =1223 ;
+UPDATE npc_data SET tab1 = '563', tab2 = '564', tab3 = '565', specialtab = '0' WHERE id =1222 ;
+UPDATE npc_data SET tab1 = '540', tab2 = '541', tab3 = '542', specialtab = '543' WHERE id =1223 ;
 UPDATE npc_data SET tab1 = '555', tab2 = '556', tab3 = '0', specialtab = '0' WHERE id =1224 ;
 UPDATE npc_data SET tab1 = '0', tab2 = '0', tab3 = '0', specialtab = '0' WHERE id =1228 ;
 UPDATE npc_data SET tab1 = '0', tab2 = '0', tab3 = '0', specialtab = '0' WHERE id =1229 ;

@@ -278,15 +278,17 @@ void CMap::RespawnMonster( )
       clock_t rtime = clock() - thisgroup->lastRespawnTime;
       if (rtime < thisgroup->respawntime*CLOCKS_PER_SEC || thisgroup->active >= thisgroup->limit)
         continue;
-      for (UINT k = thisgroup->active; k < thisgroup->limit; k++) {
+     for (UINT k = thisgroup->active; k < thisgroup->limit; k++) {
         CMob *thismob;
-        if (thisgroup->tacMobs.size() > 0 && thisgroup->basicKills > thisgroup->tacticalpoints) {
-          UINT mobId = (UINT)(rand() % thisgroup->tacMobs.size());
-          thismob = thisgroup->tacMobs.at(mobId);
+        if (thisgroup->tacMobs.size() > 0 && thisgroup->basicKills >= thisgroup->tacticalpoints) {
+          thismob = thisgroup->tacMobs.at(thisgroup->curTac);
           thisgroup->basicKills = 0;
+          thisgroup->curTac++;
+          if (thisgroup->curTac >= thisgroup->tacMobs.size()) thisgroup->curTac = 0;
         } else {
-          UINT mobId = (UINT)(rand() % thisgroup->basicMobs.size());
-          thismob = thisgroup->basicMobs.at(mobId);
+          thismob = thisgroup->basicMobs.at(thisgroup->curBasic);
+          thisgroup->curBasic++;
+          if (thisgroup->curBasic >= thisgroup->basicMobs.size()) thisgroup->curBasic = 0;
         }
         for (UINT i = 0; i < thismob->amount; i++) {
           fPoint position = GServer->RandInCircle( thisgroup->point, thisgroup->range );

@@ -261,6 +261,7 @@ struct CROSEServerConfig
     int Command_Job;
     int Command_Kick;
     int Command_KillInRange;
+    int Command_LearnSkill;
     int Command_Level;
     int Command_LevelUp;
     int Command_ManageFairy;
