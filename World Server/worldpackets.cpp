@@ -668,7 +668,10 @@ bool CWorldServer::pakSpawnNPC( CPlayer* thisclient, CNPC* thisnpc )
         ADDWORD( pak, thisnpc->thisnpc->dialogid );
     }
     else
-    {// fixed by tomiz, rl2171 & lmame [npc dialogs fixed]
+    { // NPC dialog should be type - 900, if not specified in DB
+        ADDWORD( pak, thisnpc->npctype - 900 );
+/*
+      {// fixed by tomiz, rl2171 & lmame [npc dialogs fixed]
          unsigned int factor;
         if (thisnpc->npctype >= 1000 && thisnpc->npctype <=1041 || thisnpc->npctype >= 1043 && thisnpc->npctype <=1084 || thisnpc->npctype >= 1086 && thisnpc->npctype <=1119 || thisnpc->npctype >= 1131 && thisnpc->npctype <=1199 || thisnpc->npctype >= 1207 && thisnpc->npctype <=1242 || thisnpc->npctype >= 1245 && thisnpc->npctype <=1252 || thisnpc->npctype >= 1267 && thisnpc->npctype <=1299) factor=900;
         else if (thisnpc->npctype == 1042 || thisnpc->npctype == 1085 ) factor=899;  // Storage Adventure Plain -> Fabrizio - Junon Clan Field -> Nell
@@ -702,6 +705,7 @@ bool CWorldServer::pakSpawnNPC( CPlayer* thisclient, CNPC* thisnpc )
             //Log(MSG_INFO,"Spawning NPC %i, dialog (factor) %i, eventid %i",thisnpc->npctype,thisnpc->npctype - factor,thisnpc->event);
             ADDWORD( pak, thisnpc->npctype - factor );
         }
+*/
 
     }
 	ADDFLOAT( pak, thisnpc->dir );

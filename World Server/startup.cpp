@@ -780,7 +780,7 @@ bool CWorldServer::LoadNPCs( )
 {
 	Log( MSG_LOAD, "NPC spawn                   " );
 	MYSQL_ROW row;
-	MYSQL_RES *result = DB->QStore("SELECT type,map,dir,x,y FROM list_npcs");
+	MYSQL_RES *result = DB->QStore("SELECT type,map,dir,x,y,dialogid FROM list_npcs");
 	if(result==NULL) return false;
 	while(row = mysql_fetch_row(result))
     {
@@ -806,7 +806,8 @@ bool CWorldServer::LoadNPCs( )
             continue;
         }
 
-        thisnpc->dialog=thisnpc->thisnpc->dialogid;
+	thisnpc->thisnpc->dialogid = atoi(row[5]); //This is global to NPC type
+//        thisnpc->dialog=thisnpc->thisnpc->dialogid;
         thisnpc->event=thisnpc->thisnpc->eventid; //LMA Event.
 
         //LMA: check if out of memory.
@@ -1029,21 +1030,29 @@ bool CWorldServer::LoadMonsters( )
     }
    	Log( MSG_LOAD, "Monsters Spawn loaded" );
 #else
-    for (UINT i = 0; i < MapList.Map.size(); i++) {
-      CMap *thismap = MapList.Map.at (i);
+       for (UINT i = 0; i < MapList.Map.size(); i++) {
+      CMap *thismap = MapList.Map.at(i);
       for (UINT j = 0; j < thismap->MobGroupList.size(); j++) {
+        bool GroupFull = false;
         CMobGroup* thisgroup = thismap->MobGroupList.at(j);
         // Load some basic mobs onto map
         for (UINT k = 0; k < thisgroup->limit; k++) {
-          UINT mobId = (UINT)(rand() % thisgroup->basicMobs.size());
-          CMob* thismob = thisgroup->basicMobs.at(mobId);
+          CMob* thismob = thisgroup->basicMobs.at(thisgroup->curBasic);
+          thisgroup->curBasic++;
+          if (thisgroup->curBasic >= thisgroup->basicMobs.size()) thisgroup->curBasic = 0;
           for (UINT l = 0; l < thismob->amount; l++) {
             fPoint position = RandInCircle( thisgroup->point, thisgroup->range );
             thismap->AddMonster( thismob->mobId, position, 0, thismob->mobdrop, thismob->mapdrop, thisgroup->id );
+            if (thisgroup->active > thisgroup->limit) {
+              GroupFull = true;
+              break;
+            }
           }
+          if (GroupFull) break;
         }
       }
     }
+
 #endif
 	return true;
 }
