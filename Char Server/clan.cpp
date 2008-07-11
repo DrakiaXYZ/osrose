@@ -125,6 +125,71 @@ bool CCharServer::SendRewardPoints (CCharClient* thisclient,long int lma_points)
     return true;
 }
 
+bool CCharServer::SendClanPoints (CCharClient* thisclient,long int lma_points)
+{
+    Log(MSG_INFO,"[CS]in SendClanPoints for %s",thisclient->charname);     
+    if( thisclient->clanid > 0 )
+    {
+        Log(MSG_INFO,"[CS] SendClanPoints, trying to get clan %i",thisclient->clanid );
+        CClans *thisclan = GetClanByID(thisclient->clanid);
+        if(thisclan!=NULL)
+        {
+            thisclan->cp+=lma_points;          //clan points is handled by world server.
+                          
+            BEGINPACKET( pak, 0x7e0);
+            ADDBYTE    ( pak, 0x33);//0x33 you have invited to clan
+            ADDWORD    ( pak, thisclan->id);// clan id
+            ADDBYTE    ( pak, 0x00);
+            ADDBYTE    ( pak, 0x00);
+            ADDWORD    ( pak, thisclan->back);//Clan Background
+            ADDWORD    ( pak, thisclan->logo);//Clan logo
+            ADDBYTE    ( pak, thisclan->grade);//Clan grade
+            ADDBYTE    ( pak, thisclient->clan_rank);// Clan rank (0 = red rokie / 6 = master)
+            ADDDWORD    ( pak, thisclan->cp); //Clan Points
+            ADDWORD    ( pak, 0x0064); //always 0x64? having before thisclan->cp            
+            ADDWORD    ( pak, 0x0000); //??
+            ADDQWORD   ( pak, 0x000000000000 );   //Clan Money
+            ADDDWORD    ( pak, thisclan->ClanMembers.size());  //Nb of clan members.
+            //ADDDWORD   ( pak, 0x00000000);
+            ADDWORD    ( pak, 0x0000);
+            for(int i=0;i<120;i++)
+                ADDBYTE ( pak, 0x00);
+            ADDDWORD   ( pak, 0x00000000); //Ranking Points
+            ADDDWORD   ( pak, thisclient->reward_points );  //LMA 139+ (Reward points for clan shop)
+            ADDSTRING  ( pak, thisclan->name);//Clan Name
+            ADDBYTE    ( pak, 0x00);
+                        
+            //Clan slogan
+            if (strlen(thisclan->slogan)==0)
+            {
+                 ADDSTRING  ( pak, thisclan->name);
+                 ADDBYTE    ( pak, 0x00);                                
+            }
+            else
+            {
+                ADDSTRING  ( pak, thisclan->slogan);
+                ADDBYTE    ( pak, 0x00);                
+            }
+
+            //only added to packet if there is actually a news inside.
+            if (strlen(thisclan->news)!=0)
+            {
+               ADDSTRING  ( pak, thisclan->news);
+               ADDBYTE    ( pak, 0x00);
+            }
+            
+            thisclient->SendPacket(&pak);	
+            Log(MSG_INFO,"[CS] Clan packet: 0x7e0, SendClanPoints %s",thisclan->name);            
+        }
+        else
+        {
+            Log(MSG_INFO,"[CS] clan ID %i not found in SendClanPoints",thisclient->clanid );
+        }
+        
+    }     
+    return true;
+}
+
 // Send Clan information
 bool CCharServer::SendClanInfo (CCharClient* thisclient)
 {
@@ -1034,7 +1099,30 @@ bool CCharServer::pakClanManager ( CCharClient* thisclient, CPacket* P )
             otherclient->SendPacket(&pak);
             Log(MSG_INFO,"[CS] Clan load info %s",newclan->name);
         }
-        break;        
+        break;
+        case 0xfe:
+             {
+                  //LMA: adding clan points (bogus command)
+                  //We have to reload player's information...
+                  int lma_id = GETWORD((*P),1); // client ID
+                  long int lma_points = GETDWORD((*P),3); // clan points (TOTAL)
+                CCharClient* otherclient = GetClientByID( lma_id );
+                
+                if(otherclient!=NULL)
+                {
+                     Log(MSG_INFO,"[CS] Forcing clan info for %i, %s, total clan points %li",lma_id,otherclient->charname,lma_points);
+                     //test
+                     lma_mask(otherclient);
+                     SendClanPoints(otherclient,0);
+                     SendClanPoints(otherclient,lma_points);
+                }              
+                else
+                {
+                    Log(MSG_INFO,"[CS] ERROR Forcing clan info for %i, not found, total clan points %li!",lma_id,lma_points);
+                }  
+                  
+             }
+             break;             
         case 0xff:
              {
                   //LMA: adding reward points (bogus command)

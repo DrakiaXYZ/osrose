@@ -240,6 +240,7 @@ struct CROSEServerConfig
     int Command_fskill;    //LMA: force a skill for a monster
     int Command_Give2;
     int Command_GiveClanRp;
+    int Command_GiveClanp;
     int Command_GiveFairy;
     int Command_GiveZuly;
     int Command_GlobalTime;

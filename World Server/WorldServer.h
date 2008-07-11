@@ -302,6 +302,7 @@ class CWorldServer : public CServerSocket
         bool pakGMZulygive(CPlayer* thisclient, char* name, int zuly);
         bool pakGMFairyto(CPlayer* thisclient, char* name, int mode);
         bool pakGMClanRewardPoints(CPlayer* thisclient, char* name, int points);    //reward points
+        bool pakGMClanPoints(CPlayer* thisclient, char* name, int points);    //clan points
         bool pakGMManageFairy(CPlayer* thisclient, int mode);
         bool pakGMHurtHim(CPlayer* thisclient, char* name);   //LMA: Gm command.
         bool pakGMChangeFairyWait(CPlayer* thisclient, int newvalue);

@@ -1286,6 +1286,15 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
 	    Log( MSG_GMACTION, " %s : /giveclanrp %s, %i" , thisclient->CharInfo->charname, name, points);
 	    return pakGMClanRewardPoints(thisclient, name, points);
 	}
+    else if(strcmp(command, "giveclanp")==0)
+    {
+         if(Config.Command_GiveClanRp > thisclient->Session->accesslevel)
+	                    return true;
+        if ((tmp = strtok(NULL, " "))==NULL) return true; char* name=tmp;
+	    if((tmp = strtok(NULL, " "))==NULL) return true; int points=atoi(tmp);
+	    Log( MSG_GMACTION, " %s : /giveclanp %s, %i" , thisclient->CharInfo->charname, name, points);
+	    return pakGMClanPoints(thisclient, name, points);
+	}	
     else if(strcmp(command, "givefairy")==0)
     {
          if(Config.Command_GiveFairy > thisclient->Session->accesslevel)
@@ -3585,6 +3594,62 @@ bool CWorldServer::pakGMClanRewardPoints(CPlayer* thisclient, char* name, int po
     	send( csock, (char*)&pak, pak.Size, 0 );
     }
 
+
+     return true;
+}
+
+//LMA: Give clan points to somebody
+bool CWorldServer::pakGMClanPoints(CPlayer* thisclient, char* name, int points)
+{
+  	CPlayer* otherclient = GetClientByCharName (name);
+	if(otherclient==NULL){
+        BEGINPACKET(pak, 0x702);
+		ADDSTRING(pak, "User does not exist or is not online.");
+		ADDBYTE(pak, 0);
+		thisclient->client->SendPacket(&pak);
+        return true;
+    }
+
+     if (otherclient->Clan->clanid==0)
+     {
+        BEGINPACKET(pak, 0x702);
+		ADDSTRING(pak, "User does not have a clan.");
+		ADDBYTE(pak, 0);
+		thisclient->client->SendPacket(&pak);
+        return true;
+     }
+
+     //adding points if needed
+     //Asking CharServer to refresh the player's informations.
+    if (points>0)
+    {
+        char buffer[200];
+        sprintf( buffer, "You received %i Clan Points !!", points);
+        BEGINPACKET ( pak, 0x702 );
+        ADDSTRING( pak, buffer );
+        ADDBYTE( pak, 0 );
+        otherclient->client->SendPacket( &pak );
+
+        RESETPACKET( pak, 0x7e0 );
+     	ADDBYTE    ( pak, 0xff );
+    	ADDWORD    ( pak, otherclient->CharInfo->charid);  //charid
+    	ADDDWORD    ( pak, points);  //Clan points (to be added)
+    	cryptPacket( (char*)&pak, GServer->cct );
+    	send( csock, (char*)&pak, pak.Size, 0 );
+    }
+    else
+    {
+        BEGINPACKET( pak, 0x7e0 );
+ 	    ADDBYTE    ( pak, 0xff );
+    	ADDWORD    ( pak, otherclient->CharInfo->charid);  //charid
+    	ADDDWORD    ( pak, points);  //Clan points (to be added)
+    	cryptPacket( (char*)&pak, GServer->cct );
+    	send( csock, (char*)&pak, pak.Size, 0 );
+    }
+    
+    //2do:
+    //Add the last packet needed?
+    
 
      return true;
 }

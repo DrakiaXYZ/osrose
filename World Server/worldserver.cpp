@@ -755,6 +755,7 @@ void CWorldServer::LoadCommandLevels( void )
     Config.Command_fskill = ConfigGetInt    ( "commands.ini", "fskill", 299 );     //LMA: Force a skill for a monster.
     Config.Command_Give2 = ConfigGetInt    ( "commands.ini", "give2", 299 );
     Config.Command_GiveClanRp = ConfigGetInt    ( "commands.ini", "giveclanrp", 299 );       //Reward points
+    Config.Command_GiveClanp = ConfigGetInt    ( "commands.ini", "giveclanp", 299 );       //Clan points    
     Config.Command_GiveFairy = ConfigGetInt    ( "commands.ini", "givefairy", 299 );
     Config.Command_GiveZuly = ConfigGetInt    ( "commands.ini", "givezuly", 299 );
     Config.Command_GlobalTime  = ConfigGetInt    ( "commands.ini", "globaldelay", 30 );

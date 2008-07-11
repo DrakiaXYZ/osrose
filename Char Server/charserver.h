@@ -84,6 +84,7 @@ class CCharServer : public CServerSocket
         bool SendClanInfo (CCharClient* thisclient);
         bool lma_mask (CCharClient* thisclient);   //LMA: Reward points (preparing mask)
         bool SendRewardPoints (CCharClient* thisclient,long int lma_points);   //LMA: Reward points
+        bool SendClanPoints (CCharClient* thisclient,long int lma_points);   //LMA: Clan points
         bool ChangeClanStatus (CCharClient* thisclient, CCharClient* otherclient, int channel);
         bool SendToClanMembers( int clanid,CPacket* pak );
         bool pakClanMembers ( CCharClient* thisclient );
