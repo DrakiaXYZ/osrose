@@ -705,7 +705,7 @@ bool CWorldServer::pakSpawnNPC( CPlayer* thisclient, CNPC* thisnpc )
     else
     { // NPC dialog should be type - 900, if not specified in DB
         ADDWORD( pak, thisnpc->npctype - 900 );
-/*
+        /*
       {// fixed by tomiz, rl2171 & lmame [npc dialogs fixed]
          unsigned int factor;
         if (thisnpc->npctype >= 1000 && thisnpc->npctype <=1041 || thisnpc->npctype >= 1043 && thisnpc->npctype <=1084 || thisnpc->npctype >= 1086 && thisnpc->npctype <=1119 || thisnpc->npctype >= 1131 && thisnpc->npctype <=1199 || thisnpc->npctype >= 1207 && thisnpc->npctype <=1242 || thisnpc->npctype >= 1245 && thisnpc->npctype <=1252 || thisnpc->npctype >= 1267 && thisnpc->npctype <=1299) factor=900;
@@ -740,9 +740,10 @@ bool CWorldServer::pakSpawnNPC( CPlayer* thisclient, CNPC* thisnpc )
             //Log(MSG_INFO,"Spawning NPC %i, dialog (factor) %i, eventid %i",thisnpc->npctype,thisnpc->npctype - factor,thisnpc->event);
             ADDWORD( pak, thisnpc->npctype - factor );
         }
-*/
+        */
 
     }
+    
 	ADDFLOAT( pak, thisnpc->dir );
 
     if (thisnpc->npctype == 1115)
@@ -750,6 +751,8 @@ bool CWorldServer::pakSpawnNPC( CPlayer* thisclient, CNPC* thisnpc )
        ADDBYTE( pak, GServer->Config.Cfmode ) // Burland Clan Field open/close
        ADDBYTE( pak, 0 );
     }
+    
+    //2do: error I guess, extra DWORD in the case of CF NPC.
 
     //Event:
     if (thisnpc->event!=0&&thisnpc->npctype!=1115)

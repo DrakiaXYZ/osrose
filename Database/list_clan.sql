@@ -21,7 +21,7 @@ CREATE TABLE `list_clan` (
   `slogan` varchar(100) default NULL,
   `news` varchar(200) default NULL,
   `rankingpoints` int(11) default NULL,
-  `siglogo` int(11) NOT NULL,
+  `siglogo` int(11) default NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=99 DEFAULT CHARSET=latin1;
 
