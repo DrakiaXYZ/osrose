@@ -3270,6 +3270,7 @@ bool CWorldServer::pakGMEventType(CPlayer* thisclient, int npctype, int dialog, 
     }
     if(type<0) type = 0;
     char buffer[200];
+    
     sprintf( buffer, "Event %i for NPC: %i, Dialog: %i (if dialog has changed, type /here to force refresh)", type, npctype, dialog);
     thisnpc->dialog = dialog;
     thisnpc->event = type;
@@ -3281,13 +3282,15 @@ bool CWorldServer::pakGMEventType(CPlayer* thisclient, int npctype, int dialog, 
 	ADDBYTE    ( pak, 0 );
     thisclient->client->SendPacket(&pak);
 
-    RESETPACKET( pak, 0x790 );
+    RESETPACKET( pak, 0x790 );    
     ADDWORD    ( pak, thisnpc->clientid );
     ADDWORD    ( pak, thisnpc->event );	  //LMA: Welcome in the real Word ^_^
     thisclient->client->SendPacket(&pak);
 
     //Saving in database
-    DB->QExecute("UPDATE npc_data SET dialog=%i, eventid=%i WHERE id=%i", dialog, type,npctype);
+    //DB->QExecute("UPDATE npc_data SET dialog=%i, eventid=%i WHERE id=%i", dialog, type,npctype);
+    //New way.
+    DB->QExecute("UPDATE npc_data SET tempdialogid=%i, eventid=%i WHERE type=%i", dialog, type,npctype);
 
 
 	return true;

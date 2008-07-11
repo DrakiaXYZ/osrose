@@ -780,7 +780,7 @@ bool CWorldServer::LoadNPCs( )
 {
 	Log( MSG_LOAD, "NPC spawn                   " );
 	MYSQL_ROW row;
-	MYSQL_RES *result = DB->QStore("SELECT type,map,dir,x,y,dialogid,eventid FROM list_npcs");
+	MYSQL_RES *result = DB->QStore("SELECT type,map,dir,x,y,dialogid,eventid,tempdialogid FROM list_npcs");
 	if(result==NULL) return false;
 	while(row = mysql_fetch_row(result))
     {
@@ -806,10 +806,11 @@ bool CWorldServer::LoadNPCs( )
             continue;
         }
 
-        thisnpc->thisnpc->dialogid = atoi(row[5]); //This is global to NPC type
+        thisnpc->thisnpc->dialogid = atoi(row[5]); //This is global to NPC type (original dialog)
         //thisnpc->dialog=thisnpc->thisnpc->dialogid;
-        //thisnpc->event=thisnpc->thisnpc->eventid; //LMA Event.
+        //thisnpc->event=thisnpc->thisnpc->eventid; //LMA Event.        
         thisnpc->event=atoi(row[6]);                //LMA Event.
+        thisnpc->dialog=atoi(row[7]);               //LMA tempdialog ID, used for events for example
 
         //LMA: check if out of memory.
         if (thisnpc->posMap>=MAX_MAP_DATA)

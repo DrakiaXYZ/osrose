@@ -698,52 +698,25 @@ bool CWorldServer::pakSpawnNPC( CPlayer* thisclient, CNPC* thisnpc )
 	ADDWORD( pak, 0x0000 );//Buffs
 	ADDWORD( pak, 0x0000 );//buffs
 	ADDWORD( pak, thisnpc->npctype );
-    if(thisnpc->thisnpc->dialogid!=0)
-    {
+	
+	//LMA: Dialog time, or we send the dialogID (default one), or the tempdialogID (event for example).
+	if (thisnpc->dialog!=0)
+	{
         ADDWORD( pak, thisnpc->thisnpc->dialogid );
+        Log(MSG_INFO,"Special dialog %i for NPC %i",thisnpc->dialog, thisnpc->npctype);
+    }
+    else if(thisnpc->thisnpc->dialogid!=0)
+    {
+         Log(MSG_INFO,"Default dialog %i for NPC %i",thisnpc->thisnpc->dialogid, thisnpc->npctype);
+         ADDWORD( pak, thisnpc->thisnpc->dialogid );
     }
     else
-    { // NPC dialog should be type - 900, if not specified in DB
+    {
+        // NPC dialog should be type - 900, if not specified in DB
         ADDWORD( pak, thisnpc->npctype - 900 );
-        /*
-      {// fixed by tomiz, rl2171 & lmame [npc dialogs fixed]
-         unsigned int factor;
-        if (thisnpc->npctype >= 1000 && thisnpc->npctype <=1041 || thisnpc->npctype >= 1043 && thisnpc->npctype <=1084 || thisnpc->npctype >= 1086 && thisnpc->npctype <=1119 || thisnpc->npctype >= 1131 && thisnpc->npctype <=1199 || thisnpc->npctype >= 1207 && thisnpc->npctype <=1242 || thisnpc->npctype >= 1245 && thisnpc->npctype <=1252 || thisnpc->npctype >= 1267 && thisnpc->npctype <=1299) factor=900;
-        else if (thisnpc->npctype == 1042 || thisnpc->npctype == 1085 ) factor=899;  // Storage Adventure Plain -> Fabrizio - Junon Clan Field -> Nell
-        else if (thisnpc->npctype == 1120 ) factor=896;  // dunno if that dialog are corect 1120 [Clan Clerk] Regina
-        else if (thisnpc->npctype >= 1121 && thisnpc->npctype <=1123) factor=900; // Shroon 1121, Pein 1122 & Edone 1123- Anima Lake
-        else if (thisnpc->npctype >= 1124 && thisnpc->npctype <=1125) factor=905; //Regina & Ruven 1124, 1125
-       	else if (thisnpc->npctype >= 1200 && thisnpc->npctype <=1203 || thisnpc->npctype >= 1206 && thisnpc->npctype <=1206) factor=896; // event npc
-        else if (thisnpc->npctype == 1204 ) factor=897;  // event npc another warp to zant dialog npc 1203 [Event Info] Lucielle Fete
-        else if (thisnpc->npctype == 1205 ) factor=901; // Event Santa Claus - Non event factor 896, event 901, stolen suits.
-        else if (thisnpc->npctype >= 1243 && thisnpc->npctype <=1244) factor=927;  // Patrol Dogs on Eldeon
-        else if (thisnpc->npctype == 1253 ) factor=889; // Eldeon [Bird]Hawker in Shady Jungle
-        else if (thisnpc->npctype >= 1254 && thisnpc->npctype <=1262) factor=901;  // Eldeon NPCs in Shady Jungle
-        else if (thisnpc->npctype == 1263 ) factor=902; // Eldeon NPC in Shady Jungle
-        else if (thisnpc->npctype == 1266 ) factor=903; // Eldeon NPC in Shady Jungle
-        else if (thisnpc->npctype == 1473 ) factor=1457; // should be ok 1473 Melendino adventure plain
-        else if (thisnpc->npctype >= 1500 && thisnpc->npctype <1502) factor=1210;
-        else if (thisnpc->npctype == 1502 ) factor=1193; // Event Santa Claus (yeah another one, elfidora and snow crystal)
-        else if (thisnpc->npctype >= 1503 && thisnpc->npctype <=1599) factor=1210;
-        else if (thisnpc->npctype >= 1750 && thisnpc->npctype <=1755 || !thisnpc->npctype == 1752 ) factor=1000; //should be ok
-        else if (thisnpc->npctype == 1752 ) factor=1528; // Clan Merchant Aliche Patt
-
-        if (thisnpc->dialog!=0)
-        {
-            //Log(MSG_INFO,"Special dialog %i for NPC %i",thisnpc->dialog, thisnpc->npctype);
-            //Log(MSG_INFO,"Spawning NPC %i, dialog %i, eventid %i",thisnpc->npctype,thisnpc->dialog,thisnpc->event);
-            ADDWORD( pak, thisnpc->dialog );
-        }
-        else
-        {
-            //Log(MSG_INFO,"Dialog %i for NPC %i",thisnpc->npctype - factor, thisnpc->npctype);
-            //Log(MSG_INFO,"Spawning NPC %i, dialog (factor) %i, eventid %i",thisnpc->npctype,thisnpc->npctype - factor,thisnpc->event);
-            ADDWORD( pak, thisnpc->npctype - factor );
-        }
-        */
-
+        Log(MSG_INFO,"NO default or special dialog %i for NPC %i",thisnpc->npctype - 900, thisnpc->npctype);
     }
-    
+	    
 	ADDFLOAT( pak, thisnpc->dir );
 
     if (thisnpc->npctype == 1115)
