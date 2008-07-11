@@ -134,7 +134,9 @@ bool CCharServer::SendClanPoints (CCharClient* thisclient,long int lma_points)
         CClans *thisclan = GetClanByID(thisclient->clanid);
         if(thisclan!=NULL)
         {
-            thisclan->cp+=lma_points;          //clan points is handled by world server.
+            thisclan->cp+=lma_points;          //clan points is handled by world server.            
+            //saving clanpoints.
+            DB->QExecute("UPDATE list_clan SET cp=%i WHERE id=%i",thisclan->cp,thisclient->clanid);
                           
             BEGINPACKET( pak, 0x7e0);
             ADDBYTE    ( pak, 0x33);//0x33 you have invited to clan

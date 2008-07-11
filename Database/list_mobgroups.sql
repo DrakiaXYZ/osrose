@@ -1,3 +1,30 @@
+/*
+MySQL Data Transfer
+Source Host: dhrr
+Source Database: osrose
+Target Host: dhrr
+Target Database: osrose
+Date: 5/14/2008 5:38:24 PM
+*/
+
+SET FOREIGN_KEY_CHECKS=0;
+-- ----------------------------
+-- Table structure for list_mobgroups
+-- ----------------------------
+CREATE TABLE `list_mobgroups` (
+  `id` int(11) NOT NULL auto_increment,
+  `map` int(11) NOT NULL,
+  `x` float NOT NULL,
+  `y` float NOT NULL,
+  `range` int(11) NOT NULL,
+  `respawntime` int(11) NOT NULL,
+  `limit` int(11) NOT NULL,
+  `tacticalpoints` int(11) NOT NULL,
+  `moblist` varchar(1024) default NULL,
+  PRIMARY KEY  (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=23114 DEFAULT CHARSET=utf8;
+
+
 INSERT INTO `list_mobgroups` VALUES (0, 1, 5118.46, 5182.58, 30, 22, 1, 200, '301,1,0|301,1,0|301,1,0|301,1,0|301,1,0|301,1,1|301,1,1');
 INSERT INTO `list_mobgroups` VALUES (0, 1, 5097.64, 5225.43, 30, 22, 1, 200, '301,1,0|301,1,0|301,1,0|301,1,0|301,1,0|301,1,1|301,1,1');
 INSERT INTO `list_mobgroups` VALUES (0, 1, 5101.19, 5214.03, 5, 22, 1, 200, '301,1,0|301,1,0|301,1,0|301,1,0|301,1,0|301,1,1|301,1,1');
