@@ -3631,7 +3631,7 @@ bool CWorldServer::pakGMClanPoints(CPlayer* thisclient, char* name, int points)
         otherclient->client->SendPacket( &pak );
 
         RESETPACKET( pak, 0x7e0 );
-     	ADDBYTE    ( pak, 0xff );
+     	ADDBYTE    ( pak, 0xfe );
     	ADDWORD    ( pak, otherclient->CharInfo->charid);  //charid
     	ADDDWORD    ( pak, points);  //Clan points (to be added)
     	cryptPacket( (char*)&pak, GServer->cct );
@@ -3640,7 +3640,7 @@ bool CWorldServer::pakGMClanPoints(CPlayer* thisclient, char* name, int points)
     else
     {
         BEGINPACKET( pak, 0x7e0 );
- 	    ADDBYTE    ( pak, 0xff );
+ 	    ADDBYTE    ( pak, 0xfe );
     	ADDWORD    ( pak, otherclient->CharInfo->charid);  //charid
     	ADDDWORD    ( pak, points);  //Clan points (to be added)
     	cryptPacket( (char*)&pak, GServer->cct );
@@ -3649,7 +3649,19 @@ bool CWorldServer::pakGMClanPoints(CPlayer* thisclient, char* name, int points)
     
     //2do:
     //Add the last packet needed?
-    
+    BEGINPACKET( pak, 0x7e0 );
+    ADDBYTE    ( pak, 0x35 );
+    ADDWORD    ( pak, otherclient->clientid );
+    ADDWORD    ( pak, otherclient->Clan->clanid );
+    ADDWORD    ( pak, 0x0000 );
+    ADDWORD    ( pak, otherclient->Clan->back );
+    ADDWORD    ( pak, otherclient->Clan->logo );
+    ADDBYTE    ( pak, otherclient->Clan->grade );
+    ADDBYTE    ( pak, otherclient->Clan->clanrank);
+    ADDSTRING  ( pak, otherclient->Clan->clanname );            
+    ADDBYTE    ( pak, 0x00 );
+    otherclient->client->SendPacket(&pak);
+        
 
      return true;
 }
