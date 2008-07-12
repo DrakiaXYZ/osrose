@@ -148,6 +148,7 @@ class CPlayer: public CCharacter
         CParty* GetParty( );
         unsigned int AddItem( CItem item );
         void TakeFuel(int add_fuel=0);   //LMA: Using fuel :)
+        void GiveCP(unsigned int points);    //LMA: Give Clan Points
         void UpdateInventory( unsigned int slot1, unsigned int slot2=0xffff );   //LMA: this one saves into database immediatly
         void UpdateInventoryNoSave( unsigned int slot1, unsigned int slot2=0xffff );   //LMA: This one doesn't immediatly save into database.
         void SaveSlot( unsigned int slot); //LMA: Saving slot into MySQL database.

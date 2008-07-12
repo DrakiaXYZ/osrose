@@ -2772,6 +2772,12 @@ bool CWorldServer::pakUseItem ( CPlayer* thisclient, CPacket* P )
             thisclient->TakeFuel(thisuse->usevalue);
             flag=true;
         }
+        case 13:
+        {
+             //LMA: Clan Points :)
+            thisclient->GiveCP(thisuse->usevalue);
+            flag=true;
+        }          
         break;
     }
     if(flag == true)

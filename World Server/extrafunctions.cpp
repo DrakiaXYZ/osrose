@@ -943,17 +943,20 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
         break;
         case 320://Automatic Consumption - HP, MP, Stamina, Clan Point
             if (useitem->itemnum>150 && useitem->itemnum<192)
-        {
-            useitem->usescript = 1;
-            useitem->usetype = UseList.Index[useitem->itemnum]->useeffect[0];
-            useitem->usevalue = UseList.Index[useitem->itemnum]->useeffect[1];
-        }
+            {
+                useitem->usescript = 1;
+                //clan points
+                if(useitem->itemnum>180 && useitem->itemnum<192)
+                     useitem->usescript = 1;
+                useitem->usetype = UseList.Index[useitem->itemnum]->useeffect[0];
+                useitem->usevalue = UseList.Index[useitem->itemnum]->useeffect[1];
+                Log( MSG_INFO, "auto consumme (%i:%i), script: %i, %i,%i",type,useitem->itemnum,useitem->usescript,useitem->usetype,useitem->usevalue);
+            }
             else
             {
                 Log( MSG_WARNING, "Unknown Item %i - Type %i",useitem->itemnum,type);
-
-            delete useitem;
-            return NULL;
+                delete useitem;
+                return NULL;
             }
         break;
         case 321://Time Coupon - items 201-203, 948, 952-957

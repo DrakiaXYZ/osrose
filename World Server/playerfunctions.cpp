@@ -919,6 +919,55 @@ void CPlayer::SaveSlot( unsigned int slot)
    return;
 }
 
+//LMA: Gives Clan Points
+void CPlayer::GiveCP(unsigned int points)
+{
+     if(points==0)
+         return;
+     if (Clan->clanid==0)
+     {
+        BEGINPACKET(pak, 0x702);
+		ADDSTRING(pak, "User does not have a clan.");
+		ADDBYTE(pak, 0);
+		client->SendPacket(&pak);
+        return;
+     }
+
+     //adding points if needed
+     //Asking CharServer to refresh the player's informations.
+    char buffer[200];
+    sprintf( buffer, "You received %i Clan Points !!", points);
+    BEGINPACKET ( pak, 0x702 );
+    ADDSTRING( pak, buffer );
+    ADDBYTE( pak, 0 );
+    client->SendPacket( &pak );
+
+    RESETPACKET( pak, 0x7e0 );
+ 	ADDBYTE    ( pak, 0xfe );
+	ADDWORD    ( pak, CharInfo->charid);  //charid
+	ADDDWORD    ( pak, points);  //Clan points (to be added)
+	cryptPacket( (char*)&pak, GServer->cct );
+	send( GServer->csock, (char*)&pak, pak.Size, 0 );
+
+    
+    //Add the last packet needed.
+    RESETPACKET( pak, 0x7e0 );
+    ADDBYTE    ( pak, 0x35 );
+    ADDWORD    ( pak, clientid );
+    ADDWORD    ( pak, Clan->clanid );
+    ADDWORD    ( pak, 0x0000 );
+    ADDWORD    ( pak, Clan->back );
+    ADDWORD    ( pak, Clan->logo );
+    ADDBYTE    ( pak, Clan->grade );
+    ADDBYTE    ( pak, Clan->clanrank);
+    ADDSTRING  ( pak, Clan->clanname );            
+    ADDBYTE    ( pak, 0x00 );
+    client->SendPacket(&pak);
+
+
+     return;     
+}
+
 
 //LMA: takes player fuel (or refuels). Handles CG and Cart.
 void CPlayer::TakeFuel(int add_fuel)
