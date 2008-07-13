@@ -61,7 +61,10 @@ echo creating list_friend table
 %mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < list_friend.sql
 echo creating list_quest table
 %mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < list_quest.sql
-
+echo creating list_quest_qsd table
+%mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < list_quest_qsd.sql
+echo creating list_mobgroups table
+%mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < list_mobgroups.sql
 
 :upgrade
 echo Installing new database content.

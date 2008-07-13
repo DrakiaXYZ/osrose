@@ -13,16 +13,6 @@
 /*!40100 SET CHARACTER SET cp1250*/;
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0*/;
 
-
-#
-# Database structure for database 'roseon'
-#
-
-CREATE DATABASE /*!32312 IF NOT EXISTS*/ `roseon` /*!40100 DEFAULT CHARACTER SET latin1 COLLATE latin1_german1_ci */;
-
-USE `roseon`;
-
-
 #
 # Table structure for table 'skills_data'
 #
