@@ -269,7 +269,7 @@ bool CWorldServer::LoadTeleGateData( )
 #ifdef USENEWQUESTSYSTEM
 bool CWorldServer::LoadQuestSTB()
 {
-    STBStoreData( "data/LIST_QUEST.STB", &STB_QUEST );
+    STBStoreData( "3ddata/stb/LIST_QUEST.STB", &STB_QUEST );
     Log(MSG_INFO,"STB Loaded for QSD Version !!!");
     return true;
 }

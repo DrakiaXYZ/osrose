@@ -66,7 +66,7 @@ void CWorldServer::ReadQSD(strings path, dword index){
 
 
 void CWorldServer::LoadQuestData(){
-	CStrStb* stbQuest = new CStrStb("data/LIST_QUESTDATA.STB");
+	CStrStb* stbQuest = new CStrStb("3ddata/stb/LIST_QUESTDATA.STB");
 	
 	char buffer [100];
 
