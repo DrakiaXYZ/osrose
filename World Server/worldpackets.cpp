@@ -153,303 +153,6 @@ void CWorldServer::pakInventory( CPlayer *thisclient )
     thisclient->client->SendPacket( &pak );
 }
 
-
-// Send Quest information
-void CWorldServer::pakQuestData( CPlayer *thisclient )
-{
-    BEGINPACKET( pak, 0x71b );
-    /*
-        char buffer;
-        FILE *packet1 = fopen("packet/quest.dat","r");       //  I USE THIS FOR TEST!
-        if(packet1==NULL)
-        {
-            cout << "file not founded: check pakQuestData function" << endl;
-            return;
-        }
-        while((fscanf(packet1,"%c",&buffer))!=EOF)
-            ADDBYTE(pak,buffer);
-        fclose(packet1);
-        thisclient->client->SendPacket( &pak );
-        return;
-    */
-
-    //LMA: Quest Variables (25 Dword)
-    //Quest Flag var declaration.
-    long int liste_blocks[32];
-    int liste_flags[512];
-    int off_b=0;
-    int off_e=0;
-    int cpt=0;
-    for(int j=0;j<512;j++)
-        liste_flags[j]=0;
-            
-    for(int i=0;i<25;i++)
-    {
-         if (thisclient->QuestVariables[i]!=0)
-         {
-            Log(MSG_INFO,"%s quest variable %i=%i",thisclient->CharInfo->charname,i,thisclient->QuestVariables[i]);
-         }
-
-        ADDBYTE( pak, thisclient->QuestVariables[i] );
-        ADDBYTE( pak, 0x00 );
-        //ADDWORD( pak, thisclient->QuestVariables[i] );
-    }
-
-    int b = 0;
-    for(int i=0;i<thisclient->MyQuest.size( );i++)
-    {
-     QUESTS* myquest = thisclient->MyQuest.at( i );
-     
-    //LMA: UW handling (switch).
-    //96-99: Union War JO (allcart, frame, engine, wheels)   9610-9613
-    //100-103: Union War Ferrel (allcart, frame, engine, wheels) 9650-9653
-    //104-107: Union War RC (allcart, frame, engine, wheels) 9630-9633
-    //108-111: Union War Arumic (allcart, frame, engine, wheels) 9640-9643            
-     if(myquest->thisquest->id>=9610&&myquest->thisquest->id<=9613)
-     {
-          liste_flags[96+(myquest->thisquest->id-9610)]=1;
-          Log(MSG_INFO,"%s, JO switch: %i",thisclient->CharInfo->charname,myquest->thisquest->id);
-     }
-     if(myquest->thisquest->id>=9650&&myquest->thisquest->id<=9653)
-     {
-          liste_flags[100+(myquest->thisquest->id-9650)]=1;
-          Log(MSG_INFO,"%s, Ferrel switch: %i",thisclient->CharInfo->charname,myquest->thisquest->id);          
-     }
-     if(myquest->thisquest->id>=9630&&myquest->thisquest->id<=9633)
-     {
-          liste_flags[104+(myquest->thisquest->id-9630)]=1;
-          Log(MSG_INFO,"%s, RC switch: %i",thisclient->CharInfo->charname,myquest->thisquest->id);          
-     }
-     if(myquest->thisquest->id>=9640&&myquest->thisquest->id<=9643)
-     {
-          liste_flags[108+(myquest->thisquest->id-9640)]=1;
-          Log(MSG_INFO,"%s, Arumic switch: %i",thisclient->CharInfo->charname,myquest->thisquest->id);          
-     }
-     
-     //LMA: We need to go through all quest list.
-     //if( myquest->active )
-     if( myquest->active&&b<10)
-        {
-            ADDWORD( pak, myquest->thisquest->id );  //# Quest
-
-            //LMA BEGIN
-            //20060622, 163000
-            //patch for healing hands, soil of purification and antidotes
-            //or Clan wars or hunting practice.
-            switch (myquest->thisquest->id)
-            {
-                   case 106:
-                      {
-                           ADDQWORD( pak, 180 ); //Time
-                     }
-                     break;
-                   case 107:
-                      {
-                           ADDQWORD( pak, 180 ); //Time
-                     }
-                     break;
-                   case 2813:
-                       {
-                           ADDQWORD( pak, 120 ); //Time
-                     }
-                     break;
-                   case 5053:
-                       {
-                           ADDQWORD( pak, 60 ); //Time
-                     }
-                     break;
-                   case 957:
-                       {
-                           ADDQWORD( pak, 120 ); //Time
-                     }
-                     break;
-                   case 958:
-                       {
-                           ADDQWORD( pak, 150 ); //Time
-                     }
-                     break;
-                   case 959:
-                       {
-                           ADDQWORD( pak, 240 ); //Time
-                     }
-                     break;
-                   default:
-                     {
-                           ADDQWORD( pak, 0x00000000 ); //Time
-                     }
-                     break;
-            }
-            //LMA END
-
-            for(int j=0;j<0x14;j++)
-                ADDBYTE( pak, 0x00 );
-
-            for(int j=0;j<5;j++)
-            {
-                if( myquest->thisquest->CItem[j] != 0 && myquest->items[j]!= 0 )
-                {
-                    CItem item;
-                    item.itemnum = myquest->thisquest->CItem[j];
-                    item.itemtype = 13;
-                    item.count = 1;
-                    ADDDWORD( pak, BuildItemHead( item ) );
-                    ADDDWORD( pak, myquest->items[j] );
-                    ADDDWORD( pak, 0x00000000 );
-                    ADDWORD ( pak, 0x0000 );
-                }
-                else
-                {
-                    ADDQWORD( pak, 0x00000000 );
-                    ADDDWORD( pak, 0x00000000 );
-                    ADDWORD ( pak, 0x0000 );
-                }
-            }
-            ADDQWORD( pak, 0x00000000 );
-            ADDDWORD( pak, 0x00000000 ); //LMA 139+
-            ADDWORD ( pak, 0x0000 );     //LMA 139+
-
-
-            b++;
-            continue;
-        }
-        /*if(b>=10)
-            break;*/            
-    }
-    
-    for(int i=b;i<10;i++)
-    {
-       /*
-        for(int j=0;j<0x4e;j++)
-            ADDBYTE( pak, 0x00 );
-        */
-
-        //LMA 139+
-        for(int j=0;j<0x72;j++)
-            ADDBYTE( pak, 0x00 );
-    }
-    //ADDBYTE( pak, 0x00 );
-
-    //quest Flags are here :)
-    //flags.
-    if(thisclient->speaksLuna)
-        liste_flags[3]=1;            //Lunar language
-
-    //Warp vessel
-    if(thisclient->canUseFlyingVessel)
-    {
-        liste_flags[1]=1;   //2do: check if correct...
-        liste_flags[16]=1;
-        liste_flags[37]=1;
-    }
-
-    //1: Stat reset already done
-    //3: Lunar Language
-    //4: stat reset done (event ?)
-    //6->13: tuto quests (lvl 1 to 8, fruits?)
-    //16: Flying Vessel?
-    //72: point reset done?
-    //32: lost engagment ring
-    //33: spero top secret schematic (old?)    
-    //34->36: Level 30 quest
-    //37: Flying Vessel?    
-    //64->65, 72,
-    //77->79: tuto quests? (hunting?)
-    //96-99: Union War JO (allcart, frame, engine, wheels)    
-    //100-103: Union War Ferrel (allcart, frame, engine, wheels)
-    //104-107: Union War RC (allcart, frame, engine, wheels)
-    //108-111: Union War Arumic (allcart, frame, engine, wheels)
-    //150: Spero's stolen formula / vaccine done,
-    //300: Est the wounded shamanist done
-    //301: Flame of Eucar done
-
-    //32 blocks
-    for(int j=0;j<32;j++)
-    {
-       liste_blocks[j]=0;
-       off_b=16*j;
-       off_e=off_b+16;
-       cpt=0;
-       for(int jj=off_b;jj<off_e;jj++)
-       {
-          if (liste_flags[jj]==1)
-          {
-            Log(MSG_INFO,"%s, Quest flag %i: %i",thisclient->CharInfo->charname,jj,1);
-            liste_blocks[j]+=(long int) pow(2,cpt);
-          }
-
-          cpt++;
-       }
-
-       if(liste_blocks[j]>0)
-         Log(MSG_INFO,"%s, Block Quest flag %i: %li",thisclient->CharInfo->charname,j,liste_blocks[j]);
-
-       ADDWORD( pak, liste_blocks[j]);
-    }
-    //End first block
-
-    //LMA: second quest var zone
-    //Only 10? Used for Clan War...
-    int qv_part2[10];
-    for(int i=0;i<10;i++)
-      qv_part2[i]=0;
-
-      //TESTS
-      //qv_part2[0]=0x1f;    //Clan war type (0x01, 0x1f, 0x3d)
-      //qv_part2[3]=0x01;    //Clan war warp or done?
-
-    for(int i=0;i<10;i++)
-    {
-        ADDBYTE( pak, qv_part2[i]);
-        ADDBYTE( pak, 0x00 );
-    }
-
-    //LMA: second quest var zone end.
-
-
-    //Before:
-    /*
-    ADDDWORD( pak, thisclient->speaksLuna ? 8 : 0 ); //Enable luna language (currently enabled for all b4 I make a proper quest for it)
-    ADDDWORD( pak, thisclient->canUseFlyingVessel ? 32 : 0 ); //Enable flying vessel
-    for(int i=4;i<41;i++)
-        ADDWORD( pak, 0);
-
-    ADDBYTE( pak, 0x00 );
-    */
-	// wish list
-	b = 0;
-	MYSQL_ROW row;
-	MYSQL_RES *result = DB->QStore( "SELECT slot,itemhead,itemdata FROM wishlist WHERE itemowner=%u", thisclient->CharInfo->charid );
-	if(result!=NULL)
-	{
-		while(row=mysql_fetch_row(result))
-		{
-			ADDDWORD( pak, atoi(row[1]) );
-			ADDDWORD( pak, atoi(row[2]) );
-			ADDDWORD( pak, 0 );
-			ADDWORD( pak, 0 );
-			b++;
-		}
-		DB->QFree( );
-	}
-	while(b<30)
-	{
-		ADDDWORD( pak, 0 );
-		ADDDWORD( pak, 0 );
-		ADDDWORD( pak, 0 );
-		ADDWORD( pak, 0 );
-		b++;
-	}
-    /*
-        for(int i=0;i<32;i++) // Wish list [Caali]
-        {
-            ADDDWORD( pak, 0x00000000 ); //Item Head
-            ADDDWORD( pak, 0x00000000 ); //Item Data
-        }
-    */
-
-    thisclient->client->SendPacket( &pak );
-}
-
 // Get this user set up with the encryption and stuff
 bool CWorldServer::pakDoIdentify( CPlayer *thisclient, CPacket *P )
 {
@@ -2490,6 +2193,89 @@ bool CWorldServer::pakTradeAdd ( CPlayer* thisclient, CPacket* P )
 	return true;
 }
 
+// Send Quest information (QSD version)
+#ifdef USENEWQUESTSYSTEM
+void CWorldServer::pakQuestData( CPlayer *thisclient )
+{
+    BEGINPACKET (pak, 0x71b);
+    for(dword i = 0; i < 5; i++) ADDWORD( pak, thisclient->quest.EpisodeVar[i]);
+    for(dword i = 0; i < 3; i++) ADDWORD( pak, thisclient->quest.JobVar[i]);
+    for(dword i = 0; i < 7; i++) ADDWORD( pak, thisclient->quest.PlanetVar[i]);
+    for(dword i = 0; i < 10; i++) ADDWORD( pak, thisclient->quest.UnionVar[i]);
+ 
+    for( unsigned i = 0; i < 10; i++ )
+    {
+        ADDWORD( pak,  thisclient->quest.quests[i].QuestID );
+        long int Time = 0;
+        if (thisclient->quest.quests[i].QuestID > 0 && STB_QUEST.rows[thisclient->quest.quests[i].QuestID][1] > 0) {
+            Time += thisclient->quest.quests[i].StartTime; // Start time
+            Time += STB_QUEST.rows[thisclient->quest.quests[i].QuestID][1] * 10; // Time to finish
+            Time -= time(NULL); // Current time
+            if (Time < 0) Time = 0; // Time is up
+            Time /= 10; // Divide to get 10's of seconds
+        }
+        ADDDWORD( pak, Time ); // Time Left
+        for(dword j = 0; j < 10; j++) ADDWORD( pak, thisclient->quest.quests[i].Variables[j]);
+        for(dword j = 0; j < 4; j++) ADDBYTE( pak, thisclient->quest.quests[i].Switches[j]);
+        for(dword j = 0; j < 6; j++) {
+            if (thisclient->quest.quests[i].Items[j].itemnum != 0) {
+                //ADDWORD( pak,  thisclient->quest.quests[i].Items[j].GetPakHeader() );
+                //ADDDWORD( pak,  thisclient->quest.quests[i].Items[j].GetPakData() );
+                ADDDWORD( pak, BuildItemHead( thisclient->quest.quests[i].Items[j] ) );
+                ADDDWORD( pak, BuildItemData( thisclient->quest.quests[i].Items[j] ) );
+                ADDDWORD( pak, 0x00000000 );
+                ADDWORD ( pak, 0x0000 );
+            } else {
+                //ADDWORD( pak,  0 );
+                //ADDDWORD( pak, 0 );
+                ADDDWORD( pak, 0 );
+                ADDDWORD( pak, 0 );
+                ADDDWORD( pak, 0x00000000 );
+                ADDWORD ( pak, 0x0000 );
+            }
+        }
+    }
+    for( unsigned i = 0; i < 0x40; i++ )
+        ADDBYTE( pak, thisclient->quest.flags[i] );
+ 
+    // Wishlist? - Not Implemented
+    for (unsigned i = 0; i < 180; i++)
+        ADDBYTE( pak, 0 );
+ 
+    thisclient->client->SendPacket( &pak );
+}
+ 
+// Handle quest triggers
+bool CWorldServer::pakGiveQuest( CPlayer* thisclient, CPacket* P )
+{
+  byte action = GETBYTE((*P),0);
+  byte slot = GETBYTE((*P),1);
+  dword hash = GETDWORD((*P),2);
+ 
+ 
+  if( thisclient->questdebug ) SendPM( thisclient, "Event Trigger [%08x] Action %i", hash, action);
+ 
+  if (action == 2) {
+    if( thisclient->questdebug ) SendPM( thisclient, "Delete quest - Slot %i", slot);
+    for (dword i = slot; i < 9; i++) thisclient->quest.quests[i] = thisclient->quest.quests[i+1];
+    thisclient->quest.quests[9].Clear();
+    BEGINPACKET ( pak, 0x730);
+    ADDBYTE ( pak, 0x03);
+    ADDBYTE ( pak, slot);
+    ADDDWORD( pak, hash);
+    thisclient->client->SendPacket(&pak);
+    return true;
+  }
+  if (action != 3) return false;
+  int success = thisclient->ExecuteQuestTrigger(hash);
+  BEGINPACKET ( pak, 0x730);
+  ADDBYTE ( pak, success);
+  ADDBYTE ( pak, 0);
+  ADDDWORD( pak, hash);
+  thisclient->client->SendPacket(&pak);
+  return true;
+}
+#else
 // Give Quest
 bool CWorldServer::pakGiveQuest ( CPlayer* thisclient, CPacket* P )
 {
@@ -2525,6 +2311,303 @@ bool CWorldServer::pakGiveQuest ( CPlayer* thisclient, CPacket* P )
     }
     return true;
 }
+
+// Send Quest information
+void CWorldServer::pakQuestData( CPlayer *thisclient )
+{
+    BEGINPACKET( pak, 0x71b );
+    /*
+        char buffer;
+        FILE *packet1 = fopen("packet/quest.dat","r");       //  I USE THIS FOR TEST!
+        if(packet1==NULL)
+        {
+            cout << "file not founded: check pakQuestData function" << endl;
+            return;
+        }
+        while((fscanf(packet1,"%c",&buffer))!=EOF)
+            ADDBYTE(pak,buffer);
+        fclose(packet1);
+        thisclient->client->SendPacket( &pak );
+        return;
+    */
+
+    //LMA: Quest Variables (25 Dword)
+    //Quest Flag var declaration.
+    long int liste_blocks[32];
+    int liste_flags[512];
+    int off_b=0;
+    int off_e=0;
+    int cpt=0;
+    for(int j=0;j<512;j++)
+        liste_flags[j]=0;
+            
+    for(int i=0;i<25;i++)
+    {
+         if (thisclient->QuestVariables[i]!=0)
+         {
+            Log(MSG_INFO,"%s quest variable %i=%i",thisclient->CharInfo->charname,i,thisclient->QuestVariables[i]);
+         }
+
+        ADDBYTE( pak, thisclient->QuestVariables[i] );
+        ADDBYTE( pak, 0x00 );
+        //ADDWORD( pak, thisclient->QuestVariables[i] );
+    }
+
+    int b = 0;
+    for(int i=0;i<thisclient->MyQuest.size( );i++)
+    {
+     QUESTS* myquest = thisclient->MyQuest.at( i );
+     
+    //LMA: UW handling (switch).
+    //96-99: Union War JO (allcart, frame, engine, wheels)   9610-9613
+    //100-103: Union War Ferrel (allcart, frame, engine, wheels) 9650-9653
+    //104-107: Union War RC (allcart, frame, engine, wheels) 9630-9633
+    //108-111: Union War Arumic (allcart, frame, engine, wheels) 9640-9643            
+     if(myquest->thisquest->id>=9610&&myquest->thisquest->id<=9613)
+     {
+          liste_flags[96+(myquest->thisquest->id-9610)]=1;
+          Log(MSG_INFO,"%s, JO switch: %i",thisclient->CharInfo->charname,myquest->thisquest->id);
+     }
+     if(myquest->thisquest->id>=9650&&myquest->thisquest->id<=9653)
+     {
+          liste_flags[100+(myquest->thisquest->id-9650)]=1;
+          Log(MSG_INFO,"%s, Ferrel switch: %i",thisclient->CharInfo->charname,myquest->thisquest->id);          
+     }
+     if(myquest->thisquest->id>=9630&&myquest->thisquest->id<=9633)
+     {
+          liste_flags[104+(myquest->thisquest->id-9630)]=1;
+          Log(MSG_INFO,"%s, RC switch: %i",thisclient->CharInfo->charname,myquest->thisquest->id);          
+     }
+     if(myquest->thisquest->id>=9640&&myquest->thisquest->id<=9643)
+     {
+          liste_flags[108+(myquest->thisquest->id-9640)]=1;
+          Log(MSG_INFO,"%s, Arumic switch: %i",thisclient->CharInfo->charname,myquest->thisquest->id);          
+     }
+     
+     //LMA: We need to go through all quest list.
+     //if( myquest->active )
+     if( myquest->active&&b<10)
+        {
+            ADDWORD( pak, myquest->thisquest->id );  //# Quest
+
+            //LMA BEGIN
+            //20060622, 163000
+            //patch for healing hands, soil of purification and antidotes
+            //or Clan wars or hunting practice.
+            switch (myquest->thisquest->id)
+            {
+                   case 106:
+                      {
+                           ADDQWORD( pak, 180 ); //Time
+                     }
+                     break;
+                   case 107:
+                      {
+                           ADDQWORD( pak, 180 ); //Time
+                     }
+                     break;
+                   case 2813:
+                       {
+                           ADDQWORD( pak, 120 ); //Time
+                     }
+                     break;
+                   case 5053:
+                       {
+                           ADDQWORD( pak, 60 ); //Time
+                     }
+                     break;
+                   case 957:
+                       {
+                           ADDQWORD( pak, 120 ); //Time
+                     }
+                     break;
+                   case 958:
+                       {
+                           ADDQWORD( pak, 150 ); //Time
+                     }
+                     break;
+                   case 959:
+                       {
+                           ADDQWORD( pak, 240 ); //Time
+                     }
+                     break;
+                   default:
+                     {
+                           ADDQWORD( pak, 0x00000000 ); //Time
+                     }
+                     break;
+            }
+            //LMA END
+
+            for(int j=0;j<0x14;j++)
+                ADDBYTE( pak, 0x00 );
+
+            for(int j=0;j<5;j++)
+            {
+                if( myquest->thisquest->CItem[j] != 0 && myquest->items[j]!= 0 )
+                {
+                    CItem item;
+                    item.itemnum = myquest->thisquest->CItem[j];
+                    item.itemtype = 13;
+                    item.count = 1;
+                    ADDDWORD( pak, BuildItemHead( item ) );
+                    ADDDWORD( pak, myquest->items[j] );
+                    ADDDWORD( pak, 0x00000000 );
+                    ADDWORD ( pak, 0x0000 );
+                }
+                else
+                {
+                    ADDQWORD( pak, 0x00000000 );
+                    ADDDWORD( pak, 0x00000000 );
+                    ADDWORD ( pak, 0x0000 );
+                }
+            }
+            ADDQWORD( pak, 0x00000000 );
+            ADDDWORD( pak, 0x00000000 ); //LMA 139+
+            ADDWORD ( pak, 0x0000 );     //LMA 139+
+
+
+            b++;
+            continue;
+        }
+        /*if(b>=10)
+            break;*/            
+    }
+    
+    for(int i=b;i<10;i++)
+    {
+       /*
+        for(int j=0;j<0x4e;j++)
+            ADDBYTE( pak, 0x00 );
+        */
+
+        //LMA 139+
+        for(int j=0;j<0x72;j++)
+            ADDBYTE( pak, 0x00 );
+    }
+    //ADDBYTE( pak, 0x00 );
+
+    //quest Flags are here :)
+    //flags.
+    if(thisclient->speaksLuna)
+        liste_flags[3]=1;            //Lunar language
+
+    //Warp vessel
+    if(thisclient->canUseFlyingVessel)
+    {
+        liste_flags[1]=1;   //2do: check if correct...
+        liste_flags[16]=1;
+        liste_flags[37]=1;
+    }
+
+    //1: Stat reset already done
+    //3: Lunar Language
+    //4: stat reset done (event ?)
+    //6->13: tuto quests (lvl 1 to 8, fruits?)
+    //16: Flying Vessel?
+    //72: point reset done?
+    //32: lost engagment ring
+    //33: spero top secret schematic (old?)    
+    //34->36: Level 30 quest
+    //37: Flying Vessel?    
+    //64->65, 72,
+    //77->79: tuto quests? (hunting?)
+    //96-99: Union War JO (allcart, frame, engine, wheels)    
+    //100-103: Union War Ferrel (allcart, frame, engine, wheels)
+    //104-107: Union War RC (allcart, frame, engine, wheels)
+    //108-111: Union War Arumic (allcart, frame, engine, wheels)
+    //150: Spero's stolen formula / vaccine done,
+    //300: Est the wounded shamanist done
+    //301: Flame of Eucar done
+
+    //32 blocks
+    for(int j=0;j<32;j++)
+    {
+       liste_blocks[j]=0;
+       off_b=16*j;
+       off_e=off_b+16;
+       cpt=0;
+       for(int jj=off_b;jj<off_e;jj++)
+       {
+          if (liste_flags[jj]==1)
+          {
+            Log(MSG_INFO,"%s, Quest flag %i: %i",thisclient->CharInfo->charname,jj,1);
+            liste_blocks[j]+=(long int) pow(2,cpt);
+          }
+
+          cpt++;
+       }
+
+       if(liste_blocks[j]>0)
+         Log(MSG_INFO,"%s, Block Quest flag %i: %li",thisclient->CharInfo->charname,j,liste_blocks[j]);
+
+       ADDWORD( pak, liste_blocks[j]);
+    }
+    //End first block
+
+    //LMA: second quest var zone
+    //Only 10? Used for Clan War...
+    int qv_part2[10];
+    for(int i=0;i<10;i++)
+      qv_part2[i]=0;
+
+      //TESTS
+      //qv_part2[0]=0x1f;    //Clan war type (0x01, 0x1f, 0x3d)
+      //qv_part2[3]=0x01;    //Clan war warp or done?
+
+    for(int i=0;i<10;i++)
+    {
+        ADDBYTE( pak, qv_part2[i]);
+        ADDBYTE( pak, 0x00 );
+    }
+
+    //LMA: second quest var zone end.
+
+
+    //Before:
+    /*
+    ADDDWORD( pak, thisclient->speaksLuna ? 8 : 0 ); //Enable luna language (currently enabled for all b4 I make a proper quest for it)
+    ADDDWORD( pak, thisclient->canUseFlyingVessel ? 32 : 0 ); //Enable flying vessel
+    for(int i=4;i<41;i++)
+        ADDWORD( pak, 0);
+
+    ADDBYTE( pak, 0x00 );
+    */
+	// wish list
+	b = 0;
+	MYSQL_ROW row;
+	MYSQL_RES *result = DB->QStore( "SELECT slot,itemhead,itemdata FROM wishlist WHERE itemowner=%u", thisclient->CharInfo->charid );
+	if(result!=NULL)
+	{
+		while(row=mysql_fetch_row(result))
+		{
+			ADDDWORD( pak, atoi(row[1]) );
+			ADDDWORD( pak, atoi(row[2]) );
+			ADDDWORD( pak, 0 );
+			ADDWORD( pak, 0 );
+			b++;
+		}
+		DB->QFree( );
+	}
+	while(b<30)
+	{
+		ADDDWORD( pak, 0 );
+		ADDDWORD( pak, 0 );
+		ADDDWORD( pak, 0 );
+		ADDWORD( pak, 0 );
+		b++;
+	}
+    /*
+        for(int i=0;i<32;i++) // Wish list [Caali]
+        {
+            ADDDWORD( pak, 0x00000000 ); //Item Head
+            ADDDWORD( pak, 0x00000000 ); //Item Data
+        }
+    */
+
+    thisclient->client->SendPacket( &pak );
+}
+#endif
 
 // Self skills
 bool CWorldServer::pakSkillSelf( CPlayer* thisclient, CPacket* P )

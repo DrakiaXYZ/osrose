@@ -1,11 +1,11 @@
 [Project]
 FileName=WorldServer.dev
 Name=WorldServer
-UnitCount=53
+UnitCount=69
 Type=1
 Ver=1
 IsCpp=1
-Folders=Common,Common/Config,Common/Crypt,Common/Database,Common/Log,Common/Sockets,World,World/Character,World/Map,World/Monster,World/Party,World/Player,World/Process,World/Quest,World/WorldInclude
+Folders=Common,Common/Config,Common/Crypt,Common/Database,Common/Log,Common/Sockets,World,World/Character,World/For_QSD,World/Map,World/Monster,World/Party,World/Player,World/Process,World/Quest,World/Quest_QSD,World/WorldInclude
 CommandLine=
 CompilerSettings=0000000000000001000000
 PchHead=-1
@@ -20,7 +20,7 @@ ResourceIncludes=
 MakeIncludes=
 Compiler=
 CppCompiler=
-Linker=-lmysql -lpthreadGC -lws2_32_@@_
+Linker=../../Dev-Cpp/lib/libpthreadGC2.a_@@_../../Dev-Cpp/lib/libmysql.a_@@_../../Dev-Cpp/lib/libws2_32.a_@@_
 Icon=
 ExeOutput=
 ObjectOutput=
@@ -609,5 +609,163 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
+[Unit54]
+FileName=..\World Server\quest\CIntStb.hpp
+CompileCpp=1
+Folder=World/Quest_QSD
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
 
+[Unit55]
+FileName=..\World Server\quest\CRoseArray.hpp
+CompileCpp=1
+Folder=World/Quest_QSD
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit56]
+FileName=..\World Server\quest\CRoseFile.hpp
+CompileCpp=1
+Folder=World/Quest_QSD
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit57]
+FileName=..\World Server\quest\CStrStb.hpp
+CompileCpp=1
+Folder=World/Quest_QSD
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit58]
+FileName=..\World Server\quest\QuestActions.cpp
+CompileCpp=1
+Folder=World/Quest_QSD
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit59]
+FileName=..\World Server\quest\QuestActions.h
+CompileCpp=1
+Folder=World/Quest_QSD
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit60]
+FileName=..\World Server\quest\QuestConditions.cpp
+CompileCpp=1
+Folder=World/Quest_QSD
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit61]
+FileName=..\World Server\quest\QuestConditions.h
+CompileCpp=1
+Folder=World/Quest_QSD
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit62]
+FileName=..\World Server\quest\Quests.cpp
+CompileCpp=1
+Folder=World/Quest_QSD
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit63]
+FileName=..\World Server\quest\QuestTrigger.h
+CompileCpp=1
+Folder=World/Quest_QSD
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit64]
+FileName=..\World Server\quest\strhashing.cpp
+CompileCpp=1
+Folder=World/Quest_QSD
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit65]
+FileName=..\World Server\quest\strhashing.h
+CompileCpp=1
+Folder=World/Quest_QSD
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit66]
+FileName=..\World Server\stbhandler.h
+CompileCpp=1
+Folder=World/For_QSD
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit67]
+FileName=..\World Server\datatypes_compat.h
+CompileCpp=1
+Folder=World/For_QSD
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit68]
+FileName=..\World Server\itemdata.cpp
+CompileCpp=1
+Folder=World/For_QSD
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit69]
+FileName=..\World Server\stbhandler.cpp
+CompileCpp=1
+Folder=World/For_QSD
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
 

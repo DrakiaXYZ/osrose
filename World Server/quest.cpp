@@ -20,6 +20,8 @@
 */
 #include "worldserver.h"
 
+//Not used if qsd version
+#ifndef USENEWQUESTSYSTEM
 bool CWorldServer::DoQuestScript( CPlayer* thisclient, CQuest* thisquest )
 {
     switch( thisquest->script )
@@ -326,3 +328,4 @@ bool CWorldServer::DoQuestScript( CPlayer* thisclient, CQuest* thisquest )
     }
     return true;
 }
+#endif

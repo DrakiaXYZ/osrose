@@ -20,13 +20,24 @@
 */
 #ifndef __ROSE_SERVERS__
 #define __ROSE_SERVERS__
+#include "datatypes.h"
 #include "../common/sockets.h"
 #include "worldmonster.h"
 #include "worldmap.h"
 #include "player.h"
 #include "character.h"
 #include "party.h"
-#include "datatypes.h"
+
+#ifdef USENEWQUESTSYSTEM
+#include "stbhandler.h"
+#include "quest/strhashing.h"
+#include "quest/CRoseArray.hpp"
+#include "quest/CRoseFile.hpp"
+#include "quest/CStrStb.hpp"
+#include "quest/CIntStb.hpp"
+#include "quest/QuestTrigger.h"
+#endif
+
 #define MAXVISUALRANGE 100
 #define MINVISUALRANGE 60
 #define ClearItem(i) { i.appraised=false; i.count=0; i.durability=0; i.itemnum=0; i.itemtype=0; i.lifespan=0; i.refine=0; i.socketed=false; i.stats=0; i.gem=0; }
@@ -365,7 +376,22 @@ class CWorldServer : public CServerSocket
         bool LoadMobGroups( );
 #endif
         bool LoadRespawnData( );
+
+#ifdef USENEWQUESTSYSTEM
+        // QSD Fuctions
+        void ReadQSD(strings path, dword index);
+        void LoadQuestData( );
+        bool LoadQuestSTB();
+ 
+        vector<CQuestTrigger*> TriggerList;
+        fpQuestCond qstCondFunc[31];
+        fpQuestRewd qstRewdFunc[29];
+ 
+        CSTBData                STB_QUEST;
+#else
         bool LoadQuestData( );
+#endif
+
         bool LoadDropsData( );
         bool LoadPYDropsData( );    //hidden
         bool LoadSkillBookDropsData( ); //hidden
@@ -384,7 +410,8 @@ class CWorldServer : public CServerSocket
         QUESTS* GetQuestByItemID( unsigned long int itemid );
 
         // Server Functions
-        bool SendPM( CPlayer* thisclient, char msg[200] );
+        //bool SendPM( CPlayer* thisclient, char msg[200] );
+        bool SendPM( CPlayer* thisclient, char* Format, ... );
         bool SendGlobalMSG( CPlayer* thisclient, char msg[200] );
         bool NPCMessage( CPlayer* thisclient, char msg[200], char npc[50] );  //Custom Events
         UINT GetMaxPartyExp( UINT partylevel );

@@ -64,7 +64,8 @@ int CDatabase::Reconnect( )
 int CDatabase::QExecuteUpdate( char *Format,... )
 {
     bool Qfail = true;
-    char query[1024];
+    //char query[1024];
+    char query[80000];
 	va_list ap;
     va_start( ap, Format );
 	vsprintf( query, Format, ap );
@@ -95,7 +96,8 @@ bool CDatabase::QExecute( char *Format,... )
 {
     bool Qfail = true;
     //char query[1024];
-    char query[1300];   //LMA: sometimes we need more...
+    //char query[1300];   //LMA: sometimes we need more...
+    char query[80000];
 	va_list ap;
     va_start( ap, Format );
 	vsprintf( query, Format, ap );
@@ -127,7 +129,8 @@ bool CDatabase::QExecute( char *Format,... )
 MYSQL_RES* CDatabase::QStore( char *Format, ...)
 {
     bool Qfail = true;
-    char query[1024];
+    //char query[1024];
+    char query[80000];
 	va_list ap;
     va_start( ap, Format );
 	vsprintf( query, Format, ap );
@@ -163,7 +166,8 @@ MYSQL_RES* CDatabase::QStore( char *Format, ...)
 MYSQL_RES* CDatabase::QUse( char *Format, ...)
 {
     bool Qfail = true;
-    char query[1024];
+    //char query[1024];
+    char query[80000];
 	va_list ap;
     va_start( ap, Format );
 	vsprintf( query, Format, ap );

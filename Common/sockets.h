@@ -72,6 +72,13 @@ typedef long SDWORD;
 typedef unsigned long DWORD;
 typedef long long SQWORD;
 typedef unsigned long long QWORD;
+//For QSD
+typedef unsigned __int8         byte;
+typedef unsigned __int16        word;
+typedef unsigned __int32        dword;
+typedef unsigned __int64        qword;
+typedef char*                   strings;
+
 using std::cout;
 using std::endl;
 using std::system;

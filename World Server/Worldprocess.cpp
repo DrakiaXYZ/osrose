@@ -43,14 +43,28 @@ bool CWorldServer::GiveExp( CMonster* thismon, UINT special_lvl, UINT special_ex
             }                                     
             if( thismon->MonsterDrop->firsthit == thisclient->CharInfo->charid )
             {
+#ifdef USENEWQUESTSYSTEM
+                for( int q=0;q<10;q++)
+                {
+                    // Give Quest Item
+                    if( thisclient->quest.quests[q].QuestID!=0 )
+                    {
+                        BEGINPACKET( pak, 0x731 )
+                        ADDWORD    ( pak, thismon->montype );
+                        thisclient->client->SendPacket( &pak );
+                        break;
+                    }
+                }
+#else
                 // Give Quest Item
                 QUESTS* myquest = thisclient->GetQuestByMob( thismon->montype );
                 if( myquest!=0 )
                 {
                     BEGINPACKET( pak, 0x731 )
                     ADDWORD    ( pak, thismon->montype );
-                    thisclient->client->SendPacket( &pak );                    
+                    thisclient->client->SendPacket( &pak );
                 }
+#endif
             }    
             
             //LMA BEGIN

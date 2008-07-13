@@ -1766,3 +1766,123 @@ bool CPlayer::PrizeExchange(CPlayer* thisclient, UINT prizeid)
     return true;     
 }
  
+
+//QSD Quests
+#ifdef USENEWQUESTSYSTEM
+int CPlayer::ExecuteQuestTrigger(dword hash)
+{
+    CQuestTrigger* trigger = NULL;
+    CQuestTrigger* nexttrigger = NULL;
+    CheckQuest = -1;
+    for(unsigned j=0; j < GServer->TriggerList.size(); j++)
+    {
+      if (GServer->TriggerList.at(j)->TriggerHash == hash)
+      {
+        trigger = GServer->TriggerList.at(j);
+        nexttrigger = GServer->TriggerList.at(j + 1);
+        break;
+      }
+    }
+    if (trigger == NULL) return QUEST_FAILURE;
+ 
+    int success = QUEST_SUCCESS;
+    Log(MSG_DEBUG, "Trigger Executed: %s[%i]", trigger->TriggerName, trigger->CheckNext);
+    for (dword i = 0; i < trigger->ConditionCount; i++) {
+      int command = trigger->Conditions[i]->opcode;
+      if (command > 30 || command < 0) continue;
+      success = (*GServer->qstCondFunc[command])(GServer, this, trigger->Conditions[i]->data);
+      Log(MSG_DEBUG, "Condition %03u returned %d", command, success);
+      if (success == QUEST_FAILURE) {
+        if (!trigger->CheckNext) return success;
+        else return ExecuteQuestTrigger(nexttrigger->TriggerHash);
+      }
+    }
+    for (dword i = 0; i < trigger->ActionCount; i++) {
+      int command = trigger->Actions[i]->opcode;
+      if (command > 28 || command < 0) {
+          Log(MSG_DEBUG, "unknown Action opcode %i", command);
+          continue;
+      }
+      Log(MSG_DEBUG, "Reward %03u returned %d", command, (*GServer->qstRewdFunc[command])(GServer, this, trigger->Actions[i]->data));
+    }
+    return success;
+}
+ 
+SQuest* CPlayer::GetActiveQuest( )
+{
+    for(dword i = 0; i < 10; i++){
+      if(quest.quests[i].QuestID != ActiveQuest) continue;
+      return &quest.quests[i];
+    }
+    return NULL;
+}
+ 
+void CPlayer::SetQuestVar(short nVarType, short nVarNO, short nValue){
+  switch(nVarType){
+    case 0:
+    {
+      SQuest* activeQuest = GetActiveQuest();
+      if(activeQuest == NULL) return;
+      activeQuest->Variables[nVarNO] = nValue;
+    }
+    return;
+    case 0x100:
+    {
+      SQuest* activeQuest = GetActiveQuest();
+      if(activeQuest == NULL) return;
+      activeQuest->SetSwitchBit(nVarNO, nValue);
+    }
+    return;
+    case 0x300:
+      if(nVarNO >= 5) return;
+      quest.EpisodeVar[nVarNO] = nValue;
+      return;
+    case 0x400:
+      if(nVarNO >= 3) return;
+      quest.JobVar[nVarNO] = nValue;
+      return;
+    case 0x500:
+      if(nVarNO >= 7) return;
+      quest.PlanetVar[nVarNO] = nValue;
+      return;
+    case 0x600:
+      if(nVarNO >= 10) return;
+      quest.UnionVar[nVarNO] = nValue;
+      return;
+  }
+}
+ 
+int CPlayer::GetQuestVar(short nVarType, short nVarNO){
+  switch(nVarType){
+    case 0:
+    {
+      SQuest* activeQuest = GetActiveQuest();
+      if(activeQuest == NULL) return -1;
+      return activeQuest->Variables[nVarNO];
+    }
+    case 0x100:
+    {
+      SQuest* activeQuest = GetActiveQuest();
+      if(activeQuest == NULL) return -1;
+      return activeQuest->GetSwitchBit(nVarNO);
+    }
+    case 0x200://Remaining time
+      return 1;
+    case 0x300:
+      if(nVarNO >= 5) return -1;
+      return quest.EpisodeVar[nVarNO];
+    case 0x400:
+      if(nVarNO >= 3) return -1;
+      return quest.JobVar[nVarNO];
+    case 0x500:
+      if(nVarNO >= 7) return -1;
+      return quest.PlanetVar[nVarNO];
+    case 0x600:
+      if(nVarNO >= 10) return -1;
+      return quest.UnionVar[nVarNO];
+  }
+  return -1;
+}
+ 
+#endif
+ 

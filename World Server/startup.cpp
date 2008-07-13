@@ -265,6 +265,17 @@ bool CWorldServer::LoadTeleGateData( )
 	return true;
 }
 
+//Loading Quests
+#ifdef USENEWQUESTSYSTEM
+bool CWorldServer::LoadQuestSTB()
+{
+    STBStoreData( "data/LIST_QUEST.STB", &STB_QUEST );
+    Log(MSG_INFO,"STB Loaded for QSD Version !!!");
+    return true;
+}
+#endif
+
+#ifndef USENEWQUESTSYSTEM
 bool CWorldServer::LoadQuestData( )
 {
     Log( MSG_LOAD, "Quest data                  " );
@@ -432,6 +443,7 @@ bool CWorldServer::LoadQuestData( )
 	Log( MSG_LOAD, "Quest Data loaded" );
 	return true;
 }
+#endif
 
 bool CWorldServer::LoadRespawnData( )
 {

@@ -89,9 +89,17 @@ class CPlayer: public CCharacter
     UINT quickbar[MAX_QUICKBAR];
     int p_skills;
 
+#ifdef USENEWQUESTSYSTEM    
+    // ExJam Quest Code - Info
+    DWORD ActiveQuest;  //active quest #
+    int CheckQuest; // The currently checked quest.
+    strings TriggerName[10];
+    SQuestData quest; // Character's quest information
+#else
     // Quest info
     vector<QUESTS*> MyQuest; // List of quest
     BYTE ActiveQuest;  //active quest #
+#endif
 
     // Time
 	clock_t lastRegenTime;
@@ -157,10 +165,18 @@ class CPlayer: public CCharacter
         bool SaveQuest( QUESTS* myquest );       //LMA: Saving quests data (Mysql 4.1+ function).
         bool PlasticSurgeon(CQuest* thisquest);      //LMA: Plastic Surgery coupons
         bool CheckItem(int itemnb,int familyid,int nb);   //Check if a peculiar item is in inventory
+        
+#ifdef USENEWQUESTSYSTEM
+        // ExJam Quest Code
+        void savequests( CPlayer* thisclient );
+        SQuest* GetActiveQuest( );
+        int GetQuestVar(short nVarType, short nVarNO);
+        void SetQuestVar(short nVarType, short nVarNO, short nValue);
+        int ExecuteQuestTrigger(dword hash);
+#else                
         // quest
         bool AddQuest( unsigned long int questid );
         bool DelInactiveQuest( unsigned long int questid );    //LMA
-
         bool DelQuest( unsigned long int questid );
         bool DelQuestUW( unsigned long int questid );    //LMA: Special for UW
         bool GiveQuestReward( CQuest* thisquest );
@@ -169,6 +185,7 @@ class CPlayer: public CCharacter
         QUESTS* GetQuestByMob( UINT mob );
         //void LogQuest( char buffer2[200] );    //LMA: Logging quests.
         void LogQuest( char *Format, ...);    //LMA: Logging quests.
+#endif
 
     	// Player Stats
         unsigned int GetAttackPower( );

@@ -21,6 +21,10 @@
 #ifndef __ROSE_DATATYPES__
 #define __ROSE_DATATYPES__
 
+//For QSD system.
+#include "datatypes_compat.h"
+#define USENEWQUESTSYSTEM
+
 //*upgraded status
 //#define NULL 2
 #define STRENGTH 10
@@ -233,7 +237,7 @@
 
 
 #include "../common/sockets.h"
-
+ 
 // Hold party experience when kill a moster
 struct CPartyExp
 {
@@ -492,6 +496,7 @@ struct CRespawnPoints
 // -----------------------------------------------------------------------------------------
 // An item that a client owns
 // -----------------------------------------------------------------------------------------
+/*
 struct CItem {
 	unsigned		itemnum;
 	UINT	itemtype;
@@ -510,6 +515,41 @@ struct CItem {
 	int sp_value;
 	int last_sp_value;
 };
+*/
+ 
+// -----------------------------------------------------------------------------------------
+// An item that a client owns (qsd version)
+// -----------------------------------------------------------------------------------------
+class CItem {
+ 
+public:
+    unsigned short GetPakHeader( );
+    unsigned GetPakData( );
+    unsigned GetVisInfo( );
+    void Clear( );
+ 
+    inline bool IsStackable(){
+        return (itemtype >= 10) && (itemtype <= 13);
+    };
+ 
+    UINT    itemnum;
+    UINT    itemtype;
+    UINT    refine;
+    UINT    lifespan;
+    UINT    durability;
+    bool    socketed;
+    bool    appraised;
+    UINT    count;
+    UINT    stats;
+    UINT    gem;
+    UINT    durabLeft;
+    long int sig_head;
+    long int sig_data;
+    int sig_gem;
+    int sp_value;
+    int last_sp_value;
+};
+ 
 
 // -----------------------------------------------------------------------------------------
 // Selling / buying items
@@ -544,12 +584,14 @@ struct CItemData
 	unsigned id;
 };
 
+#ifndef USENEWQUESTSYSTEM
 // Structure for holding loaded STB data
 struct CSTBData {
 	unsigned rowcount;
 	unsigned fieldcount;
 	int** rows;
 };
+#endif
 
 // -----------------------------------------------------------------------------------------
 // Skill Data
@@ -972,7 +1014,84 @@ struct CBreakList
     UINT total;
 };
 
-
+// Quests (qsd)
+struct SQuest
+{
+    word QuestID;
+    dword StartTime;
+    word Variables[10];
+    byte Switches[4];
+    CItem Items[5];
+    byte unknown[6];
+ 
+    bool GetSwitchBit( dword switchId )
+    {
+        dword byteId = switchId / 8;
+        dword bitId = switchId % 8;
+        return ((Switches[byteId] >> bitId) & 1);
+    };
+ 
+    void SetSwitchBit( byte switchId, byte value )
+    {
+        dword byteId = switchId / 8;
+        dword bitId = switchId % 8;
+        Switches[byteId] = Switches[byteId] | ((value?1:0) << bitId);
+    };
+ 
+    void AddItem(CItem* item, byte btOp = 2)
+    {
+        for(dword i = 0; i < 6; i++){
+            if(Items[i].GetPakHeader() == item->GetPakHeader()) {
+                if(btOp == 1){
+                    Items[i].count += item->count;
+                    return;
+                }else if(btOp == 0){
+                    if(Items[i].count <= item->count)
+                        Items[i].Clear();
+                    else
+                        Items[i].count -= item->count;
+                    return;
+                }
+            }
+            if(btOp == 0) continue;
+            if(Items[i].GetPakHeader() != 0) continue;
+            Items[i].itemnum = item->itemnum;
+            Items[i].itemtype = item->itemtype;
+            Items[i].count = item->count;
+            return;
+        }
+    };
+ 
+    void Clear(){
+        memset(this, 0, sizeof(SQuest));
+    };
+ 
+};
+ 
+struct SQuestData
+{
+    word EpisodeVar[5];
+    word JobVar[3];
+    word PlanetVar[7];
+    word UnionVar[10];
+ 
+    SQuest quests[10];
+    byte flags[0x40];
+ 
+    void SetFlag( dword flagid, bool value ){
+        dword byteid = flagid / 8;
+        dword bitid = flagid % 8;
+        flags[byteid] = flags[byteid] | ((value?1:0) << bitid);
+    }
+ 
+    bool GetFlag( dword flagid ){
+        dword byteid = flagid / 8;
+        dword bitid = flagid % 8;
+        return ((flags[byteid] >> bitid) & 1);
+    }
+};
+ 
+//QSD End
 
 #endif
 

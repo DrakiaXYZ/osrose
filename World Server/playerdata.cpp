@@ -246,6 +246,20 @@ bool CPlayer::loaddata( )
     	GServer->DB->QFree( );   
     }
     
+    //Quest, QSD version
+#ifdef USENEWQUESTSYSTEM
+    memset(&quest, 0, sizeof(SQuestData)); 
+    result = GServer->DB->QStore("SELECT quests from list_quest_new where owner=%i",CharInfo->charid );
+    if(result!=NULL) //return false;
+    {
+        while(row = mysql_fetch_row(result))
+        {
+           if( row[0] != NULL ) memcpy(&quest, row[0], sizeof(SQuestData));
+        }
+    }
+    GServer->DB->QFree( );
+ 
+#else    
     for (int i=0;i<25;i++)
     {
        QuestVariables[i]=0x00; 
@@ -870,6 +884,8 @@ bool CPlayer::loaddata( )
         MyQuest.push_back( myquest );             
     }   	
    	GServer->DB->QFree( );  
+#endif
+   	
 	Session->isLoggedIn = true;	
     GServer->DB->QExecute("UPDATE accounts SET online=true where id=%u", Session->userid );
     
@@ -1175,6 +1191,79 @@ void CPlayer::savedata( )
         
         //We save Zuly storage elsewhere.
 		//GServer->DB->QExecute("update accounts set zulystorage = %i where id = %i", CharInfo->Storage_Zulies, Session->userid);
+		
+		//QSD Save
+		//2do, save on used?
+		#ifdef USENEWQUESTSYSTEM
+               savequests(this);
+        #endif
+        
 		Log(MSG_INFO, "Data Saved for char '%s' ", CharInfo->charname );
     }
 }
+
+//For QSD. 
+#ifdef USENEWQUESTSYSTEM
+unsigned char GetCharVal( char mychar )
+{
+    switch( mychar )
+    {
+        case '0':   return 0;
+        case '1':   return 1;
+        case '2':   return 2;
+        case '3':   return 3;
+        case '4':   return 4;
+        case '5':   return 5;
+        case '6':   return 6;
+        case '7':   return 7;
+        case '8':   return 8;
+        case '9':   return 9;
+        case 'a':   return 10;
+        case 'b':   return 11;
+        case 'c':   return 12;
+        case 'd':   return 13;
+        case 'e':   return 14;
+        case 'f':   return 15;
+        case 'A':   return 10;
+        case 'B':   return 11;
+        case 'C':   return 12;
+        case 'D':   return 13;
+        case 'E':   return 14;
+        case 'F':   return 15;
+    }
+    return 0;
+}
+ 
+void EncodeBinary( char* encoded, unsigned char* data, unsigned datalen )
+{
+    for( unsigned short i = 0, j = 0; i < datalen; i++ )
+    {
+        encoded[ j++ ] = "0123456789ABCDEF"[ data[ i ] >> 4 ];
+        encoded[ j++ ] = "0123456789ABCDEF"[ data[ i ] & 0xf ];
+    }
+    encoded[ datalen * 2 ] = 0;
+}
+ 
+void DecodeBinary( char* encoded, unsigned char* data )
+{
+    unsigned curbit = 0;
+    for( unsigned i = 0; i < (unsigned)strlen(encoded); i+=2 )
+    {
+        data[curbit] = GetCharVal( encoded[i] ) << 4;
+        data[curbit] += GetCharVal( encoded[i+1] );
+        curbit++;
+    }
+}
+#endif
+ 
+#ifdef USENEWQUESTSYSTEM
+void CPlayer::savequests( CPlayer* thisclient )
+{
+    char* questBuffer = new char[sizeof(SQuestData)*3 +1];
+    mysql_real_escape_string(GServer->DB->Mysql, questBuffer, (const char*)&quest, sizeof(SQuestData));
+    GServer->DB->QExecute( "DELETE FROM list_quest_new WHERE owner=%i",thisclient->CharInfo->charid );
+    GServer->DB->QExecute("INSERT INTO list_quest_new (owner, quests) VALUES(%i,'%s')",
+        thisclient->CharInfo->charid, questBuffer);
+    delete questBuffer;
+}
+#endif

@@ -48,7 +48,7 @@ void textcolor(int color)
 void Log( enum msg_type flag, char *Format, ... )
 {
 	va_list ap;	      // For arguments
-va_start( ap, Format );
+    va_start( ap, Format );
 
     // Timestamp
     time_t rtime;

@@ -482,6 +482,11 @@ bool CWorldServer::OnServerReady( )
     LoadBreakList( );     // geo edit for disassemble // 22 oct 07
     LoadSkillData( );
 
+    //Load our Server Info
+#ifdef USENEWQUESTSYSTEM
+    LoadQuestSTB();
+#endif
+
     //hidden
     // LoadDropsData( );
     // new drops routine load

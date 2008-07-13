@@ -947,7 +947,7 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
                 useitem->usescript = 1;
                 //clan points
                 if(useitem->itemnum>180 && useitem->itemnum<192)
-                     useitem->usescript = 1;
+                     useitem->usescript = 13;
                 useitem->usetype = UseList.Index[useitem->itemnum]->useeffect[0];
                 useitem->usevalue = UseList.Index[useitem->itemnum]->useeffect[1];
                 Log( MSG_INFO, "auto consumme (%i:%i), script: %i, %i,%i",type,useitem->itemnum,useitem->usescript,useitem->usetype,useitem->usevalue);
@@ -2607,6 +2607,10 @@ void CWorldServer::UWDecide()
 //LMA: We delete all Union Quest for all players.
 void CWorldServer::UWForceDelAllQuest(int questid)
 {
+     #ifdef USENEWQUESTSYSTEM
+     Log(MSG_INFO,"QSD mode: UWForceDelAllQuest unavailable");
+     return;
+     #endif
     GServer->DB->QExecute( "DELETE FROM list_quest WHERE questid=%i",questid);
 
 
@@ -2616,8 +2620,15 @@ void CWorldServer::UWForceDelAllQuest(int questid)
 //LMA: We force a delete quest, but fast way.
 void CWorldServer::UWForceDelQuest(CPlayer* thisclient,int action,int questpart,int questid)
 {
+     #ifdef USENEWQUESTSYSTEM
+     Log(MSG_INFO,"QSD mode: UWForceDelQuest unavailable");
+     return;
+     #endif
+     
     //server part
+    #ifndef USENEWQUESTSYSTEM
     thisclient->DelQuestUW( questid );
+    #endif
 
     //Player's part.
     BEGINPACKET( pak, 0x730);

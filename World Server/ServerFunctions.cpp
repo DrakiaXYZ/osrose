@@ -21,6 +21,7 @@
 #include "worldserver.h"
 
 // from Paul_T
+/*
 bool CWorldServer::SendPM( CPlayer* thisclient, char msg[200] )
 {
            BEGINPACKET( pak, 0x0784 );
@@ -29,6 +30,24 @@ bool CWorldServer::SendPM( CPlayer* thisclient, char msg[200] )
            ADDSTRING( pak, msg );
            ADDBYTE( pak, 0 );
            thisclient->client->SendPacket(&pak);
+           return true;
+}
+*/
+
+// from Paul_T
+bool CWorldServer::SendPM( CPlayer* thisclient, char* Format, ... )
+{
+  char buf[512];
+  va_list ap;
+  va_start( ap, Format );
+  vsprintf( buf, Format, ap );
+           BEGINPACKET( pak, 0x0784 );
+           ADDSTRING( pak, "Server" );
+           ADDBYTE( pak, 0 );
+     ADDSTRING( pak, buf );
+           ADDBYTE( pak, 0 );
+           thisclient->client->SendPacket(&pak);
+  va_end( ap );
            return true;
 }
 

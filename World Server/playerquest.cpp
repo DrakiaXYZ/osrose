@@ -21,6 +21,8 @@
 #include "player.h"
 #include "worldserver.h"
 
+//Not used if qsd version
+#ifndef USENEWQUESTSYSTEM
 
 //LMA function for logging quest info (IG)
 //void CPlayer::LogQuest( char buffer2[200] )
@@ -1572,3 +1574,4 @@ QUESTS* CPlayer::GetQuestByMob( unsigned int mob )
 	}
 	return 0;
 }
+#endif
