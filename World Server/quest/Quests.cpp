@@ -147,6 +147,7 @@ void CWorldServer::LoadQuestData(){
 	qstRewdFunc[26] = &QUEST_REWD_026;
 	qstRewdFunc[27] = &QUEST_REWD_027;
 	qstRewdFunc[28] = &QUEST_REWD_028;
+	qstRewdFunc[34] = &QUEST_REWD_034;
 
 	delete stbQuest;
 }

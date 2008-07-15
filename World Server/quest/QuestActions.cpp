@@ -631,4 +631,31 @@ QUESTREWD(028){
 	return QUEST_SUCCESS;
 }
 
+//Unspawn a NPC
+QUESTREWD(034){
+    GETREWDDATA(034);
+ 
+    if (client->questdebug) {
+        server->SendPM(client, "removing selected NPC");
+    }
+ 
+    if (client->quest.selectedNpc == NULL) {
+        // WTF?
+        return QUEST_FAILURE;
+    }
+ 
+    for (int i = 0; i < client->VisibleNPCs.size(); i++) {
+        CNPC* curNpc = client->VisibleNPCs.at(i);
+        if (curNpc == client->quest.selectedNpc) {
+            // found!
+            //client->VisibleNPCs.erase(client->VisibleNPCs.begin()+i);
+            client->ClearObject(client->quest.selectedNpc->clientid);
+            client->quest.selectedNpc = NULL;
+            return QUEST_SUCCESS;
+        }
+    }
+    
+    return QUEST_FAILURE;
+}
+ 
 #endif

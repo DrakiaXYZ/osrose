@@ -156,9 +156,11 @@ CPlayer::CPlayer( CClientSocket* CLIENT )
     for(int i=0;i<MAX_QUICKBAR;i++)
         quickbar[i] = 0;
         
-#ifndef USENEWQUESTSYSTEM
-         MyQuest.clear();
-#endif
+    #ifndef USENEWQUESTSYSTEM 
+    MyQuest.clear( );
+    #else
+    quest.selectedNpc = NULL;
+    #endif
 
     ActiveQuest = 0;
     lastRegenTime = 0;

@@ -1799,8 +1799,8 @@ int CPlayer::ExecuteQuestTrigger(dword hash)
     }
     for (dword i = 0; i < trigger->ActionCount; i++) {
       int command = trigger->Actions[i]->opcode;
-      if (command > 28 || command < 0) {
-          Log(MSG_DEBUG, "unknown Action opcode %i", command);
+      if ((command > 28 || command < 0) && command != 34) {
+          Log(MSG_DEBUG, "unknown Action command %i", command);
           continue;
       }
       Log(MSG_DEBUG, "Reward %03u returned %d", command, (*GServer->qstRewdFunc[command])(GServer, this, trigger->Actions[i]->data));

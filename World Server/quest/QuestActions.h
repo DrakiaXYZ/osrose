@@ -12,7 +12,7 @@ QUESTREWD(015);QUESTREWD(016);QUESTREWD(017);
 QUESTREWD(018);QUESTREWD(019);QUESTREWD(020);
 QUESTREWD(021);QUESTREWD(022);QUESTREWD(023);
 QUESTREWD(024);QUESTREWD(025);QUESTREWD(026);
-QUESTREWD(027);QUESTREWD(028);
+QUESTREWD(027);QUESTREWD(028);QUESTREWD(034);
 
 struct STR_REWD_000 {
 	dword iQuestSN;
@@ -201,3 +201,27 @@ struct STR_REWD_028 {
 	dword iX;
 	dword iY;
 };
+
+// use LUA function
+struct STR_REWD_029 {
+};
+ 
+// skill reset
+struct STR_REWD_030 {
+};
+ 
+// unknown start
+struct STR_REWD_031 {
+};
+ 
+struct STR_REWD_032 {
+};
+ 
+struct STR_REWD_033 {
+};
+// unknown end
+ 
+// unspawn NPC
+struct STR_REWD_034 {
+};
+ 

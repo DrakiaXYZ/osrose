@@ -385,7 +385,7 @@ class CWorldServer : public CServerSocket
  
         vector<CQuestTrigger*> TriggerList;
         fpQuestCond qstCondFunc[31];
-        fpQuestRewd qstRewdFunc[29];
+        fpQuestRewd qstRewdFunc[35];
  
         CSTBData                STB_QUEST;
 #else

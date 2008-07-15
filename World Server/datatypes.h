@@ -1077,6 +1077,7 @@ struct SQuestData
  
     SQuest quests[10];
     byte flags[0x40];
+    CNPC* selectedNpc;
  
     void SetFlag( dword flagid, bool value ){
         dword byteid = flagid / 8;
