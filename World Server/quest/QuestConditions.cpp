@@ -267,24 +267,37 @@ QUESTCOND(012){
 	return QUEST_SUCCESS;
 }
 
+ 
 //Select NPC
 QUESTCOND(013){
-	GETCONDDATA(013);
-
-	/*if(entity->_EntityType != ENTITY_NPC) return QUEST_FAILURE;
-
-	CNpc* thisNpc = reinterpret_cast<CNpc*>(entity);
-	std::map<dword, CNpc*>::iterator triggerITR = server->NpcList.find(data->iNpcNo);
-	if(triggerITR == server->NpcList.end()){
-		thisNpc->SelectedNpc = NULL;
-		return QUEST_FAILURE;
-	}
-	thisNpc->SelectedNpc = triggerITR->second;
-
-	return QUEST_SUCCESS;*/
-	// More NPC specific stuff
-	return QUEST_SUCCESS;
+    GETCONDDATA(013);
+ 
+    /*if(entity->_EntityType != ENTITY_NPC) return QUEST_FAILURE;
+ 
+    CNpc* thisNpc = reinterpret_cast<CNpc*>(entity);
+    std::map<dword, CNpc*>::iterator triggerITR = server->NpcList.find(data->iNpcNo);
+    if(triggerITR == server->NpcList.end()){
+        thisNpc->SelectedNpc = NULL;
+        return QUEST_FAILURE;
+    }
+    thisNpc->SelectedNpc = triggerITR->second;
+ 
+    return QUEST_SUCCESS;*/
+    // More NPC specific stuff
+    CMap* thisMap = GServer->MapList.Index[client->Position->Map];
+    CNPC* thisNpc = thisMap->GetNPCInMapQSD(data->iNpcNo);
+ 
+    if (thisNpc == NULL) {
+        Log (MSG_WARNING, "Questcondition 13: NPC not found");
+        return QUEST_FAILURE;
+    }
+ 
+    client->quest.selectedNpc = thisNpc;
+ 
+    return QUEST_SUCCESS;
 }
+ 
+
 
 //Check Quest Flag
 QUESTCOND(014){

@@ -195,6 +195,18 @@ CNPC* CMap::GetNPCInMap( UINT id )
     return NULL;
 }
 
+//LMA: Used for QSD.
+CNPC* CMap::GetNPCInMapQSD( UINT id )
+{
+    for(UINT i=0;i<NPCList.size();i++)
+    {
+        CNPC* thisNpc = NPCList.at(i);
+        if(thisNpc->npctype == id )
+            return thisNpc;
+    }
+    return NULL;
+}
+
 void CMap::UpdateTime( ) 
 {
     if(id==0) return;    

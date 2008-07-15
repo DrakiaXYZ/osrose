@@ -59,6 +59,7 @@ class CMap
     CPlayer* GetCharIDInMap( UINT id );
     CDrop* GetDropInMap( UINT id );
     CNPC* GetNPCInMap( UINT id );
+    CNPC* CMap::GetNPCInMapQSD( UINT id );
     void UpdateTime( );
     void CleanDrops( );
     void RespawnMonster( );
