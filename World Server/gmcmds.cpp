@@ -488,9 +488,9 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
         }
         else if (loc == 5) // Xita Refuge - Eldeon
         {
-             if (thisclient->Stats->Level<90)
+             if (thisclient->Stats->Level<120)
              {
-             SendPM(thisclient, "You need to be a least Level 90 to visit Eldeon!");
+             SendPM(thisclient, "You need to be a least Level 120 to visit Eldeon!");
              return true;
              }
          {
@@ -513,9 +513,11 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
         }
         else if (loc == 8) // Luna Clan Field
         {
-             if (thisclient->Stats->Level<100)
+             //if (thisclient->Stats->Level<120)
+             if (thisclient->Stats->Level<120 && thisclient->Stats->Level>160)
+             // Luna Clan Field actually restricted to from 120 - 160 only, will above work?
              {
-             SendPM(thisclient, "You need to be a least Level 100 to visit Luna Clan Field!");
+             SendPM(thisclient, "You need to be between Level 120 and 160 to visit Luna Clan Field!");
              return true;
              }
 
@@ -551,7 +553,7 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
                 y = 5285;
              }
         }
-        else if (loc == 12) // Oro
+/*        else if (loc == 12) // Oro
         {
              if (thisclient->Stats->Level<160)
              {
@@ -565,6 +567,7 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
                 y = 5236;
              }
         }
+*/
         else
         {
             SendPM(thisclient, "Please input a number after the go command, below is a list of places and their appropriate number");
@@ -579,7 +582,7 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
             SendPM(thisclient, "9 = Desert of the Dead");
             SendPM(thisclient, "10 = Pyramid Tombs - ElVerloon");
             SendPM(thisclient, "11 = Sikuku Underground Prison");
-            SendPM(thisclient, "12 = Oro");
+//            SendPM(thisclient, "12 = Oro");
             SendPM(thisclient, "Example; /go 3");
         }
         if ( thisclient->Stats->HP < (thisclient->Stats->MaxHP / 2) || thisclient->Stats->HP < 1 || thisclient->Session->inGame == false )
