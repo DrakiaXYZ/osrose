@@ -1565,6 +1565,128 @@ else if (strcmp(command, "give2")==0)
             }
         }
     }
+    else if(strcmp(command, "addquest")==0)
+    {
+         
+        if(Config.Command_IQuest > thisclient->Session->accesslevel)
+	         return true;
+        if ((tmp = strtok(NULL, " "))==NULL) return true;
+        unsigned int questnum =atoi(tmp);
+                Log( MSG_GMACTION, "add quest %i" , questnum);
+        for(int i=0;i<10;i++)
+            {
+                if (thisclient->quest.quests[i].QuestID != 0) continue;
+                    thisclient->quest.quests[i].QuestID = questnum;
+                    thisclient->quest.quests[i].StartTime = clock_t();
+                Log( MSG_GMACTION, "quest added %i" , thisclient->quest.quests[i].QuestID);
+                break;
+            }
+    }
+    else if(strcmp(command, "listquest")==0)
+    {
+         
+        if(Config.Command_IQuest > thisclient->Session->accesslevel)
+	         return true;
+        SendPM( thisclient, "Current Quests:" );
+        for(int i=0;i<10;i++)
+            {
+              if (thisclient->quest.quests[i].QuestID == 0) continue;
+                SendPM( thisclient, "Quest[%i]: %i[%i] %i[%i] %i[%i] %i[%i] %i[%i]" , thisclient->quest.quests[i].QuestID, thisclient->quest.quests[i].Items[0].itemnum, thisclient->quest.quests[i].Items[0].count, thisclient->quest.quests[i].Items[1].itemnum, thisclient->quest.quests[i].Items[1].count, thisclient->quest.quests[i].Items[2].itemnum,thisclient->quest.quests[i].Items[2].count,thisclient->quest.quests[i].Items[3].itemnum,thisclient->quest.quests[i].Items[3].count,thisclient->quest.quests[i].Items[4].itemnum,thisclient->quest.quests[i].Items[4].count);
+            }
+    }
+    else if(strcmp(command, "listqflag")==0)
+    {
+      if(Config.Command_IQuest > thisclient->Session->accesslevel)
+        return true;
+      SendPM(thisclient, "Quest Flags");
+      string buffer = "";
+      for (dword i = 0; i < 0x40; i++) {
+        char buf2[5];
+        sprintf(buf2, "%i ", thisclient->quest.flags[i]);
+        buffer.append(buf2);
+        if (i > 0 && i%10 == 0) {
+          SendPM(thisclient, (char*)buffer.c_str());
+          buffer = "";
+        }
+      }
+      SendPM(thisclient, (char*)buffer.c_str());
+    }
+    else if(strcmp(command, "listqvar")==0)
+    {
+      if(Config.Command_IQuest > thisclient->Session->accesslevel)
+        return true;
+        SendPM( thisclient, "Quest Variables");
+
+        string buffer = "Episode: ";
+        for(dword i = 0; i < 5; i++) {
+          char buf2[5];
+          sprintf(buf2, "%02x ", thisclient->quest.EpisodeVar[i]);
+          buffer.append(buf2);
+        }
+        SendPM( thisclient, (char*)buffer.c_str() );
+
+        buffer = "Job: ";
+        for(dword i = 0; i < 3; i++) {
+          char buf2[5];
+          sprintf(buf2, "%02x ", thisclient->quest.JobVar[i]);
+          buffer.append(buf2);
+        }
+        SendPM( thisclient, (char*)buffer.c_str());
+
+        buffer = "Planet: ";
+        for(dword i = 0; i < 7; i++) {
+          char buf2[5];
+          sprintf(buf2, "%02x ", thisclient->quest.PlanetVar[i]);
+          buffer.append(buf2);
+        }
+        SendPM( thisclient, (char*)buffer.c_str());
+
+        buffer = "Union: ";
+        for(dword i = 0; i < 10; i++) {
+          char buf2[5];
+          sprintf(buf2, "%02x ", thisclient->quest.UnionVar[i]);
+          buffer.append(buf2);
+            }
+        SendPM( thisclient, (char*)buffer.c_str());
+
+        for (dword j = 0; j < 10; j++) {
+        if (thisclient->quest.quests[j].QuestID == 0) continue;
+        buffer = "Quest: ";
+          for(dword i = 0; i < 10; i++) {
+            char buf2[5];
+            sprintf(buf2, "%02x ", thisclient->quest.quests[j].Variables[i]);
+            buffer.append(buf2);
+          }
+          SendPM( thisclient, (char*)buffer.c_str());
+        }
+    }
+    else if(strcmp(command, "setqvar")==0)
+    {
+      if(Config.Command_IQuest > thisclient->Session->accesslevel)
+        return true;
+      if ((tmp = strtok(NULL, " "))==NULL) return true;
+            unsigned int vartype = atoi(tmp);
+      if ((tmp = strtok(NULL, " "))==NULL) return true;
+            unsigned int var = atoi(tmp);
+      if ((tmp = strtok(NULL, " "))==NULL) return true;
+            unsigned int val = atoi(tmp);
+      if (vartype > 3) return true;
+      switch (vartype) {
+        case 0:
+          thisclient->quest.EpisodeVar[var] = val;
+        break;
+        case 1:
+          thisclient->quest.JobVar[var] = val;
+        break;
+        case 2:
+          thisclient->quest.PlanetVar[var] = val;
+        break;
+        case 3:
+          thisclient->quest.UnionVar[var] = val;
+        break;
+      }
+      SendPM( thisclient, "Set Var[%i][%i] = %i", vartype, var, val);
+    }    
 	else if (strcmp(command, "shoptype")==0)
 	{
          if(Config.Command_ShopType > thisclient->Session->accesslevel)

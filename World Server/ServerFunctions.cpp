@@ -711,7 +711,8 @@ bool CWorldServer::TeleportTo ( CPlayer* thisclient, int map, fPoint position )
 
 
 // Learn Skill
-bool CWorldServer::LearnSkill( CPlayer* thisclient, UINT skill )
+//bool CWorldServer::LearnSkill( CPlayer* thisclient, UINT skill )
+bool CWorldServer::LearnSkill( CPlayer* thisclient, UINT skill, bool takeSP)
 {                 
 /*
 0 - already learned 
@@ -740,11 +741,14 @@ bool CWorldServer::LearnSkill( CPlayer* thisclient, UINT skill )
             UINT rclass = 0;
             for(UINT i=0;i<4; i++)
             {
+        if (thisskill->c_class[i] == 0) {
+            continue;
+        }
                 if (thisskill->c_class[i] == 41)
                 {
                     rclass = 111;
                 }
-                else if (thisskill->c_class[i] == 42)
+                 else if (thisskill->c_class[i] == 42)
                 {
                     rclass = 211;
                 }
@@ -817,7 +821,7 @@ bool CWorldServer::LearnSkill( CPlayer* thisclient, UINT skill )
                 }
             }
         }
-        if(b==1)
+/*        if(b==1)
         {
             thisclient->cskills[thisclient->p_skills].id = skill;
             thisclient->cskills[thisclient->p_skills].level=1;
@@ -825,6 +829,19 @@ bool CWorldServer::LearnSkill( CPlayer* thisclient, UINT skill )
             thisclient->CharInfo->SkillPoints -= 1;
             thisclient->p_skills++;
         }
+        */
+ 
+        if(b==1)
+        {
+            thisclient->cskills[thisclient->p_skills].id = skill;
+            thisclient->cskills[thisclient->p_skills].level=1;
+            thisclient->cskills[thisclient->p_skills].thisskill = thisskill;
+            if (takeSP) {
+                thisclient->CharInfo->SkillPoints -= thisskill->sp;
+            }
+            thisclient->p_skills++;
+        }
+ 
         BEGINPACKET( pak, 0x7b0 );
         ADDBYTE    ( pak, b);
         ADDWORD    ( pak, thisclient->p_skills-1);

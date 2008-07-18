@@ -490,8 +490,8 @@ QUESTREWD(014){
     GETREWDDATA(014);
   if( client->questdebug )
     server->SendPM(client, "Learn skill: %i", data->iSkillNo);
-//    GServer->LearnSkill(client, data->iSkillNo, false);
-	GServer->LearnSkill(client, data->iSkillNo);
+    GServer->LearnSkill(client, data->iSkillNo, false);
+//	GServer->LearnSkill(client, data->iSkillNo);
 	return QUEST_SUCCESS;
 }
 
