@@ -1,10 +1,10 @@
 /*
 MySQL Data Transfer
-Source Host: 192.168.1.100
+Source Host: osrose
 Source Database: osrose
-Target Host: 192.168.1.100
+Target Host: osrose
 Target Database: osrose
-Date: 12/24/2007 8:09:43 AM
+Date: 7/19/2008 8:06:52 AM
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -12,93 +12,90 @@ SET FOREIGN_KEY_CHECKS=0;
 -- Table structure for list_telegates
 -- ----------------------------
 CREATE TABLE `list_telegates` (
-  `id` int(11) NOT NULL,
-  `name` varchar(255) NOT NULL default '',
-  `map` int(11) NOT NULL,
-  `x` float NOT NULL,
-  `y` float NOT NULL,
+  `id` int(10) NOT NULL,
+  `srcmap` int(10) NOT NULL,
+  `srcx` float NOT NULL,
+  `srcy` float NOT NULL,
+  `destmap` int(10) NOT NULL,
+  `destx` float NOT NULL,
+  `desty` float NOT NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records 
 -- ----------------------------
-INSERT INTO `list_telegates` VALUES ('17', 'Adventure Plains (NW) > Valley of Luxem Tower (SW)', '21', '5098', '5051');
-INSERT INTO `list_telegates` VALUES ('12', 'Valley of Luxem Tower (SW) > Adventure Plains (NW)', '22', '5846', '5539');
-INSERT INTO `list_telegates` VALUES ('19', 'Adventure Plains (NE) > Valley of Luxem Tower (SE)', '21', '5295', '5058');
-INSERT INTO `list_telegates` VALUES ('14', 'Valley of Luxem Tower (SE) > Adventure Plains (NE)', '22', '5972', '5551');
-INSERT INTO `list_telegates` VALUES ('18', 'Adventure Plains > Goblin Cave B1', '31', '5516', '5437');
-INSERT INTO `list_telegates` VALUES ('61', 'Goblin Cave B1 > Adventure Plains', '22', '5414', '5051');
-INSERT INTO `list_telegates` VALUES ('65', 'Goblin Cave B1 (End) > B2', '31', '5384', '5228');
-INSERT INTO `list_telegates` VALUES ('63', 'Goblin Cave B2 > B1 (End)', '32', '5524', '5377');
-INSERT INTO `list_telegates` VALUES ('62', 'Goblin Cave B1 > B2', '32', '5435', '5258');
-INSERT INTO `list_telegates` VALUES ('64', 'Goblin Cave B2 > B1', '31', '5294', '5339');
-INSERT INTO `list_telegates` VALUES ('67', 'Goblin Cave B2 > B3', '33', '5155', '5206');
-INSERT INTO `list_telegates` VALUES ('69', 'Goblin Cave B3 > B2', '32', '5119', '5064');
-INSERT INTO `list_telegates` VALUES ('66', 'Goblin Cave B2 > B3', '33', '5605', '5488');
-INSERT INTO `list_telegates` VALUES ('68', 'Goblin Cave B3 > B2', '32', '5434', '5200');
-INSERT INTO `list_telegates` VALUES ('13', 'Valley of Luxem Tower > Breezy Hills', '23', '5049', '4964');
-INSERT INTO `list_telegates` VALUES ('26', 'Breezy Hills > Valley of Luxem Tower', '21', '5510', '5334');
-INSERT INTO `list_telegates` VALUES ('11', 'Valley of Luxem Tower > Canyon City of Zant', '1', '5249', '5025');
-INSERT INTO `list_telegates` VALUES ('21', 'Canyon City of Zant > Valley of Luxem Tower', '21', '5144', '5505');
-INSERT INTO `list_telegates` VALUES ('23', 'Canyon City of Zant > Breezy Hills', '23', '5039', '5207');
-INSERT INTO `list_telegates` VALUES ('28', 'Breezy Hills > Canyon City of Zant', '1', '5510', '5177');
-INSERT INTO `list_telegates` VALUES ('22', 'Canyon City of Zant > El Verloon Desert', '24', '5162', '4871');
-INSERT INTO `list_telegates` VALUES ('31', 'El Verloon Desert > Canyon City of Zant', '1', '5284', '5509');
-INSERT INTO `list_telegates` VALUES ('32', 'El Verloon Desert > Breezy Hills', '23', '5065', '5538');
-INSERT INTO `list_telegates` VALUES ('27', 'Breezy Hills > El Verloon Desert', '24', '5386', '4891');
-INSERT INTO `list_telegates` VALUES ('33', 'El Verloon Desert > Anima Lake', '25', '5021', '5424');
-INSERT INTO `list_telegates` VALUES ('36', 'Anima Lake > El Verloon Desert', '24', '5709', '5497');
-INSERT INTO `list_telegates` VALUES ('38', 'Anima Lake > Junon Polis', '2', '5614', '5542');
-INSERT INTO `list_telegates` VALUES ('56', 'Junon Polis > Anima Lake', '25', '5403', '4958');
-INSERT INTO `list_telegates` VALUES ('40', 'Anima Lake > Desert of the Dead', '29', '5081', '5010');
-INSERT INTO `list_telegates` VALUES ('43', 'Desert of the Dead > Anima Lake', '25', '5508', '5537');
-INSERT INTO `list_telegates` VALUES ('39', 'Anima Lake > Forest of Wisdom', '26', '5050', '5504');
-INSERT INTO `list_telegates` VALUES ('41', 'Forest of Wisdom > Anima Lake', '25', '5650', '5238');
-INSERT INTO `list_telegates` VALUES ('42', 'Forest of Wisdom > Kenji Beach', '27', '5155', '5489');
-INSERT INTO `list_telegates` VALUES ('46', 'Kenji Beach > Forest of Wisdom', '26', '5282', '4884');
-INSERT INTO `list_telegates` VALUES ('47', 'Kenji Beach > Gorge of Silence', '28', '5474', '4765');
-INSERT INTO `list_telegates` VALUES ('51', 'Gorge of Silence > Kenji Beach', '27', '5768', '5485');
-INSERT INTO `list_telegates` VALUES ('70', 'Sunshine Coast > Canyon City of Zant', '1', '5242', '5193');
-INSERT INTO `list_telegates` VALUES ('71', 'Grand Ballroom > Junon Polis', '2', '5548', '5184');
-INSERT INTO `list_telegates` VALUES ('104', 'Magic City of Eucar > Freezing Plateau', '55', '5522', '4479');
-INSERT INTO `list_telegates` VALUES ('115', 'Freezing Plateau > Magic City of Eucar', '51', '5088', '5351');
-INSERT INTO `list_telegates` VALUES ('103', 'Magic City of Eucar > Crystal Snowfields', '54', '5058', '4423');
-INSERT INTO `list_telegates` VALUES ('112', 'Crystal Snowfields > Magic City of Eucar', '51', '5672', '5235');
-INSERT INTO `list_telegates` VALUES ('113', 'Crystal Snowfields > Freezing Plateau', '55', '5807', '4685');
-INSERT INTO `list_telegates` VALUES ('116', 'Freezing Plateau > Crystal Snowfields', '54', '5098', '4823');
-INSERT INTO `list_telegates` VALUES ('86', 'Crystal Snowfields > Temple B1', '56', '5035', '4272');
-INSERT INTO `list_telegates` VALUES ('120', 'Forgotten Temple B1 > Crystal Snowfields', '54', '5092', '4245');
-INSERT INTO `list_telegates` VALUES ('87', 'Forgotten Temple B1L > B1North', '56', '5664', '4925');
-INSERT INTO `list_telegates` VALUES ('88', 'Forgotten Temple B1North > B1l', '56', '5693', '4384');
-INSERT INTO `list_telegates` VALUES ('92', 'Forgotten Temple B1Sister > B1FarLeft', '56', '5034', '4536');
-INSERT INTO `list_telegates` VALUES ('91', 'Forgotten Temple B1FarLeft > B1Sister', '56', '5500', '4564');
-INSERT INTO `list_telegates` VALUES ('89', 'Forgotten Temple B1Middle > B1TopLeft', '56', '5125', '5302');
-INSERT INTO `list_telegates` VALUES ('90', 'Forgotten Temple B1TopLeft > B1Middle', '56', '5215', '4630');
-INSERT INTO `list_telegates` VALUES ('95', 'Forgotten Temple B1 > B2', '57', '5539', '5155');
-INSERT INTO `list_telegates` VALUES ('96', 'Forgotten Temple B2 > B1', '56', '5034', '5229');
-INSERT INTO `list_telegates` VALUES ('93', 'Forgotten Temple B2Large > B2Small', '57', '5439', '5354');
-INSERT INTO `list_telegates` VALUES ('94', 'Forgotten Temple B2Small > B2Large', '57', '5765', '5183');
-INSERT INTO `list_telegates` VALUES ('101', 'Magic City of Eucar > Mana Snowfields', '52', '6152', '5209');
-INSERT INTO `list_telegates` VALUES ('106', 'Mana Snowfields > M.C. Eucar', '51', '5040', '4849');
-INSERT INTO `list_telegates` VALUES ('107', 'Mana Snowfields > Arumic Valley', '53', '5041', '5203');
-INSERT INTO `list_telegates` VALUES ('110', 'Arumic Valley > Mana Snowfields', '52', '5698', '4692');
-INSERT INTO `list_telegates` VALUES ('102', 'Magic City of Eucar > Arumic Valley', '53', '6161', '5373');
-INSERT INTO `list_telegates` VALUES ('109', 'Arumic Valley > M.C. Eucar', '51', '5446', '4716');
-INSERT INTO `list_telegates` VALUES ('123', 'Luna Clan Field > Crystal Snowfields', '54', '5094', '4254');
-INSERT INTO `list_telegates` VALUES ('117', 'Mount Eruca > Magic City of Eucar', '51', '5004', '5278');
-INSERT INTO `list_telegates` VALUES ('105', 'Magic City of Eucar > Mount Eruca', '58', '5680', '4287');
-INSERT INTO `list_telegates` VALUES ('126', 'Xita Refuge (NW) > Shady Jungle (SW)', '62', '5683', '4479');
-INSERT INTO `list_telegates` VALUES ('128', 'Shady Jungle (SW) > Xita Refuge (NW)', '61', '5218', '5381');
-INSERT INTO `list_telegates` VALUES ('127', 'Xita Refuge (NE) > Shady Jungle (SE)', '62', '6326', '4429');
-INSERT INTO `list_telegates` VALUES ('129', 'Shady Jungle (SE) > Xita Refuge (NE)', '61', '5799', '5383');
-INSERT INTO `list_telegates` VALUES ('130', 'Shady Jungle > Forest of Wandering', '63', '6088', '5201');
-INSERT INTO `list_telegates` VALUES ('131', 'Forest of Wandering > Shady Jungle', '62', '5086', '5268');
-INSERT INTO `list_telegates` VALUES ('132', 'Shady Jungle > Marsh of Ghosts', '64', '5039', '5326');
-INSERT INTO `list_telegates` VALUES ('133', 'Marsh of Ghosts > Shady Jungle', '62', '6543', '5247');
-INSERT INTO `list_telegates` VALUES ('134', 'Forest of Wandering > Sikuku Underground Prison', '65', '5511', '5395');
-INSERT INTO `list_telegates` VALUES ('135', 'Sikuku Underground Prison > Forest of Wandering', '63', '5403', '4437');
-INSERT INTO `list_telegates` VALUES ('137', 'Pyramid F1 outside', '24', '5510', '5255');
-INSERT INTO `list_telegates` VALUES ('139', 'Pyramid F1 to Tombs', '42', '5165', '5207');
-INSERT INTO `list_telegates` VALUES ('140', 'Pyramid Tombs to F1', '41', '5165', '5207');
-INSERT INTO `list_telegates` VALUES ('138', 'Pyramid warp', '41', '5165', '5207');
+INSERT INTO `list_telegates` VALUES ('11', '21', '5135.83', '5551.34', '1', '5247.99', '5024.26');
+INSERT INTO `list_telegates` VALUES ('12', '21', '5080.88', '5018.84', '22', '5844.11', '5543.18');
+INSERT INTO `list_telegates` VALUES ('13', '21', '5545.91', '5338.69', '23', '5045.95', '4962.88');
+INSERT INTO `list_telegates` VALUES ('14', '21', '5306.85', '5025.11', '22', '5973.44', '5550.06');
+INSERT INTO `list_telegates` VALUES ('17', '22', '5825.77', '5571.81', '21', '5093.14', '5044.78');
+INSERT INTO `list_telegates` VALUES ('18', '22', '5383.32', '5078.91', '31', '5520.44', '5450.31');
+INSERT INTO `list_telegates` VALUES ('19', '22', '5979.73', '5577.98', '21', '5301.46', '5047.28');
+INSERT INTO `list_telegates` VALUES ('21', '1', '5236.86', '4982.02', '21', '5140.06', '5504.44');
+INSERT INTO `list_telegates` VALUES ('22', '1', '5271.78', '5543.42', '24', '5151.02', '4878.51');
+INSERT INTO `list_telegates` VALUES ('23', '1', '5546.1', '5170.63', '23', '5040.86', '5206.05');
+INSERT INTO `list_telegates` VALUES ('26', '23', '5010.83', '4964.57', '21', '5520.37', '5335.52');
+INSERT INTO `list_telegates` VALUES ('27', '23', '5048.43', '5569.67', '24', '5382.48', '4906.56');
+INSERT INTO `list_telegates` VALUES ('28', '23', '5009.55', '5204.56', '1', '5512.29', '5177.15');
+INSERT INTO `list_telegates` VALUES ('31', '24', '5161.2', '4830.98', '1', '5279.88', '5493.08');
+INSERT INTO `list_telegates` VALUES ('32', '24', '5376.06', '4848.49', '23', '5065.35', '5532.05');
+INSERT INTO `list_telegates` VALUES ('33', '24', '5751.95', '5493.36', '25', '5027.93', '5442.95');
+INSERT INTO `list_telegates` VALUES ('36', '25', '4994.22', '5404.84', '24', '5691.21', '5492.95');
+INSERT INTO `list_telegates` VALUES ('38', '25', '5417.02', '4893.31', '2', '5615.07', '5543.74');
+INSERT INTO `list_telegates` VALUES ('39', '25', '5699.28', '5232.03', '26', '5050.41', '5501.55');
+INSERT INTO `list_telegates` VALUES ('40', '25', '5529.2', '5564.26', '29', '5082.87', '5023.78');
+INSERT INTO `list_telegates` VALUES ('41', '26', '4993.92', '5525.09', '25', '5642.96', '5241.79');
+INSERT INTO `list_telegates` VALUES ('42', '26', '5273.73', '4853.05', '27', '5154.97', '5483.59');
+INSERT INTO `list_telegates` VALUES ('43', '29', '5088.85', '4982.47', '25', '5503.03', '5530.31');
+INSERT INTO `list_telegates` VALUES ('46', '27', '5152.74', '5519.31', '26', '5277.77', '4883.99');
+INSERT INTO `list_telegates` VALUES ('47', '27', '5760.53', '5520.38', '28', '5471.66', '4768.62');
+INSERT INTO `list_telegates` VALUES ('51', '28', '5461.25', '4733.01', '27', '5768.91', '5494.68');
+INSERT INTO `list_telegates` VALUES ('56', '2', '5639.49', '5563.82', '25', '5407.84', '4949.69');
+INSERT INTO `list_telegates` VALUES ('61', '31', '5520.7', '5481.9', '22', '5408.64', '5038.51');
+INSERT INTO `list_telegates` VALUES ('62', '31', '5292.86', '5303.2', '32', '5434.77', '5257.05');
+INSERT INTO `list_telegates` VALUES ('63', '31', '5387.19', '5273', '32', '5524.89', '5384.32');
+INSERT INTO `list_telegates` VALUES ('64', '32', '5437.07', '5298.83', '31', '5294.74', '5327.64');
+INSERT INTO `list_telegates` VALUES ('65', '32', '5522.32', '5358.58', '31', '5381.38', '5216.77');
+INSERT INTO `list_telegates` VALUES ('66', '32', '5436.84', '5162.54', '33', '5605.13', '5485.46');
+INSERT INTO `list_telegates` VALUES ('67', '32', '5121.17', '5031.31', '33', '5154.54', '5207.43');
+INSERT INTO `list_telegates` VALUES ('68', '33', '5607.6', '5506.83', '32', '5433.88', '5202.87');
+INSERT INTO `list_telegates` VALUES ('69', '33', '5155.8', '5245.27', '32', '5117.51', '5074');
+INSERT INTO `list_telegates` VALUES ('71', '40', '5185.07', '5129.11', '2', '5547.6', '5193.07');
+INSERT INTO `list_telegates` VALUES ('86', '54', '5066.67', '4240.93', '56', '5034.48', '4272.99');
+INSERT INTO `list_telegates` VALUES ('87', '56', '5710.57', '4380.42', '56', '5664.48', '4924.34');
+INSERT INTO `list_telegates` VALUES ('88', '56', '5673.99', '4943.41', '56', '5590.93', '4385.44');
+INSERT INTO `list_telegates` VALUES ('89', '56', '5211.99', '4614.97', '56', '5125.16', '5311.09');
+INSERT INTO `list_telegates` VALUES ('90', '56', '5120.08', '5277.04', '56', '5215.43', '4733.23');
+INSERT INTO `list_telegates` VALUES ('91', '56', '5045.29', '4519.77', '56', '5528.24', '4564.86');
+INSERT INTO `list_telegates` VALUES ('92', '56', '5478.15', '4569.29', '56', '5096.59', '4565.07');
+INSERT INTO `list_telegates` VALUES ('93', '57', '5772.26', '5171.19', '57', '5432.11', '5354.7');
+INSERT INTO `list_telegates` VALUES ('94', '57', '5456.32', '5350.38', '57', '5764.81', '5185.23');
+INSERT INTO `list_telegates` VALUES ('95', '56', '5035.08', '5253.38', '57', '5540.01', '5157.9');
+INSERT INTO `list_telegates` VALUES ('96', '57', '5541.42', '5101.11', '56', '5035.21', '5200.04');
+INSERT INTO `list_telegates` VALUES ('101', '51', '5008.97', '4839.75', '52', '6156.07', '5210.39');
+INSERT INTO `list_telegates` VALUES ('102', '51', '5445.15', '4686.24', '53', '6159.24', '5368.95');
+INSERT INTO `list_telegates` VALUES ('103', '51', '5718.27', '5230.67', '54', '5058.63', '4439.96');
+INSERT INTO `list_telegates` VALUES ('104', '51', '5079.73', '5378.6', '55', '5524.47', '4464.4');
+INSERT INTO `list_telegates` VALUES ('105', '51', '5007.16', '5307.56', '58', '5676.35', '4269.24');
+INSERT INTO `list_telegates` VALUES ('106', '52', '6201.18', '5201.6', '51', '5059.28', '4851.4');
+INSERT INTO `list_telegates` VALUES ('107', '52', '5731.86', '4677.65', '53', '5037.27', '5202.48');
+INSERT INTO `list_telegates` VALUES ('109', '53', '6127.19', '5414.47', '51', '5444.41', '4728.49');
+INSERT INTO `list_telegates` VALUES ('110', '53', '4989.23', '5191', '52', '5690.67', '4690.99');
+INSERT INTO `list_telegates` VALUES ('112', '54', '5025.87', '4408.42', '51', '5667.08', '5237.91');
+INSERT INTO `list_telegates` VALUES ('113', '54', '5063.33', '4833.69', '55', '5814.3', '4684.07');
+INSERT INTO `list_telegates` VALUES ('115', '55', '5519.94', '4416.11', '51', '5084.68', '5344.79');
+INSERT INTO `list_telegates` VALUES ('116', '55', '5838.36', '4697.31', '54', '5093.42', '4824.61');
+INSERT INTO `list_telegates` VALUES ('117', '58', '5680.8', '4174.61', '51', '4999.23', '5265.38');
+INSERT INTO `list_telegates` VALUES ('120', '56', '5035.79', '4235.9', '54', '5114.37', '4250.87');
+INSERT INTO `list_telegates` VALUES ('123', '59', '5007.55', '5126.43', '54', '5114.37', '4250.87');
+INSERT INTO `list_telegates` VALUES ('126', '61', '5232.55', '5418.33', '62', '5681.12', '4554.2');
+INSERT INTO `list_telegates` VALUES ('127', '61', '5827.32', '5411.13', '62', '6333.31', '4460.94');
+INSERT INTO `list_telegates` VALUES ('128', '62', '5686.36', '4391.86', '61', '5218.67', '5385.83');
+INSERT INTO `list_telegates` VALUES ('129', '62', '6326.54', '4342.24', '61', '5802.86', '5388.78');
+INSERT INTO `list_telegates` VALUES ('130', '62', '5005.84', '5317.1', '63', '6080.95', '5189.86');
+INSERT INTO `list_telegates` VALUES ('131', '63', '6106.96', '5239.22', '62', '5092.95', '5261.04');
+INSERT INTO `list_telegates` VALUES ('132', '62', '6590.96', '5292.14', '64', '5042.98', '5318.52');
+INSERT INTO `list_telegates` VALUES ('133', '64', '5020.87', '5357.01', '62', '6536.86', '5245.06');
+INSERT INTO `list_telegates` VALUES ('134', '63', '5404.55', '4372.7', '65', '5511.9', '5395');
+INSERT INTO `list_telegates` VALUES ('135', '65', '5451.93', '5380.5', '63', '5403.91', '4437.7');

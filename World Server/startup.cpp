@@ -243,7 +243,8 @@ bool CWorldServer::LoadTeleGateData( )
 {
 	Log( MSG_LOAD, "Telegates data              " );
 	MYSQL_ROW row;
-	MYSQL_RES *result = DB->QStore("SELECT id,x,y,map FROM list_telegates");
+//	MYSQL_RES *result = DB->QStore("SELECT id,x,y,map FROM list_telegates");
+	MYSQL_RES *result = DB->QStore("SELECT id, srcx, srcy, srcmap, destx, desty, destmap FROM list_telegates");
 	if(result==NULL) return false;
 	while( row = mysql_fetch_row(result) )
     {
@@ -255,9 +256,15 @@ bool CWorldServer::LoadTeleGateData( )
             return false;
         }
 		thisgate->id = atoi(row[0]);
-		thisgate->dest.x = (float)atof(row[1]);
-		thisgate->dest.y = (float)atof(row[2]);
-		thisgate->destMap = atoi(row[3]);
+		thisgate->src.x = (float)atof(row[1]);
+		thisgate->src.y = (float)atof(row[2]);
+		thisgate->srcMap = atoi(row[3]);
+		thisgate->dest.x = (float)atof(row[4]);
+		thisgate->dest.y = (float)atof(row[5]);
+		thisgate->destMap = atoi(row[6]);
+//		thisgate->dest.x = (float)atof(row[1]);
+//		thisgate->dest.y = (float)atof(row[2]);
+//		thisgate->destMap = atoi(row[3]);
 		TeleGateList.push_back( thisgate );
 	}
 	DB->QFree( );
@@ -588,7 +595,8 @@ bool CWorldServer::LoadMobGroups() {
   MYSQL_ROW row;
   bool flag = true;
   char* tmp = NULL;
-  MYSQL_RES *result = DB->QStore("SELECT id, map, x, y, range, respawntime, `limit`, tacticalpoints, moblist FROM list_mobgroups");
+//  MYSQL_RES *result = DB->QStore("SELECT id, map, x, y, range, respawntime, `limit`, tacticalpoints, moblist FROM list_mobgroups");
+  MYSQL_RES *result = DB->QStore("SELECT `id`, `map`, `x`, `y`, `range`, `respawntime`, `limit`, `tacticalpoints`, `moblist` FROM `list_mobgroups`");
   if (result == NULL) return false;
   while (row = mysql_fetch_row(result)) {
     CMobGroup* thisgroup = new (nothrow) CMobGroup;

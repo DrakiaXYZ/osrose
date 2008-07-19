@@ -246,6 +246,7 @@ QUESTREWD(003){
         case sMoney:
             if(!OperateValues<int>(curAbil->btOp, (int*)&client->CharInfo->Zulies, curAbil->iValue))
                 return QUEST_FAILURE;
+			// Send zuly update packet
             BEGINPACKET( pak, 0x71d );
             ADDQWORD( pak, client->CharInfo->Zulies );
             client->client->SendPacket( &pak );

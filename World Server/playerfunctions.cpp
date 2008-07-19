@@ -1867,6 +1867,7 @@ int CPlayer::GetQuestVar(short nVarType, short nVarNO){
       return activeQuest->GetSwitchBit(nVarNO);
     }
     case 0x200://Remaining time
+      Log(MSG_DEBUG, "GetQuestVar got remaining quest time");
       return 1;
     case 0x300:
       if(nVarNO >= 5) return -1;

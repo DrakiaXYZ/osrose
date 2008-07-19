@@ -698,6 +698,8 @@ struct CPVPZones
 struct CTeleGate
 {
 	unsigned short id;
+	fPoint src;
+	unsigned char srcMap;
 	fPoint dest;
 	unsigned char destMap;
 };
