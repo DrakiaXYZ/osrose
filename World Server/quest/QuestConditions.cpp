@@ -185,8 +185,10 @@ QUESTCOND(006){
 			return QUEST_FAILURE;
 	}
 
-	float dx = client->Position->current.x - (float)data->iX;
-	float dy = client->Position->current.y - (float)data->iY;
+//	float dx = client->Position->current.x - (float)data->iX;
+//	float dy = client->Position->current.y - (float)data->iY;
+    float dx = client->Position->current.x - (float)(data->iX / 100);
+    float dy = client->Position->current.y - (float)(data->iY / 100);
 	float distance = sqrt((dx*dx) + (dy*dy));
 	return (distance < data->iRadius)?QUEST_SUCCESS:QUEST_FAILURE;
 }

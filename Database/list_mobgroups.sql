@@ -1,8 +1,8 @@
 /*
 MySQL Data Transfer
-Source Host: dhrr
+Source Host: osrose
 Source Database: osrose
-Target Host: dhrr
+Target Host: osrose
 Target Database: osrose
 Date: 5/14/2008 5:38:24 PM
 */
@@ -22,7 +22,7 @@ CREATE TABLE `list_mobgroups` (
   `tacticalpoints` int(11) NOT NULL,
   `moblist` varchar(1024) default NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=23114 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 
 INSERT INTO `list_mobgroups` VALUES (0, 1, 5118.46, 5182.58, 30, 22, 1, 200, '301,1,0|301,1,0|301,1,0|301,1,0|301,1,0|301,1,1|301,1,1');

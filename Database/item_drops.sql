@@ -23,7 +23,7 @@ CREATE TABLE `item_drops` (
   `alt` varchar(500) collate latin1_general_ci NOT NULL default '0|0|0|0|0|0|0',
   `description` varchar(100) collate latin1_general_ci NOT NULL,
   PRIMARY KEY  (`ref`)
-) ENGINE=MyISAM AUTO_INCREMENT=9529 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- ----------------------------
 -- Records 

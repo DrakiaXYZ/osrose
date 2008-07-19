@@ -265,7 +265,7 @@ CursorRow=764
 TopLine=764
 LeftChar=1
 [Editor_35]
-Open=1
+Open=0
 Top=0
 <<<<<<< .mine
 CursorCol=23
@@ -278,11 +278,18 @@ TopLine=701
 >>>>>>> .r85
 LeftChar=1
 [Editor_36]
-Open=1
+Open=0
+<<<<<<< .mine
+Top=0
+CursorCol=10
+CursorRow=515
+TopLine=505
+=======
 Top=0
 CursorCol=6
 CursorRow=1689
 TopLine=1542
+>>>>>>> .r134
 LeftChar=1
 [Editor_37]
 Open=0
@@ -323,8 +330,8 @@ CursorRow=97
 TopLine=73
 LeftChar=1
 [Editor_43]
-Open=1
-Top=1
+Open=0
+Top=0
 CursorCol=10
 CursorRow=738
 TopLine=735
@@ -393,7 +400,7 @@ Top=0
 Open=0
 Top=0
 [Editor_57]
-Open=1
+Open=0
 Top=0
 CursorCol=5
 CursorRow=492
@@ -403,8 +410,12 @@ LeftChar=1
 Open=0
 Top=0
 [Editor_59]
-Open=0
-Top=0
+Open=1
+Top=1
+CursorCol=1
+CursorRow=192
+TopLine=180
+LeftChar=1
 [Editor_60]
 Open=0
 Top=0
