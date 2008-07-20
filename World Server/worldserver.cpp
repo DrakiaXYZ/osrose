@@ -729,6 +729,7 @@ void CWorldServer::LoadConfigurations( char* file )
 // Load commands from commands.ini [by Paul_T]
 void CWorldServer::LoadCommandLevels( void )
 {
+    Config.Command_Addquest = ConfigGetInt ( "commands.ini", "addquest", 299 );
     Config.Command_AllSkill = ConfigGetInt ( "commands.ini", "allskill", 299 );
     Config.Command_Ani = ConfigGetInt    ( "commands.ini", "ani", 299 );
     Config.Command_Ann = ConfigGetInt    ( "commands.ini", "ann", 299 );
@@ -784,6 +785,9 @@ void CWorldServer::LoadCommandLevels( void )
     Config.Command_KillInRange = ConfigGetInt    ( "commands.ini", "killinrange", 299 );
     Config.Command_Level = ConfigGetInt    ( "commands.ini", "level", 299 );
     Config.Command_LevelUp = ConfigGetInt    ( "commands.ini", "levelup", 299 );
+    Config.Command_Listquest = ConfigGetInt ( "commands.ini", "listquest", 299 );
+    Config.Command_Listqflag = ConfigGetInt ( "commands.ini", "listqflag", 299 );
+    Config.Command_Listqvar = ConfigGetInt ( "commands.ini", "listqvar", 299 );    
     Config.Command_ManageFairy = ConfigGetInt    ( "commands.ini", "managefairy", 299 );
     Config.Command_MaxStats     = ConfigGetInt    ( "commands.ini", "maxstats", 299 );     //MaxStats
     Config.Command_Mdmg = ConfigGetInt    ( "commands.ini", "mdmg", 299 );
@@ -803,12 +807,15 @@ void CWorldServer::LoadCommandLevels( void )
     Config.Command_Pvp = ConfigGetInt    ( "commands.ini", "pvp", 299 );
     Config.Command_Rate = ConfigGetInt    ( "commands.ini", "rate", 299 );
     Config.Command_Reborn = ConfigGetInt    ( "commands.ini", "reborn", 299 );  //Reborn by core
+    Config.Command_Refine = ConfigGetInt    ( "commands.ini", "refine", 299 );  //Refine by PurpleYouko
     Config.Command_Reload = ConfigGetInt    ( "commands.ini", "reload", 299 );
     Config.Command_ReloadQuest = ConfigGetInt    ( "commands.ini", "reloadquest", 299 );
     Config.Command_Rules = ConfigGetInt    ( "commands.ini", "rules", 99 );
     Config.Command_Save = ConfigGetInt    ( "commands.ini", "save", 299 );
     Config.Command_ServerInfo = ConfigGetInt    ( "commands.ini", "serverinfo", 299 );
     Config.Command_Set = ConfigGetInt    ( "commands.ini", "set", 299 );
+    Config.Command_Setqflag = ConfigGetInt ( "commands.ini", "setqflag", 299 );
+    Config.Command_Setqvar = ConfigGetInt ( "commands.ini", "setqvar", 299 );
     Config.Command_Settime = ConfigGetInt    ( "commands.ini", "settime", 299 );
     Config.Command_ShopType = ConfigGetInt    ( "commands.ini", "shoptype", 299 );
     Config.Command_Shutdown = ConfigGetInt    ( "commands.ini", "shutdown", 299 );

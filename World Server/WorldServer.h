@@ -304,6 +304,7 @@ class CWorldServer : public CServerSocket
     	bool pakGMStat( CPlayer* thisclient, char* statname, int statvalue );
         bool pakGMItemtoplayer(CPlayer* thisclient, char* name , UINT itemid , UINT itemtype , UINT itemamount , UINT itemrefine , UINT itemls, UINT itemstats , UINT itemsocket) ;
         bool pakGMItem( CPlayer* thisclient, UINT itemid , UINT itemtype , UINT itemamount , UINT itemrefine , UINT itemls, UINT itemstats , UINT itemsocket );
+
         //LMA: for Quests
         bool pakGMItemQuest( CPlayer* thisclient, UINT itemid, UINT itemtype, UINT itemamount, UINT itemrefine, UINT itemls, UINT itemstats, UINT itemsocket, char buffer2[200] );
         bool pakGMTeleOtherPlayer( CPlayer *thisclient, char* name, int map, float x, float y );

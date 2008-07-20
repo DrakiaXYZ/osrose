@@ -1291,7 +1291,7 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
 	}
     else if(strcmp(command, "giveclanp")==0)
     {
-         if(Config.Command_GiveClanRp > thisclient->Session->accesslevel)
+         if(Config.Command_GiveClanp > thisclient->Session->accesslevel)
 	                    return true;
         if ((tmp = strtok(NULL, " "))==NULL) return true; char* name=tmp;
 	    if((tmp = strtok(NULL, " "))==NULL) return true; int points=atoi(tmp);
@@ -1567,8 +1567,8 @@ else if (strcmp(command, "give2")==0)
     }
     else if(strcmp(command, "addquest")==0)
     {
-         
-        if(Config.Command_IQuest > thisclient->Session->accesslevel)
+     
+        if(Config.Command_Addquest > thisclient->Session->accesslevel)
 	         return true;
         if ((tmp = strtok(NULL, " "))==NULL) return true;
         unsigned int questnum =atoi(tmp);
@@ -1585,7 +1585,7 @@ else if (strcmp(command, "give2")==0)
     else if(strcmp(command, "listquest")==0)
     {
          
-        if(Config.Command_IQuest > thisclient->Session->accesslevel)
+        if(Config.Command_Listquest > thisclient->Session->accesslevel)
 	         return true;
         SendPM( thisclient, "Current Quests:" );
         for(int i=0;i<10;i++)
@@ -1596,7 +1596,7 @@ else if (strcmp(command, "give2")==0)
     }
     else if(strcmp(command, "listqflag")==0)
     {
-      if(Config.Command_IQuest > thisclient->Session->accesslevel)
+      if(Config.Command_Listqflag > thisclient->Session->accesslevel)
         return true;
       SendPM(thisclient, "Quest Flags");
       string buffer = "";
@@ -1604,16 +1604,29 @@ else if (strcmp(command, "give2")==0)
         char buf2[5];
         sprintf(buf2, "%i ", thisclient->quest.flags[i]);
         buffer.append(buf2);
-        if (i > 0 && i%10 == 0) {
+//        if (i > 0 && i%10 == 0) {
+        if ((i + 1) % 10 == 0) {      
           SendPM(thisclient, (char*)buffer.c_str());
           buffer = "";
         }
       }
       SendPM(thisclient, (char*)buffer.c_str());
     }
+    else if(strcmp(command, "Setqflag")==0)
+    {
+      if(Config.Command_Setqflag > thisclient->Session->accesslevel)
+        return true;
+      if ((tmp = strtok(NULL, " "))==NULL) return true;
+            unsigned int var = atoi(tmp);
+      if ((tmp = strtok(NULL, " "))==NULL) return true;
+            unsigned int val = atoi(tmp);
+      if (var >= (0x40 * 8)) return true;
+      thisclient->quest.SetFlag(var, (val > 0) ? true : false);
+      SendPM( thisclient, "Set Flag[%i] = %i", var, val);
+    }
     else if(strcmp(command, "listqvar")==0)
     {
-      if(Config.Command_IQuest > thisclient->Session->accesslevel)
+      if(Config.Command_Listqvar > thisclient->Session->accesslevel)
         return true;
         SendPM( thisclient, "Quest Variables");
 
@@ -1662,7 +1675,7 @@ else if (strcmp(command, "give2")==0)
     }
     else if(strcmp(command, "setqvar")==0)
     {
-      if(Config.Command_IQuest > thisclient->Session->accesslevel)
+      if(Config.Command_Setqvar > thisclient->Session->accesslevel)
         return true;
       if ((tmp = strtok(NULL, " "))==NULL) return true;
             unsigned int vartype = atoi(tmp);
@@ -1673,15 +1686,19 @@ else if (strcmp(command, "give2")==0)
       if (vartype > 3) return true;
       switch (vartype) {
         case 0:
+          if (var >= 5) return true;
           thisclient->quest.EpisodeVar[var] = val;
         break;
         case 1:
+          if (var >= 3) return true;
           thisclient->quest.JobVar[var] = val;
         break;
         case 2:
+          if (var >= 7) return true;
           thisclient->quest.PlanetVar[var] = val;
         break;
         case 3:
+          if (var >= 10) return true;
           thisclient->quest.UnionVar[var] = val;
         break;
       }
@@ -1990,6 +2007,71 @@ else if (strcmp(command, "give2")==0)
         position.z = atof(tmp);
         pakGMMoveTo( thisclient, position );
     }
+    else if (strcmp(command, "refine")==0)
+    {
+        if(Config.Command_Refine > thisclient->Session->accesslevel)
+            return true; 
+        if ((tmp = strtok(NULL, " "))==NULL)return true;
+        int slot = 7; //defaults to weapon
+        int tipo;
+        int itemrefine;
+        if(strcmp(tmp, "mask")==0)
+        {
+            slot=1;
+        }
+        else
+        if(strcmp(tmp, "cap")==0)
+        {
+            slot=2;
+        }
+        else
+        if(strcmp(tmp, "suit")==0)
+        {
+            slot=3;
+        }
+        else
+        if(strcmp(tmp, "back")==0)
+        {
+            slot=4;
+        }
+        else
+        if(strcmp(tmp, "glov")==0)
+        {
+            slot=5;
+        }
+        else
+        if(strcmp(tmp, "shoe")==0)
+        {
+            slot=6;
+        }
+        else
+        if(strcmp(tmp, "weap")==0)
+        {
+            slot=7;
+        }
+        else
+        if(strcmp(tmp, "shield")==0)
+        {
+            slot=8;
+        }
+        if ((tmp = strtok(NULL, " "))==NULL)
+            itemrefine =0;
+        else
+            itemrefine = atoi(tmp)<10?atoi(tmp)*16:9*16;
+        thisclient->items[slot].refine = itemrefine;
+        
+        BEGINPACKET( pak, 0x7a5);
+	    ADDWORD( pak, thisclient->clientid );
+	    ADDWORD( pak, slot);
+	    ADDWORD( pak, thisclient->items[slot].itemnum);	// ITEM NUM
+	    ADDWORD( pak, BuildItemRefine(  thisclient->items[slot] ));	// REFINE
+	    ADDWORD( pak, thisclient->Stats->Move_Speed );	// REFINE 2602
+	    SendToVisible( &pak,thisclient );
+
+        thisclient->UpdateInventory( slot );
+        thisclient->SetStats( );
+		return true;
+    }    
     else if(strcmp(command, "settime")==0)
     {
         if(Config.Command_Settime > thisclient->Session->accesslevel)
@@ -4690,6 +4772,18 @@ bool CWorldServer::pakGMClass( CPlayer* thisclient, char* classid )
     {
         return true;
     }
+/*   add this section?
+    // Set the quest vars for the new class by Drakia
+    dword jVarSw = classid_new % 10;
+    thisclient->quest.JobVar[0] = 0;
+    thisclient->quest.JobVar[1] = 0;
+    if (jVarSw == 1) {
+      thisclient->quest.JobVar[0] = 1;
+    } else if (jVarSw == 2) {
+      thisclient->quest.JobVar[0] = 1;
+      thisclient->quest.JobVar[1] = 2;
+    }
+*/        
     bool changed = true;
     if ( thisclient->CharInfo->Job == classid_new )
        changed = false;

@@ -216,6 +216,7 @@ struct CROSEServerConfig
 
 
     // COMMAND LEVELS
+    int Command_Addquest; // by Drakia
     int Command_AllSkill; // by crashinside
     int Command_Ani;
     int Command_Ann;
@@ -272,6 +273,9 @@ struct CROSEServerConfig
     int Command_LearnSkill;
     int Command_Level;
     int Command_LevelUp;
+    int Command_Listquest; // by Drakia
+    int Command_Listqflag; // by Drakia
+    int Command_Listqvar; // by Drakia    
     int Command_ManageFairy;
     int Command_MaxStats;
     int Command_Mdmg;
@@ -291,12 +295,15 @@ struct CROSEServerConfig
     int Command_Pvp;
     int Command_Rate;
     int Command_Reborn;  //reborn by Core
+    int Command_Refine;
     int Command_Reload;
     int Command_ReloadQuest;
     int Command_Rules;
     int Command_Save;
     int Command_ServerInfo;
     int Command_Set;
+    int Command_Setqflag; // by Drakia
+    int Command_Setqvar; // by Drakia
     int Command_Settime;
     int Command_ShopType;
     int Command_Shutdown;
