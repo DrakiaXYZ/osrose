@@ -1,10 +1,10 @@
 /*
 MySQL Data Transfer
-Source Host: 192.168.1.100
+Source Host: localhost
 Source Database: osrose
-Target Host: 192.168.1.100
+Target Host: localhost
 Target Database: osrose
-Date: 12/29/2007 10:31:51 AM
+Date: 7/21/2008 8:55:44 PM
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -37,11 +37,11 @@ CREATE TABLE `characters` (
   `clan_rank` int(11) NOT NULL default '0',
   `stamina` int(11) NOT NULL default '5000',
   `quickbar` varchar(255) NOT NULL default '0',
-  `basic_skills` varchar(255) NOT NULL default '11,12,13,14,15,16,17,18,19,20,21,22,25,5000,5001,101,102,103,104',
-  `class_skills` varchar(300) NOT NULL default '0',
-  `class_skills_level` varchar(300) NOT NULL default '1',
-  `respawnid` int(11) NOT NULL default '56',
-  `townid` int(11) NOT NULL default '6',
+  `basic_skills` varchar(255) NOT NULL default '11,12,13,14,15,16,17,18,19,20,25,26,27,28,29,30,31,32,33,5001',
+  `class_skills` varchar(500) NOT NULL default '0',
+  `class_skills_level` varchar(500) NOT NULL default '1',
+  `respawnid` int(11) NOT NULL default '54',
+  `townid` int(11) NOT NULL default '54',
   `rewardpoints` int(11) NOT NULL default '0',
   `unionid` int(11) NOT NULL default '0',
   `unionfame` int(11) NOT NULL default '0',
@@ -56,7 +56,7 @@ CREATE TABLE `characters` (
   `timershop` int(11) NOT NULL default '0',
   `isgm` tinyint(1) NOT NULL default '0',
   PRIMARY KEY  (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=442 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=463 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records 

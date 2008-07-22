@@ -74,7 +74,6 @@ struct STATS
     unsigned int sidechance; //future expansion of drop system
     unsigned int ExtraDamage;
     unsigned int ExtraDamage_add;
-    unsigned int Stealth;
 };
 
 struct BATTLE
@@ -104,7 +103,6 @@ struct STATUS
     BYTE HP_up;
     BYTE MP_up;    
     BYTE ExtraDamage_up;
-    BYTE Stealth_1;
     //Stats down
     BYTE Attack_down;
     BYTE Defense_down;
@@ -124,6 +122,8 @@ struct STATUS
     BYTE Poison;
     BYTE Mute;
     BYTE Flame;
+    BYTE Stealth;  
+    BYTE Cloaking;
     //BYTE ExtraDamage;   //Was not quoted before
     bool CanAttack;
     bool CanRun;

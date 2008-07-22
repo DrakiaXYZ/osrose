@@ -818,6 +818,8 @@ bool CWorldServer::pakChangeEquip( CPlayer* thisclient, CPacket* P )
                 case A_ACCUR:
                 case A_HASTE:
                 case A_CRITICAL:
+                case A_STEALTH:
+                case A_CLOAK:
                     thisclient->MagicStatus[i].Duration = 0;
                 break;
             }

@@ -308,23 +308,40 @@ bool CWorldServer::CheckABuffs( CSkills* thisskill, CCharacter* character, int E
             } 
         }
         break;
-        case A_STEALTH_1:
+        case A_STEALTH:
         {
-             //Devilking
             CBValue BuffValue = GetBuffValue( thisskill, character, Evalue, i,
-                                            character->Status->Stealth_1,
-                                            character->Stats->Stealth, true );
+                                              character->Status->Stealth,
+                                              0xff,
+                                              0, true );                     
             if(BuffValue.NewValue!=0)
-            {
-                UINT j = BuffValue.Position;
-                character->Stats->Stealth = BuffValue.NewValue;
-                character->Status->Stealth_1 = j;
+            {       
+                UINT j = BuffValue.Position;           
+                character->Status->Stealth = j;
                 character->MagicStatus[j].Buff = thisskill->buff[i];
                 character->MagicStatus[j].BuffTime = clock();
-                character->MagicStatus[j].Duration = thisskill->duration;
-                character->MagicStatus[j].Value = BuffValue.Value;
+                character->MagicStatus[j].Duration = thisskill->duration;  
+                character->MagicStatus[j].Value = BuffValue.Value;                  
                 bflag = true;
-            }
+            }                                            
+        }
+        break;
+        case A_CLOAK:
+        {
+            CBValue BuffValue = GetBuffValue( thisskill, character, Evalue, i,
+                                              character->Status->Cloaking,
+                                              0xff,
+                                              0, true );                     
+            if(BuffValue.NewValue!=0)
+            {       
+                UINT j = BuffValue.Position;           
+                character->Status->Cloaking = j;
+                character->MagicStatus[j].Buff = thisskill->buff[i];
+                character->MagicStatus[j].BuffTime = clock();
+                character->MagicStatus[j].Duration = thisskill->duration;  
+                character->MagicStatus[j].Value = BuffValue.Value;                  
+                bflag = true;
+            }                                            
         }
         break;
                                                                      
@@ -818,8 +835,6 @@ unsigned int CWorldServer::BuildBuffs( CCharacter* character )
                 buff1 += DODGE_UP;    
     if(character->Status->ExtraDamage_up != 0xff)//A_Extra_Damage: Devilking / Arnold
                 buff4 += DAMAGE_UP;
-    if(character->Status->Stealth_1 != 0xff)//A_STEALTH:
-                buff4 += STEALTH_1;
                                                             
         //Down
     if(character->Status->Attack_down != 0xff) // A_ATTACK:
@@ -838,10 +853,6 @@ unsigned int CWorldServer::BuildBuffs( CCharacter* character )
                 buff1 += 0; 
     if(character->Status->Critical_down != 0xff)//A_CRITICAL:
                 buff3 += CRITICAL_DOWN;
-    /*
-    if(character->Status->Stealth_down != 0xff)//A_STEALTH:
-                buff4 += STEALTH_DOWN;
-    */
     if(character->IsSummon( ))
                 buff4 += SUMMON;
     if(character->Status->Stun != 0xff)
@@ -852,5 +863,9 @@ unsigned int CWorldServer::BuildBuffs( CCharacter* character )
                 buff3+= MUTED;
     if(character->Status->Flame != 0xff)
                 buff1+= FLAMED;
+    if(character->Status->Stealth != 0xff)
+                buff4 += STEALTH;    
+    if(character->Status->Cloaking != 0xff)
+                buff4 += CLOAKING;
     return (buff1 * 0x01) + (buff2 * 0x100 ) + (buff3 * 0x10000) + (buff4 * 0x1000000);
 }

@@ -105,27 +105,27 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
         {
             case 1:  //AP
             {
-                spot = 1;
+                spot = 54;  // 1
                 break;
             }
             case 2:  //Zant
             {
-                spot = 2;
+                spot = 1;  // 2
                 break;
             }
             case 3:  //Junon
             {
-                spot = 4;
+                spot = 4;  // 4
                 break;
             }
             case 4:  //Eucar
             {
-                spot = 5;
+                spot = 105;  // 5
                 break;
             }
             case 5:  //Xita
             {
-                spot = 68;
+                spot = 122;  //68
                 break;
             }
         }
@@ -140,7 +140,7 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
             SendPM(thisclient, "1 = Adventurers plains");
             SendPM(thisclient, "2 = The city of Zant");
             SendPM(thisclient, "3 = Junon Polis");
-            SendPM(thisclient, "4 = The city of Eucar");
+            SendPM(thisclient, "4 = The City of Eucar");
             SendPM(thisclient, "5 = Xita Refuge");
             SendPM(thisclient, "Example; /savetown 3");
         }
