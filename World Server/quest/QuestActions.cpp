@@ -290,49 +290,49 @@ QUESTREWD(005){
 			client->client->SendPacket(&pak);
 		}
 		break;
-		case 2://Item
-		{
-			CItem nItem;
-			nItem.itemtype = data->iItemSN / 1000;
-			nItem.itemnum = data->iItemSN % 1000;
-			if(nItem.IsStackable()){
-				nItem.count = GetRewardValue(data->btEquation, data->iValue, client, 0);
-			} else
-				nItem.count = 1;
-
-      if( client->questdebug )
-        server->SendPM(client, "Give item [%i][%i]x%i", nItem.itemtype, nItem.itemnum, nItem.count);
-
-			//nItem.durability = GServer->STB_ITEM[nItem.itemtype-1].rows[nItem.itemnum][29];
-			
-			//no durability in Evo?
-			//nItem.durability = GServer->EquipList[nItem.itemtype].Index[nItem.itemnum]->d;
-			nItem.durability = 50;
-			    nItem.gem = 0;
-				nItem.stats = 0;
-				nItem.refine = 0;
-				nItem.socketed = 0;
-			nItem.lifespan = 100;
-				nItem.appraised = 1;
-			dword slot = client->AddItem(nItem);
-			if (slot == 0xffff) { // Fail
-        BEGINPACKET( pak, 0x7a7);
-        ADDWORD(pak, 0x00);
-        ADDBYTE(pak, 0x03);
-        ADDBYTE(pak, 0x00);
-        client->client->SendPacket(&pak);
-      } else { // Success
-        BEGINPACKET( pak, 0x71f);
-        ADDBYTE(pak, 0x01);
-        ADDBYTE(pak, slot);
-        ADDWORD(pak, client->items[slot].GetPakHeader( ) );
-        ADDDWORD(pak, client->items[slot].GetPakData( ) );
-        ADDDWORD( pak, 0x00000000 );
-        ADDWORD ( pak, 0x0000 );        
-        client->client->SendPacket(&pak);
-			}
-		}
-		break;
+	 
+        case 2://Item
+        {
+            CItem nItem;
+            nItem.itemtype = data->iItemSN / 1000;
+            nItem.itemnum = data->iItemSN % 1000;
+            if(nItem.IsStackable()){
+                nItem.count = GetRewardValue(data->btEquation, data->iValue, client, 0);
+            } else
+                nItem.count = 1;
+ 
+            if( client->questdebug )
+                server->SendPM(client, "Give item [%i][%i]x%i", nItem.itemtype, nItem.itemnum, nItem.count);
+ 
+            //Maxxon: How is durability done in Evo?
+            //nItem.durability = GServer->EquipList[nItem.itemtype].Index[nItem.itemnum]->d;
+            nItem.durability = 50;
+            nItem.gem = 0;
+            nItem.stats = 0;
+            nItem.refine = 0;
+            nItem.socketed = 0;
+            nItem.lifespan = 100;
+            nItem.appraised = 1;
+            dword slot = client->AddItem(nItem);
+            if (slot == 0xffff) { // Fail
+                BEGINPACKET( pak, 0x7a7);
+                ADDWORD(pak, 0x00);
+                ADDBYTE(pak, 0x03);
+                ADDBYTE(pak, 0x00);
+                client->client->SendPacket(&pak);
+            } else { // Success
+                BEGINPACKET( pak, 0x71f);
+                ADDBYTE(pak, 0x01);
+                ADDBYTE(pak, slot);
+                ADDDWORD(pak, GServer->BuildItemHead ( client->items[slot]) );
+                ADDDWORD(pak, GServer->BuildItemData ( client->items[slot]) );
+                ADDDWORD( pak, 0x00000000 );
+                ADDWORD ( pak, 0x0000 );
+                client->client->SendPacket(&pak);
+            }
+        }
+        break;
+ 
 	}
 
 	return QUEST_SUCCESS;

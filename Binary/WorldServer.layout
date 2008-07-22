@@ -278,12 +278,12 @@ TopLine=701
 >>>>>>> .r85
 LeftChar=1
 [Editor_36]
-Open=1
+Open=0
 <<<<<<< .mine
-Top=1
+Top=0
 CursorCol=10
 CursorRow=3403
-TopLine=3457
+TopLine=101
 =======
 Top=0
 CursorCol=6
@@ -400,11 +400,11 @@ Top=0
 Open=0
 Top=0
 [Editor_57]
-Open=0
-Top=0
-CursorCol=30
-CursorRow=249
-TopLine=242
+Open=1
+Top=1
+CursorCol=2
+CursorRow=335
+TopLine=312
 LeftChar=1
 [Editor_58]
 Open=0
