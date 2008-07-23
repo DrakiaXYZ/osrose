@@ -1046,6 +1046,33 @@ bool CWorldServer::pakGate( CPlayer* thisclient, CPacket* P )
     MapList.Index[map]->TeleportPlayer( thisclient, position );
 	return true;
 }
+/*
+//Drakia's telegate hacker fix - needs testing.  Comment above and uncomment below for test
+// Goto next map through gate
+bool CWorldServer::pakGate( CPlayer* thisclient, CPacket* P )
+{
+    thisclient->Session->inGame = false;
+    word GateID = GETWORD((*P), 0x00);
+    CTeleGate* thisgate = GetTeleGateByID( GateID );
+    fPoint position;
+    UINT map = 0;
+    // I'm setting this at 50 distance from the point of teleport. Increase if you run into
+    // broken telegates. We might need to dump the scale and work from that - Drakia
+    if( thisgate == NULL ||
+        thisclient->Position->Map != thisgate->srcMap ||
+        distance(thisclient->Position->current, thisgate->src) > 50 )
+    {
+      Log( MSG_HACK, "Player %s[Map: %i X: %f Y: %f] - Gate Hacking[ID: %i]",
+                     thisclient->CharInfo->charname, thisclient->Position->Map,
+                     thisclient->Position->current.x, thisclient->Position->current.y, GateID );
+        return true;
+	}
+	map = thisgate->destMap;
+	position = thisgate->dest;
+    MapList.Index[map]->TeleportPlayer( thisclient, position );
+	return true;
+}
+*/
 
 // Emotions
 bool CWorldServer::pakDoEmote( CPlayer* thisclient, CPacket* P )
