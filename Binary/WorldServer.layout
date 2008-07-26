@@ -97,12 +97,12 @@ CursorRow=35
 TopLine=7
 LeftChar=1
 [Editor_14]
-Open=0
-Top=0
-CursorCol=2
-CursorRow=282
-TopLine=267
-LeftChar=1
+Open=1
+Top=1
+CursorCol=23
+CursorRow=482
+TopLine=472
+LeftChar=2
 [Editor_15]
 Open=0
 Top=0
@@ -400,11 +400,19 @@ Top=0
 Open=0
 Top=0
 [Editor_57]
+<<<<<<< .mine
+Open=0
+Top=0
+CursorCol=2
+CursorRow=335
+TopLine=312
+=======
 Open=0
 Top=0
 CursorCol=1
 CursorRow=293
 TopLine=278
+>>>>>>> .r141
 LeftChar=1
 [Editor_58]
 Open=0

@@ -479,6 +479,7 @@ void CCharacter::RefreshBuff( )
                         0xff;
                 case A_CLOAK:
                      Status->Cloaking = 0xff;
+                break;     
                 case A_STUN:
                      Status->Stun = 0xff;
                      printf("removing stun\n");
