@@ -1012,7 +1012,7 @@ bool CWorldServer::pakPvp796( CPlayer* thisclient, CPacket* P )
 
 	return true;
 }
-
+/*
 // Goto next map through gate
 bool CWorldServer::pakGate( CPlayer* thisclient, CPacket* P )
 {
@@ -1046,7 +1046,8 @@ bool CWorldServer::pakGate( CPlayer* thisclient, CPacket* P )
     MapList.Index[map]->TeleportPlayer( thisclient, position );
 	return true;
 }
-/*
+*/
+
 //Drakia's telegate hacker fix - needs testing.  Comment above and uncomment below for test
 // Goto next map through gate
 bool CWorldServer::pakGate( CPlayer* thisclient, CPacket* P )
@@ -1072,7 +1073,7 @@ bool CWorldServer::pakGate( CPlayer* thisclient, CPacket* P )
     MapList.Index[map]->TeleportPlayer( thisclient, position );
 	return true;
 }
-*/
+
 
 // Emotions
 bool CWorldServer::pakDoEmote( CPlayer* thisclient, CPacket* P )
