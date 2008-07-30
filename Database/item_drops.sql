@@ -4,7 +4,7 @@ Source Host: osrose
 Source Database: osrose
 Target Host: osrose
 Target Database: osrose
-Date: 7/9/2008 9:18:24 PM
+Date: 7/29/2008 5:57:01 PM
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -23,7 +23,7 @@ CREATE TABLE `item_drops` (
   `alt` varchar(500) collate latin1_general_ci NOT NULL default '0|0|0|0|0|0|0',
   `description` varchar(100) collate latin1_general_ci NOT NULL,
   PRIMARY KEY  (`ref`)
-) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=9531 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- ----------------------------
 -- Records 
@@ -706,7 +706,9 @@ INSERT INTO `item_drops` VALUES ('1003', '304', '11', '0', '0', '60', '0', '1571
 INSERT INTO `item_drops` VALUES ('9522', '78', '10', '150', '250', '300', '64', '0', '0|0|0|0|0|0|0', '8th Talismans - Marsh');
 INSERT INTO `item_drops` VALUES ('9523', '87', '10', '120', '200', '300', '62', '0', '0|0|0|0|0|0|0', '7th Bindrunes - Shady');
 INSERT INTO `item_drops` VALUES ('9524', '77', '10', '120', '200', '300', '62', '0', '0|0|0|0|0|0|0', '7th Talismans - Shady');
-INSERT INTO `item_drops` VALUES ('9525', '181', '10', '30', '89', '300', '11', '0', '182|183|184|185|0|0|0', 'Clan Points - JP CF');
-INSERT INTO `item_drops` VALUES ('9526', '181', '10', '30', '89', '300', '12', '0', '182|183|184|185|0|0|0', 'Clan Points - JP CF');
-INSERT INTO `item_drops` VALUES ('9527', '181', '10', '30', '89', '300', '13', '0', '182|183|184|185|0|0|0', 'Clan Points - JP CF');
-INSERT INTO `item_drops` VALUES ('9528', '185', '10', '120', '160', '300', '59', '0', '186|187|188|189|190|0|0', 'Clan Points - Luna CF');
+INSERT INTO `item_drops` VALUES ('9525', '181', '10', '30', '49', '1500', '11', '0', '182|183|184|185|0|0|0', 'Clan Points - JP CF');
+INSERT INTO `item_drops` VALUES ('9526', '181', '10', '50', '69', '1500', '12', '0', '182|183|184|185|0|0|0', 'Clan Points - JP CF');
+INSERT INTO `item_drops` VALUES ('9527', '181', '10', '70', '89', '1500', '13', '0', '182|183|184|185|0|0|0', 'Clan Points - JP CF');
+INSERT INTO `item_drops` VALUES ('9528', '185', '10', '120', '160', '1500', '59', '0', '186|187|188|189|190|0|0', 'Clan Points - Luna CF');
+INSERT INTO `item_drops` VALUES ('9529', '407', '12', '0', '0', '1500', '0', '299', '0|0|0|0|0|0|0', 'Cleanup at Sunshine Coast - Mr Cannie');
+INSERT INTO `item_drops` VALUES ('9530', '407', '12', '0', '0', '1500', '0', '300', '0|0|0|0|0|0|0', 'Cleanup at Sunshine Coast - Mr Baggie');
