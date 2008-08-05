@@ -19,7 +19,32 @@
     depeloped with Main erose/hrose source server + some change from the original eich source
 */
 #include "worldserver.h"
-
+bool CWorldServer::LoadSTBData( )
+{
+    Log( MSG_LOAD, "STB Data             " );  // all of the stb loading was from osiRose and ospRose
+    STBStoreData( "3DData\\STB\\LIST_NPC.STB", &STB_NPC );
+    STBStoreData( "3DData\\STB\\LIST_SKILL.STB", &STB_SKILL );
+    STBStoreData( "3DData\\STB\\LIST_STATUS.STB", &STB_STATUS );
+//    STBStoreData( "3DData\\STB\\LIST_QUEST.STB", &STB_QUEST ); //declared already in line 304
+    STBStoreData( "3DData\\STB\\LIST_FACEITEM.STB", &STB_ITEM[0] );
+	STBStoreData( "3DData\\STB\\LIST_CAP.STB", &STB_ITEM[1] );
+	STBStoreData( "3DData\\STB\\LIST_BODY.STB", &STB_ITEM[2] );
+	STBStoreData( "3DData\\STB\\LIST_ARMS.STB", &STB_ITEM[3] );
+	STBStoreData( "3DData\\STB\\LIST_FOOT.STB", &STB_ITEM[4] );
+	STBStoreData( "3DData\\STB\\LIST_BACK.STB", &STB_ITEM[5] );
+	STBStoreData( "3DData\\STB\\LIST_JEWEL.STB", &STB_ITEM[6] );
+	STBStoreData( "3DData\\STB\\LIST_WEAPON.STB", &STB_ITEM[7] );
+	STBStoreData( "3DData\\STB\\LIST_SUBWPN.STB", &STB_ITEM[8] );
+	STBStoreData( "3DData\\STB\\LIST_USEITEM.STB", &STB_ITEM[9] );
+	STBStoreData( "3DData\\STB\\LIST_JEMITEM.STB", &STB_ITEM[10] );
+	STBStoreData( "3DData\\STB\\LIST_NATURAL.STB", &STB_ITEM[11] );
+	STBStoreData( "3DData\\STB\\LIST_QUESTITEM.STB", &STB_ITEM[12] );
+	STBStoreData( "3DData\\STB\\LIST_PAT.STB", &STB_ITEM[13] );
+	STBStoreData( "3DData\\STB\\LIST_PRODUCT.STB", &STB_PRODUCT );
+	STBStoreData( "3DData\\STB\\LIST_SELL.STB", &STB_SELL );
+	STBStoreData( "3DData\\STB\\LIST_ZONE.STB", &STB_ZONE );
+	STBStoreData( "3DData\\STB\\ITEM_DROP.STB", &STB_DROP );
+}
 
 bool CWorldServer::LoadNPCData( )
 {
@@ -1436,7 +1461,7 @@ bool CWorldServer::LoadSellData( )
 
 bool CWorldServer::LoadConsItem( )
 {
-    Log( MSG_LOAD, "Consumable Data             " );
+/*    Log( MSG_LOAD, "Consumable Data             " );
     FILE* fh = NULL;
     fh = fopen("data/useitem_data.csv", "r");
     if(fh==NULL)
@@ -1485,6 +1510,32 @@ bool CWorldServer::LoadConsItem( )
         UseList.Index[newuse->id] = newuse;
     }
     fclose(fh);
+*/
+
+    Log( MSG_LOAD, "Consumable Data - STB   " );
+    for(unsigned int i=0;i<STB_ITEM[9].rowcount;i++)
+    {
+        CUseData* newuse = new (nothrow) CUseData;
+        if(newuse==NULL)
+        {
+            Log(MSG_WARNING, "\nError allocing memory: use" );
+            return false;
+        }
+        newuse->id = i;
+        newuse->restriction = STB_ITEM[9].rows[i][3];
+        newuse->type = STB_ITEM[9].rows[i][4];
+        newuse->price = STB_ITEM[9].rows[i][5];
+        newuse->pricerate = STB_ITEM[9].rows[i][6];
+        newuse->weight = STB_ITEM[9].rows[i][7];
+        newuse->quality = STB_ITEM[9].rows[i][8];
+        newuse->pricevalue = STB_ITEM[9].rows[i][16];
+        newuse->usecondition[0]= STB_ITEM[9].rows[i][17];
+        newuse->usecondition[1]= STB_ITEM[9].rows[i][18];
+        newuse->useeffect[0]= STB_ITEM[9].rows[i][19];
+        newuse->useeffect[1]= STB_ITEM[9].rows[i][20];
+        UseList.Data.push_back( newuse );
+        UseList.Index[newuse->id] = newuse;
+    }    
     Log( MSG_LOAD, "Consumable Data Loaded" );
     return true;
 }
@@ -1693,7 +1744,7 @@ bool CWorldServer::LoadGrids( )
 
 bool CWorldServer::LoadItemStats( )
 {
-    Log( MSG_LOAD, "Item Stats                  " );
+/*    Log( MSG_LOAD, "Item Stats                  " );
     FILE* fh = NULL;
     fh = fopen("data/stat.csv", "r");
     if(fh==NULL)
@@ -1715,6 +1766,18 @@ bool CWorldServer::LoadItemStats( )
         StatsList[id].value[1] = GetUIntValue(",");
     }
     fclose(fh);
+*/
+{
+    Log( MSG_LOAD, "Item Stats - STB   " );
+    for(unsigned int i=0;i<STB_ITEM[10].rowcount;i++)
+    {
+        StatsList[i].stat[0] = STB_ITEM[10].rows[i][16];
+        StatsList[i].value[0] = STB_ITEM[10].rows[i][17];
+        StatsList[i].stat[1] = STB_ITEM[10].rows[i][18];
+        StatsList[i].value[1] = STB_ITEM[10].rows[i][19];
+    }
+    return true;
+}
     Log( MSG_LOAD, "Item Stats Loaded" );
     return true;
 }

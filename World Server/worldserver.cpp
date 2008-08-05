@@ -466,6 +466,7 @@ bool CWorldServer::OnServerReady( )
 	MOVE_SPEED_MODIF = 100000;
 
     //Load our Server Info
+    LoadSTBData( );
     LoadZoneData( );
     LoadGrids( );   //resetting grids...
     LoadConsItem( );

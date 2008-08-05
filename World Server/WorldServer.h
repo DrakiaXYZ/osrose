@@ -359,6 +359,7 @@ class CWorldServer : public CServerSocket
     	bool pakCSReady( CPlayer* thisclient, CPacket* P );
 
     	//----------------- Server StartUp Functions (startup.cpp)
+    	bool LoadSTBData( );
     	bool LoadZoneData( );
     	bool LoadGrids( );         //LMA: maps
     	bool LoadConsItem( );
@@ -451,6 +452,17 @@ class CWorldServer : public CServerSocket
         CSellList               SellList;
         CUseList                UseList;
         CMapList                MapList;
+        
+        CSTBData				STB_NPC;				// NPC data
+        CSTBData                STB_SKILL;              // Skill data
+        CSTBData                STB_STATUS;             // Status Data
+//        CSTBData				STB_QUEST;				// Quest data - already declared in line 393
+        CSTBData				STB_ITEM[14];			// Item data
+        CSTBData                STB_DROP;               // Drop list
+        CSTBData                STB_ZONE;               // Zone data
+        CSTBData                STB_PRODUCT;            // Crafting data
+        CSTBData                STB_SELL;               // npc sell index
+
 
     	clock_t				   lastServerStep;			// Last Update
     	clock_t                LastUpdateTime;          // Store the last update World Time
