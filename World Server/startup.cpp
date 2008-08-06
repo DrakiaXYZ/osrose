@@ -44,6 +44,7 @@ bool CWorldServer::LoadSTBData( )
 	STBStoreData( "3DData\\STB\\LIST_SELL.STB", &STB_SELL );
 	STBStoreData( "3DData\\STB\\LIST_ZONE.STB", &STB_ZONE );
 	STBStoreData( "3DData\\STB\\ITEM_DROP.STB", &STB_DROP );
+	STBStoreData("3DData\\STB\\LIST_UPGRADE.STB", &upgradeData);
 }
 
 bool CWorldServer::LoadNPCData( )
@@ -1106,6 +1107,7 @@ bool CWorldServer::LoadMonsters( )
 
 bool CWorldServer::LoadUpgrade( )
 {
+/*     
 	Log( MSG_LOAD, "Refine Data                 " );
     FILE* fh = NULL;
     fh = fopen("data/refine_data.csv", "r");
@@ -1123,6 +1125,26 @@ bool CWorldServer::LoadUpgrade( )
         upgrade[GetUIntValue(",",&line)] = GetUIntValue(",");
     }
     fclose(fh);
+*/
+//    CSTBData upgradeData; // defined in worldserver.h
+ 
+    Log( MSG_LOAD, "Refine Data (STB)      " );
+    
+//    STBStoreData("data/LIST_UPGRADE.STB", &upgradeData); // defined above
+    
+    for (UINT i = 0; i<upgradeData.rowcount; i++) {
+        // weapons
+        if (upgradeData.rows[i][0] != 0) {
+            upgrade[0][upgradeData.rows[i][0]] = upgradeData.rows[i][1];
+        }
+        // gear
+        if (upgradeData.rows[i][2] != 0) {
+            upgrade[1][upgradeData.rows[i][2]] = upgradeData.rows[i][3];
+        }
+    }
+ 
+    STBFreeData(&upgradeData);
+
    	Log( MSG_LOAD, "Refine Data loaded" );
 	return true;
 }

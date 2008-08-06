@@ -4317,8 +4317,17 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
                 return true;
             unsigned int prefine = rand()%100;
             bool success = false;
-           if( prefine <= upgrade[nextlevel] )
-                success = true;
+            if (thisclient->items[item].itemtype == 8) {
+                // weapons
+                if( prefine <= upgrade[0][nextlevel] ) {
+                    success = true;
+                }
+            } else {
+                // gear
+                if( prefine <= upgrade[1][nextlevel] ) {
+                    success = true;
+                }
+            }
 
             BEGINPACKET( pak, 0x7bc );
             if( success )
