@@ -1209,13 +1209,77 @@ bool CWorldServer::LoadEquip( )
         EquipList[newequip->equiptype].Index[newequip->id] = newequip; // Index to read more quickly the data
     }
     fclose(fh);
+/*
+    Log( MSG_LOAD, "Equip Data - STB         " );
+    for(int j=0;j<9;j++)
+    {
+        for(unsigned int i=0;i<STB_ITEM[j].rowcount;i++)
+        {
+            CEquip* newequip = new (nothrow) CEquip;
+            if(newequip==NULL)
+            {
+                Log(MSG_WARNING, "\nError allocing memory: equip" );
+                return false;
+            }
+            newequip->id = i;
+            newequip->equiptype = (j+1);
+            newequip->type = STB_ITEM[j].rows[i][4];
+            newequip->price = STB_ITEM[j].rows[i][5];
+            newequip->pricerate = STB_ITEM[j].rows[i][6];
+            newequip->weight = STB_ITEM[j].rows[i][7];
+            newequip->quality = STB_ITEM[j].rows[i][8];
+            newequip->level = STB_ITEM[j].rows[i][13];
+            newequip->material = STB_ITEM[j].rows[i][14];
+            newequip->defense = STB_ITEM[j].rows[i][31];
+            newequip->magicresistence = STB_ITEM[j].rows[i][32];
+            newequip->attackdistance = STB_ITEM[j].rows[i][33];//Speed of travel/Range
+            if(newequip->equiptype==SHOE)
+            {
+                newequip->movespeed = newequip->attackdistance;
+            }
+            else
+            {
+                newequip->movespeed = 0;
+            }
+
+            if (STB_ITEM[j].fieldcount>35){
+                newequip->attackpower = STB_ITEM[j].rows[i][35];
+                newequip->attackspeed = STB_ITEM[j].rows[i][36];
+                newequip->magicattack = STB_ITEM[j].rows[i][37];      //new. Staffs and wands are designated as magic weapons.
+                if(newequip->magicattack > 1)newequip->magicattack = 0; //all the blue named spears have weird numbers here. Maybe why NA had a massive damage glitch with them.
+            }
+            else{
+                newequip->attackpower = 0;
+                newequip->attackspeed = 0;
+                newequip->magicattack = 0;
+            }
+
+
+            for(int k=0;k<3;k++)
+                newequip->occupation[k] = STB_ITEM[j].rows[i][(16+k)];
+            for(int k=0;k<2;k++)
+                newequip->condition1[k] = STB_ITEM[j].rows[i][(19+k)];
+            for(int k=0;k<2;k++)
+                newequip->condition2[k] = STB_ITEM[j].rows[i][(21+k)];
+            for(int k=0;k<2;k++)
+                newequip->stat1[k] = STB_ITEM[j].rows[i][(24+k)];
+            for(int k=0;k<2;k++)
+                newequip->stat2[k] = STB_ITEM[j].rows[i][(27+k)];
+            newequip->itemgrade = STB_ITEM[j].rows[i][46];
+            newequip->raretype = STB_ITEM[j].rows[i][47];
+            EquipList[newequip->equiptype].Data.push_back( newequip );
+            EquipList[newequip->equiptype].Index[newequip->id] = newequip; // Index to read more quickly the data
+            //delete newequip;
+        }
+    }
+*/        
     Log( MSG_LOAD, "Equip Data loaded" );
     return true;
 }
 
 bool CWorldServer::LoadJemItem( )
 {
-    Log( MSG_LOAD, "Jem Data                    " );
+/*    Log( MSG_LOAD, "Jem Data                    " );
     FILE* fh = NULL;
     fh = fopen("data/jemitem_data.csv", "r");
     if(fh==NULL)
@@ -1262,13 +1326,37 @@ bool CWorldServer::LoadJemItem( )
         JemList.Index[thisjem->id] = thisjem;
     }
     fclose(fh);
+*/
+    Log( MSG_LOAD, "Jem Data - STB        " );
+    for(unsigned int i=0;i<STB_ITEM[10].rowcount;i++)
+    {
+        CJemData* thisjem = new (nothrow) CJemData;
+        if(thisjem==NULL)
+        {
+            Log(MSG_WARNING, "\nError allocing memory: jemitem" );
+            continue;
+        }
+        thisjem->id = i;
+        thisjem->type = STB_ITEM[10].rows[i][4];
+        thisjem->price = STB_ITEM[10].rows[i][5];
+        thisjem->pricerate = STB_ITEM[10].rows[i][6];
+        thisjem->weight = STB_ITEM[10].rows[i][7];
+        thisjem->quality = STB_ITEM[10].rows[i][8];
+        thisjem->material = STB_ITEM[10].rows[i][14];
+        thisjem->stat1[0] = STB_ITEM[10].rows[i][16];
+        thisjem->stat1[1] = STB_ITEM[10].rows[i][17];
+        thisjem->stat2[0] = STB_ITEM[10].rows[i][18];
+        thisjem->stat2[1] = STB_ITEM[10].rows[i][19];
+        JemList.Data.push_back( thisjem );
+        JemList.Index[thisjem->id] = thisjem;
+    }    
     Log( MSG_LOAD, "Jem Data loaded" );
     return true;
 }
 
 bool CWorldServer::LoadNaturalItem( )
 {
-    Log( MSG_LOAD, "Natural Data                " );
+/*    Log( MSG_LOAD, "Natural Data                " );
     FILE* fh = NULL;
     fh = fopen("data/natural_data.csv", "r");
     if(fh==NULL)
@@ -1309,13 +1397,34 @@ bool CWorldServer::LoadNaturalItem( )
         NaturalList.Index[thisnatural->id] = thisnatural;
     }
     fclose(fh);
+*/
+    Log( MSG_LOAD, "Natural Data - STB        " );
+    for(unsigned int i=0;i<STB_ITEM[11].rowcount;i++)
+    {
+        CNaturalData* thisnatural = new (nothrow) CNaturalData;
+        if(thisnatural==NULL)
+        {
+            Log(MSG_WARNING, "\nError allocing memory: natural" );
+            return false;
+        }
+        thisnatural->id = i;
+        thisnatural->type = STB_ITEM[11].rows[i][4];
+        thisnatural->price = STB_ITEM[11].rows[i][5];
+        thisnatural->pricerate = STB_ITEM[11].rows[i][6];
+        thisnatural->weight = STB_ITEM[11].rows[i][7];
+        thisnatural->quality = STB_ITEM[11].rows[i][8];
+        thisnatural->pricevalue = STB_ITEM[11].rows[i][16];
+        NaturalList.Data.push_back( thisnatural );
+        NaturalList.Index[thisnatural->id] = thisnatural;
+    }
+
     Log( MSG_LOAD, "Natural Data loaded" );
     return true;
 }
 
 bool CWorldServer::LoadPatItem( )
 {
-    Log( MSG_LOAD, "PAT Data                    " );
+/*    Log( MSG_LOAD, "PAT Data                    " );
     FILE* fh = NULL;
     fh = fopen("data/pat_data.csv", "r");
     if(fh==NULL)
@@ -1363,13 +1472,45 @@ bool CWorldServer::LoadPatItem( )
         PatList.Index[newpat->id] = newpat;
     }
     fclose(fh);
+*/
+    Log( MSG_LOAD, "PAT Data - STB         " );
+    for(unsigned int i=0;i<STB_ITEM[13].rowcount;i++)
+    {
+        CPatData* newpat = new (nothrow) CPatData;
+        if(newpat==NULL)
+        {
+            Log(MSG_WARNING, "Error allocing memory: pat\n" );
+            return false;
+        }
+        newpat->id = i;
+        newpat->type = STB_ITEM[13].rows[i][4];
+        newpat->price = STB_ITEM[13].rows[i][5];
+        newpat->pricerate = STB_ITEM[13].rows[i][6];
+        newpat->weight = STB_ITEM[13].rows[i][7];
+        newpat->quality = STB_ITEM[13].rows[i][8];
+        newpat->material = STB_ITEM[13].rows[i][14];
+        newpat->partversion = STB_ITEM[13].rows[i][17];
+//        newpat->level = STB_ITEM[13].rows[i][22];             // extra field added rev 70
+//        newpat->condition[1] = STB_ITEM[13].rows[i][24];      // extra field added rev 70
+//        newpat->modifier[1] = STB_ITEM[13].rows[i][25];       // extra field added rev 70
+//        newpat->condition[2] = STB_ITEM[13].rows[i][27];      // extra field added rev 70
+//        newpat->modifier[2] = STB_ITEM[13].rows[i][28];       // extra field added rev 70
+        newpat->maxfuel = STB_ITEM[13].rows[i][31];
+        newpat->fuelcons = STB_ITEM[13].rows[i][32];
+        newpat->speed = STB_ITEM[13].rows[i][33];
+        newpat->attackdistance = STB_ITEM[13].rows[i][35];
+        newpat->attackpower = STB_ITEM[13].rows[i][36];
+        newpat->attackspeed = STB_ITEM[13].rows[i][37];
+        PatList.Data.push_back( newpat );
+        PatList.Index[newpat->id] = newpat;
+    }
     Log( MSG_LOAD, "PAT Data loaded" );
     return true;
 }
 
 bool CWorldServer::LoadProductItem( )
 {
-    Log( MSG_LOAD, "Product Data                " );
+/*    Log( MSG_LOAD, "Product Data                " );
     FILE* fh = NULL;
     fh = fopen("data/product_data.csv", "r");
     if(fh==NULL)
@@ -1411,13 +1552,35 @@ bool CWorldServer::LoadProductItem( )
         ProductList.Index[newproduct->id] = newproduct;
     }
     fclose(fh);
+*/
+    Log( MSG_LOAD, "Product Data - STB        " );
+    for(unsigned int i=0;i<STB_PRODUCT.rowcount;i++)
+    {
+        CProductData* newproduct = new (nothrow) CProductData;
+        if(newproduct==NULL)
+        {
+            Log(MSG_WARNING, "Error allocing memory: product\n" );
+            return false;
+        }
+        newproduct->id = i;
+        newproduct->item[0]=STB_PRODUCT.rows[i][2];
+        newproduct->amount[0]=STB_PRODUCT.rows[i][3];
+        newproduct->item[1]=STB_PRODUCT.rows[i][4];
+        newproduct->amount[1]=STB_PRODUCT.rows[i][5];
+        newproduct->item[2]=STB_PRODUCT.rows[i][6];
+        newproduct->amount[2]=STB_PRODUCT.rows[i][7];
+        newproduct->item[3]=STB_PRODUCT.rows[i][8];
+        newproduct->amount[3]=STB_PRODUCT.rows[i][9];
+        ProductList.Data.push_back( newproduct );
+        ProductList.Index[newproduct->id] = newproduct;
+    }    
     Log( MSG_LOAD, "Product Data loaded" );
     return true;
 }
 
 bool CWorldServer::LoadSellData( )
 {
-    Log( MSG_LOAD, "Sell Data                   " );
+/*    Log( MSG_LOAD, "Sell Data                   " );
     FILE* fh = NULL;
     fh = fopen("data/sell_data.csv", "r");
     if(fh==NULL)
@@ -1455,6 +1618,25 @@ bool CWorldServer::LoadSellData( )
         SellList.Index[newsell->id] = newsell;
     }
     fclose(fh);
+    */
+    Log( MSG_LOAD, "Sell Data - STB        " );
+    for(unsigned int i=0;i<STB_SELL.rowcount;i++)
+    {
+
+        CCSellData* newsell = new (nothrow) CCSellData;
+        if(newsell==NULL)
+        {
+            Log(MSG_WARNING, "\nError Allocing memory: sell" );
+            return false;
+        }
+        newsell->id = i;
+        for(unsigned int j=2;j<STB_SELL.fieldcount;j++)
+        {
+            newsell->item[j-2] = STB_SELL.rows[i][j];
+        }
+        SellList.Data.push_back( newsell );
+        SellList.Index[newsell->id] = newsell;
+    }    
     Log( MSG_LOAD, "Sell Data loaded" );
     return true;
 }
