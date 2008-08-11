@@ -195,8 +195,11 @@ struct INFO
     UINT Hair;
     UINT Exp;
     UINT Job;
-    long int Zulies;
-    long int Storage_Zulies;
+//    long int Zulies;
+//    long int Storage_Zulies;
+//  DevilKing's update for more than 2 billion zuly
+    unsigned long int Zulies;
+    unsigned long int Storage_Zulies;
     long int LastGlobal;
     int StatPoints;
     int SkillPoints;
