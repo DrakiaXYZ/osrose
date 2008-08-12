@@ -289,15 +289,37 @@ bool CWorldServer::pakDoID( CPlayer* thisclient, CPacket* P )
     ADDBYTE    ( pak, 0x32 );  //9
     ADDBYTE    ( pak, 0x32 );  //10
     ADDBYTE    ( pak, 0x32 );  //11
+
     CMap* map = MapList.Index[thisclient->Position->Map];
     if(map->allowpvp!=0)
+    {
         ADDWORD(pak, 0x0001)//player vs player map
+    }
     else
+    {
         ADDWORD(pak, 0x0000)//non player vs player map
+    }
+
     ADDWORD    (pak, 0x0000 );//??
     // Map Time
     ADDDWORD( pak, map->MapTime );
-    if(map->allowpvp==1){ ADDWORD(pak, 51 );} // pvp all vs all
+    if(map->allowpvp==1)
+    {
+        // pvp all vs all
+        //ADDWORD(pak, 51 );
+
+        //LMA: CF case...
+        if(map->id>=11&&map->id<=13&&thisclient->Clan->clanid>0)
+        {
+            Log(MSG_INFO,"CF map, sending clanid (allowpvp=1) %i",thisclient->Clan->clanid);
+            ADDWORD(pak, thisclient->Clan->clanid);
+        }
+        else
+        {
+            ADDWORD(pak, 51);
+        }
+
+    }
     else if(map->allowpvp==2) // pvp group vs group
     {
         //LMA: for UW
@@ -314,10 +336,19 @@ bool CWorldServer::pakDoID( CPlayer* thisclient, CPacket* P )
         }
         else
         {
-            ADDWORD(pak, 51);
+            //LMA: CF case...
+            if(map->id>=11&&map->id<=13)
+            {
+                Log(MSG_INFO,"CF map, sending clanid %i",thisclient->Clan->clanid);
+                ADDWORD(pak, thisclient->Clan->clanid);
+            }
+            else
+            {
+                ADDWORD(pak, 51);
+            }
+
         }
         /*ADDWORD(pak, thisclient->Clan->clanid );*/
-
     }
     else
     {
@@ -401,7 +432,7 @@ bool CWorldServer::pakSpawnNPC( CPlayer* thisclient, CNPC* thisnpc )
 	ADDWORD( pak, 0x0000 );//Buffs
 	ADDWORD( pak, 0x0000 );//buffs
 	ADDWORD( pak, thisnpc->npctype );
-	
+
 	//LMA: Dialog time, or we send the dialogID (default one), or the tempdialogID (event for example).
 	if (thisnpc->dialog!=0)
 	{
@@ -419,7 +450,7 @@ bool CWorldServer::pakSpawnNPC( CPlayer* thisclient, CNPC* thisnpc )
         ADDWORD( pak, thisnpc->npctype - 900 );
         Log(MSG_INFO,"NO default or special dialog %i for NPC %i",thisnpc->npctype - 900, thisnpc->npctype);
     }
-	    
+
 	ADDFLOAT( pak, thisnpc->dir );
 
     if (thisnpc->npctype == 1115)
@@ -427,7 +458,7 @@ bool CWorldServer::pakSpawnNPC( CPlayer* thisclient, CNPC* thisnpc )
        ADDBYTE( pak, GServer->Config.Cfmode ) // Burland Clan Field open/close
        ADDBYTE( pak, 0 );
     }
-    
+
     //2do: error I guess, extra DWORD in the case of CF NPC.
 
     //Event:
@@ -2232,7 +2263,7 @@ void CWorldServer::pakQuestData( CPlayer *thisclient )
     for(dword i = 0; i < 3; i++) ADDWORD( pak, thisclient->quest.JobVar[i]);
     for(dword i = 0; i < 7; i++) ADDWORD( pak, thisclient->quest.PlanetVar[i]);
     for(dword i = 0; i < 10; i++) ADDWORD( pak, thisclient->quest.UnionVar[i]);
- 
+
     for( unsigned i = 0; i < 10; i++ )
     {
         ADDWORD( pak,  thisclient->quest.quests[i].QuestID );
@@ -2267,24 +2298,24 @@ void CWorldServer::pakQuestData( CPlayer *thisclient )
     }
     for( unsigned i = 0; i < 0x40; i++ )
         ADDBYTE( pak, thisclient->quest.flags[i] );
- 
+
     // Wishlist? - Not Implemented
     for (unsigned i = 0; i < 180; i++)
         ADDBYTE( pak, 0 );
- 
+
     thisclient->client->SendPacket( &pak );
 }
- 
+
 // Handle quest triggers
 bool CWorldServer::pakGiveQuest( CPlayer* thisclient, CPacket* P )
 {
   byte action = GETBYTE((*P),0);
   byte slot = GETBYTE((*P),1);
   dword hash = GETDWORD((*P),2);
- 
- 
+
+
   if( thisclient->questdebug ) SendPM( thisclient, "Event Trigger [%08x] Action %i", hash, action);
- 
+
   if (action == 2) {
     if( thisclient->questdebug ) SendPM( thisclient, "Delete quest - Slot %i", slot);
     for (dword i = slot; i < 9; i++) thisclient->quest.quests[i] = thisclient->quest.quests[i+1];
@@ -2370,7 +2401,7 @@ void CWorldServer::pakQuestData( CPlayer *thisclient )
     int cpt=0;
     for(int j=0;j<512;j++)
         liste_flags[j]=0;
-            
+
     for(int i=0;i<25;i++)
     {
          if (thisclient->QuestVariables[i]!=0)
@@ -2387,12 +2418,12 @@ void CWorldServer::pakQuestData( CPlayer *thisclient )
     for(int i=0;i<thisclient->MyQuest.size( );i++)
     {
      QUESTS* myquest = thisclient->MyQuest.at( i );
-     
+
     //LMA: UW handling (switch).
     //96-99: Union War JO (allcart, frame, engine, wheels)   9610-9613
     //100-103: Union War Ferrel (allcart, frame, engine, wheels) 9650-9653
     //104-107: Union War RC (allcart, frame, engine, wheels) 9630-9633
-    //108-111: Union War Arumic (allcart, frame, engine, wheels) 9640-9643            
+    //108-111: Union War Arumic (allcart, frame, engine, wheels) 9640-9643
      if(myquest->thisquest->id>=9610&&myquest->thisquest->id<=9613)
      {
           liste_flags[96+(myquest->thisquest->id-9610)]=1;
@@ -2401,19 +2432,19 @@ void CWorldServer::pakQuestData( CPlayer *thisclient )
      if(myquest->thisquest->id>=9650&&myquest->thisquest->id<=9653)
      {
           liste_flags[100+(myquest->thisquest->id-9650)]=1;
-          Log(MSG_INFO,"%s, Ferrel switch: %i",thisclient->CharInfo->charname,myquest->thisquest->id);          
+          Log(MSG_INFO,"%s, Ferrel switch: %i",thisclient->CharInfo->charname,myquest->thisquest->id);
      }
      if(myquest->thisquest->id>=9630&&myquest->thisquest->id<=9633)
      {
           liste_flags[104+(myquest->thisquest->id-9630)]=1;
-          Log(MSG_INFO,"%s, RC switch: %i",thisclient->CharInfo->charname,myquest->thisquest->id);          
+          Log(MSG_INFO,"%s, RC switch: %i",thisclient->CharInfo->charname,myquest->thisquest->id);
      }
      if(myquest->thisquest->id>=9640&&myquest->thisquest->id<=9643)
      {
           liste_flags[108+(myquest->thisquest->id-9640)]=1;
-          Log(MSG_INFO,"%s, Arumic switch: %i",thisclient->CharInfo->charname,myquest->thisquest->id);          
+          Log(MSG_INFO,"%s, Arumic switch: %i",thisclient->CharInfo->charname,myquest->thisquest->id);
      }
-     
+
      //LMA: We need to go through all quest list.
      //if( myquest->active )
      if( myquest->active&&b<10)
@@ -2501,9 +2532,9 @@ void CWorldServer::pakQuestData( CPlayer *thisclient )
             continue;
         }
         /*if(b>=10)
-            break;*/            
+            break;*/
     }
-    
+
     for(int i=b;i<10;i++)
     {
        /*
@@ -2537,12 +2568,12 @@ void CWorldServer::pakQuestData( CPlayer *thisclient )
     //16: Flying Vessel?
     //72: point reset done?
     //32: lost engagment ring
-    //33: spero top secret schematic (old?)    
+    //33: spero top secret schematic (old?)
     //34->36: Level 30 quest
-    //37: Flying Vessel?    
+    //37: Flying Vessel?
     //64->65, 72,
     //77->79: tuto quests? (hunting?)
-    //96-99: Union War JO (allcart, frame, engine, wheels)    
+    //96-99: Union War JO (allcart, frame, engine, wheels)
     //100-103: Union War Ferrel (allcart, frame, engine, wheels)
     //104-107: Union War RC (allcart, frame, engine, wheels)
     //108-111: Union War Arumic (allcart, frame, engine, wheels)
@@ -2890,7 +2921,7 @@ bool CWorldServer::pakUseItem ( CPlayer* thisclient, CPacket* P )
              //LMA: Clan Points :)
             thisclient->GiveCP(thisuse->usevalue);
             flag=true;
-        }          
+        }
         break;
     }
     if(flag == true)

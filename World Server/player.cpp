@@ -1,28 +1,28 @@
 /*
     Rose Online Server Emulator
     Copyright (C) 2006,2007 OSRose Team http://www.dev-osrose.com
-    
+
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
     as published by the Free Software Foundation; either version 2
     of the License, or (at your option) any later version.
-    
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-    
+
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-    depeloped with Main erose/hrose source server + some change from the original eich source        
+    depeloped with Main erose/hrose source server + some change from the original eich source
 */
 #include "player.h"
 #include "worldserver.h"
 
 CPlayer::CPlayer( CClientSocket* CLIENT )
-{  
+{
     client = CLIENT;
     // USED ITEM
     UsedItem = new USEDITEM;
@@ -31,12 +31,12 @@ CPlayer::CPlayer( CClientSocket* CLIENT )
     UsedItem->usevalue = 0;
     UsedItem->usetype = 0;
     UsedItem->userate = 0;
-    UsedItem->used = 0; 
+    UsedItem->used = 0;
     // CHARINFO
     CharInfo = new INFO;
     assert(CharInfo);
     memset( &CharInfo->charname, '\0', 17 );
-	CharInfo->charid = 0;	    	
+	CharInfo->charid = 0;
     CharInfo->Sex = 0;
     CharInfo->Face = 0;
     CharInfo->Hair = 0;
@@ -61,8 +61,8 @@ CPlayer::CPlayer( CClientSocket* CLIENT )
     assert(Trade);
     for(int i=0;i<10;i++)
         Trade->trade_itemid[i] = 0;
-    for(int i=0;i<11;i++)    
-        Trade->trade_count[i] = 0;    
+    for(int i=0;i<11;i++)
+        Trade->trade_count[i] = 0;
     Trade->trade_status = 0;
     Trade->trade_target = 0;
     //PARTY
@@ -70,7 +70,7 @@ CPlayer::CPlayer( CClientSocket* CLIENT )
     assert(Party);
     Party->party = NULL;
     Party->IsMaster = true;
-    // SHOP    
+    // SHOP
     Shop = new SHOP;
     assert(Shop);
     Shop->open = false;
@@ -83,25 +83,25 @@ CPlayer::CPlayer( CClientSocket* CLIENT )
         Shop->BuyingList[i].price = 0;
         Shop->SellingList[i].slot = 0;
         Shop->SellingList[i].count = 0;
-        Shop->SellingList[i].price = 0;        
+        Shop->SellingList[i].price = 0;
     }
     Shop->Buying = 0;
     Shop->Selling = 0;
     Shop->ShopType = 0;
     Shop->mil_shop_time=0;
-    
+
     //bonusxp
     timerxp=0;
     bonusxp=1;
     wait_validation=0;
     once=false;
-    
+
     // SESSION
     Session = new SESSION;
     assert(Session);
 	Session->userid = 0;
 	memset( &Session->username, '\0', 17 );
-	memset( &Session->password, '\0', 33 );	
+	memset( &Session->password, '\0', 33 );
 	Session->accesslevel = 0;
 	Session->isLoggedIn = false;
 	Session->inGame = false;
@@ -109,7 +109,7 @@ CPlayer::CPlayer( CClientSocket* CLIENT )
     for(unsigned int i=0;i<MAX_INVENTORY;i++)
         ClearItem( items[i] );
     for(unsigned int i=0;i<MAX_STORAGE;i++)
-        ClearItem( storageitems[i] );    
+        ClearItem( storageitems[i] );
     // Clan
     Clan = new CLAN;
     assert(Clan);
@@ -127,14 +127,14 @@ CPlayer::CPlayer( CClientSocket* CLIENT )
     Attr->Int = 0;
     Attr->Con = 0;
     Attr->Cha = 0;
-    Attr->Sen = 0;    
+    Attr->Sen = 0;
     Attr->Estr = 0;
     Attr->Edex = 0;
     Attr->Eint = 0;
     Attr->Econ = 0;
     Attr->Echa = 0;
-    Attr->Esen = 0;   
-    
+    Attr->Esen = 0;
+
     CharType = TPLAYER;
 
     questdebug = false;
@@ -155,8 +155,8 @@ CPlayer::CPlayer( CClientSocket* CLIENT )
         bskills[i] = 0;
     for(int i=0;i<MAX_QUICKBAR;i++)
         quickbar[i] = 0;
-        
-    #ifndef USENEWQUESTSYSTEM 
+
+    #ifndef USENEWQUESTSYSTEM
     MyQuest.clear( );
     #else
     quest.selectedNpc = NULL;
@@ -175,7 +175,7 @@ CPlayer::CPlayer( CClientSocket* CLIENT )
 
 CPlayer::~CPlayer( )
 {
-    if(client!=NULL) 
+    if(client!=NULL)
     {
         delete client;
         client = NULL;
@@ -191,7 +191,7 @@ CPlayer::~CPlayer( )
     if(Attr!=NULL) delete Attr;
 #ifndef USENEWQUESTSYSTEM
          MyQuest.clear();
-#endif    
+#endif
 
     VisiblePlayers.clear();
     VisibleDrops.clear();
@@ -210,12 +210,12 @@ bool CPlayer::UpdateValues( )
     {
         CPlayer* otherclient = GServer->GetClientByCID( Ride->charid, Position->Map );
         if( otherclient!=NULL )
-        {            
+        {
             if( otherclient->Status->Stance != 0x04 )
-            {                
+            {
                 otherclient->Ride->Drive = false;
                 otherclient->Ride->Ride = false;
-                otherclient->Ride->charid = 0;                
+                otherclient->Ride->charid = 0;
                 Ride->Drive = false;
                 Ride->Ride = false;
                 Ride->charid = 0;
@@ -225,19 +225,19 @@ bool CPlayer::UpdateValues( )
             {
                 Position->current = otherclient->Position->current;  //ONLY ON BACK SEAT
                 Position->destiny = otherclient->Position->destiny;  //ONLY ON BACK SEAT
-                Position->lastMoveTime = otherclient->Position->lastMoveTime;   //ONLY ON BACK SEAT    
-                return false;  // will not update the player position                 
+                Position->lastMoveTime = otherclient->Position->lastMoveTime;   //ONLY ON BACK SEAT
+                return false;  // will not update the player position
             }
-        }  
+        }
         else
-        {      
+        {
             Ride->Drive = false;
             Ride->Ride = false;
-            Ride->charid = 0;      
+            Ride->charid = 0;
             Position->destiny = Position->current;  //RIDER LOST
         }
     }
-    
+
     return true;
 }
 
@@ -249,34 +249,34 @@ bool CPlayer::SpawnToPlayer( CPlayer* player, CPlayer* otherclient )
     ADDFLOAT( pak, Position->current.x*100 );			// POS X
 	ADDFLOAT( pak, Position->current.y*100 );			// POS Y
     ADDFLOAT( pak, Position->destiny.x*100 );			// GOING TO X
-    ADDFLOAT( pak, Position->destiny.y*100 );			// GOINT TO Y   
+    ADDFLOAT( pak, Position->destiny.y*100 );			// GOINT TO Y
     if(Status->Stance == 0x01)
     {
-        ADDWORD( pak, 0x000a );     
-        ADDWORD( pak, 0x0000 );                
+        ADDWORD( pak, 0x000a );
+        ADDWORD( pak, 0x0000 );
     }
     else
     if(Stats->HP <= 0)
     {
         ADDWORD( pak, 0x0003 );
-        ADDWORD( pak, 0x0000 );         
+        ADDWORD( pak, 0x0000 );
     }
     else
     if(Position->destiny.x != Position->current.y || Position->destiny.y != Position->current.y)
     {
         ADDWORD( pak, 0x0001 );
-        ADDWORD( pak, Battle->atktarget );         
+        ADDWORD( pak, Battle->atktarget );
     }
-    else    
+    else
     if(Battle->atktarget!=0)
     {
         ADDWORD( pak, 0x0002 );
-        ADDWORD( pak, Battle->atktarget );         
-    }    
-    else    
+        ADDWORD( pak, Battle->atktarget );
+    }
+    else
     {
-        ADDWORD( pak, 0x0001 );                
-        ADDWORD( pak, 0x0000 );         
+        ADDWORD( pak, 0x0001 );
+        ADDWORD( pak, 0x0000 );
     }
     switch (Status->Stance)
     {
@@ -284,20 +284,59 @@ bool CPlayer::SpawnToPlayer( CPlayer* player, CPlayer* otherclient )
            ADDBYTE( pak, 0x00 );
         break;
         case RUNNING:
-           ADDBYTE( pak, 0x01 ); 
+           ADDBYTE( pak, 0x01 );
         break;
         case DRIVING:
-           ADDBYTE( pak, 0x02 );    
-        break;   
+           ADDBYTE( pak, 0x02 );
+        break;
         default:
-           ADDBYTE( pak, 0x0b ); 
+           ADDBYTE( pak, 0x0b );
     }
-    ADDWORD( pak, 0x0000 );    
-    ADDWORD( pak, 0x0000 );        
+    ADDWORD( pak, 0x0000 );
+    ADDWORD( pak, 0x0000 );
     if(otherclient->Party->party==NULL || otherclient->Party->party != player->Party->party || otherclient->Party->party == player->Party->party)
     {
         CMap* map = GServer->MapList.Index[player->Position->Map];
-        if(map->allowpvp==1){ADDDWORD(pak, 0x00000051 );} // pvp all vs all
+        if(map->allowpvp==1)
+        {
+            //LMA: testing something for CF maps...
+            // pvp all vs all
+            //ADDDWORD(pak, 0x00000051 );
+
+            /*
+            if((player->Clan->clanid != otherclient->Clan->clanid) && ((map->id>=11) && (map->id<=13)))
+            {
+                //CF Maps
+                Log(MSG_INFO,"Two players not in same clan, sending 0x51");
+                ADDDWORD(pak, 0x00000051 );
+            }
+            else if((map->id>=11) && (map->id<=13))
+            {
+                Log(MSG_INFO,"Two players IN same clan, sending 0x00");
+                ADDDWORD(pak, 0x00000000 );
+            }
+            else
+            {
+                Log(MSG_INFO,"standard pvp map");
+                ADDDWORD(pak, 0x00000051 );
+            }
+            */
+
+
+
+            if((map->id>=11) && (map->id<=13))
+            {
+                //CF Maps
+                Log(MSG_INFO,"Two players in CF map, sending clanid %i",Clan->clanid);
+                ADDDWORD(pak, Clan->clanid );
+            }
+            else
+            {
+                ADDDWORD(pak, 0x00000051 );
+            }
+
+
+        }
         else
         if(map->allowpvp==2) // pvp group vs group
         {
@@ -307,7 +346,7 @@ bool CPlayer::SpawnToPlayer( CPlayer* player, CPlayer* otherclient )
         }
         else { ADDDWORD(pak, 0x00000000 ); }
     }
-    else {ADDDWORD(pak, 0x00000000 );}     
+    else {ADDDWORD(pak, 0x00000000 );}
     ADDDWORD( pak, GServer->BuildBuffs( this ) );//BUFFS
     ADDBYTE( pak, CharInfo->Sex );					// GENDER
     ADDWORD( pak, Stats->Move_Speed );			// WALK SPEED MAYBE?
@@ -326,22 +365,22 @@ bool CPlayer::SpawnToPlayer( CPlayer* player, CPlayer* otherclient )
     ADDWORD( pak, items[1].itemnum );		// FACE
     ADDWORD( pak, GServer->BuildItemRefine( items[1] )  );		// FACE REFINE
     ADDWORD( pak, items[4].itemnum );		// BACK
-    ADDWORD( pak, GServer->BuildItemRefine( items[4] )  );		// BACK REFINE 
+    ADDWORD( pak, GServer->BuildItemRefine( items[4] )  );		// BACK REFINE
     ADDWORD( pak, items[7].itemnum );		// WEAPON
     ADDWORD( pak, GServer->BuildItemRefine( items[7] )  );		// WEAPON REFINE
     ADDWORD( pak, items[8].itemnum );		// SUBWEAPON
     ADDWORD( pak, GServer->BuildItemRefine( items[8] )  );		// SUBWEAPON REFINE
-    
-    /*        
+
+    /*
     ADDWORD( pak, ((items[132].itemnum << 5) & 0x3ff) );//arrows
     ADDWORD( pak, ((items[133].itemnum << 5) & 0x3ff) );//bullets
-    ADDWORD( pak, ((items[134].itemnum << 5) & 0x3ff) );//cannons    
+    ADDWORD( pak, ((items[134].itemnum << 5) & 0x3ff) );//cannons
     */
     //Fix from maximz
     ADDWORD( pak, ((items[132].itemnum << 5) ));//arrows
     ADDWORD( pak, ((items[133].itemnum << 5) ));//bullets
-    ADDWORD( pak, ((items[134].itemnum << 5) ));//cannons     
-    
+    ADDWORD( pak, ((items[134].itemnum << 5) ));//cannons
+
     ADDWORD( pak, CharInfo->Job );
     ADDBYTE( pak, Stats->Level );
     ADDWORD( pak, items[135].itemnum);		// CART FRAME
@@ -361,9 +400,9 @@ bool CPlayer::SpawnToPlayer( CPlayer* player, CPlayer* otherclient )
     }
     else
     {
-        ADDBYTE( pak, 0x00 );								
-    }          
-    ADDBYTE( pak, 0x00);    
+        ADDBYTE( pak, 0x00 );
+    }
+    ADDBYTE( pak, 0x00);
     ADDBYTE( pak, 0x00);
     if( Fairy )
     {
@@ -386,14 +425,14 @@ bool CPlayer::SpawnToPlayer( CPlayer* player, CPlayer* otherclient )
     {
         ADDDWORD( pak, Clan->clanid );
         ADDWORD( pak, Clan->back);
-        ADDWORD( pak, Clan->logo);           
+        ADDWORD( pak, Clan->logo);
         ADDBYTE( pak, Clan->grade);
-        ADDBYTE( pak, 0x00);   
+        ADDBYTE( pak, 0x00);
         ADDSTRING( pak, Clan->clanname);
         Log(MSG_INFO,"[WS] Clan info in player packet 0x793");
     }
     ADDWORD( pak, 0x0000 );
-    player->client->SendPacket(&pak); 
+    player->client->SendPacket(&pak);
     if( Party->party!=NULL && Party->party == player->Party->party)
     {
         BEGINPACKET( pak, 0x7d5 );
@@ -405,15 +444,15 @@ bool CPlayer::SpawnToPlayer( CPlayer* player, CPlayer* otherclient )
         ADDDWORD   ( pak, 0x0000000f );
         ADDWORD    ( pak, 0x1388 );
         player->client->SendPacket( &pak );
-    }          
+    }
 	if( Ride->Ride )
-	{        
+	{
         CPlayer* rideclient = GServer->GetClientByCID( Ride->charid, Position->Map );
-        if(rideclient==NULL) 
+        if(rideclient==NULL)
         {
             Ride->Ride = false;
             Ride->Drive= false;
-            Ride->charid = 0;              
+            Ride->charid = 0;
             return true;
         }
         if( GServer->IsVisible( player, rideclient ) || player->CharInfo->charid == rideclient->CharInfo->charid )
@@ -422,34 +461,34 @@ bool CPlayer::SpawnToPlayer( CPlayer* player, CPlayer* otherclient )
             if( Ride->Drive )
             {
                 ADDWORD    ( pak, rideclient->clientid );
-                ADDFLOAT   ( pak, rideclient->Position->current.x*100 );            
-                ADDFLOAT   ( pak, rideclient->Position->current.y*100 );                
+                ADDFLOAT   ( pak, rideclient->Position->current.x*100 );
+                ADDFLOAT   ( pak, rideclient->Position->current.y*100 );
             }
             else
             {
                 ADDWORD    ( pak, clientid );
-                ADDFLOAT   ( pak, Position->current.x*100 );            
+                ADDFLOAT   ( pak, Position->current.x*100 );
                 ADDFLOAT   ( pak, Position->current.y*100 );
             }
             ADDWORD    ( pak, 0x0000 );
             player->client->SendPacket( &pak );
-                
+
             RESETPACKET( pak, 0x7dd );
             ADDBYTE    ( pak, 0x02 );
             if( rideclient->Ride->Drive )
-            {               
+            {
                 ADDWORD    ( pak, rideclient->clientid );
-                ADDWORD    ( pak, clientid );                   
+                ADDWORD    ( pak, clientid );
             }
             else
             {
-                ADDWORD    ( pak, clientid );                
-                ADDWORD    ( pak, rideclient->clientid );                                              
-            }          
-            player->client->SendPacket( &pak );                          
+                ADDWORD    ( pak, clientid );
+                ADDWORD    ( pak, rideclient->clientid );
+            }
+            player->client->SendPacket( &pak );
         }
-    }  
+    }
     //Little addition till the nonsense in server sync is fixed.
-    //StartAction(NULL, 0, 0, true);  
+    //StartAction(NULL, 0, 0, true);
 	return true;
 }
