@@ -318,7 +318,7 @@ bool CWorldServer::pakDoID( CPlayer* thisclient, CPacket* P )
         {
             //test maxxon
             //ADDWORD(pak, 51);
-            ADDDWORD (pak, thisclient->clientid);
+            ADDWORD (pak, thisclient->clientid);
         }
 
     }
@@ -340,7 +340,7 @@ bool CWorldServer::pakDoID( CPlayer* thisclient, CPacket* P )
         {
             //test maxxon
             //ADDWORD(pak, 51);
-            ADDDWORD(pak, thisclient->Clan->clanid );
+            ADDWORD(pak, thisclient->Clan->clanid );
         }
         /*ADDWORD(pak, thisclient->Clan->clanid );*/
     }
