@@ -92,8 +92,6 @@ echo mileage
 %mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < mileage.sql
 echo ban_list
 %mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < ban_list.sql
-echo item_drops2
-%mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < item_drops2.sql
 echo item_reference
 %mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < item_reference.sql
 echo custom events

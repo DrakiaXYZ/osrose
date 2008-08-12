@@ -4,10 +4,12 @@ SET FOREIGN_KEY_CHECKS=0;
 -- ----------------------------
 CREATE TABLE `list_telegates` (
 `id` int(11) NOT NULL,
-`name` varchar(255) NOT NULL default '',
-`map` int(11) NOT NULL,
-`x` float NOT NULL,
- `y` float NOT NULL,
+`srcmap` int(11) NOT NULL,
+`srcx` float(0) NOT NULL,
+`srcy` float(0) NOT NULL,
+`destmap` int(11) NOT NULL,
+`destx` float(0) NOT NULL,
+`desty` float(0) NOT NULL,
 PRIMARY KEY  (`id`)
  ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 INSERT INTO `list_telegates` VALUES (24, 1, 5038.21, 5260.50, 37, 5002.38, 5384.19);
