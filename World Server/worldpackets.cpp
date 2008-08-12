@@ -316,7 +316,9 @@ bool CWorldServer::pakDoID( CPlayer* thisclient, CPacket* P )
         }
         else
         {
-            ADDWORD(pak, 51);
+            //test maxxon
+            //ADDWORD(pak, 51);
+            ADDDWORD (pak, thisclient->clientid);
         }
 
     }
@@ -336,17 +338,9 @@ bool CWorldServer::pakDoID( CPlayer* thisclient, CPacket* P )
         }
         else
         {
-            //LMA: CF case...
-            if(map->id>=11&&map->id<=13)
-            {
-                Log(MSG_INFO,"CF map, sending clanid %i",thisclient->Clan->clanid);
-                ADDWORD(pak, thisclient->Clan->clanid);
-            }
-            else
-            {
-                ADDWORD(pak, 51);
-            }
-
+            //test maxxon
+            //ADDWORD(pak, 51);
+            ADDDWORD(pak, thisclient->Clan->clanid );
         }
         /*ADDWORD(pak, thisclient->Clan->clanid );*/
     }

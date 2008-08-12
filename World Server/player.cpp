@@ -322,29 +322,52 @@ bool CPlayer::SpawnToPlayer( CPlayer* player, CPlayer* otherclient )
             }
             */
 
-
-
             if((map->id>=11) && (map->id<=13))
             {
                 //CF Maps
-                Log(MSG_INFO,"Two players in CF map, sending clanid %i",Clan->clanid);
+                Log(MSG_INFO,"[PVP1] Two players in CF map, sending clanid %i",Clan->clanid);
                 ADDDWORD(pak, Clan->clanid );
             }
             else
             {
-                ADDDWORD(pak, 0x00000051 );
+                //maxxon test:
+                //ADDDWORD(pak, 0x00000051 );
+                Log(MSG_INFO,"[PVP1] Vs All");
+                ADDDWORD(pak, clientid + 0x100 );
             }
 
+        }
+        else if(map->allowpvp==2) // pvp group vs group
+        {
+            /*
+            if((player->Clan->clanid != otherclient->Clan->clanid) && ((map->id>0) && (map->id<121)))
+            {
+                //Clan War map (pedion)
+                ADDDWORD(pak, 0x00000051 );
+            }
+            else if((player->Clan->clanid == otherclient->Clan->clanid) && ((map->id>0) && (map->id<=100)))
+            {
+                //other pvp group vs group map
+                ADDDWORD(pak, 0x00000051 );
+            }
+            else
+            {
+                ADDDWORD(pak, 0x00000000 );
+            }
+            */
+            //test maxxon:
+            Log(MSG_INFO,"[PVP2] sending clanid %i",Clan->clanid);
+            ADDDWORD(pak, Clan->clanid);
 
+            //2do: special case for union wars.
         }
         else
-        if(map->allowpvp==2) // pvp group vs group
         {
-            if((player->Clan->clanid != otherclient->Clan->clanid) && ((map->id>0) && (map->id<121))) { ADDDWORD(pak, 0x00000051 ); }//Clan War map (pedion)
-            else if((player->Clan->clanid == otherclient->Clan->clanid) && ((map->id>0) && (map->id<=100))) { ADDDWORD(pak, 0x00000051 ); }//other pvp group vs group map
-            else { ADDDWORD(pak, 0x00000000 ); }
+            //test maxxon
+            //ADDDWORD(pak, 0x00000000 );
+            ADDDWORD(pak, 0x00000002);
         }
-        else { ADDDWORD(pak, 0x00000000 ); }
+
     }
     else {ADDDWORD(pak, 0x00000000 );}
     ADDDWORD( pak, GServer->BuildBuffs( this ) );//BUFFS
