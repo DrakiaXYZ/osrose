@@ -533,13 +533,13 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
             x = 5093;
             y = 5144;
         }
-        else if (loc == 10) // Pyramid Tombs
+/*        else if (loc == 10) // Pyramid Tombs
         {
             map = 41;
             x = 5105; // 5165 if jRose Client
             y = 5246; // 5207 if jRose Client
         }
-        else if (loc == 11) // Sikuku Underground Prison
+*/        else if (loc == 11) // Sikuku Underground Prison
         {
              if (thisclient->Stats->Level<160) // by Terr0risT
              {
@@ -580,7 +580,7 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
             SendPM(thisclient, "7 = Lions Plains");
             SendPM(thisclient, "8 = Luna Clan Field");
             SendPM(thisclient, "9 = Desert of the Dead");
-            SendPM(thisclient, "10 = Pyramid Tombs - ElVerloon");
+//            SendPM(thisclient, "10 = Pyramid Tombs - ElVerloon");
             SendPM(thisclient, "11 = Sikuku Underground Prison");
 //            SendPM(thisclient, "12 = Oro");
             SendPM(thisclient, "Example; /go 3");
@@ -1363,6 +1363,12 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
          if(Config.Command_Goto > thisclient->Session->accesslevel)
 	                    return true;
 		if ((tmp = strtok(NULL, " "))==NULL) return true; char* name=tmp;
+// added to prevent map changes with less hp than 1/2
+        if ( thisclient->Stats->HP < (thisclient->Stats->MaxHP / 2) || thisclient->Session->inGame == false )
+        {
+             SendPM(thisclient, "You need at least 50% HP in order to warp");
+             return true;
+        }
 		Log( MSG_GMACTION, " %s : /goto %s" , thisclient->CharInfo->charname, name);
 		return pakGMTeleToPlayer(thisclient, name);
 	}
@@ -1840,6 +1846,12 @@ else if (strcmp(command, "give2")==0)
 	   if(Config.Command_GoToMap > thisclient->Session->accesslevel)
 	                    return true;
         if ((tmp = strtok(NULL, " "))==NULL) return true; unsigned map=atoi(tmp);
+// added to prevent map changes with less hp than 1/2
+        if ( thisclient->Stats->HP < (thisclient->Stats->MaxHP / 2) || thisclient->Session->inGame == false )
+        {
+             SendPM(thisclient, "You need at least 50% HP in order to warp");
+             return true;
+        }
         Log( MSG_GMACTION, " %s : /gotomap %i" , thisclient->CharInfo->charname, map);
 		return pakGMGotomap(thisclient, map);
     }

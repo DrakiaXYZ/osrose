@@ -817,7 +817,7 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
                     //Marsh of Ghosts - Mileage Scroll - added by rl2171
                     case 366:
                         useitem->usetype = 64;
-                        useitem->usevalue = 50395326; // Temp value until actual value is found
+                        useitem->usevalue = 50405320;
                     break;
                     //Forgotten Temple B2 - Mileage Scroll - added by rl2171
                     case 367:
