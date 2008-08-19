@@ -3,15 +3,15 @@ SET FOREIGN_KEY_CHECKS=0;
 -- Table structure for list_telegates
 -- ----------------------------
 CREATE TABLE `list_telegates` (
-`id` int(11) NOT NULL,
-`srcmap` int(11) NOT NULL,
-`srcx` float(0) NOT NULL,
-`srcy` float(0) NOT NULL,
-`destmap` int(11) NOT NULL,
-`destx` float(0) NOT NULL,
-`desty` float(0) NOT NULL,
-PRIMARY KEY  (`id`)
- ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+  `id` int(10) NOT NULL,
+  `srcmap` int(10) NOT NULL,
+  `srcx` float NOT NULL,
+  `srcy` float NOT NULL,
+  `destmap` int(10) NOT NULL,
+  `destx` float NOT NULL,
+  `desty` float NOT NULL,
+  PRIMARY KEY  (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 INSERT INTO `list_telegates` VALUES (24, 1, 5038.21, 5260.50, 37, 5002.38, 5384.19);
 INSERT INTO `list_telegates` VALUES (22, 1, 5271.78, 5543.42, 24, 5151.02, 4878.51);
 INSERT INTO `list_telegates` VALUES (21, 1, 5236.86, 4982.02, 21, 5140.06, 5504.44);
