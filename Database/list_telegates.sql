@@ -3,15 +3,15 @@ SET FOREIGN_KEY_CHECKS=0;
 -- Table structure for list_telegates
 -- ----------------------------
 CREATE TABLE `list_telegates` (
-  `id` int(10) NOT NULL,
-  `srcmap` int(10) NOT NULL,
-  `srcx` float NOT NULL,
-  `srcy` float NOT NULL,
-  `destmap` int(10) NOT NULL,
-  `destx` float NOT NULL,
-  `desty` float NOT NULL,
-  PRIMARY KEY  (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+`id` int(11) NOT NULL,
+`srcmap` int(10) NOT NULL,
+`srcx` float NOT NULL,
+`srcy` float NOT NULL,
+`destmap` int(10) NOT NULL,
+`destx` float NOT NULL,
+`desty` float NOT NULL,
+PRIMARY KEY  (`id`)
+ ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 INSERT INTO `list_telegates` VALUES (24, 1, 5038.21, 5260.50, 37, 5002.38, 5384.19);
 INSERT INTO `list_telegates` VALUES (22, 1, 5271.78, 5543.42, 24, 5151.02, 4878.51);
 INSERT INTO `list_telegates` VALUES (21, 1, 5236.86, 4982.02, 21, 5140.06, 5504.44);
@@ -49,11 +49,11 @@ INSERT INTO `list_telegates` VALUES (66, 32, 5436.84, 5162.54, 33, 5605.13, 5485
 INSERT INTO `list_telegates` VALUES (65, 32, 5522.32, 5358.58, 31, 5381.38, 5216.77);
 INSERT INTO `list_telegates` VALUES (69, 33, 5155.80, 5245.27, 32, 5117.51, 5074.00);
 INSERT INTO `list_telegates` VALUES (68, 33, 5607.60, 5506.83, 32, 5433.88, 5202.87);
-INSERT INTO `list_telegates` VALUES (70, 37, 5004.50, 5400.80, 1, 5065.44, 5242.10);
 INSERT INTO `list_telegates` VALUES (71, 40, 5185.07, 5129.11, 2, 5547.60, 5193.07);
 INSERT INTO `list_telegates` VALUES (104, 51, 5079.73, 5378.60, 55, 5524.47, 4464.40);
 INSERT INTO `list_telegates` VALUES (105, 51, 5007.16, 5307.56, 58, 5676.35, 4269.24);
 INSERT INTO `list_telegates` VALUES (101, 51, 5008.97, 4839.75, 52, 6156.07, 5210.39);
+INSERT INTO `list_telegates` VALUES (22, 51, 5271.78, 5543.42, 24, 5151.02, 4878.51);
 INSERT INTO `list_telegates` VALUES (102, 51, 5445.15, 4686.24, 53, 6159.24, 5368.95);
 INSERT INTO `list_telegates` VALUES (103, 51, 5718.27, 5230.67, 54, 5058.63, 4439.96);
 INSERT INTO `list_telegates` VALUES (107, 52, 5731.86, 4677.65, 53, 5037.27, 5202.48);

@@ -864,7 +864,7 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
             else // Emotions
             if( (useitem->itemnum>970 && useitem->itemnum<979) ||
                 (useitem->itemnum>917 && useitem->itemnum<920) ||
-                (useitem->itemnum>599 && useitem->itemnum<608) )  //918 - Love Chocolate  919 - Kiss Scroll
+                (useitem->itemnum>599 && useitem->itemnum<609) )  //918 - Love Chocolate  919 - Kiss Scroll
             {
                 useitem->usescript = 4;
                 useitem->usetype = UseList.Index[useitem->itemnum]->useeffect[0];
@@ -879,6 +879,7 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
                 useitem->usescript = 5;
                 useitem->usetype = UseList.Index[useitem->itemnum]->useeffect[1];
                 if(useitem->itemnum==439){useitem->usevalue = 965;} // Metal Moldie
+//                else if(useitem->itemnum==609){useitem->usevalue = 2047;} // Event Metal Moldie
                 else if(useitem->itemnum==916){useitem->usevalue = 294;} //Firecracker Penguin
                 else if(useitem->itemnum==917){useitem->usevalue = 297;} // Ice Spirit
                 else if(useitem->itemnum==940){useitem->usevalue = 994;} // Easter Bunny
@@ -916,6 +917,14 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
             useitem->usetype = UseList.Index[useitem->itemnum]->useeffect[0];
             useitem->usevalue = UseList.Index[useitem->itemnum]->useeffect[1];
 
+                if(useitem->itemnum==609)
+                {
+                     // Summon Metal Moldie  -  not working yet
+                     useitem->usevalue = 2047;
+                     useitem->usescript = 5;
+                     useitem->usetype = UseList.Index[useitem->itemnum]->useeffect[1];
+                     useitem->use_buff = UseList.Index[useitem->itemnum]->useeffect[1];
+                }
             //LMA: Anti hack protection, those skills (plastic surgeon, reset skills) will be
             //deleted in the quest itself, it'll avoid packets injections ;) .
 //            if (useitem->itemnum>=451&&useitem->itemnum<=453)

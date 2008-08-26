@@ -17,13 +17,13 @@ CREATE TABLE `list_npcs` (
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 INSERT INTO `list_npcs` VALUES (0, '[Livestock Farmer] Lampa', 1016, 1, 173.934, 5109.42, 5363.68, 116,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Ferrell Guild Staff] Crow', 1004, 1, 6.067, 5094.38, 5259.90, 104,0,0);
-INSERT INTO `list_npcs` VALUES (0, '[Ferrell Guild Staff] Ulysses', 1012, 1, 84.015, 5071.26, 5206.92, 112,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Ferrell Guild Staff] Ulysses', 1012, 1, 84.014, 5071.26, 5206.92, 112,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Co-Founder of the Junon Order] Francis', 1003, 1, 157.957, 5080.30, 5066.28, 103,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Righteous Crusader] Leonard', 1005, 1, 16.102, 5261.08, 5166.96, 105,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Designer] Keenu', 1010, 1, 343.898, 5273.50, 5256.83, 110,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Eccentric Inventor] Spero', 1011, 1, 14.293, 5212.36, 5254.66, 111,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Tavern Owner] Sharlin', 1013, 1, 333.435, 5131.56, 5218.14, 113,0,0);
-INSERT INTO `list_npcs` VALUES (0, '[Resident] Luth', 1015, 1, 270.001, 5130.61, 5154.58, 115,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Resident] Luth', 1015, 1, 270.002, 5130.61, 5154.58, 115,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Guide] Lena', 1014, 1, 169.135, 5240.40, 5124.57, 114,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Event Info] Judy', 1201, 1, 162.011, 5261.88, 5212.97, 305,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Akram Kingdom Minister] Warren', 1002, 1, 178.499, 5208.78, 5112.94, 102,0,0);
@@ -141,9 +141,10 @@ INSERT INTO `list_npcs` VALUES (0, '[Ranger] Paul', 1155, 29, 330.956, 5157.10, 
 INSERT INTO `list_npcs` VALUES (0, '[Beach Resident] Judith', 1204, 37, 358.499, 5115.68, 5324.15, 308,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Event Info] Santa Claus', 1205, 38, 3.012, 5069.18, 5362.51, 309,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Event Info] Loelsch', 1206, 38, 66.941, 5057.19, 5351.61, 310,0,0);
-INSERT INTO `list_npcs` VALUES (0, '[Event Info] Lucielle Fete', 1203, 40, 333.435, 5254.64, 5216.39, 307,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Event Info] Lucille Fete', 1203, 40, 333.435, 5254.64, 5216.39, 307,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Station Guide] Illiya', 1188, 51, 148.307, 5107.24, 4996.57, 288,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Tavern Owner] Anzhelika', 1186, 51, 139.107, 5263.61, 5079.49, 286,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Cornell''s Grandson] Cheney', 1018, 51, 22.043, 5436.30, 5492.26, 118,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Ferrell Guild Banker] Andre', 1180, 51, 0.000, 5414.86, 5114.41, 280,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Arumic Merchant] Pabel', 1185, 51, 3.008, 5298.98, 5105.03, 285,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Arumic Prophet] Olleck Basilasi', 1173, 51, 178.499, 5359.62, 5085.72, 273,0,0);
