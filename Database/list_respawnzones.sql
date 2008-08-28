@@ -1,3 +1,29 @@
+/*
+MySQL Data Transfer
+Source Host: localhost
+Source Database: osrose
+Target Host: localhost
+Target Database: osrose
+Date: 7/18/2008 11:53:56 AM
+*/
+
+SET FOREIGN_KEY_CHECKS=0;
+-- ----------------------------
+-- Table structure for list_respawnzones
+-- ----------------------------
+CREATE TABLE `list_respawnzones` (
+  `id` int(11) NOT NULL auto_increment,
+  `map` int(11) NOT NULL,
+  `x` float NOT NULL,
+  `y` float NOT NULL,
+  `radius` float NOT NULL default '10',
+  `type` int(11) NOT NULL default '2',
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=286 DEFAULT CHARSET=latin1;
+
+-- ----------------------------
+-- Records 
+-- ----------------------------
 INSERT INTO `list_respawnzones` VALUES (0, 1, 5240.72, 5189.85, 10, 0);
 INSERT INTO `list_respawnzones` VALUES (0, 1, 5210.47, 5136.67, 10, 1);
 INSERT INTO `list_respawnzones` VALUES (0, 2, 5655.32, 5238.22, 10, 1);

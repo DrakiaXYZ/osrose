@@ -90,6 +90,8 @@ echo updating extra_stats
 %mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < list_extra_stats.sql
 echo mileage
 %mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < mileage.sql
+echo item_drops
+%mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < item_drops.sql
 echo ban_list
 %mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < ban_list.sql
 echo item_reference
