@@ -1927,7 +1927,9 @@ bool CWorldServer::pakStartSkill ( CPlayer* thisclient, CPacket* P )
     fPoint thispoint;
     UINT targetid = GETWORD( (*P), 0 );
     BYTE skillnum = GETBYTE( (*P), 2 );
-    if(skillnum>=MAX_SKILL)
+        Log(MSG_INFO,"index value: %1",skillnum);
+//    if(skillnum>=MAX_SKILL)
+    if(skillnum>=MAX_SKILL&&skillnum!=83)  //dual scratch temp fix
     {
         Log( MSG_HACK, "Invalid Skill id %i for %s ", skillnum, thisclient->CharInfo->charname );
         return false;
@@ -1935,8 +1937,14 @@ bool CWorldServer::pakStartSkill ( CPlayer* thisclient, CPacket* P )
 
     Log( MSG_INFO, "pakStartSkill for %s (%i)", thisclient->CharInfo->charname,skillnum);
 
-    unsigned int skillid = thisclient->cskills[skillnum].id+thisclient->cskills[skillnum].level-1;
-    CMap* map = MapList.Index[thisclient->Position->Map];
+//   unsigned int skillid = thisclient->cskills[skillnum].id+thisclient->cskills[skillnum].level-1;
+       unsigned int skillid=101;
+    
+    if(skillnum!=83) //dual scratch temp fix
+    {
+        skillid = thisclient->cskills[skillnum].id+thisclient->cskills[skillnum].level-1;
+    }
+CMap* map = MapList.Index[thisclient->Position->Map];
     CCharacter* character = map->GetCharInMap( targetid );
     if(character==NULL) return true;
 

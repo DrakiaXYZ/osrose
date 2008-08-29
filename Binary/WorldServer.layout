@@ -278,7 +278,7 @@ TopLine=701
 >>>>>>> .r85
 LeftChar=1
 [Editor_36]
-Open=1
+Open=0
 <<<<<<< .mine
 Top=0
 CursorCol=38
@@ -347,9 +347,9 @@ LeftChar=1
 <<<<<<< .mine
 Open=1
 Top=1
-CursorCol=26
-CursorRow=4142
-TopLine=4401
+CursorCol=6
+CursorRow=1946
+TopLine=1929
 LeftChar=1
 =======
 Open=0
