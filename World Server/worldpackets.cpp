@@ -1927,7 +1927,7 @@ bool CWorldServer::pakStartSkill ( CPlayer* thisclient, CPacket* P )
     fPoint thispoint;
     UINT targetid = GETWORD( (*P), 0 );
     BYTE skillnum = GETBYTE( (*P), 2 );
-        Log(MSG_INFO,"index value: %1",skillnum);
+
 //    if(skillnum>=MAX_SKILL)
     if(skillnum>=MAX_SKILL&&skillnum!=83)  //dual scratch temp fix
     {
@@ -1939,7 +1939,7 @@ bool CWorldServer::pakStartSkill ( CPlayer* thisclient, CPacket* P )
 
 //   unsigned int skillid = thisclient->cskills[skillnum].id+thisclient->cskills[skillnum].level-1;
        unsigned int skillid=101;
-    
+
     if(skillnum!=83) //dual scratch temp fix
     {
         skillid = thisclient->cskills[skillnum].id+thisclient->cskills[skillnum].level-1;
