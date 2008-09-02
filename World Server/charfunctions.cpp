@@ -1,22 +1,22 @@
 /*
     Rose Online Server Emulator
     Copyright (C) 2006,2007 OSRose Team http://www.dev-osrose.com
-    
+
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
     as published by the Free Software Foundation; either version 2
     of the License, or (at your option) any later version.
-    
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-    
+
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-    depeloped with Main erose/hrose source server + some change from the original eich source        
+    depeloped with Main erose/hrose source server + some change from the original eich source
 */
 #include "character.h"
 #include "worldserver.h"
@@ -63,7 +63,7 @@ CDrop* CCharacter::GetDrop( )
 void CCharacter::StartAction( CCharacter* Target, BYTE action, UINT skillid, bool restart, CCharacter* receiver )
 {
     //Log(MSG_INFO,"Someone does an action %i, skill %i",action,skillid);
-    
+
     BEGINPACKET( pak, 0 );
     if (restart)
     {
@@ -73,22 +73,22 @@ void CCharacter::StartAction( CCharacter* Target, BYTE action, UINT skillid, boo
     }
     switch(action)
     {
-        case NORMAL_ATTACK: 
+        case NORMAL_ATTACK:
         {
             RESETPACKET( pak, 0x798 );
             ADDWORD    ( pak, clientid );
             ADDWORD    ( pak, Target->clientid );
             ADDWORD    ( pak, Stats->Move_Speed );
             ADDFLOAT   ( pak, Target->Position->current.x*100 );
-            ADDFLOAT   ( pak, Target->Position->current.y*100 );   
+            ADDFLOAT   ( pak, Target->Position->current.y*100 );
             Battle->target = Target->clientid;
-            Battle->atktarget = Target->clientid;       
-            Battle->atktype = action;  
-            Position->destiny  = Target->Position->current;            
-            Position->lastMoveTime = clock( );                     
+            Battle->atktarget = Target->clientid;
+            Battle->atktype = action;
+            Position->destiny  = Target->Position->current;
+            Position->lastMoveTime = clock( );
         }
         break;
-        case SKILL_ATTACK:              
+        case SKILL_ATTACK:
         case SKILL_BUFF:
         {
         	RESETPACKET( pak, 0x7b3 );
@@ -97,19 +97,19 @@ void CCharacter::StartAction( CCharacter* Target, BYTE action, UINT skillid, boo
         	ADDWORD    ( pak, skillid );
         	ADDWORD    ( pak, 50000 );
             ADDFLOAT   ( pak, Target->Position->current.x*100 );
-            ADDFLOAT   ( pak, Target->Position->current.y*100 );  
+            ADDFLOAT   ( pak, Target->Position->current.y*100 );
             Battle->target = Target->clientid;
-            
+
             if(action==SKILL_ATTACK) Battle->skilltarget = Target->clientid;
             else Battle->bufftarget = Target->clientid;
-            
-            Battle->atktype = action; 
+
+            Battle->atktype = action;
             Position->destiny  = Target->Position->current;
             Battle->skillid = skillid;
-            Position->lastMoveTime = clock( );                             
+            Position->lastMoveTime = clock( );
         }
         break;
-        case MONSTER_SKILL_ATTACK:              
+        case MONSTER_SKILL_ATTACK:
         case MONSTER_SKILL_BUFF:
         {
         	RESETPACKET( pak, 0x7b3 );
@@ -122,16 +122,16 @@ void CCharacter::StartAction( CCharacter* Target, BYTE action, UINT skillid, boo
             ADDFLOAT   ( pak, Target->Position->current.y*100 );
             ADDBYTE    ( pak, 0x06);
             Battle->target = Target->clientid;
-            
+
             if(action==MONSTER_SKILL_ATTACK) Battle->skilltarget = Target->clientid;
             else Battle->bufftarget = Target->clientid;
-            
-            Battle->atktype = action; 
+
+            Battle->atktype = action;
             Position->destiny  = Target->Position->current;
             Battle->skillid = skillid;
-            Position->lastMoveTime = clock( );                             
+            Position->lastMoveTime = clock( );
         }
-        break;        
+        break;
         case SUMMON_BUFF:
         {
             //LMA: Special case for Support summons
@@ -140,7 +140,7 @@ void CCharacter::StartAction( CCharacter* Target, BYTE action, UINT skillid, boo
         	ADDWORD    ( pak, Target->clientid );
         	ADDWORD    ( pak, skillid );
             ADDBYTE (pak,0x2b);
-            ADDBYTE (pak,0x01);                        
+            ADDBYTE (pak,0x01);
             ADDFLOAT   ( pak, Target->Position->current.x*100 );
             ADDFLOAT   ( pak, Target->Position->current.y*100 );
             /*
@@ -148,92 +148,105 @@ void CCharacter::StartAction( CCharacter* Target, BYTE action, UINT skillid, boo
             ADDFLOAT   ( pak, Position->current.y*100 );
             */
             ADDBYTE    ( pak, 0x06);
-            Battle->target = 0;            
+            Battle->target = 0;
             //Battle->skilltarget = Target->clientid;
-            Battle->bufftarget = Target->clientid;            
-            Battle->atktype = action; 
+            Battle->bufftarget = Target->clientid;
+            Battle->atktype = action;
             Position->destiny  = Target->Position->current;
             Battle->skillid = skillid;
             Position->lastMoveTime = clock( );
             GServer->SendToVisible( &pak, Target );
             return;
-            
+
         }
-        break;          
+        break;
         case SKILL_AOE:
         case BUFF_SELF:
         case BUFF_AOE:
         {
             RESETPACKET( pak, 0x7b2);
             ADDWORD    ( pak, clientid );
-            ADDWORD    ( pak, skillid );  
-            Battle->atktype = action; 
-            Battle->skillid = skillid;          
+            ADDWORD    ( pak, skillid );
+            Battle->atktype = action;
+            Battle->skillid = skillid;
         }
         break;
         case MONSTER_BUFF_SELF:
         {
             RESETPACKET( pak, 0x7b2);
             ADDWORD    ( pak, clientid );
-            ADDWORD    ( pak, skillid );  
-            Battle->atktype = action; 
-            Battle->skillid = skillid;          
+            ADDWORD    ( pak, skillid );
+            Battle->atktype = action;
+            Battle->skillid = skillid;
         }
-        break;        
+        break;
         case AOE_TARGET:
         {
+            //LMA 2008/09/02: new version, the target is a zone, not a monster... so we stick with aoedestiny ;)
+            /*
             RESETPACKET( pak, 0x7b4 );
             ADDWORD    ( pak, clientid );
             ADDWORD    ( pak, skillid );
             ADDFLOAT   ( pak, Target->Position->current.x*100 );
-            ADDFLOAT   ( pak, Target->Position->current.y*100 ); 
-            Battle->atktype = action; 
-            Battle->skillid = skillid;  
+            ADDFLOAT   ( pak, Target->Position->current.y*100 );
+            Battle->atktype = action;
+            Battle->skillid = skillid;
             Battle->skilltarget = Target->clientid;
             Battle->target = Target->clientid;     //LMA: just for compatibility use...
             Log(MSG_INFO,"StartAction, AOE_TARGET, target ID %i, (%.2f,%.2f)",Target->clientid,Target->Position->current.x,Target->Position->current.y);
+            */
+            RESETPACKET( pak, 0x7b4 );
+            ADDWORD    ( pak, clientid );
+            ADDWORD    ( pak, skillid );
+            ADDFLOAT   ( pak, Position->aoedestiny.x*100 );
+            ADDFLOAT   ( pak, Position->aoedestiny.y*100 );
+            Battle->atktype = action;
+            Battle->skillid = skillid;
+            Battle->skilltarget = 0;
+            Battle->target = 0;
+            Log(MSG_INFO,"StartAction, AOE_TARGET, target (%.2f,%.2f)",Position->aoedestiny.x,Position->aoedestiny.y);
         }
         break;
         case STAY_STILL_ATTACK:
         {
              //LMA: Very special case where the monster don't really attack (mc)
-             Battle->atktype = action; 
-             Battle->skillid = skillid;  
-             Battle->skilltarget = Target->clientid;            
+             Battle->atktype = action;
+             Battle->skillid = skillid;
+             Battle->skilltarget = Target->clientid;
              return;
          }
-        default: return;              
+        default: return;
     }
     //if (getClient()==NULL)
        GServer->SendToVisible( &pak, this );
     /*else
         getClient();*/
-        
-    if (!IsPlayer()) Battle->contatk = true;      
+
+    if (!IsPlayer()) Battle->contatk = true;
 }
 
 bool CCharacter::IsOnBattle( )
-{  
+{
     /*
     if (Battle->atktype==SUMMON_BUFF)
        Log(MSG_INFO,"IsOnBattle, atktype: %i/%i, bufftarget %i, skill %i ",Battle->atktype,SUMMON_BUFF,Battle->bufftarget,Battle->skillid);
     */
-    
+
     if(Battle->atktype==0) return false;
     switch(Battle->atktype)
     {
-        case NORMAL_ATTACK: 
+        case NORMAL_ATTACK:
         {
             if(Battle->atktarget!=0) return true;
         }
         break;
-        case SKILL_ATTACK: 
-        case AOE_TARGET: 
+        case SKILL_ATTACK:
+        case AOE_TARGET:
         {
             if(Battle->skilltarget!=0 && Battle->skillid!=0) return true;
         }
-        break;        
-        case SKILL_BUFF:  
+        break;
+        case SKILL_BUFF:
         {
             if(Battle->bufftarget!=0 && Battle->skillid!=0) return true;
         }
@@ -254,44 +267,44 @@ bool CCharacter::IsOnBattle( )
         }
         break;
         case MONSTER_BUFF_SELF:
-        case SKILL_AOE: 
-        case SKILL_SELF: 
-        case BUFF_SELF: 
+        case SKILL_AOE:
+        case SKILL_SELF:
+        case BUFF_SELF:
         case BUFF_AOE:
         {
-            if(Battle->skillid!=0) return true; 
+            if(Battle->skillid!=0) return true;
         }
         break;
         case STAY_STILL_ATTACK:
         {
               //LMA: Very special case where the monster don't really attack (mc)
               return true;
-         }            
-        default: return false;        
+         }
+        default: return false;
     }
 }
 
 bool CCharacter::CanAttack( ) // updated by Core
 {
- 
+
     // we cannot attack while sleeping or stunned
     if (Status->Sleep != 0xff || Status->Stun != 0xff) {
         return false;
     }
- 
+
      clock_t etime = clock() - Battle->lastAtkTime;
     //if( etime < CLOCKS_PER_SEC * 100 / Stats->Attack_Speed ) return false;   for the time being let's just let it be unsynced to avoid disbalanced
     int weapontype = IsPlayer()?getWeaponType():0;
     //the fix: not much but it works ;)
-    if (weapontype == 212) 
+    if (weapontype == 212)
         return true;
-        
-    //MZ 
+
+    //MZ
     //it's my fix, to protect from exception divide by zero
     //During fight, at change of the weapon it happens
         if (0 == Stats->Attack_Speed) return false;
-    //MZ        
-        
+    //MZ
+
     if ( weapontype == 231 || weapontype == 232 || weapontype == 233 )
     {
        if( (etime < CLOCKS_PER_SEC * (GServer->ATTK_SPEED_MODIF*4/3) / Stats->Attack_Speed) || Status->Stun != 0xff ) return false;
@@ -360,7 +373,7 @@ CCharacter* CCharacter::GetCharBuffTarget( )
 // VIRTUAL [reduce ammon/bullets/cannons]
 void CCharacter::ReduceABC( )
 {
-    
+
 }
 
 // VIRTUAL [get extra buff value]
@@ -371,7 +384,7 @@ int CCharacter::GetEVBuff( )
 
 // VIRTUAL [return intelligence]
 unsigned int CCharacter::GetInt( )
-{    
+{
     return 15;
 }
 
@@ -401,35 +414,35 @@ void CCharacter::RefreshBuff( )
                     else
                         Status->Defense_down = 0xff;
                     Stats->Defense = GetDefense( );
-                break;       
+                break;
                 case A_ACCUR:
                     if(i<15)
                         Status->Accury_up= 0xff;
                     else
                         Status->Accury_down = 0xff;
                     Stats->Accury = GetAccury( );
-                break;                                         
+                break;
                 case A_MRESIST:
                     if(i<15)
                         Status->Magic_Defense_up = 0xff;
                     else
                         Status->Magic_Defense_down = 0xff;
                     Stats->Magic_Defense = GetMagicDefense( );
-                break;       
+                break;
                 case A_DODGE:
                     if(i<15)
                         Status->Dodge_up = 0xff;
                     else
                         Status->Dodge_down = 0xff;
                     Stats->Dodge = GetDodge( );
-                break;      
+                break;
                 case A_DASH:
                     if(i<15)
                         Status->Dash_up = 0xff;
                     else
                         Status->Dash_down = 0xff;
                     Stats->Move_Speed = GetMoveSpeed( );
-                break;        
+                break;
                 case A_HASTE:
                     if(i<15)
                         Status->Haste_up = 0xff;
@@ -443,14 +456,14 @@ void CCharacter::RefreshBuff( )
                     else
                         Status->Critical_down = 0xff;
                     Stats->Critical = GetCritical( );
-                break;    
+                break;
                 case A_MAX_HP:
                     if(i<15)
                         Status->HP_up = 0xff;
                     else
                         Status->HP_down = 0xff;
                     Stats->MaxHP = GetMaxHP( );
-                break;                            
+                break;
                 case A_MAX_MP:
                     if(i<15)
                         Status->MP_up = 0xff;
@@ -465,21 +478,21 @@ void CCharacter::RefreshBuff( )
                         Stats->ExtraDamage = 0;
                         Stats->ExtraDamage_add=0;
                      }
-                        
+
                      else
                          Status->ExtraDamage_down = 0xff;
-                         
+
                 break;
                 case A_STEALTH:
                      if(i<15)
                         Status->Stealth = 0xff;
                      if(IsAttacking( ))
-                        MagicStatus[i].Duration = 0;                                                                
+                        MagicStatus[i].Duration = 0;
                      else
                         0xff;
                 case A_CLOAK:
                      Status->Cloaking = 0xff;
-                break;     
+                break;
                 case A_STUN:
                      Status->Stun = 0xff;
                      printf("removing stun\n");
@@ -501,10 +514,10 @@ void CCharacter::RefreshBuff( )
                      //StartAction(NULL, 0, 0, true);
                 break;
 
-                                                                        
+
             }
             MagicStatus[i].Buff = 0;
-            MagicStatus[i].BuffTime = 0;            
+            MagicStatus[i].BuffTime = 0;
             MagicStatus[i].Duration = 0;
             MagicStatus[i].Value = 0;
             bflag = true;
@@ -515,7 +528,7 @@ void CCharacter::RefreshBuff( )
              MagicStatus[i].BuffTime+= 1*CLOCKS_PER_SEC;
              MagicStatus[i].Duration-=1;
              printf("did %i poison dmg to the player, still %i seconds and %i HP remain \n", MagicStatus[i].Value, MagicStatus[i].Duration, Stats->HP);
-             
+
              //A bunch of messy code to send dmg packet
              BEGINPACKET( pak, 0x7b6 );
              ADDWORD    ( pak, clientid );
@@ -523,7 +536,7 @@ void CCharacter::RefreshBuff( )
              ADDDWORD   ( pak, 0x000007f8 );
              ADDBYTE    ( pak, 0x00 );
              ADDDWORD   ( pak, MagicStatus[i].Value );
-    
+
              //If Enemy is killed
              if( IsDead())
              {
@@ -559,7 +572,7 @@ void CCharacter::RefreshBuff( )
                  }
                  GServer->SendToVisible( &pak, this, thisdrop );
              }
-    
+
              //If enemy is still alive
              else
              {
@@ -573,7 +586,7 @@ void CCharacter::RefreshBuff( )
              MagicStatus[i].BuffTime+= 1*CLOCKS_PER_SEC;
              MagicStatus[i].Duration-=1;
              printf("did %i flame dmg to the player, still %i seconds and %i HP remain \n", MagicStatus[i].Value, MagicStatus[i].Duration, Stats->HP);
-             
+
              //A bunch of messy code to send dmg packet
              BEGINPACKET( pak, 0x7b6 );
              ADDWORD    ( pak, clientid );
@@ -581,7 +594,7 @@ void CCharacter::RefreshBuff( )
              ADDDWORD   ( pak, 0x000007f8 );
              ADDBYTE    ( pak, 0x00 );
              ADDDWORD   ( pak, MagicStatus[i].Value );
-    
+
              //If Enemy is killed
              if( IsDead())
              {
@@ -617,7 +630,7 @@ void CCharacter::RefreshBuff( )
                  }
                  GServer->SendToVisible( &pak, this, thisdrop );
              }
-    
+
              //If enemy is still alive
              else
              {
@@ -625,14 +638,14 @@ void CCharacter::RefreshBuff( )
                  GServer->SendToVisible( &pak, this );
              }
          }
-    }        
+    }
     if(bflag)
     {
         BEGINPACKET( pak,0x7b7 );
         ADDWORD    ( pak, clientid );
-        ADDDWORD   ( pak, GServer->BuildBuffs( this ) );            
-        GServer->SendToVisible( &pak, this );        
-    } 
+        ADDDWORD   ( pak, GServer->BuildBuffs( this ) );
+        GServer->SendToVisible( &pak, this );
+    }
 }
 
 // VIRTUAL [return party pointer]
@@ -652,8 +665,8 @@ bool CCharacter::IsAttacking( )
             case BUFF_AOE:
                 return false;
         }
-    }   
-    else return false; 
+    }
+    else return false;
     return true;
 }
 

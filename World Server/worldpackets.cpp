@@ -3264,6 +3264,9 @@ bool CWorldServer::pakSkillAOE( CPlayer* thisclient, CPacket* P)
             thisclient->StartAction( character , AOE_TARGET, skillid );
         }
         */
+
+        //LMA 2008/09/02: new version, the target is a zone, not a monster... so we stick with aoedestiny ;)
+        /*
         //LMA: The packet doesn't give the target, only a location :)
         //So we try to get a monster near the coordinates we have...
         CMonster* thismonster=LookAOEMonster(thisclient);
@@ -3282,12 +3285,15 @@ bool CWorldServer::pakSkillAOE( CPlayer* thisclient, CPacket* P)
            return true;
         }
 
-        thisclient->StartAction( character , AOE_TARGET, skillid );
+        */
+        thisclient->StartAction( NULL , AOE_TARGET, skillid );
     }
     else
     {
         //Log( MSG_INFO, "no aoe, skillid = %i ", thisclient->Battle->skillid);
     }
+
+
     return true;
 }
 

@@ -174,6 +174,8 @@ void CCharacter::DoAttack( )
             }
             if(Battle->atktype==AOE_TARGET)
             {
+                //LMA 2008/09/02: new version, the target is a zone, not a monster... so we stick with aoedestiny ;)
+                /*
                 Enemy = GetCharTarget( );
                 if(Enemy==NULL)
                 {
@@ -203,6 +205,17 @@ void CCharacter::DoAttack( )
                 {
                     Log(MSG_INFO,"[DoAttack] In AOE_TARGET time for AoeSkill");
                     AoeSkill( skill, Enemy );
+                }
+                else
+                {
+                    Log(MSG_INFO,"[DoAttack] In AOE_TARGET not reached or can't attack");
+                }
+                */
+                float distance = GServer->distance( Position->current, Position->aoedestiny );
+                if(distance<=skill->range)
+                {
+                    Log(MSG_INFO,"[DoAttack] In AOE_TARGET time for AoeSkill");
+                    AoeSkill( skill, NULL );    //LMA: no specific Enemy in Zone.
                 }
                 else
                 {
@@ -547,7 +560,9 @@ bool CCharacter::AoeSkill( CSkills* skill, CCharacter* Enemy )
     fPoint goodtarget;
     goodtarget=Position->current;
     if (Battle->atktype==AOE_TARGET)
+    {
        goodtarget=Position->aoedestiny;
+    }
 
     if(Battle->castTime==0)
     {
@@ -559,10 +574,16 @@ bool CCharacter::AoeSkill( CSkills* skill, CCharacter* Enemy )
     }
     else
     {
-        clock_t etime = clock() - Battle->castTime;
-        if(etime<SKILL_DELAY)
-            return true;
+        //LMA: No delay for AOE_TARGET skill (zone)
+        if (Battle->atktype!=AOE_TARGET)
+        {
+            clock_t etime = clock() - Battle->castTime;
+            if(etime<SKILL_DELAY)
+                return true;
+        }
+
     }
+
     Battle->castTime = 0;
     CMap* map = GServer->MapList.Index[Position->Map];
     for(UINT i=0;i<map->MonsterList.size();i++)
@@ -599,6 +620,7 @@ bool CCharacter::AoeSkill( CSkills* skill, CCharacter* Enemy )
 
         }
     }
+
     if(Enemy!=NULL)
     {
         if(!Enemy->IsDead( ))
