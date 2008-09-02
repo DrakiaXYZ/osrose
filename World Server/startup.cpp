@@ -702,13 +702,16 @@ bool CWorldServer::LoadMobGroups() {
 //  MYSQL_RES *result = DB->QStore("SELECT id, map, x, y, range, respawntime, `limit`, tacticalpoints, moblist FROM list_mobgroups");
   MYSQL_RES *result = DB->QStore("SELECT `id`, `map`, `x`, `y`, `range`, `respawntime`, `limit`, `tacticalpoints`, `moblist` FROM `list_mobgroups`");
   if (result == NULL) return false;
-  while (row = mysql_fetch_row(result)) {
+  while (row = mysql_fetch_row(result))
+  {
     CMobGroup* thisgroup = new (nothrow) CMobGroup;
-    if (thisgroup == NULL) {
+    if (thisgroup == NULL)
+    {
       Log(MSG_ERROR, "Error allocating memory");
       DB->QFree();
       return false;
     }
+
     thisgroup->id = atoi(row[0]);
     thisgroup->map = atoi(row[1]);
     thisgroup->point.x = atof(row[2]);
@@ -729,9 +732,14 @@ bool CWorldServer::LoadMobGroups() {
     thisgroup->basicMobs.clear();
     thisgroup->tacMobs.clear();
 
+    //LMA: resetting the error flag
+    flag=true;
+
     // Fill in basic/tac mobs
     tmp = strtok(mobList, ",|");
-    while (tmp != NULL) {
+    while (tmp != NULL)
+    {
+
       int mobId = atoi(tmp);
       tmp = strtok(NULL, ",|");
       if (tmp == NULL) {
@@ -781,15 +789,21 @@ bool CWorldServer::LoadMobGroups() {
       else
         thisgroup->basicMobs.push_back(thismob);
       tmp = strtok(NULL, ",|");
+     }
+
+        if (!flag)
+        {
+          delete thisgroup;
+          continue;
+        }
+
+        MapList.Index[thisgroup->map]->MobGroupList.push_back(thisgroup);
+        mobGroups.push_back(thisgroup);
     }
-    if (!flag) {
-      delete thisgroup;
-      continue;
-    }
-    MapList.Index[thisgroup->map]->MobGroupList.push_back(thisgroup);
-    mobGroups.push_back(thisgroup);
-    }
+
     DB->QFree( );
+
+
     return true;
 }
 #endif
