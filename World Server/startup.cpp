@@ -47,6 +47,8 @@ bool CWorldServer::LoadSTBData( )
 	STBStoreData("3DData\\STB\\LIST_UPGRADE.STB", &upgradeData);
 }
 
+//LMA: npc_data, sql version.
+/*
 bool CWorldServer::LoadNPCData( )
 {
 //	Change MSG_LOAD to MSG_INFO for more details on the screen
@@ -156,6 +158,81 @@ bool CWorldServer::LoadNPCData( )
 	DB->QFree( );
 	Log( MSG_LOAD, "NPC Data loaded" );
 	return true;
+}
+*/
+
+//LMA: npc_data, STB version.
+bool CWorldServer::LoadNPCData( )
+{
+    for (UINT i = 0; i<STB_NPC.rowcount; i++)
+    {
+        //checking if it's a NPC / monster or just an empty line.
+        if(STB_NPC.rows[i][8]==0)
+        {
+            continue;
+        }
+
+        CNPCData* newnpc = new (nothrow) CNPCData;
+        if(newnpc==NULL)
+        {
+            Log( MSG_ERROR, "Error allocing memory" );
+            continue;
+        }
+
+        newnpc->id = i;
+        newnpc->life = 0;    //LMA: non sense, it's the name lol
+        newnpc->wspeed = STB_NPC.rows[i][2];
+        newnpc->rspeed = STB_NPC.rows[i][3];
+        newnpc->dspeed = STB_NPC.rows[i][4];
+        newnpc->weapon = STB_NPC.rows[i][5];
+        newnpc->subweapon = STB_NPC.rows[i][6];
+        newnpc->level = STB_NPC.rows[i][7];
+        newnpc->hp = STB_NPC.rows[i][8];
+
+        newnpc->atkpower = STB_NPC.rows[i][9];
+        newnpc->hitrate = STB_NPC.rows[i][10];
+        newnpc->defense = STB_NPC.rows[i][11];
+        newnpc->magicdefense = STB_NPC.rows[i][12];
+        newnpc->dodge = STB_NPC.rows[i][13];
+        newnpc->atkspeed = STB_NPC.rows[i][14];
+        newnpc->AI = STB_NPC.rows[i][16];
+        newnpc->exp = STB_NPC.rows[i][17];
+
+        newnpc->dropid = STB_NPC.rows[i][18];
+        newnpc->money = STB_NPC.rows[i][19];
+        newnpc->item = STB_NPC.rows[i][20];
+        newnpc->tab1 = STB_NPC.rows[i][21];
+        newnpc->tab2 = STB_NPC.rows[i][22];
+        newnpc->tab3 = STB_NPC.rows[i][23];
+        newnpc->specialtab = STB_NPC.rows[i][24];
+
+        newnpc->atkdistance = STB_NPC.rows[i][26]/100;
+        newnpc->aggresive = STB_NPC.rows[i][27];
+        newnpc->shp = STB_NPC.rows[i][42];
+        newnpc->dialogid = 0;   //handled in list_npc now
+        newnpc->eventid = 0;   //handled in list_npc now
+        newnpc->side=0; //hidden
+        newnpc->sidechance=0;   //hidden
+
+        //LMA: Various skills for monsters (won't be used anymore, will be done by AIP, for now left for compatibility).
+        for(int i=0;i<4;i++)
+        {
+          newnpc->askills[i]=0;
+          newnpc->bskills[i]=0;
+          newnpc->dskills[i]=0;
+        }
+
+        newnpc->lastskill=0;
+        newnpc->sigskill=0;
+        newnpc->delayskill=0;
+        NPCData.push_back( newnpc );
+    }
+
+    STBFreeData(&STB_NPC);
+    Log( MSG_LOAD, "NPC Data loaded          STB" );
+
+
+    return true;
 }
 
 bool CWorldServer::LoadSkillData( )
@@ -679,13 +756,25 @@ bool CWorldServer::LoadMobGroups() {
       thismob->tactical = tactical;
       thismob->mobId = mobId;
       thismob->thisnpc = GetNPCDataByID( thismob->mobId );
-      thismob->mapdrop = GetDropData( thisgroup->map );
-      thismob->mobdrop = GetDropData( thismob->thisnpc->dropid );
-      if (thismob->thisnpc == NULL) {
-        Log(MSG_WARNING, "Invalid mobId - Mob %i will not be added", atoi(row[0]));
-        delete thismob;
-        continue;
+
+      //LMA: We check here and delete the whole group.
+      if (thismob->thisnpc == NULL)
+      {
+        Log(MSG_WARNING, "Group %i:: Invalid monster %i",thisgroup->id,thismob->mobId);
+        flag=false;
+        break;
       }
+
+    //LMA: shouldn't be PY'drop used in those ones?
+      thismob->mapdrop=NULL;
+      thismob->mobdrop=NULL;
+
+    /*
+    //Org code
+      thismob->mapdrop = GetDropData( thisgroup->map );
+      thismob->mobdrop= GetDropData( thismob->thisnpc->dropid );
+      */
+
       if (thismob->tactical)
         thisgroup->tacMobs.push_back(thismob);
       else
@@ -854,7 +943,7 @@ bool CWorldServer::LoadNPCs( )
 
         thisnpc->thisnpc->dialogid = atoi(row[5]); //This is global to NPC type (original dialog)
         //thisnpc->dialog=thisnpc->thisnpc->dialogid;
-        //thisnpc->event=thisnpc->thisnpc->eventid; //LMA Event.        
+        //thisnpc->event=thisnpc->thisnpc->eventid; //LMA Event.
         thisnpc->event=atoi(row[6]);                //LMA Event.
         thisnpc->dialog=atoi(row[7]);               //LMA tempdialog ID, used for events for example
 
@@ -1010,7 +1099,6 @@ bool CWorldServer::LoadPYDropsData( )
 }
 
 //hidden
-
 bool CWorldServer::LoadSkillBookDropsData( )
 {
     Log( MSG_INFO, "Loading Skillbook data" );
@@ -1107,7 +1195,7 @@ bool CWorldServer::LoadMonsters( )
 
 bool CWorldServer::LoadUpgrade( )
 {
-/*     
+/*
 	Log( MSG_LOAD, "Refine Data                 " );
     FILE* fh = NULL;
     fh = fopen("data/refine_data.csv", "r");
@@ -1127,11 +1215,11 @@ bool CWorldServer::LoadUpgrade( )
     fclose(fh);
 */
 //    CSTBData upgradeData; // defined in worldserver.h
- 
+
     Log( MSG_LOAD, "Refine Data (STB)      " );
-    
+
 //    STBStoreData("data/LIST_UPGRADE.STB", &upgradeData); // defined above
-    
+
     for (UINT i = 0; i<upgradeData.rowcount; i++) {
         // weapons
         if (upgradeData.rows[i][0] != 0) {
@@ -1142,7 +1230,7 @@ bool CWorldServer::LoadUpgrade( )
             upgrade[1][upgradeData.rows[i][2]] = upgradeData.rows[i][3];
         }
     }
- 
+
     STBFreeData(&upgradeData);
 
    	Log( MSG_LOAD, "Refine Data loaded" );
@@ -1294,7 +1382,7 @@ bool CWorldServer::LoadEquip( )
             //delete newequip;
         }
     }
-*/        
+*/
     Log( MSG_LOAD, "Equip Data loaded" );
     return true;
 }
@@ -1371,7 +1459,7 @@ bool CWorldServer::LoadJemItem( )
         thisjem->stat2[1] = STB_ITEM[10].rows[i][19];
         JemList.Data.push_back( thisjem );
         JemList.Index[thisjem->id] = thisjem;
-    }    
+    }
     Log( MSG_LOAD, "Jem Data loaded" );
     return true;
 }
@@ -1595,7 +1683,7 @@ bool CWorldServer::LoadProductItem( )
         newproduct->amount[3]=STB_PRODUCT.rows[i][9];
         ProductList.Data.push_back( newproduct );
         ProductList.Index[newproduct->id] = newproduct;
-    }    
+    }
     Log( MSG_LOAD, "Product Data loaded" );
     return true;
 }
@@ -1658,7 +1746,7 @@ bool CWorldServer::LoadSellData( )
         }
         SellList.Data.push_back( newsell );
         SellList.Index[newsell->id] = newsell;
-    }    
+    }
     Log( MSG_LOAD, "Sell Data loaded" );
     return true;
 }
@@ -1739,7 +1827,7 @@ bool CWorldServer::LoadConsItem( )
         newuse->useeffect[1]= STB_ITEM[9].rows[i][20];
         UseList.Data.push_back( newuse );
         UseList.Index[newuse->id] = newuse;
-    }    
+    }
     Log( MSG_LOAD, "Consumable Data Loaded" );
     return true;
 }

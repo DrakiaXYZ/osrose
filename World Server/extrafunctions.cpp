@@ -645,13 +645,26 @@ CSkills* CWorldServer::GetSkillByID( unsigned int id )
 // Get Monster Drop By ID
 CMDrops* CWorldServer::GetDropData( unsigned int id )
 {
+    //LMA: problem is that we use PY's code and ->id is never used???
+    return NULL;
+
+    /*
+    //org code.
     unsigned int A=0,B=0,C=0;
     for(A=0,B=MDropList.size()-1;A<=B;)
     {
         if(A==B)
         {
            CMDrops* thismdrop = (CMDrops*) MDropList.at( A );
-           id = thismdrop->id;
+
+           //LMA: problem...
+           if(id!=thismdrop->id)
+           {
+                Log(MSG_WARNING,"DROP NOT FOUND (A==B)! %i", id );
+                return NULL;
+           }
+
+           //id = thismdrop->id;
            return thismdrop;
         }
         C = (A+B)/2;
@@ -660,8 +673,10 @@ CMDrops* CWorldServer::GetDropData( unsigned int id )
         if(thismdrop->id > id){B=C-1;}
         else{A=C+1;}
     }
-    Log(MSG_WARNING,"DROP NOT FOUNDED! %i", id );
+
+    Log(MSG_WARNING,"DROP NOT FOUND! %i", id );
     return NULL;
+    */
 }
 
 // Get NPC Data by ID
@@ -672,18 +687,25 @@ CNPCData* CWorldServer::GetNPCDataByID( unsigned int id )
     {
         if(A==B)
         {
+            //LMA: we can have a problem here...
             CNPCData* thisnpc = (CNPCData*) NPCData.at( A );
-            id = thisnpc->id;
-            return thisnpc;
+            if(id!=thisnpc->id)
+            {
+                Log(MSG_WARNING,"NPC NOT FOUND (A==B)! %i", id );
+                return NULL;
+            }
 
+            //id = thisnpc->id;
+            return thisnpc;
         }
+
         C = (A+B)/2;
         CNPCData* thisnpc = (CNPCData*) NPCData.at( C );
         if(thisnpc->id == id){return thisnpc;}
         if(thisnpc->id > id){B=C-1;}
         else{A=C+1;}
     }
-    Log(MSG_WARNING,"NPC NOT FOUNDED! %i", id );
+    Log(MSG_WARNING,"NPC NOT FOUND! %i", id );
     return NULL;
 }
 
@@ -822,7 +844,7 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
                     //Forgotten Temple B2 - Mileage Scroll - added by rl2171
                     case 367:
                         useitem->usetype = 57;
-                        useitem->usevalue = 55405148; 
+                        useitem->usevalue = 55405148;
                     break;
                     //Junon's Order Return Scroll - Quest Scroll - added by rl2171
                     case 945:
@@ -2633,7 +2655,7 @@ void CWorldServer::UWForceDelQuest(CPlayer* thisclient,int action,int questpart,
      Log(MSG_INFO,"QSD mode: UWForceDelQuest unavailable");
      return;
      #endif
-     
+
     //server part
     #ifndef USENEWQUESTSYSTEM
     thisclient->DelQuestUW( questid );
