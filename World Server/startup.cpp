@@ -164,6 +164,7 @@ bool CWorldServer::LoadNPCData( )
 //LMA: npc_data, STB version.
 bool CWorldServer::LoadNPCData( )
 {
+	Log( MSG_LOAD, "NPC Data - STB               " );     
     for (UINT i = 0; i<STB_NPC.rowcount; i++)
     {
         //checking if it's a NPC / monster or just an empty line.
@@ -1216,7 +1217,7 @@ bool CWorldServer::LoadUpgrade( )
 */
 //    CSTBData upgradeData; // defined in worldserver.h
 
-    Log( MSG_LOAD, "Refine Data (STB)      " );
+    Log( MSG_LOAD, "Refine Data - STB      " );
 
 //    STBStoreData("data/LIST_UPGRADE.STB", &upgradeData); // defined above
 
