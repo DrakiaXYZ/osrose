@@ -204,6 +204,8 @@ void CCharacter::StartAction( CCharacter* Target, BYTE action, UINT skillid, boo
             Battle->skillid = skillid;
             Battle->skilltarget = 0;
             Battle->target = 0;
+            Position->destiny  = Position->aoedestiny;
+            Position->lastMoveTime = clock( );
             Log(MSG_INFO,"StartAction, AOE_TARGET, target (%.2f,%.2f)",Position->aoedestiny.x,Position->aoedestiny.y);
         }
         break;

@@ -211,7 +211,9 @@ void CCharacter::DoAttack( )
                     Log(MSG_INFO,"[DoAttack] In AOE_TARGET not reached or can't attack");
                 }
                 */
-                float distance = GServer->distance( Position->current, Position->aoedestiny );
+
+                float distance=GServer->distance( Position->current, Position->aoedestiny );
+                //Log(MSG_INFO,"distance %f / range: %i, current: %.2f,%.2f, aoe: %.2f,%.2f",distance,skill->range,Position->current.x,Position->current.y,Position->aoedestiny.x,Position->aoedestiny.y);
                 if(distance<=skill->range)
                 {
                     Log(MSG_INFO,"[DoAttack] In AOE_TARGET time for AoeSkill");
@@ -219,7 +221,8 @@ void CCharacter::DoAttack( )
                 }
                 else
                 {
-                    Log(MSG_INFO,"[DoAttack] In AOE_TARGET not reached or can't attack");
+                    //LMA: Too verbose...
+                    //Log(MSG_INFO,"[DoAttack] In AOE_TARGET not reached or can't attack");
                 }
 
             }
@@ -555,6 +558,7 @@ bool CCharacter::AoeSkill( CSkills* skill, CCharacter* Enemy )
 {
     Log(MSG_INFO,"In AOE Skill");
     Position->destiny = Position->current;
+    //Log(MSG_INFO,"Position in AOE: %.2f,%.2f",Position->current.x,Position->current.y);
 
     //LMA: handling case of AOE_SKILLS and AOE_TARGET (the target point is not the same).
     fPoint goodtarget;

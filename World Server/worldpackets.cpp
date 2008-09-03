@@ -3224,11 +3224,12 @@ bool CWorldServer::pakSkillAOE( CPlayer* thisclient, CPacket* P)
         thisclient->Status->Mute!=0xff || !thisclient->Status->CanCastSkill) return true;
     BYTE num = GETBYTE( (*P), 0 );
 
-    //LMA: position of monster targeted.
+    //LMA: position of monster targeted (in fact it's a zone, monster is just a mean to an end).
     thisclient->Position->aoedestiny.x=GETFLOAT((*P), 0x02 )/100;
     thisclient->Position->aoedestiny.y=GETFLOAT((*P), 0x06 )/100;
     thisclient->Position->aoedestiny.z=0;
 
+    //Log(MSG_INFO,"AOE Current %.2f,%.2f",thisclient->Position->current.x,thisclient->Position->current.y);
     //Log(MSG_INFO,"[pakSkillAOE] num=%i,x=%.2f, y=%.2f",num,thisclient->Position->aoedestiny.x,thisclient->Position->aoedestiny.y);
     if(num>=MAX_SKILL)
     {
@@ -3285,7 +3286,9 @@ bool CWorldServer::pakSkillAOE( CPlayer* thisclient, CPacket* P)
            return true;
         }
 
+        thisclient->StartAction( character , AOE_TARGET, skillid );
         */
+
         thisclient->StartAction( NULL , AOE_TARGET, skillid );
     }
     else
