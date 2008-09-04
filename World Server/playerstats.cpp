@@ -1322,12 +1322,12 @@ unsigned int CPlayer::GetMaxMP( )
                     if( GServer->JemList.Index[items[i].gem]->stat1[0] == A_MAX_MP)
                     {
                         maxmp += GServer->JemList.Index[items[i].gem]->stat1[1];
-                        Log(MSG_INFO,"Amethyst(?) detected (stat1), adding %i do maxmp",GServer->JemList.Index[items[i].gem]->stat1[1]);
+                        Log(MSG_INFO,"Turquoise(?) detected (stat1), adding %i do maxmp",GServer->JemList.Index[items[i].gem]->stat1[1]);
                     }
                     if( GServer->JemList.Index[items[i].gem]->stat2[0] == A_MAX_MP)
                     {
                         maxmp += GServer->JemList.Index[items[i].gem]->stat2[1];
-                        Log(MSG_INFO,"Amethyst(?) detected (stat2), adding %i do maxmp",GServer->JemList.Index[items[i].gem]->stat2[1]);
+                        Log(MSG_INFO,"Turquoise(?) detected (stat2), adding %i do maxmp",GServer->JemList.Index[items[i].gem]->stat2[1]);
                     }
                 }
             }
