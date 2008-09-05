@@ -2925,6 +2925,32 @@ bool CWorldServer::pakUseItem ( CPlayer* thisclient, CPacket* P )
             flag=true;
         }
         break;
+        case 14:
+        {
+            //LMA: PY's code, different script for dance scrolls
+            CSkills* thisskill = GetSkillByID( thisuse->usetype );
+            if(thisskill == NULL)
+            {
+                Log(MSG_WARNING, "Char %s tried to use invalid Dance scroll type: %i", thisclient->CharInfo->charname, thisuse->usetype );
+                delete thisuse;
+                return true;
+            }
+            Log(MSG_INFO, "Char %s used a Dance scroll type: %i", thisclient->CharInfo->charname, thisuse->usetype );
+            int skilltarget = thisskill->target;
+            int skillrange = thisskill->aoeradius;
+            flag = true;
+            Log(MSG_INFO, "Sending skill request. AOE range = %i", skillrange);
+            if(skillrange > 0 ) //AOE effect
+            {
+                thisclient->StartAction( NULL,BUFF_AOE,thisuse->usetype );
+            }
+            else
+            {
+                thisclient->StartAction( NULL,BUFF_SELF,thisuse->usetype );
+            }
+            flag=true;
+        }
+        break;
     }
     if(flag == true)
     {

@@ -871,9 +871,12 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
             if( (useitem->itemnum>370 && useitem->itemnum<377) ||
                 (useitem->itemnum>389 && useitem->itemnum<398) )
             {
-                useitem->usescript = 4;
+                //LMA: PY's code, different script for dance scrolls
+                /*useitem->usescript = 4;
                 useitem->usetype = UseList.Index[useitem->itemnum]->useeffect[0];
-                useitem->usevalue = UseList.Index[useitem->itemnum]->useeffect[1];
+                useitem->usevalue = UseList.Index[useitem->itemnum]->useeffect[1];*/
+                useitem->usescript = 14; // should not be treated the same as firecrackers. this is a skill
+                useitem->usetype = UseList.Index[useitem->itemnum]->useeffect[1];
             }
             else // Firecrackers
             if( useitem->itemnum==913 ||
