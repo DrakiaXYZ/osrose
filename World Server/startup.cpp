@@ -164,7 +164,7 @@ bool CWorldServer::LoadNPCData( )
 //LMA: npc_data, STB version.
 bool CWorldServer::LoadNPCData( )
 {
-	Log( MSG_LOAD, "NPC Data - STB               " );     
+	Log( MSG_LOAD, "NPC Data - STB               " );
     for (UINT i = 0; i<STB_NPC.rowcount; i++)
     {
         //checking if it's a NPC / monster or just an empty line.
@@ -1262,6 +1262,8 @@ bool CWorldServer::CleanConnectedList( )
 
 bool CWorldServer::LoadEquip( )
 {
+    //LMA: csv version.
+    /*
     Log( MSG_LOAD, "Equip Data                  " );
     FILE* fh = NULL;
     fh = fopen("data/equip_data.csv", "r");
@@ -1334,7 +1336,9 @@ bool CWorldServer::LoadEquip( )
         EquipList[newequip->equiptype].Index[newequip->id] = newequip; // Index to read more quickly the data
     }
     fclose(fh);
-/*
+    */
+
+    //STB version
     Log( MSG_LOAD, "Equip Data - STB         " );
     for(int j=0;j<9;j++)
     {
@@ -1346,7 +1350,17 @@ bool CWorldServer::LoadEquip( )
                 Log(MSG_WARNING, "\nError allocing memory: equip" );
                 return false;
             }
+
             newequip->id = i;
+
+            //LMA: check if out of memory.
+            if (newequip->id>=MAX_EQUIP_DATA)
+            {
+               Log(MSG_WARNING,"equip, index overflow trapped %i>%i (increase MAX_EQUIP_DATA)",newequip->id,MAX_EQUIP_DATA);
+               delete newequip;
+               continue;
+            }
+
             newequip->equiptype = (j+1);
             newequip->type = STB_ITEM[j].rows[i][4];
             newequip->price = STB_ITEM[j].rows[i][5];
@@ -1367,19 +1381,26 @@ bool CWorldServer::LoadEquip( )
                 newequip->movespeed = 0;
             }
 
-            if (STB_ITEM[j].fieldcount>35){
+            //All files from itemtype 1 to 10 are loaded here, it's a test for weapons I guess.
+            if (STB_ITEM[j].fieldcount>35)
+            {
                 newequip->attackpower = STB_ITEM[j].rows[i][35];
                 newequip->attackspeed = STB_ITEM[j].rows[i][36];
+                //LMA: magicattack not handled !!
+                /*
                 newequip->magicattack = STB_ITEM[j].rows[i][37];      //new. Staffs and wands are designated as magic weapons.
                 if(newequip->magicattack > 1)newequip->magicattack = 0; //all the blue named spears have weird numbers here. Maybe why NA had a massive damage glitch with them.
+                */
             }
-            else{
+            else
+            {
                 newequip->attackpower = 0;
                 newequip->attackspeed = 0;
-                newequip->magicattack = 0;
+                //LMA: magicattack not handled !!
+                //newequip->magicattack = 0;
             }
 
-
+            //job1 to job3
             for(int k=0;k<3;k++)
                 newequip->occupation[k] = STB_ITEM[j].rows[i][(16+k)];
             for(int k=0;k<2;k++)
@@ -1391,14 +1412,17 @@ bool CWorldServer::LoadEquip( )
             for(int k=0;k<2;k++)
                 newequip->stat2[k] = STB_ITEM[j].rows[i][(27+k)];
             newequip->itemgrade = STB_ITEM[j].rows[i][46];
-            newequip->raretype = STB_ITEM[j].rows[i][47];
+
+            //LMA: raretype not handled !!
+            //newequip->raretype = STB_ITEM[j].rows[i][47];
             EquipList[newequip->equiptype].Data.push_back( newequip );
             EquipList[newequip->equiptype].Index[newequip->id] = newequip; // Index to read more quickly the data
-            //delete newequip;
         }
     }
-*/
+
     Log( MSG_LOAD, "Equip Data loaded" );
+
+
     return true;
 }
 
@@ -1462,6 +1486,15 @@ bool CWorldServer::LoadJemItem( )
             continue;
         }
         thisjem->id = i;
+
+        //LMA: check if out of memory.
+        if (thisjem->id>=MAX_JEM_DATA)
+        {
+           Log(MSG_WARNING,"Jems, index overflow trapped %i>%i (increase MAX_JEM_DATA)",thisjem->id,MAX_JEM_DATA);
+           delete thisjem;
+           continue;
+        }
+
         thisjem->type = STB_ITEM[10].rows[i][4];
         thisjem->price = STB_ITEM[10].rows[i][5];
         thisjem->pricerate = STB_ITEM[10].rows[i][6];
@@ -1533,6 +1566,15 @@ bool CWorldServer::LoadNaturalItem( )
             return false;
         }
         thisnatural->id = i;
+
+        //LMA: check if out of memory.
+        if (thisnatural->id>=MAX_NATURAL_DATA)
+        {
+           Log(MSG_WARNING,"natural data, index overflow trapped %i>%i (increase MAX_NATURAL_DATA)",thisnatural->id,MAX_NATURAL_DATA);
+           delete thisnatural;
+           continue;
+        }
+
         thisnatural->type = STB_ITEM[11].rows[i][4];
         thisnatural->price = STB_ITEM[11].rows[i][5];
         thisnatural->pricerate = STB_ITEM[11].rows[i][6];
@@ -1608,6 +1650,15 @@ bool CWorldServer::LoadPatItem( )
             return false;
         }
         newpat->id = i;
+
+        //LMA: check if out of memory.
+        if (newpat->id>=MAX_PAT_DATA)
+        {
+           Log(MSG_WARNING,"PAT Data, index overflow trapped %i>%i (increase MAX_PAT_DATA)",newpat->id,MAX_PAT_DATA);
+           delete newpat;
+           continue;
+        }
+
         newpat->type = STB_ITEM[13].rows[i][4];
         newpat->price = STB_ITEM[13].rows[i][5];
         newpat->pricerate = STB_ITEM[13].rows[i][6];
@@ -1688,6 +1739,15 @@ bool CWorldServer::LoadProductItem( )
             return false;
         }
         newproduct->id = i;
+
+        //LMA: check if out of memory.
+        if (newproduct->id>=MAX_PRODUCT_DATA)
+        {
+           Log(MSG_WARNING,"Product Data, index overflow trapped %i>%i (increase MAX_PRODUCT_DATA)",newproduct->id,MAX_PRODUCT_DATA);
+           delete newproduct;
+           continue;
+        }
+
         newproduct->item[0]=STB_PRODUCT.rows[i][2];
         newproduct->amount[0]=STB_PRODUCT.rows[i][3];
         newproduct->item[1]=STB_PRODUCT.rows[i][4];
@@ -1755,6 +1815,15 @@ bool CWorldServer::LoadSellData( )
             return false;
         }
         newsell->id = i;
+
+        //LMA: check if out of memory.
+        if (newsell->id>=MAX_SELL_DATA)
+        {
+           Log(MSG_WARNING,"sell data, index overflow trapped %i>%i (increase MAX_SELL_DATA)",newsell->id,MAX_SELL_DATA);
+           delete newsell;
+           continue;
+        }
+
         for(unsigned int j=2;j<STB_SELL.fieldcount;j++)
         {
             newsell->item[j-2] = STB_SELL.rows[i][j];
@@ -1829,6 +1898,15 @@ bool CWorldServer::LoadConsItem( )
             return false;
         }
         newuse->id = i;
+
+        //LMA: check if out of memory.
+        if (newuse->id>=MAX_USE_DATA)
+        {
+           Log(MSG_WARNING,"Consummables, index overflow trapped %i>%i (increase MAX_USE_DATA)",newuse->id,MAX_USE_DATA);
+           delete newuse;
+           continue;
+        }
+
         newuse->restriction = STB_ITEM[9].rows[i][3];
         newuse->type = STB_ITEM[9].rows[i][4];
         newuse->price = STB_ITEM[9].rows[i][5];
