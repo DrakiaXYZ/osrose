@@ -4164,6 +4164,9 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
        case 0x02: // Treasure Chests, Gift Box - by Drakia
                   // Disassemble - by Geobot
         {
+
+            Log(MSG_INFO,"DSM: B0 %i, B1 %i, B2 %i, B3 %i",GETBYTE((*P), 0),GETBYTE((*P), 1),GETBYTE((*P), 2),GETBYTE((*P), 3));
+
             CItem item;
             CItem itemextra;
             unsigned int chestSlot = GETBYTE((*P), 3);
@@ -4178,13 +4181,29 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
             if(thisclient->items[src].count < 1)
                 return false;
 
-           int k = 9999;
-           for(int i=0;i<1000;i++)
+           //LMA: using max break.
+           //int k = 9999;
+           int k = MAX_BREAK;
+
+           //for(int i=0;i<1000;i++)
+           for(int i=0;i<MAX_BREAK;i++)
            {
-               if(thisclient->items[src].itemnum == BreakList[i].itemnum && thisclient->items[src].itemtype == BreakList[i].itemtype)
+                //LMA: new way?
+                /*
+                if(thisclient->items[src].itemnum == BreakList[i].itemnum && thisclient->items[src].itemtype == BreakList[i].itemtype)
                    k = i;
+                */
+                if(thisclient->items[src].itemnum == BreakList[i].itemnum && thisclient->items[src].itemtype == BreakList[i].itemtype)
+                {
+                   k = i;
+                   break;
+                }
+
            }
-           if(k==9999)
+
+            //LMA: using max break.
+           //if(k==9999)
+           if(k==MAX_BREAK)
                return false;
 
            UINT totalprob = 0;

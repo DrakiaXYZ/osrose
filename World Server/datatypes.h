@@ -235,10 +235,11 @@
 #define MAX_SELL_DATA 1000
 #define MAX_USE_DATA 2000
 #define MAX_MAP_DATA 300
+#define MAX_BREAK 3000
 
 
 #include "../common/sockets.h"
- 
+
 // Hold party experience when kill a moster
 struct CPartyExp
 {
@@ -343,7 +344,7 @@ struct CUseData
     UINT pricerate;
     UINT weight;
     UINT quality;
-    UINT material; //core    
+    UINT material; //core
     UINT usecondition[2];
     UINT useeffect[2];
     UINT pricevalue;
@@ -517,22 +518,22 @@ struct CItem {
 	int last_sp_value;
 };
 */
- 
+
 // -----------------------------------------------------------------------------------------
 // An item that a client owns (qsd version)
 // -----------------------------------------------------------------------------------------
 class CItem {
- 
+
 public:
     unsigned short GetPakHeader( );
     unsigned GetPakData( );
     unsigned GetVisInfo( );
     void Clear( );
- 
+
     inline bool IsStackable(){
         return (itemtype >= 10) && (itemtype <= 13);
     };
- 
+
     UINT    itemnum;
     UINT    itemtype;
     UINT    refine;
@@ -550,7 +551,7 @@ public:
     int sp_value;
     int last_sp_value;
 };
- 
+
 
 // -----------------------------------------------------------------------------------------
 // Selling / buying items
@@ -705,16 +706,16 @@ struct CTeleGate
 	unsigned char destMap;
 };
 
- 
+
 //------------------------------------------------------------------------------------------
 // Custom events, quests and games
 //------------------------------------------------------------------------------------------
- 
+
 struct CCustomString
 {
-    char prizename[50];     
+    char prizename[50];
 };
-       
+
 struct CCustomEvent
 {
     unsigned short id;
@@ -722,7 +723,7 @@ struct CCustomEvent
     char npcname[50];
     fPoint location;
     unsigned short map;
-    UINT active;  
+    UINT active;
     UINT prizetype[10];
     UINT prizeid[10];
     UINT prizecost[10];
@@ -738,18 +739,18 @@ struct CCustomEvent
     bool inuse;
     UINT level;
 };
- 
+
 struct CCustomGate
 {
   unsigned short id;
   fPoint source;
   unsigned short sourcemap;
   fPoint dest;
-  unsigned short destmap;    
-  bool active; 
+  unsigned short destmap;
+  bool active;
   unsigned short radius;
 };
- 
+
 
 // -----------------------------------------------------------------------------------------
 // A respawn point object
@@ -798,7 +799,7 @@ struct CMob {
     CMDrops* mobdrop;
     CMDrops* mapdrop;
 };
- 
+
 struct CMobGroup {
   UINT id;
   UINT map;
@@ -883,7 +884,7 @@ struct CReward
     unsigned int type;
     unsigned int prob;
     unsigned int rewardamount;
-    unsigned int rewardposs;    
+    unsigned int rewardposs;
 };
 
 struct CChest
@@ -892,7 +893,7 @@ struct CChest
     vector<CReward*> Rewards;
     unsigned int probmax;
     unsigned int rewardamount;
-    unsigned int rewardposs;    
+    unsigned int rewardposs;
 };
 
 struct CBValue
@@ -1026,21 +1027,21 @@ struct SQuest
     byte Switches[4];
     CItem Items[5];
     byte unknown[6];
- 
+
     bool GetSwitchBit( dword switchId )
     {
         dword byteId = switchId / 8;
         dword bitId = switchId % 8;
         return ((Switches[byteId] >> bitId) & 1);
     };
- 
+
     void SetSwitchBit( byte switchId, byte value )
     {
         dword byteId = switchId / 8;
         dword bitId = switchId % 8;
         Switches[byteId] = Switches[byteId] | ((value?1:0) << bitId);
     };
- 
+
     void AddItem(CItem* item, byte btOp = 2)
     {
         for(dword i = 0; i < 6; i++){
@@ -1064,37 +1065,37 @@ struct SQuest
             return;
         }
     };
- 
+
     void Clear(){
         memset(this, 0, sizeof(SQuest));
     };
- 
+
 };
- 
+
 struct SQuestData
 {
     word EpisodeVar[5];
     word JobVar[3];
     word PlanetVar[7];
     word UnionVar[10];
- 
+
     SQuest quests[10];
     byte flags[0x40];
     CNPC* selectedNpc;
- 
+
     void SetFlag( dword flagid, bool value ){
         dword byteid = flagid / 8;
         dword bitid = flagid % 8;
         flags[byteid] = flags[byteid] | ((value?1:0) << bitid);
     }
- 
+
     bool GetFlag( dword flagid ){
         dword byteid = flagid / 8;
         dword bitid = flagid % 8;
         return ((flags[byteid] >> bitid) & 1);
     }
 };
- 
+
 //QSD End
 
 #endif

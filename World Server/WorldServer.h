@@ -385,11 +385,11 @@ class CWorldServer : public CServerSocket
         void ReadQSD(strings path, dword index);
         void LoadQuestData( );
         bool LoadQuestSTB();
- 
+
         vector<CQuestTrigger*> TriggerList;
         fpQuestCond qstCondFunc[31];
         fpQuestRewd qstRewdFunc[35];
- 
+
         CSTBData                STB_QUEST;
 #else
         bool LoadQuestData( );
@@ -452,7 +452,7 @@ class CWorldServer : public CServerSocket
         CSellList               SellList;
         CUseList                UseList;
         CMapList                MapList;
-        
+
         CSTBData				STB_NPC;				// NPC data
         CSTBData                STB_SKILL;              // Skill data
         CSTBData                STB_STATUS;             // Status Data
@@ -484,7 +484,10 @@ class CWorldServer : public CServerSocket
        // geo edit for disassemble // 22 oct 07
         UINT BreakListSize;
         bool LoadBreakList();
-        CBreakList BreakList[3000];
+
+        //lma: putting a limit.
+        //CBreakList BreakList[3000];
+        CBreakList BreakList[MAX_BREAK];
 
         // console
         bool handleCommand( char* );

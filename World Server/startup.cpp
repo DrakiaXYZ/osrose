@@ -2212,10 +2212,17 @@ bool CWorldServer::LoadBreakList()
     int i=0;
     while(!feof(fh))
     {
-      if(i<3000)
-// make sure above line is set higher than actual amount
-// In WorldServer.h change this one CBreakList BreakList[3000] to match above
-      {
+        // make sure above line is set higher than actual amount
+        // In WorldServer.h change this one CBreakList BreakList[3000] to match above
+        //if(i<3000)
+
+        //LMA: using max_break now.
+        if (i>MAX_BREAK)
+        {
+           Log(MSG_WARNING,"Break List, index overflow trapped %i>%i (increase MAX_BREAK)",i,MAX_BREAK);
+           break;
+        }
+
         memset( &line, '\0', 500 );
         fgets( line, 500, fh );
         UINT itemid = GetUIntValue(",",&line);
@@ -2227,11 +2234,12 @@ bool CWorldServer::LoadBreakList()
             BreakList[i].amount[j] = GetUIntValue(",");
             BreakList[i].prob[j] = GetUIntValue(",");
         }
+
         BreakList[i].numToGive = GetUIntValue(",");
         BreakList[i].total = GetUIntValue(",");
         i++;
-      }
     }
+
     BreakListSize = i-1;
     fclose(fh);
     Log( MSG_LOAD, "Disassembly List Loaded" );
