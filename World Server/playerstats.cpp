@@ -42,6 +42,24 @@ unsigned int CPlayer::GetDodge( )
                 Log(MSG_WARNING, "Char %s have equip invalid item: %i,%i", CharInfo->charname, items[i].itemtype, items[i].itemnum );
                 continue;
             }
+
+            //LMA: Adding gem support
+            if(items[i].gem!=0)
+            {
+                if(GServer->JemList.Index[items[i].gem]!=NULL)
+                {
+                    if( GServer->JemList.Index[items[i].gem]->stat1[0] == A_DODGE)
+                    {
+                        Dodge += GServer->JemList.Index[items[i].gem]->stat1[1];
+                    }
+                    if( GServer->JemList.Index[items[i].gem]->stat2[0] == A_DODGE)
+                    {
+                        Dodge += GServer->JemList.Index[items[i].gem]->stat2[1];
+                    }
+                }
+            }
+            //End gem
+
             if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[0] == A_DODGE)
             {
                 Dodge += GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[1];
@@ -116,6 +134,24 @@ unsigned int CPlayer::GetAccury( )
                 Log(MSG_WARNING, "Char %s have equip invalid item: %i,%i", CharInfo->charname, items[i].itemtype, items[i].itemnum );
                 continue;
             }
+
+             //LMA: Adding gem support
+            if(items[i].gem!=0)
+            {
+                if(GServer->JemList.Index[items[i].gem]!=NULL)
+                {
+                    if( GServer->JemList.Index[items[i].gem]->stat1[0] == A_ACCUR)
+                    {
+                        Accury += GServer->JemList.Index[items[i].gem]->stat1[1];
+                    }
+                    if( GServer->JemList.Index[items[i].gem]->stat2[0] == A_ACCUR)
+                    {
+                        Accury += GServer->JemList.Index[items[i].gem]->stat2[1];
+                    }
+                }
+            }
+            //End gem
+
             if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[0] == A_ACCUR)
             {
                 Accury += GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[1];
@@ -174,6 +210,25 @@ unsigned int CPlayer::GetCritical( )
                 Log(MSG_WARNING, "Char %s have equip invalid item: %i,%i", CharInfo->charname, items[i].itemtype, items[i].itemnum );
                 continue;
             }
+
+
+            //LMA: Adding Gem support
+            if(items[i].gem!=0)
+            {
+                if(GServer->JemList.Index[items[i].gem]!=NULL)
+                {
+                    if( GServer->JemList.Index[items[i].gem]->stat1[0] == A_CRITICAL)
+                    {
+                        Critical += GServer->JemList.Index[items[i].gem]->stat1[1];
+                    }
+                    if( GServer->JemList.Index[items[i].gem]->stat2[0] == A_CRITICAL)
+                    {
+                        Critical += GServer->JemList.Index[items[i].gem]->stat2[1];
+                    }
+                }
+            }
+            //End Gem
+
             if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[0] == A_CRITICAL)
             {
                 Critical += GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[1];
@@ -236,6 +291,24 @@ unsigned int CPlayer::GetMagicDefense( )
                 Log(MSG_WARNING, "Char %s have equip invalid item: %i,%i", CharInfo->charname, items[i].itemtype, items[i].itemnum );
                 continue;
             }
+
+            //LMA: Adding Gem support
+            if(items[i].gem!=0)
+            {
+                if(GServer->JemList.Index[items[i].gem]!=NULL)
+                {
+                    if( GServer->JemList.Index[items[i].gem]->stat1[0] == A_MRESIST)
+                    {
+                        MagicDefense += GServer->JemList.Index[items[i].gem]->stat1[1];
+                    }
+                    if( GServer->JemList.Index[items[i].gem]->stat2[0] == A_MRESIST)
+                    {
+                        MagicDefense += GServer->JemList.Index[items[i].gem]->stat2[1];
+                    }
+                }
+            }
+            //End Gem
+
             if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[0] == A_MRESIST)
             {
                 MagicDefense += GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[1];
@@ -1059,6 +1132,24 @@ unsigned int CPlayer::GetMoveSpeed( )
                        mspeed += GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat2[1];
                     }
                 }
+
+                //LMA: Adding gem support
+                if(items[i].gem!=0)
+                {
+                    if(GServer->JemList.Index[items[i].gem]!=NULL)
+                    {
+                        if( GServer->JemList.Index[items[i].gem]->stat1[0] == A_DASH)
+                        {
+                            mspeed += GServer->JemList.Index[items[i].gem]->stat1[1];
+                        }
+                        if( GServer->JemList.Index[items[i].gem]->stat2[0] == A_DASH)
+                        {
+                            mspeed += GServer->JemList.Index[items[i].gem]->stat2[1];
+                        }
+                    }
+                }
+                //End gem
+
                 if(items[i].stats>0 && items[i].stats<500)
                 {
                     if(GServer->StatsList[items[i].stats].stat[0] == A_DASH)
@@ -1197,12 +1288,10 @@ unsigned int CPlayer::GetMaxHP( )
                     if( GServer->JemList.Index[items[i].gem]->stat1[0] == A_MAX_HP)
                     {
                         hpmax += GServer->JemList.Index[items[i].gem]->stat1[1];
-                        Log(MSG_INFO,"Amethyst(?) detected (stat1), adding %i do hpmax",GServer->JemList.Index[items[i].gem]->stat1[1]);
                     }
                     if( GServer->JemList.Index[items[i].gem]->stat2[0] == A_MAX_HP)
                     {
                         hpmax += GServer->JemList.Index[items[i].gem]->stat2[1];
-                        Log(MSG_INFO,"Amethyst(?) detected (stat2), adding %i do hpmax",GServer->JemList.Index[items[i].gem]->stat2[1]);
                     }
                 }
             }
@@ -1322,12 +1411,10 @@ unsigned int CPlayer::GetMaxMP( )
                     if( GServer->JemList.Index[items[i].gem]->stat1[0] == A_MAX_MP)
                     {
                         maxmp += GServer->JemList.Index[items[i].gem]->stat1[1];
-                        Log(MSG_INFO,"Turquoise(?) detected (stat1), adding %i do maxmp",GServer->JemList.Index[items[i].gem]->stat1[1]);
                     }
                     if( GServer->JemList.Index[items[i].gem]->stat2[0] == A_MAX_MP)
                     {
                         maxmp += GServer->JemList.Index[items[i].gem]->stat2[1];
-                        Log(MSG_INFO,"Turquoise(?) detected (stat2), adding %i do maxmp",GServer->JemList.Index[items[i].gem]->stat2[1]);
                     }
                 }
             }
@@ -1395,6 +1482,24 @@ unsigned int CPlayer::GetHPRegenAmount( )
                 Log(MSG_WARNING, "Char %s have equip invalid item: %i,%i", CharInfo->charname, items[i].itemtype, items[i].itemnum );
                 continue;
             }
+
+            //LMA: Adding gem support
+            if(items[i].gem!=0)
+            {
+                if(GServer->JemList.Index[items[i].gem]!=NULL)
+                {
+                    if( GServer->JemList.Index[items[i].gem]->stat1[0] == A_HP_REC_RATE)
+                    {
+                        amount += GServer->JemList.Index[items[i].gem]->stat1[1];
+                    }
+                    if( GServer->JemList.Index[items[i].gem]->stat2[0] == A_HP_REC_RATE)
+                    {
+                        amount += GServer->JemList.Index[items[i].gem]->stat2[1];
+                    }
+                }
+            }
+            //End gem
+
             if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[0] == A_HP_REC_RATE)
             {
                 amount += GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[1];
@@ -1451,6 +1556,24 @@ unsigned int CPlayer::GetMPRegenAmount( )
                 Log(MSG_WARNING, "Char %s have equip invalid item: %i,%i", CharInfo->charname, items[i].itemtype, items[i].itemnum );
                 continue;
             }
+
+            //LMA: Adding gem support
+            if(items[i].gem!=0)
+            {
+                if(GServer->JemList.Index[items[i].gem]!=NULL)
+                {
+                    if( GServer->JemList.Index[items[i].gem]->stat1[0] == A_MP_REC_RATE)
+                    {
+                        amount += GServer->JemList.Index[items[i].gem]->stat1[1];
+                    }
+                    if( GServer->JemList.Index[items[i].gem]->stat2[0] == A_MP_REC_RATE)
+                    {
+                        amount += GServer->JemList.Index[items[i].gem]->stat2[1];
+                    }
+                }
+            }
+            //End gem
+
             if( GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[0] == A_MP_REC_RATE)
             {
                 amount += amount * GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->stat1[1] / 100;
