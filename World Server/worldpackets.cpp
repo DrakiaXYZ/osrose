@@ -4203,35 +4203,102 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
 
             //LMA: using max break.
            //if(k==9999)
+           bool is_failed=false;
            if(k==MAX_BREAK)
-               return false;
+           {
+               is_failed=true;
+               //return false;
+           }
 
            UINT totalprob = 0;
 
-           for(int i=0;i<BreakList[k].total;i++)
-           {
-               totalprob += BreakList[k].prob[i];
-           }
+            if(!is_failed)
+            {
+               for(int i=0;i<BreakList[k].total;i++)
+               {
+                   totalprob += BreakList[k].prob[i];
+               }
+
+            }
 
            if(totalprob==0)
            {
-               return false;
+               is_failed=true;
+               //return false;
            }
 
            UINT rand = RandNumber(0,99999);
            UINT m = 99;
-           for(int i=0;i<BreakList[k].total;i++)
-           {
-               if(rand < BreakList[k].prob[i])
-                   m = i;
-               else
-                   rand -= BreakList[k].prob[i];
-           }
+            if(!is_failed)
+            {
+               for(int i=0;i<BreakList[k].total;i++)
+               {
+                   if(rand < BreakList[k].prob[i])
+                       m = i;
+                   else
+                       rand -= BreakList[k].prob[i];
+               }
 
-           if(m>14)
-           {
+               if(m>14)
+               {
+                   is_failed=true;
+                   //return false;
+               }
+
+            }
+
+            //LMA: we have to return something, else it'll crash the client !
+            if(is_failed)
+            {
+               Log(MSG_WARNING,"Player %s tried to disassemble item (%i:%i), it's not in break list or in error!",thisclient->CharInfo->charname,thisclient->items[src].itemtype,thisclient->items[src].itemnum);
+                //let's give him a banana for his trouble ;)
+              CItem newitem;
+               newitem.itemnum = 102;
+               newitem.itemtype = 10;
+               newitem.count = 1;
+               newitem.refine = 0;
+               newitem.lifespan = 100;
+               newitem.durability = 40;
+               newitem.socketed=0;
+               newitem.appraised=0;
+               newitem.stats=0;
+               newitem.gem=0;
+
+               unsigned newslot = thisclient->GetNewItemSlot(newitem);
+               if(newslot == 0xffff) return false;
+
+               if(thisclient->items[newslot].count > 0)
+               {
+                   thisclient->items[newslot].count += newitem.count;
+                   if(thisclient->items[newslot].count > 999)
+                       thisclient->items[newslot].count = 999;
+               }
+               else
+                   thisclient->items[newslot] = newitem;
+
+              thisclient->items[src].count -= 1;
+              if( thisclient->items[src].count < 1)
+                  ClearItem( thisclient->items[src] );
+              thisclient->UpdateInventory(src);
+
+              BEGINPACKET( pak, 0x7bc );
+              ADDBYTE    ( pak, 0x07 );//disassemble success
+              ADDBYTE    ( pak, 0x02 );//number of items to follow
+              ADDBYTE    ( pak, newslot );
+              ADDDWORD   ( pak, BuildItemHead( thisclient->items[newslot] ) );
+              ADDDWORD   ( pak, BuildItemData( thisclient->items[newslot] ) );
+              ADDWORD    ( pak, 0x0000);
+              ADDWORD    ( pak, 0x0000);
+              ADDWORD    ( pak, 0x0000);
+              ADDBYTE    ( pak, src );
+              ADDDWORD   ( pak, BuildItemHead( thisclient->items[src] ) );
+              ADDDWORD   ( pak, BuildItemData( thisclient->items[src] ) );
+              ADDWORD    ( pak, 0x0000);
+              ADDWORD    ( pak, 0x0000);
+              ADDWORD    ( pak, 0x0000);
+              thisclient->client->SendPacket( &pak );
                return false;
-           }
+            }
 
            UINT num = BreakList[k].product[m] % 1000;
            UINT type = int(BreakList[k].product[m] / 1000);
@@ -4249,8 +4316,6 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
                newitem.gem=0;
 
                unsigned newslot = thisclient->GetNewItemSlot(newitem);
-               Log(MSG_INFO,"newslot %i",newslot);
-
                if(newslot == 0xffff) return false;
 
                if(thisclient->items[newslot].count > 0)
