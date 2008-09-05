@@ -4165,7 +4165,7 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
                   // Disassemble - by Geobot
         {
 
-            Log(MSG_INFO,"DSM: B0 %i, B1 %i, B2 %i, B3 %i",GETBYTE((*P), 0),GETBYTE((*P), 1),GETBYTE((*P), 2),GETBYTE((*P), 3));
+            Log(MSG_INFO,"DSM: B0 %i, B1 %i, B2 %i, B3 %i, B4 %i",GETBYTE((*P), 0),GETBYTE((*P), 1),GETBYTE((*P), 2),GETBYTE((*P), 3),GETBYTE((*P), 4));
 
             CItem item;
             CItem itemextra;
@@ -4186,7 +4186,7 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
            int k = MAX_BREAK;
 
            //for(int i=0;i<1000;i++)
-           for(int i=0;i<MAX_BREAK;i++)
+           for(int i=0;i<BreakListSize;i++)
            {
                 //LMA: new way?
                 /*
@@ -4207,12 +4207,16 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
                return false;
 
            UINT totalprob = 0;
+
            for(int i=0;i<BreakList[k].total;i++)
            {
                totalprob += BreakList[k].prob[i];
            }
+
            if(totalprob==0)
+           {
                return false;
+           }
 
            UINT rand = RandNumber(0,99999);
            UINT m = 99;
@@ -4223,8 +4227,11 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
                else
                    rand -= BreakList[k].prob[i];
            }
+
            if(m>14)
+           {
                return false;
+           }
 
            UINT num = BreakList[k].product[m] % 1000;
            UINT type = int(BreakList[k].product[m] / 1000);
@@ -4242,6 +4249,8 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
                newitem.gem=0;
 
                unsigned newslot = thisclient->GetNewItemSlot(newitem);
+               Log(MSG_INFO,"newslot %i",newslot);
+
                if(newslot == 0xffff) return false;
 
                if(thisclient->items[newslot].count > 0)

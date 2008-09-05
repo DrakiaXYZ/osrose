@@ -2210,6 +2210,9 @@ bool CWorldServer::LoadBreakList()
     char* temp;
     fgets( line, 500, fh );// this is the column name
     int i=0;
+
+    bool istest=false;
+
     while(!feof(fh))
     {
         // make sure above line is set higher than actual amount
@@ -2228,7 +2231,9 @@ bool CWorldServer::LoadBreakList()
         UINT itemid = GetUIntValue(",",&line);
         BreakList[i].itemtype = int(itemid / 1000);
         BreakList[i].itemnum = itemid % 1000;
-        for(int j=0;j<15;j++)
+        //LMA: We read 20 items now...
+        //for(int j=0;j<15;j++)
+        for(int j=0;j<20;j++)
         {
             BreakList[i].product[j] = GetUIntValue(",");
             BreakList[i].amount[j] = GetUIntValue(",");

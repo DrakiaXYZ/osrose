@@ -1007,13 +1007,19 @@ struct CListMap
 //LMA End
 
 //////////////////////// Geo edit for disassembles 22 oct 07
+//LMA: We need 20 items now...
 struct CBreakList
 {
     UINT itemnum;
     UINT itemtype;
+    /*
     UINT product[15];
     UINT amount[15];
     UINT prob[15];
+    */
+    UINT product[20];
+    UINT amount[20];
+    UINT prob[20];
     UINT numToGive;
     UINT total;
 };
