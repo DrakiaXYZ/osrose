@@ -1,7 +1,7 @@
 [Editor_45]
-CursorCol=38
-CursorRow=1220
-TopLine=1377
+CursorCol=21
+CursorRow=2457
+TopLine=2441
 LeftChar=1
 Open=1
 Top=1
@@ -332,9 +332,9 @@ LeftChar=1
 [Editor_43]
 Open=0
 Top=0
-CursorCol=28
-CursorRow=313
-TopLine=309
+CursorCol=17
+CursorRow=568
+TopLine=568
 LeftChar=1
 [Editor_44]
 Open=0
@@ -345,11 +345,11 @@ TopLine=7
 LeftChar=1
 [Editor_46]
 <<<<<<< .mine
-Open=0
+Open=1
 Top=0
-CursorCol=6
-CursorRow=1946
-TopLine=1929
+CursorCol=83
+CursorRow=4408
+TopLine=4380
 LeftChar=1
 =======
 Open=0

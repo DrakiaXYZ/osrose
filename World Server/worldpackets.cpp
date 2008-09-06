@@ -4374,7 +4374,8 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
                 {
                     item.itemtype = reward->type;
                     item.itemnum = reward->id;
-                    item.count = reward->rewardamount;
+                    //item.count = reward->rewardamount;
+                    item.count = RandNumber( 1,reward->rewardamount);
                     item.socketed = false;
                     item.appraised = true;
                     item.lifespan = 100;
@@ -4403,7 +4404,8 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
                         {
                             itemextra.itemtype = reward->type;
                             itemextra.itemnum = reward->id;
-                            itemextra.count = reward->rewardamount;
+                            //itemextra.count = reward->rewardamount;
+                            itemextra.count = RandNumber( 1,reward->rewardamount);
                             itemextra.socketed = false;
                             itemextra.appraised = true;
                             itemextra.lifespan = 100;

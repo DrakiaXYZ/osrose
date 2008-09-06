@@ -217,7 +217,7 @@ void CMonster::SpawnMonster( CPlayer* player, CMonster* thismon )
     //LMA: supportive summons (lucky ghost)
     if(IsSummon()&&buffid>0&&(player==GetOwner()))
     {
-        Log(MSG_INFO,"The summon is spwaned");
+        Log(MSG_INFO,"The summon is spawned");
         /*CPlayer* player = GetOwner( );
         if (ownplayer==NULL)
            return true;*/
