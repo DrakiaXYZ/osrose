@@ -480,7 +480,8 @@ bool CWorldServer::OnServerReady( )
     // PY new Stat Lookup table
     LoadStatLookup( );
     // PY end
-    LoadBreakList( );     // geo edit for disassemble // 22 oct 07
+    //LoadBreakList( );     // geo edit for disassemble // 22 oct 07
+    LoadBreakChestBlueList();   //LMA: loading chests, breaks from STB...
     LoadSkillData( );
 
     //Load our Server Info
@@ -495,7 +496,7 @@ bool CWorldServer::OnServerReady( )
     LoadSkillBookDropsData( );
     // end of new drops data
 
-    LoadChestData( );
+    //LoadChestData( ); //LMA: loaded now by STB in LoadBreakChestBlueList.
     LoadQuestData( );
     // PY custom events start
     LoadCustomTeleGate( );
@@ -762,7 +763,7 @@ void CWorldServer::LoadCommandLevels( void )
     Config.Command_fskill = ConfigGetInt    ( "commands.ini", "fskill", 299 );     //LMA: Force a skill for a monster.
     Config.Command_Give2 = ConfigGetInt    ( "commands.ini", "give2", 299 );
     Config.Command_GiveClanRp = ConfigGetInt    ( "commands.ini", "giveclanrp", 299 );       //Reward points
-    Config.Command_GiveClanp = ConfigGetInt    ( "commands.ini", "giveclanp", 299 );       //Clan points    
+    Config.Command_GiveClanp = ConfigGetInt    ( "commands.ini", "giveclanp", 299 );       //Clan points
     Config.Command_GiveFairy = ConfigGetInt    ( "commands.ini", "givefairy", 299 );
     Config.Command_GiveZuly = ConfigGetInt    ( "commands.ini", "givezuly", 299 );
     Config.Command_GlobalTime  = ConfigGetInt    ( "commands.ini", "globaldelay", 30 );
@@ -788,7 +789,7 @@ void CWorldServer::LoadCommandLevels( void )
     Config.Command_LevelUp = ConfigGetInt    ( "commands.ini", "levelup", 299 );
     Config.Command_Listquest = ConfigGetInt ( "commands.ini", "listquest", 299 );
     Config.Command_Listqflag = ConfigGetInt ( "commands.ini", "listqflag", 299 );
-    Config.Command_Listqvar = ConfigGetInt ( "commands.ini", "listqvar", 299 );    
+    Config.Command_Listqvar = ConfigGetInt ( "commands.ini", "listqvar", 299 );
     Config.Command_ManageFairy = ConfigGetInt    ( "commands.ini", "managefairy", 299 );
     Config.Command_MaxStats     = ConfigGetInt    ( "commands.ini", "maxstats", 299 );     //MaxStats
     Config.Command_Mdmg = ConfigGetInt    ( "commands.ini", "mdmg", 299 );

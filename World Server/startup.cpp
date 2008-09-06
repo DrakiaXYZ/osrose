@@ -45,6 +45,9 @@ bool CWorldServer::LoadSTBData( )
 	STBStoreData( "3DData\\STB\\LIST_ZONE.STB", &STB_ZONE );
 	STBStoreData( "3DData\\STB\\ITEM_DROP.STB", &STB_DROP );
 	STBStoreData("3DData\\STB\\LIST_UPGRADE.STB", &upgradeData);
+
+	//LMA: for break and chest and blue craft.
+	STBStoreData("3DData\\STB\\LIST_BREAK.STB", &BreakData);
 }
 
 //LMA: npc_data, sql version.
@@ -2196,6 +2199,7 @@ bool CWorldServer::LoadStatLookup( )
 
 
 // geo edit for disassemble // 22 oct 07
+/*
 bool CWorldServer::LoadBreakList()
 {
     Log( MSG_LOAD, "Disassembly List            " );
@@ -2210,8 +2214,6 @@ bool CWorldServer::LoadBreakList()
     char* temp;
     fgets( line, 500, fh );// this is the column name
     int i=0;
-
-    bool istest=false;
 
     while(!feof(fh))
     {
@@ -2250,6 +2252,7 @@ bool CWorldServer::LoadBreakList()
     Log( MSG_LOAD, "Disassembly List Loaded" );
     return true;
 }
+*/
 
 
 bool CWorldServer::LoadCustomTeleGate()
@@ -2348,3 +2351,184 @@ bool CWorldServer::LoadCustomEvents( )
     Log( MSG_LOAD, "Custom Events data loaded" );
     return true;
 }
+
+
+//LMA: Loading breaks, chests and blue crafts from list_break.stb
+//To do: Blue craft and handle 'wrong' Xmas items (245-247 add one).
+bool CWorldServer::LoadBreakChestBlueList()
+{
+    Log( MSG_LOAD, "Break / Chest / Blue Craft - STB" );
+    int nb_craft=0;
+    int nb_chest=0;
+    int nb_break=0;
+    int choice=0;
+    UINT itemtype=0;
+    UINT itemnum=0;
+
+    for(unsigned int i=0;i<BreakData.rowcount;i++)
+    {
+        //let's check if we have a break, a chest or a blue craft stuff...
+        if(BreakData.rows[i][1]==0)
+        {
+            continue;
+        }
+
+        choice=0;
+        itemtype= int(BreakData.rows[i][1]/1000);
+        if (itemtype>0&&itemtype<10)
+        {
+            //break
+            choice=1;
+            itemnum=BreakData.rows[i][1] % 1000;
+        }
+
+        if(choice==0&&itemtype==10)
+        {
+            //chest.
+            choice=2;
+            itemnum=BreakData.rows[i][1] % 1000;
+        }
+
+        if (choice==0)
+        {
+            itemtype= int(BreakData.rows[i][1]/100000);
+            if (itemtype>1&&itemtype<10)
+            {
+                //blue craft
+                choice=3;
+                itemnum=BreakData.rows[i][1] % 100000;
+            }
+
+        }
+
+        if (choice==0)
+        {
+            //LMA: who wants to be a milionnaire? ^_^
+            itemtype= int(BreakData.rows[i][1]/1000000);
+             if (itemtype==10)
+            {
+                //chest or dispensers
+                choice=2;
+                itemnum=BreakData.rows[i][1] % 1000000;
+            }
+
+        }
+
+        //time to make the right choice :)
+        switch (choice)
+        {
+                case 1:
+                {
+                    //Break, should be easy.
+                    CBreakList* newbreak = new (nothrow) CBreakList;
+                    if(newbreak==NULL)
+                    {
+                        Log(MSG_WARNING, "Error allocing memory: break list\n" );
+                        return false;
+                    }
+
+                    newbreak->itemnum=itemnum;
+                    newbreak->itemtype=itemtype;
+                    //We read the 20 items.
+                    for(int j=0;j<20;j++)
+                    {
+                        newbreak->product[j]=BreakData.rows[i][2+j*3];
+                        newbreak->amount[j]=BreakData.rows[i][3+j*3];
+                        newbreak->prob[j]=BreakData.rows[i][4+j*3];
+                    }
+
+                    newbreak->numToGive = BreakData.rows[i][62];
+                    newbreak->total = BreakData.rows[i][63];
+                    nb_break++;
+                    BreakList.push_back( newbreak );
+                    //Log(MSG_INFO,"Break added: (%i:%i), numtogive %i, total %i",newbreak->itemtype,newbreak->itemnum,newbreak->numToGive,newbreak->total);
+                    break;
+                }
+                case 2:
+                {
+                    //chest... Well let's adapt Drakia's code.
+                    CChest* newchest = new (nothrow) CChest;
+                    if(newchest==NULL)
+                    {
+                        Log( MSG_WARNING, "Error allocing memory for chest\n" );
+                        return false;
+                    }
+
+                    newchest->chestid = itemnum;
+                   //We read the 20 items.
+                   int nb_rewards=0;
+                   UINT rewtype=0;
+                   UINT rewnum=0;
+                   bool isok=true;
+                   newchest->probmax = 0;
+
+                    for(int j=0;j<20;j++)
+                    {
+                        if (BreakData.rows[i][2+j*3]==0)
+                        {
+                            //No more rewards to be read.
+                            break;
+                        }
+
+                        isok=true;
+                        rewtype=int(BreakData.rows[i][2+j*3]/1000);
+                        rewnum=BreakData.rows[i][2+j*3]%1000;
+
+                        if(rewnum==0||rewtype>14||rewtype==0)
+                        {
+                            Log(MSG_WARNING,"Problem getting item from Break STB: %i",BreakData.rows[i][2+j*3]);
+                            isok=false;
+                        }
+
+                        if(!isok)
+                        {
+                            continue;
+                        }
+
+                        nb_rewards++;
+                        CReward* Reward = new (nothrow) CReward;
+                        if(Reward==NULL)
+                        {
+                            Log(MSG_WARNING, "Error allocing memory Reward" );
+                            return false;
+                        }
+
+                        Reward->id = rewnum;
+                        Reward->type=rewtype;
+                        Reward->rewardamount=BreakData.rows[i][3+j*3];
+                        Reward->prob=BreakData.rows[i][4+j*3];
+                        newchest->probmax+=BreakData.rows[i][4+j*3];
+                        newchest->Rewards.push_back( Reward );
+                    }
+
+                    newchest->rewardposs = BreakData.rows[i][62];
+                    nb_chest++;
+                    ChestList.push_back( newchest );
+                    //Log(MSG_INFO,"Chest added: (%i:%i), numtogive %i",10,newchest->chestid,newchest->rewardposs);
+                    break;
+                }
+                case 3:
+                {
+                    //blue craft... Not yet handled...
+                    //ChestList.push_back( newbreak );
+                    nb_craft++;
+                    break;
+                }
+                case 0:
+                {
+                    Log(MSG_WARNING,"Can't interpret itemid %i in list_break.stb",BreakData.rows[i][1]);
+                    break;
+                }
+
+        }
+
+
+    }
+
+    Log(MSG_INFO,"We parsed %i Breaks, %i chests, %i blue craft",nb_break,nb_chest,nb_craft);
+    Log( MSG_LOAD, "Break / Chest / Blue Craft - STB - Done" );
+
+
+    return true;
+}
+

@@ -385,6 +385,7 @@ class CWorldServer : public CServerSocket
         void ReadQSD(strings path, dword index);
         void LoadQuestData( );
         bool LoadQuestSTB();
+        bool LoadBreakChestBlueList( );
 
         vector<CQuestTrigger*> TriggerList;
         fpQuestCond qstCondFunc[31];
@@ -463,6 +464,7 @@ class CWorldServer : public CServerSocket
         CSTBData                STB_PRODUCT;            // Crafting data
         CSTBData                STB_SELL;               // npc sell index
         CSTBData                upgradeData;            // Upgrade - refine data
+        CSTBData                BreakData;              // Break - Used for Break list, chests and blue crafts.
 
 
     	clock_t				   lastServerStep;			// Last Update
@@ -483,11 +485,13 @@ class CWorldServer : public CServerSocket
         unsigned MOVE_SPEED_MODIF;
        // geo edit for disassemble // 22 oct 07
         UINT BreakListSize;
-        bool LoadBreakList();
+        //bool LoadBreakList();
 
         //lma: putting a limit.
         //CBreakList BreakList[3000];
-        CBreakList BreakList[MAX_BREAK];
+        //CBreakList BreakList[MAX_BREAK];
+        vector<CBreakList*>         BreakList;
+
 
         // console
         bool handleCommand( char* );

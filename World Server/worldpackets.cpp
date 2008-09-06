@@ -4169,10 +4169,24 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
 
             CItem item;
             CItem itemextra;
+            CChest* thischest;
             unsigned int chestSlot = GETBYTE((*P), 3);
             unsigned int rewardCount = (RandNumber(0, 100) < 20)?2:1;
-            CChest* thischest = GetChestByID(thisclient->items[chestSlot].itemnum);
-            if (thischest == NULL)
+            bool ischest=false;
+
+            //Chests are only itemtype 10
+            if(thisclient->items[chestSlot].itemtype==10)
+            {
+                ischest=true;
+                thischest = GetChestByID(thisclient->items[chestSlot].itemnum);
+                if(thischest==NULL)
+                {
+                    ischest=false;
+                }
+
+            }
+
+            if (!ischest)
             {
 /////////////////////////////////////   start disassemble
             BYTE src = GETBYTE((*P),3);
@@ -4181,19 +4195,10 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
             if(thisclient->items[src].count < 1)
                 return false;
 
-           //LMA: using max break.
-           //int k = 9999;
-           int k = MAX_BREAK;
-
-           //for(int i=0;i<1000;i++)
-           for(int i=0;i<BreakListSize;i++)
+           int k = BreakList.size();
+           for(int i=0;i<BreakList.size();i++)
            {
-                //LMA: new way?
-                /*
-                if(thisclient->items[src].itemnum == BreakList[i].itemnum && thisclient->items[src].itemtype == BreakList[i].itemtype)
-                   k = i;
-                */
-                if(thisclient->items[src].itemnum == BreakList[i].itemnum && thisclient->items[src].itemtype == BreakList[i].itemtype)
+                if(thisclient->items[src].itemnum == BreakList.at(i)->itemnum && thisclient->items[src].itemtype == BreakList.at(i)->itemtype)
                 {
                    k = i;
                    break;
@@ -4201,22 +4206,18 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
 
            }
 
-            //LMA: using max break.
-           //if(k==9999)
            bool is_failed=false;
-           if(k==MAX_BREAK)
+           if(k==BreakList.size())
            {
                is_failed=true;
-               //return false;
            }
 
            UINT totalprob = 0;
-
             if(!is_failed)
             {
-               for(int i=0;i<BreakList[k].total;i++)
+               for(int i=0;i<BreakList.at(k)->total;i++)
                {
-                   totalprob += BreakList[k].prob[i];
+                   totalprob += BreakList.at(k)->prob[i];
                }
 
             }
@@ -4231,12 +4232,12 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
            UINT m = 99;
             if(!is_failed)
             {
-               for(int i=0;i<BreakList[k].total;i++)
+               for(int i=0;i<BreakList.at(k)->total;i++)
                {
-                   if(rand < BreakList[k].prob[i])
+                   if(rand < BreakList.at(k)->prob[i])
                        m = i;
                    else
-                       rand -= BreakList[k].prob[i];
+                       rand -= BreakList.at(k)->prob[i];
                }
 
                if(m>14)
@@ -4306,13 +4307,13 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
                return true;
             }
 
-           UINT num = BreakList[k].product[m] % 1000;
-           UINT type = int(BreakList[k].product[m] / 1000);
+           UINT num = BreakList.at(k)->product[m] % 1000;
+           UINT type = int(BreakList.at(k)->product[m] / 1000);
 
                CItem newitem;
                newitem.itemnum = num;
                newitem.itemtype = type;
-               newitem.count = BreakList[k].amount[m];
+               newitem.count = BreakList.at(k)->amount[m];
                newitem.refine = 0;
                newitem.lifespan = 100;
                newitem.durability = RandNumber(40,50);

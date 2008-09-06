@@ -1012,11 +1012,6 @@ struct CBreakList
 {
     UINT itemnum;
     UINT itemtype;
-    /*
-    UINT product[15];
-    UINT amount[15];
-    UINT prob[15];
-    */
     UINT product[20];
     UINT amount[20];
     UINT prob[20];
