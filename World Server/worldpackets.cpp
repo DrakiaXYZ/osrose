@@ -4248,6 +4248,7 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
             }
 
             //LMA: we have to return something, else it'll crash the client !
+            //If me return no packet, it freezes the client anyway ^_^
             if(is_failed)
             {
                Log(MSG_WARNING,"Player %s tried to disassemble item (%i:%i), it's not in break list or in error!",thisclient->CharInfo->charname,thisclient->items[src].itemtype,thisclient->items[src].itemnum);
@@ -4265,7 +4266,12 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
                newitem.gem=0;
 
                unsigned newslot = thisclient->GetNewItemSlot(newitem);
-               if(newslot == 0xffff) return false;
+               if(newslot == 0xffff)
+               {
+                   //This should never happen since client is handling that.
+                   //We let the client crashes in this case ^_^
+                   return false;
+               }
 
                if(thisclient->items[newslot].count > 0)
                {
@@ -4297,7 +4303,7 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
               ADDWORD    ( pak, 0x0000);
               ADDWORD    ( pak, 0x0000);
               thisclient->client->SendPacket( &pak );
-               return false;
+               return true;
             }
 
            UINT num = BreakList[k].product[m] % 1000;
@@ -4316,7 +4322,12 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
                newitem.gem=0;
 
                unsigned newslot = thisclient->GetNewItemSlot(newitem);
-               if(newslot == 0xffff) return false;
+               if(newslot == 0xffff)
+               {
+                   //This should never happen since client is handling that.
+                   //We let the client crashes in this case ^_^
+                   return false;
+               }
 
                if(thisclient->items[newslot].count > 0)
                {
