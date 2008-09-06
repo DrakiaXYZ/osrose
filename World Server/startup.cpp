@@ -2354,7 +2354,6 @@ bool CWorldServer::LoadCustomEvents( )
 
 
 //LMA: Loading breaks, chests and blue crafts from list_break.stb
-//To do: Blue craft and handle 'wrong' Xmas items (245-247 add one).
 bool CWorldServer::LoadBreakChestBlueList()
 {
     Log( MSG_LOAD, "Break / Chest / Blue Craft - STB" );
@@ -2395,7 +2394,9 @@ bool CWorldServer::LoadBreakChestBlueList()
             if (itemtype>1&&itemtype<10)
             {
                 //blue craft
-                choice=3;
+                //In fact they are breaks?
+                //choice=3;
+                choice=1;
                 itemnum=BreakData.rows[i][1] % 100000;
             }
 
@@ -2454,6 +2455,7 @@ bool CWorldServer::LoadBreakChestBlueList()
                         return false;
                     }
 
+                    //Patch for Xmas gift boxes...
                     newchest->chestid = itemnum;
                     if (itemnum>=245&&itemnum<=247)
                     {
