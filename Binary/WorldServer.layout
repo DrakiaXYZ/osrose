@@ -1,10 +1,10 @@
 [Editor_45]
-CursorCol=21
-CursorRow=2457
-TopLine=2441
+CursorCol=25
+CursorRow=2398
+TopLine=2385
 LeftChar=1
 Open=1
-Top=1
+Top=0
 [Editor_50]
 CursorCol=103
 CursorRow=20
@@ -346,10 +346,10 @@ LeftChar=1
 [Editor_46]
 <<<<<<< .mine
 Open=1
-Top=0
-CursorCol=83
-CursorRow=4408
-TopLine=4380
+Top=1
+CursorCol=4
+CursorRow=3098
+TopLine=3118
 LeftChar=1
 =======
 Open=0

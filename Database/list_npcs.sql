@@ -23,7 +23,7 @@ INSERT INTO `list_npcs` VALUES (0, '[Righteous Crusader] Leonard', 1005, 1, 16.1
 INSERT INTO `list_npcs` VALUES (0, '[Designer] Keenu', 1010, 1, 343.898, 5273.50, 5256.83, 110,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Eccentric Inventor] Spero', 1011, 1, 14.293, 5212.36, 5254.66, 111,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Tavern Owner] Sharlin', 1013, 1, 333.435, 5131.56, 5218.14, 113,0,0);
-INSERT INTO `list_npcs` VALUES (0, '[Resident] Luth', 1015, 1, 270.002, 5130.61, 5154.58, 115,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Resident] Luth', 1015, 1, 270.003, 5130.61, 5154.58, 115,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Guide] Lena', 1014, 1, 169.135, 5240.40, 5124.57, 114,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Event Info] Judy', 1201, 1, 162.011, 5261.88, 5212.97, 305,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Akram Kingdom Minister] Warren', 1002, 1, 178.499, 5208.78, 5112.94, 102,0,0);
@@ -32,7 +32,7 @@ INSERT INTO `list_npcs` VALUES (0, '[Cornell''s Grandson] Cheney', 1018, 1, 22.0
 INSERT INTO `list_npcs` VALUES (0, '[Arumic Merchant] Tryteh', 1006, 1, 258.128, 5313.26, 5153.74, 106,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Gypsy Merchant] Mina', 1007, 1, 197.989, 5292.56, 5127.66, 107,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Weapon Seller] Raffle', 1008, 1, 322.406, 5302.32, 5232.34, 108,0,0);
-INSERT INTO `list_npcs` VALUES (0, '[Armor Seller] Carrion', 1009, 1, 275.985, 5313.53, 5198.14, 109,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Armor Seller] Carrion', 1009, 1, 275.986, 5313.53, 5198.14, 109,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Keenu''s Daughter] Arisa', 1020, 1, 275.985, 5428.17, 5082.68, 120,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Lena''s Sister] Shirley', 1019, 1, 322.406, 5504.69, 5274.08, 119,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Righteous Crusader] Gawain', 1090, 2, 84.016, 5334.58, 5353.91, 190,0,0);
