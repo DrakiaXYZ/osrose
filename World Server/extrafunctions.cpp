@@ -1148,13 +1148,15 @@ UINT CWorldServer::RandNumber( UINT init, UINT range, UINT seed )
 }
 
 // Check if is a valid item
+//LMA: using the new "MAX" defines.
 bool CWorldServer::IsValidItem(UINT type, UINT id )
 {
     if(type==0 || id==0 )
         return false;
     if(type<10)
     {
-        if(id>4999)
+        //if(id>4999)
+        if(id>=MAX_EQUIP_DATA)
             return false;
         if(EquipList[type].Index[id]->id==0)
             return false;
@@ -1164,25 +1166,29 @@ bool CWorldServer::IsValidItem(UINT type, UINT id )
         switch(type)
         {
             case 10:
-                if(id>1999)
+                //if(id>1999)
+                if(id>=MAX_USE_DATA)
                     return false;
                 if(UseList.Index[id]->id==0)
                     return false;
             break;
             case 11:
-                if(id>3999)
+                //if(id>3999)
+                if(id>=MAX_JEM_DATA)
                     return false;
                 if(JemList.Index[id]->id==0)
                     return false;
             break;
             case 12:
-                if(id>999)
+                //if(id>999)
+                if(id>=MAX_NATURAL_DATA)
                     return false;
                 if(NaturalList.Index[id]->id==00)
                     return false;
             break;
             case 14:
-                if(id>999)
+                //if(id>999)
+                if(id>=MAX_PAT_DATA)
                     return false;
                 if(PatList.Index[id]->id==00)
                     return false;
