@@ -28,7 +28,7 @@ INSERT INTO `list_npcs` VALUES (0, '[Guide] Lena', 1014, 1, 169.135, 5240.40, 51
 INSERT INTO `list_npcs` VALUES (0, '[Event Info] Judy', 1201, 1, 162.011, 5261.88, 5212.97, 305,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Akram Kingdom Minister] Warren', 1002, 1, 178.499, 5208.78, 5112.94, 102,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Village Chief] Cornell', 1001, 1, 183.008, 5217.51, 5113.18, 101,0,0);
-INSERT INTO `list_npcs` VALUES (0, '[Cornell''s Grandson] Cheney', 1018, 1, 22.043, 5436.30, 5492.26, 118,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Cornell''s Grandson] Cheney', 1018, 1, 22.043, 5435.30, 5492.26, 118,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Arumic Merchant] Tryteh', 1006, 1, 258.128, 5313.26, 5153.74, 106,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Gypsy Merchant] Mina', 1007, 1, 197.989, 5292.56, 5127.66, 107,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Weapon Seller] Raffle', 1008, 1, 322.406, 5302.32, 5232.34, 108,0,0);
@@ -184,12 +184,6 @@ INSERT INTO `list_npcs` VALUES (0, '[Sikuku Warrior] Wounded Soldier', 1263, 62,
 INSERT INTO `list_npcs` VALUES (0, '[Critically Wounded] Nukie', 1266, 62, 202.043, 5858.96, 5208.03, 363,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Sikuku Warrior] Yak', 1255, 62, 24.237, 5789.36, 5051.35, 354,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Sikuku Warrior] Ruduck', 1254, 62, 22.043, 5779.49, 5040.41, 353,0,0);
-INSERT INTO `list_npcs` VALUES (0, 'Gate', 1022, 70, 90.000, 5244.98, 5043.13, 0,0,0);
-INSERT INTO `list_npcs` VALUES (0, 'Gate', 1022, 70, 270.000, 5476.32, 5040.21, 0,0,0);
-INSERT INTO `list_npcs` VALUES (0, 'Gate', 1023, 74, 0.000, 5072.13, 5289.34, 0,0,0);
-INSERT INTO `list_npcs` VALUES (0, 'Gate', 1023, 74, 0.000, 5072.59, 5112.01, 0,0,0);
-INSERT INTO `list_npcs` VALUES (0, 'Gate', 1023, 74, 0.000, 5157.48, 5288.80, 0,0,0);
-INSERT INTO `list_npcs` VALUES (0, 'Gate', 1023, 74, 0.000, 5159.85, 5109.60, 0,0,0);
 INSERT INTO `list_npcs` VALUES (0, 'Gate', 1023, 101, 0.000, 5072.13, 5289.34, 0,0,0);
 INSERT INTO `list_npcs` VALUES (0, 'Gate', 1023, 101, 0.000, 5072.59, 5112.01, 0,0,0);
 INSERT INTO `list_npcs` VALUES (0, 'Gate', 1023, 101, 0.000, 5157.48, 5288.80, 0,0,0);

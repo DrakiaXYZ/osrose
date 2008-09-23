@@ -1,10 +1,10 @@
 /*
 MySQL Data Transfer
-Source Host: osrose
+Source Host: localhost
 Source Database: osrose
-Target Host: osrose
+Target Host: localhost
 Target Database: osrose
-Date: 7/29/2008 5:57:01 PM
+Date: 9/16/2008 12:29:36 PM
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -23,7 +23,7 @@ CREATE TABLE `item_drops` (
   `alt` varchar(500) collate latin1_general_ci NOT NULL default '0|0|0|0|0|0|0',
   `description` varchar(100) collate latin1_general_ci NOT NULL,
   PRIMARY KEY  (`ref`)
-) ENGINE=MyISAM AUTO_INCREMENT=9531 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=9532 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- ----------------------------
 -- Records 
@@ -712,3 +712,4 @@ INSERT INTO `item_drops` VALUES ('9527', '181', '10', '70', '89', '1500', '13', 
 INSERT INTO `item_drops` VALUES ('9528', '185', '10', '120', '160', '1500', '59', '0', '186|187|188|189|190|0|0', 'Clan Points - Luna CF');
 INSERT INTO `item_drops` VALUES ('9529', '407', '12', '0', '0', '1500', '0', '299', '0|0|0|0|0|0|0', 'Cleanup at Sunshine Coast - Mr Cannie');
 INSERT INTO `item_drops` VALUES ('9530', '407', '12', '0', '0', '1500', '0', '300', '0|0|0|0|0|0|0', 'Cleanup at Sunshine Coast - Mr Baggie');
+INSERT INTO `item_drops` VALUES ('9531', '409', '12', '0', '0', '1500', '0', '0', '0|0|0|0|0|0|0', 'Grand Ballroom Event - Lacrima Drop');
