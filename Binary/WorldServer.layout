@@ -1,7 +1,7 @@
 [Editor_45]
-CursorCol=25
-CursorRow=2398
-TopLine=2385
+CursorCol=1
+CursorRow=2714
+TopLine=2569
 LeftChar=1
 Open=1
 Top=0
@@ -140,11 +140,11 @@ CursorRow=95
 TopLine=83
 LeftChar=1
 [Editor_19]
-Open=0
+Open=1
 Top=0
-CursorCol=6
-CursorRow=453
-TopLine=403
+CursorCol=1
+CursorRow=677
+TopLine=651
 LeftChar=1
 [Editor_20]
 Open=0
@@ -258,11 +258,11 @@ CursorRow=305
 TopLine=305
 LeftChar=1
 [Editor_34]
-Open=0
-Top=0
+Open=1
+Top=1
 CursorCol=1
-CursorRow=703
-TopLine=690
+CursorRow=665
+TopLine=640
 LeftChar=1
 [Editor_35]
 Open=0
@@ -345,8 +345,8 @@ TopLine=7
 LeftChar=1
 [Editor_46]
 <<<<<<< .mine
-Open=1
-Top=1
+Open=0
+Top=0
 CursorCol=4
 CursorRow=3098
 TopLine=3118

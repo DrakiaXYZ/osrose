@@ -240,6 +240,7 @@ bool CWorldServer::LoadNPCData( )
 }
 
 bool CWorldServer::LoadSkillData( )
+/*
 {
 	Log( MSG_LOAD, "Skills data                 " );
 	MYSQL_ROW row;
@@ -345,6 +346,109 @@ bool CWorldServer::LoadSkillData( )
 	Log( MSG_LOAD, "Skills Data loaded" );
 	return true;
 }
+*/
+
+{
+	Log( MSG_LOAD, "Skills data - STB        " );
+    for (unsigned int i = 0; i<STB_SKILL.rowcount;i++)
+    {
+        CSkills* newskill = new (nothrow) CSkills;
+        if(newskill==NULL)
+        {
+            Log(MSG_WARNING, "\nError allocing memory: skills_data" );
+            return false;
+        }
+        char *tmp;
+        newskill->id=i;
+        newskill->level = STB_SKILL.rows[i][2];  // Skills Level
+        newskill->sp = STB_SKILL.rows[i][3];     // Cost to get skill
+        newskill->type = STB_SKILL.rows[i][4];   //
+        newskill->skilltype = STB_SKILL.rows[i][5]; // Type of skill
+        newskill->range = STB_SKILL.rows[i][6]/100; // Range of skill
+        newskill->target = STB_SKILL.rows[i][7];    // Skill Target
+        newskill->aoerange = STB_SKILL.rows[i][8]/100; // AOE Range
+        newskill->atkpower = STB_SKILL.rows[i][9];     // Attack Power
+        newskill->status[0] = STB_SKILL.rows[i][11];  // status
+        newskill->status[1] = STB_SKILL.rows[i][12];  // status
+        newskill->success = STB_SKILL.rows[i][13];    // Success Rate
+        if(newskill->success == 0)
+            newskill->success = 100;                //success rate is stored as NULL where it is 100%. eg dual scratch
+        newskill->duration = STB_SKILL.rows[i][14];   // Duration
+        newskill->costtype[0] = STB_SKILL.rows[i][16];   //not all costs are in MP
+        newskill->costamount[0] = STB_SKILL.rows[i][17]; //some are in HP or Stamina
+        newskill->mp = STB_SKILL.rows[i][17];
+        newskill->costtype[1] = STB_SKILL.rows[i][18]; // All driveby skills have 2 costs
+        newskill->costamount[1] = STB_SKILL.rows[i][19]; // The second is normally cart gauge
+        newskill->cooldown = STB_SKILL.rows[i][20];   // The time it takes to be able to use the skill again.
+        //newskill->success=STB_SKILL.rows[i][69];    //Dunno what this field is really but it sure isn't success rate <_<
+        newskill->weapon[0] = STB_SKILL.rows[i][30];    // Item Type must be equipped (Only 1)
+        newskill->weapon[1] = STB_SKILL.rows[i][31];    // Item Type must be equipped
+        newskill->weapon[2] = STB_SKILL.rows[i][32];    // Item Type must be equipped
+        newskill->weapon[3] = STB_SKILL.rows[i][33];    // Item Type must be equipped
+        newskill->weapon[4] = STB_SKILL.rows[i][34];    // Item Type must be equipped
+        newskill->c_class[0] = STB_SKILL.rows[i][35];   // Required Class (Only One)
+        newskill->c_class[1] = STB_SKILL.rows[i][36];   // Required Class
+        newskill->c_class[2] = STB_SKILL.rows[i][37];   // Required Class
+        newskill->c_class[3] = STB_SKILL.rows[i][38];   // Required Class
+        newskill->c_class[4] = 0;
+        newskill->rskill[0] = STB_SKILL.rows[i][39];    // Required Skill
+        newskill->rskill[1] = STB_SKILL.rows[i][41];    // Required Skill
+        newskill->rskill[2] = STB_SKILL.rows[i][43];    // Required Skill
+        newskill->lskill[0] = STB_SKILL.rows[i][40];    // Required Skill Level
+        newskill->lskill[1] = STB_SKILL.rows[i][42];    // Required Skill Level
+        newskill->lskill[2] = STB_SKILL.rows[i][44];    // Required Skill Level
+
+        newskill->buff[0] = STB_SKILL.rows[i][21];      // Stat
+        newskill->value1[0] = STB_SKILL.rows[i][22];    // Int Value
+        newskill->value2[0] = STB_SKILL.rows[i][23];    // % Value
+        newskill->buff[1] = STB_SKILL.rows[i][24];      // Stat
+        newskill->value1[1] = STB_SKILL.rows[i][25];    // Int Value
+        newskill->value2[1] = STB_SKILL.rows[i][26];    // % Value
+        
+        //WTF are these for???
+        //newskill->buff[2]=0;STB_SKILL.rows[i][11];//for damage support
+        //newskill->value1[2]=0;STB_SKILL.rows[i][9];//for damage support
+        //newskill->value2[2]=0;
+
+        newskill->req[0] = STB_SKILL.rows[i][45];    //the requirement type (usually 31 = level)
+        newskill->clevel = STB_SKILL.rows[i][46];    //requirement amount
+        newskill->reqam[0] = STB_SKILL.rows[i][46];  //this need no always be level but is usually
+        newskill->req[1] = STB_SKILL.rows[i][47];    //the requirement type (in most cases blank)
+        newskill->reqam[1] = STB_SKILL.rows[i][48];  //requirement amount
+        newskill->zuly = (STB_SKILL.rows[i][85] * 100);    // Required zuly
+        if ((STB_SKILL.rows[i][8])>0)
+        {
+            newskill->aoe = 1;
+            newskill->aoeradius = STB_SKILL.rows[i][8]/100;
+        }
+        else
+        {
+            newskill->aoe = 0;
+            newskill->aoeradius = 0;
+        }
+        if ((STB_SKILL.rows[i][28])>0)
+        {
+            newskill->script = 1;
+            newskill->svalue1 = STB_SKILL.rows[i][28];
+        }
+        else
+        {
+            newskill->script=0;
+            newskill->svalue1=0;
+        }
+        newskill->nbuffs = 0;
+        if(newskill->buff[0] != 0 || newskill->status[0] != 0)
+            newskill->nbuffs += 1;
+        if(newskill->buff[1]!= 0 || newskill->status[1] != 0)
+            newskill->nbuffs += 2;
+        
+
+        SkillList.push_back( newskill );
+	}
+	Log( MSG_LOAD, "Skills Data - STB loaded" );
+    return true;
+}
+
 
 bool CWorldServer::LoadTeleGateData( )
 {
@@ -2538,4 +2642,72 @@ bool CWorldServer::LoadBreakChestBlueList()
 
     return true;
 }
+
+// Future stuff - from osprose
+
+/*
+
+bool CWorldServer::LoadConfig( )
+{
+    Log( MSG_INFO, "Loading database config" );
+    MYSQL_ROW row;
+    MYSQL_RES *result = DB->QStore("SELECT exp_rate, drop_rate, zuly_rate, blue_chance, stat_chance, slot_chance, \
+        refine_chance, rare_refine, kill_on_fail, player_damage, monster_damage, player_acc, monster_acc, \
+        pvp_acc, skill_damage FROM list_config");
+    if(result==NULL)
+    {
+        DB->QFree( );
+        return false;
+    }
+    if (mysql_num_rows(result) == 0) 
+    {
+        DB->QFree( );
+        return false;
+    }
+    while( row = mysql_fetch_row(result) )
+    {
+       GServer->Config.EXP_RATE = atoi(row[0]);
+       GServer->Config.DROP_RATE = atoi(row[1]);
+       GServer->Config.ZULY_RATE = atoi(row[2]);
+       GServer->Config.BlueChance = atoi(row[3]);
+       GServer->Config.StatChance = atoi(row[4]);
+       GServer->Config.SlotChance = atoi(row[5]);
+       GServer->Config.RefineChance = atoi(row[6]);
+       GServer->Config.Rare_Refine = atoi(row[7]);
+       GServer->Config.KillOnFail = atoi(row[8]);
+       GServer->Config.PlayerDmg = atoi(row[9]);
+       GServer->Config.MonsterDmg = atoi(row[10]);
+       // Not implemented in server yet - Drakia
+       //GServer->Config.PlayerAcc = atoi(row[11]);
+       //GServer->Config.MonsterAcc = atoi(row[12]);
+       //GServer->Config.PvpAcc = atoi(row[13]);
+       //GServer->Config.SkillDmg = atoi(row[14]);
+    }
+    DB->QFree( );
+    Log( MSG_INFO, "Config Data Loaded" );
+    return true;
+}
+
+bool CWorldServer::LoadLTB( )
+{
+    Log(MSG_INFO, "Loading LTB strings");
+    MYSQL_ROW row;
+    MYSQL_RES *result = DB->QStore("SELECT id,npc,ltbstring FROM ltb");
+    if(result==NULL)
+    {
+        DB->QFree( );
+        return false;
+    }
+    int index = 0;
+    while( row = mysql_fetch_row(result) )
+    {
+        strcpy(GServer->Ltbstring[atoi(row[0])].NPCname,row[1]);
+        strcpy(GServer->Ltbstring[atoi(row[0])].LTBstring,row[2]);
+    }  
+    DB->QFree( );
+    Log( MSG_INFO, "LTB Data Loaded" );
+    return true;
+}
+
+*/
 

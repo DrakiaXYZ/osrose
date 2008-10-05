@@ -598,6 +598,7 @@ struct CSTBData {
 // -----------------------------------------------------------------------------------------
 // Skill Data
 // -----------------------------------------------------------------------------------------
+/*
 struct CSkills {
     UINT id;
     UINT level;
@@ -624,7 +625,45 @@ struct CSkills {
     UINT svalue1;
     UINT gm_aoe;
 };
-
+*/
+struct CSkills {
+    UINT id;
+    UINT level;
+    UINT type;
+    UINT skilltype; // New
+    UINT range;
+    UINT target;
+    UINT status[2]; // New
+    UINT aoerange; // New
+    UINT successrate; // New
+    UINT costtype[2]; // New
+    UINT costamount[2]; // New
+    UINT duration;
+    UINT atkpower;
+    UINT mp;
+    UINT costtype2; // New
+    UINT costamount2; // New
+    UINT cooldown; // New
+    UINT weapon[5];
+    UINT rskill[3];
+    UINT lskill[3];
+    UINT c_class[4];
+    UINT req[2]; // New
+    UINT reqam[2]; // New
+    UINT zuly;   // New
+    UINT clevel;
+    UINT success;
+    UINT sp;
+    UINT buff[3];
+    UINT value1[3];
+    UINT value2[3];
+    UINT nbuffs;
+    unsigned short int aoe;
+    UINT aoeradius;
+    UINT script;
+    UINT svalue1;
+    UINT gm_aoe;
+};
 // -----------------------------------------------------------------------------------------
 // Sell data object
 // -----------------------------------------------------------------------------------------
