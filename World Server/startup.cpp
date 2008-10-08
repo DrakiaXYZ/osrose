@@ -2768,9 +2768,7 @@ bool CWorldServer::LoadBreakChestBlueList()
     return true;
 }
 
-// Future stuff - from osprose
-
-/*
+// From osprose
 
 bool CWorldServer::LoadConfig( )
 {
@@ -2778,13 +2776,13 @@ bool CWorldServer::LoadConfig( )
     MYSQL_ROW row;
     MYSQL_RES *result = DB->QStore("SELECT exp_rate, drop_rate, zuly_rate, blue_chance, stat_chance, slot_chance, \
         refine_chance, rare_refine, kill_on_fail, player_damage, monster_damage, player_acc, monster_acc, \
-        pvp_acc, skill_damage FROM list_config");
+        pvp_acc, skill_damage, maxlevel, drop_type, savetime, partygap, maxstat, cfmode  FROM list_config");
     if(result==NULL)
     {
         DB->QFree( );
         return false;
     }
-    if (mysql_num_rows(result) == 0)
+    if (mysql_num_rows(result) == 0) 
     {
         DB->QFree( );
         return false;
@@ -2807,12 +2805,21 @@ bool CWorldServer::LoadConfig( )
        //GServer->Config.MonsterAcc = atoi(row[12]);
        //GServer->Config.PvpAcc = atoi(row[13]);
        //GServer->Config.SkillDmg = atoi(row[14]);
+// new update - from PurpleYouko
+       GServer->Config.MaxLevel = atoi(row[15]);
+       GServer->Config.DROP_TYPE = atoi(row[16]);
+       //GServer->Config.SAVETIME = atoi(row[17]);
+       GServer->Config.Partygap = atoi(row[18]);
+       GServer->Config.MaxStat = atoi(row[19]);
+       GServer->Config.Cfmode = atoi(row[20]);              
     }
     DB->QFree( );
     Log( MSG_INFO, "Config Data Loaded" );
     return true;
 }
 
+// Future stuff - from osprose
+/*
 bool CWorldServer::LoadLTB( )
 {
     Log(MSG_INFO, "Loading LTB strings");
@@ -2828,11 +2835,10 @@ bool CWorldServer::LoadLTB( )
     {
         strcpy(GServer->Ltbstring[atoi(row[0])].NPCname,row[1]);
         strcpy(GServer->Ltbstring[atoi(row[0])].LTBstring,row[2]);
-    }
+    }  
     DB->QFree( );
     Log( MSG_INFO, "LTB Data Loaded" );
     return true;
 }
 
 */
-

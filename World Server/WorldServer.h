@@ -375,6 +375,7 @@ class CWorldServer : public CServerSocket
         bool LoadCustomTeleGate( );
         bool LoadCustomEvents( );
         bool LoadMonsterSpawn( );
+        bool LoadConfig( ); //New config loading        
 #ifdef USEIFO
         bool LoadMobGroups( );
 #endif

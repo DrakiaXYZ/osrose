@@ -191,7 +191,10 @@ struct CROSEServerConfig
     int StatChance; //hidden
     int SlotChance; //hidden
     int RefineChance; //hidden
+    int Rare_Refine;
+    int KillOnFail;    
     int Cfmode;
+    int MaxLevel;
     int EventType; //Event
     int EventNPC;  //Event
     char* osRoseVer ; //Revision of server
@@ -233,6 +236,7 @@ struct CROSEServerConfig
     int Command_ChangeFairyStay;
     int Command_ChangeFairyTestMode;
     int Command_Class;
+    int Command_ConfigReset;    
     int Command_Convert;
     int Command_Debuff;
     int Command_DelSpawn;

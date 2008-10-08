@@ -678,30 +678,30 @@ void CWorldServer::LoadConfigurations( char* file )
     //World
     Config.MinimumAccessLevel   = ConfigGetInt    ( file, "minimal_access_level", 100 );
 	Config.usethreads           = ConfigGetInt    ( file, "usethreads", 0 )==0?false:true;
-	Config.EXP_RATE             = ConfigGetInt    ( file, "exp_rate", 10 );
-	Config.DROP_RATE            = ConfigGetInt    ( file, "drop_rate", 1 );
-    Config.DROP_TYPE            = ConfigGetInt    ( file, "drop_type", 2 );
-	Config.ZULY_RATE            = ConfigGetInt    ( file, "zuly_rate", 1 );
+	//Config.EXP_RATE             = ConfigGetInt    ( file, "exp_rate", 10 );
+	//Config.DROP_RATE            = ConfigGetInt    ( file, "drop_rate", 1 );
+    //Config.DROP_TYPE            = ConfigGetInt    ( file, "drop_type", 2 );
+	//Config.ZULY_RATE            = ConfigGetInt    ( file, "zuly_rate", 1 );
 	Config.WELCOME_MSG          = ConfigGetString ( file, "welcome_msg", "Welcome to Rose Online" );
     Config.AUTOSAVE             = ConfigGetInt    ( file, "autosave", 0 );
-	Config.SAVETIME             = ConfigGetInt    ( file, "savetime", 3600 );
+	//Config.SAVETIME             = ConfigGetInt    ( file, "savetime", 3600 );
     Config.MapDelay             = ConfigGetInt    ( file, "mapdelay", 10 );
     Config.WorldDelay           = ConfigGetInt    ( file, "worlddelay", 200 );
     Config.VisualDelay          = ConfigGetInt    ( file, "visualdelay", 500 );
-    Config.Partygap             = ConfigGetInt    ( file, "partygap", 10 );
-    Config.MaxStat              = ConfigGetInt    ( file, "maxstat", 254 );
+    //Config.Partygap             = ConfigGetInt    ( file, "partygap", 10 );
+    //Config.MaxStat              = ConfigGetInt    ( file, "maxstat", 254 );
     Config.FairyMode            = ConfigGetInt    ( file, "fairy", 1 );
     Config.FairyStay            = ConfigGetInt    ( file, "fairystay", 20 );
     Config.FairyWait            = ConfigGetInt    ( file, "fairywait", 15 );
     Config.FairyMax             = ConfigGetInt    ( file, "fairymax", 0);
     Config.FairyTestMode        = ConfigGetInt    ( file, "fairytestmode", 1);
-    Config.PlayerDmg            = ConfigGetInt    ( file, "playerdmg", 120);
-    Config.BlueChance           = ConfigGetInt    ( file, "bluechance", 5); //hidden
-    Config.StatChance           = ConfigGetInt    ( file, "statchance", 5); //hidden
-    Config.SlotChance           = ConfigGetInt    ( file, "slotchance", 5); //hidden
-    Config.RefineChance         = ConfigGetInt    ( file, "refinechance", 5); //hidden
-    Config.MonsterDmg           = ConfigGetInt    ( file, "monsterdmg", 100);
-    Config.Cfmode               = ConfigGetInt    ( file, "cfmode", 0);
+    //Config.PlayerDmg            = ConfigGetInt    ( file, "playerdmg", 120);
+    //Config.MonsterDmg           = ConfigGetInt    ( file, "monsterdmg", 100);
+    //Config.BlueChance           = ConfigGetInt    ( file, "bluechance", 5); //hidden
+    //Config.StatChance           = ConfigGetInt    ( file, "statchance", 5); //hidden
+    //Config.SlotChance           = ConfigGetInt    ( file, "slotchance", 5); //hidden
+    //Config.RefineChance         = ConfigGetInt    ( file, "refinechance", 5); //hidden
+    //Config.Cfmode               = ConfigGetInt    ( file, "cfmode", 0);
     Config.osRoseVer            = ConfigGetString    ( file, "osRoseVer", "79.999");
     Config.testgrid             = ConfigGetInt    ( file, "testgrid", 0); //LMA: maps tests grids (0=usual, 1=grid)
     Config.jrose                = ConfigGetInt    ( file, "jrose", 0); //LMA: Special code for jRose handling (163)
@@ -755,6 +755,7 @@ void CWorldServer::LoadCommandLevels( void )
     Config.Command_ChangeFairyStay = ConfigGetInt    ( "commands.ini", "changefairystay", 299 );
     Config.Command_ChangeFairyTestMode = ConfigGetInt    ( "commands.ini", "changefairytestmode", 299 );
     Config.Command_Class = ConfigGetInt    ( "commands.ini", "class", 299 );
+    Config.Command_ConfigReset = ConfigGetInt    ( "commands.ini", "ConfigReset", 299 );
     Config.Command_Convert = ConfigGetInt    ( "commands.ini", "convert", 299 );
     Config.Command_Debuff = ConfigGetInt    ( "commands.ini", "debuff", 299 );
     Config.Command_DelSkills = ConfigGetInt ( "commands.ini", "delskills", 299 );
