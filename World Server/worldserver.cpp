@@ -684,7 +684,7 @@ void CWorldServer::LoadConfigurations( char* file )
 	//Config.ZULY_RATE            = ConfigGetInt    ( file, "zuly_rate", 1 );
 	Config.WELCOME_MSG          = ConfigGetString ( file, "welcome_msg", "Welcome to Rose Online" );
     Config.AUTOSAVE             = ConfigGetInt    ( file, "autosave", 0 );
-	//Config.SAVETIME             = ConfigGetInt    ( file, "savetime", 3600 );
+	Config.SAVETIME             = ConfigGetInt    ( file, "savetime", 3600 );
     Config.MapDelay             = ConfigGetInt    ( file, "mapdelay", 10 );
     Config.WorldDelay           = ConfigGetInt    ( file, "worlddelay", 200 );
     Config.VisualDelay          = ConfigGetInt    ( file, "visualdelay", 500 );

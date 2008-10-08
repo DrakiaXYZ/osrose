@@ -2602,12 +2602,13 @@ else if (strcmp(command, "give2")==0)
                         return true;
          char* action;
          bool is_ok=false;
+         UINT newval=0;
          //char* buffer;
          char buffer[200];
          if ((tmp = strtok(NULL, " ")) == NULL)return true; action = tmp;
          if(strcmp(action, "maxlevel")==0)
          {
-            if ((tmp = strtok(NULL, " ")) == NULL) return true; UINT newval = atoi(tmp);
+            if ((tmp = strtok(NULL, " ")) == NULL) return true; newval = atoi(tmp);
             {
                 Config.MaxLevel = newval;
                 char* confname = "default";
@@ -2617,7 +2618,7 @@ else if (strcmp(command, "give2")==0)
          }
          if(strcmp(action, "xprate")==0)
          {
-            if ((tmp = strtok(NULL, " ")) == NULL) return true; UINT newval = atoi(tmp);
+            if ((tmp = strtok(NULL, " ")) == NULL) return true; newval = atoi(tmp);
             {
                 Config.EXP_RATE = newval;
                 char* confname = "default";
@@ -2627,7 +2628,7 @@ else if (strcmp(command, "give2")==0)
          }
          if(strcmp(action, "droprate")==0)
          {
-            if ((tmp = strtok(NULL, " ")) == NULL) return true; UINT newval = atoi(tmp);
+            if ((tmp = strtok(NULL, " ")) == NULL) return true; newval = atoi(tmp);
             {
                 Config.DROP_RATE = newval;
                 char* confname = "default";
@@ -2637,7 +2638,7 @@ else if (strcmp(command, "give2")==0)
          }
          if(strcmp(action, "droptype")==0)
          {
-            if ((tmp = strtok(NULL, " ")) == NULL) return true; UINT newval = atoi(tmp);
+            if ((tmp = strtok(NULL, " ")) == NULL) return true; newval = atoi(tmp);
             {
                 Config.DROP_TYPE = newval;
                 char* confname = "default";
@@ -2647,7 +2648,7 @@ else if (strcmp(command, "give2")==0)
          }
          if(strcmp(action, "zulyrate")==0)
          {
-            if ((tmp = strtok(NULL, " ")) == NULL) return true; UINT newval = atoi(tmp);
+            if ((tmp = strtok(NULL, " ")) == NULL) return true; newval = atoi(tmp);
             {
                 Config.ZULY_RATE = newval;
                 char* confname = "default";
@@ -2657,7 +2658,7 @@ else if (strcmp(command, "give2")==0)
          }
          if(strcmp(action, "savetime")==0)
          {
-            if ((tmp = strtok(NULL, " ")) == NULL) return true; UINT newval = atoi(tmp);
+            if ((tmp = strtok(NULL, " ")) == NULL) return true; newval = atoi(tmp);
             {
                 Config.SaveTime = newval;
                 char* confname = "default";
@@ -2667,7 +2668,7 @@ else if (strcmp(command, "give2")==0)
          }
          if(strcmp(action, "partygap")==0)
          {
-            if ((tmp = strtok(NULL, " ")) == NULL) return true; UINT newval = atoi(tmp);
+            if ((tmp = strtok(NULL, " ")) == NULL) return true; newval = atoi(tmp);
             {
                 Config.Partygap = newval;
                 char* confname = "default";
@@ -2677,7 +2678,7 @@ else if (strcmp(command, "give2")==0)
          }
          if(strcmp(action, "maxstat")==0)
          {
-            if ((tmp = strtok(NULL, " ")) == NULL) return true; UINT newval = atoi(tmp);
+            if ((tmp = strtok(NULL, " ")) == NULL) return true; newval = atoi(tmp);
             {
                 Config.MaxStat = newval;
                 char* confname = "default";
@@ -2687,7 +2688,7 @@ else if (strcmp(command, "give2")==0)
          }
          if(strcmp(action, "playerdmg")==0)
          {
-            if ((tmp = strtok(NULL, " ")) == NULL) return true; UINT newval = atoi(tmp);
+            if ((tmp = strtok(NULL, " ")) == NULL) return true; newval = atoi(tmp);
             {
                 Config.PlayerDmg = newval;
                 char* confname = "default";
@@ -2697,7 +2698,7 @@ else if (strcmp(command, "give2")==0)
          }
          if(strcmp(action, "monsterdmg")==0)
          {
-            if ((tmp = strtok(NULL, " ")) == NULL) return true; UINT newval = atoi(tmp);
+            if ((tmp = strtok(NULL, " ")) == NULL) return true; newval = atoi(tmp);
             {
                 Config.MonsterDmg = newval;
                 char* confname = "default";
@@ -2707,7 +2708,7 @@ else if (strcmp(command, "give2")==0)
          }
          if(strcmp(action, "cfmode")==0)
          {
-            if ((tmp = strtok(NULL, " ")) == NULL) return true; UINT newval = atoi(tmp);
+            if ((tmp = strtok(NULL, " ")) == NULL) return true; newval = atoi(tmp);
             {
                 Config.Cfmode = newval;
                 char* confname = "default";
@@ -2725,13 +2726,13 @@ else if (strcmp(command, "give2")==0)
          {
              Log( MSG_INFO, "Unrecognized configreset command by GM %s" , thisclient->CharInfo->charname);
              //sprintf ( buffer, "/configreset %s is not a valid command", tmp );
-             sprintf ( buffer, "/configreset %s is not a valid command", action );
+             sprintf ( buffer, "configreset %s is not a valid command", action );
              SendPM(thisclient, buffer);
              return true;
          }
 
          Log( MSG_GMACTION, " %s : /configreset %s" , thisclient->CharInfo->charname, action);
-         sprintf ( buffer, "%s data has been reloaded", action );
+         sprintf ( buffer, "configreset %s %i data has been reloaded", action, newval  );
          SendPM(thisclient, buffer);
          return true;
     }
