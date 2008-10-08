@@ -484,6 +484,13 @@ bool CWorldServer::OnServerReady( )
     LoadBreakChestBlueList();   //LMA: loading chests, breaks from STB...
     LoadSkillData( );
 
+    //LMA: for debug (load old skill system and compares to new one).
+    /*
+    LoadSkillDataOld( );
+    LMACheckSkills();
+    */
+    //End debug.
+
     //Load our Server Info
 #ifdef USENEWQUESTSYSTEM
     LoadQuestSTB();

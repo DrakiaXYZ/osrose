@@ -239,8 +239,8 @@ bool CWorldServer::LoadNPCData( )
     return true;
 }
 
-bool CWorldServer::LoadSkillData( )
-/*
+//old version (sql).
+bool CWorldServer::LoadSkillDataOld( )
 {
 	Log( MSG_LOAD, "Skills data                 " );
 	MYSQL_ROW row;
@@ -255,6 +255,26 @@ bool CWorldServer::LoadSkillData( )
             DB->QFree( );
             return false;
         }
+
+        //LMA: Vars init.
+        newskill->skilltype=0;
+        newskill->aoerange=0;
+        newskill->status[0]=0;
+        newskill->status[1]=0;
+        newskill->status[2]=0;
+        newskill->costtype[0]=0;
+        newskill->costtype[1]=0;
+        newskill->costamount[0]=0;
+        newskill->costamount[1]=0;
+        newskill->cooldown=0;
+        newskill->c_class[4]=0;
+        newskill->req[0]=0;
+        newskill->reqam[0]=0;
+        newskill->req[1]=0;
+        newskill->reqam[1]=0;
+        newskill->zuly=0;
+        //End
+
         newskill->id=atoi(row[0]);
         newskill->level=atoi(row[1]);
         newskill->sp=atoi(row[2]);
@@ -340,18 +360,85 @@ bool CWorldServer::LoadSkillData( )
             else
                 newskill->lskill[i]=atoi(tmp);
         }
-        SkillList.push_back( newskill );
+
+        SkillListOld.push_back( newskill );
 	}
 	DB->QFree( );
 	Log( MSG_LOAD, "Skills Data loaded" );
-	return true;
-}
-*/
 
+
+    return true;
+}
+
+//LMA: We compare STB and SQL "skills" to check differences.
+bool CWorldServer::LMACheckSkills()
+{
+    Log(MSG_INFO,"Begin Skill Export");
+    Log(MSG_INFO,"STB/SQL,name,id,level,sp,type,skilltype,range,target,aoerange,atkpower,status[0],status[1],status[2],success,duration,costtype[0],costamount[0],mp,costtype[1],costamount[1],cooldown,weapon[0],weapon[1],weapon[2],weapon[3],weapon[4],c_class[0],c_class[1],c_class[2],c_class[3],c_class[4],rskill[0],rskill[1],rskill[2],lskill[0],lskill[1],lskill[2],buff[0],value1[0],value2[0],buff[1],value1[1],value2[1],buff[2],value1[2],value2[2],req[0],clevel,reqam[0],req[1],reqam[1],zuly,aoe,aoeradius,script,svalue1,nbuffs,END");
+
+    for (int i=0;i<SkillList.size();i++)
+    {
+        CSkills* newskill=NULL;
+        CSkills* oldskill=NULL;
+        newskill=SkillList.at(i);
+
+        //jumping "void" skills.
+        if(newskill->skilltype==0)
+        {
+            continue;
+        }
+
+        //We search this skill into the SQL skills.
+        for (int j=0;j<SkillListOld.size();j++)
+        {
+            oldskill=SkillListOld.at(j);
+            if(oldskill->id!=newskill->id)
+            {
+                continue;
+            }
+
+            break;
+        }
+
+        if (oldskill->id!=newskill->id)
+        {
+            Log(MSG_INFO,"STB Skill %i not found in SQL",newskill->id);
+            continue;
+        }
+
+        //let's play :)
+        //getting skill name (SQL)
+        MYSQL_ROW row;
+        MYSQL_RES *result = DB->QStore("SELECT skillname FROM skills_data WHERE id=%i",newskill->id);
+        row = mysql_fetch_row(result);
+        char* tmp;
+        tmp=row[0];
+        Log(MSG_INFO,"STB,%s,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%s","?",newskill->id,newskill->level,newskill->sp,newskill->type,newskill->skilltype,newskill->range,newskill->target,newskill->aoerange,newskill->atkpower,newskill->status[0],newskill->status[1],newskill->status[2],newskill->success,newskill->duration,newskill->costtype[0],newskill->costamount[0],newskill->mp,newskill->costtype[1],newskill->costamount[1],newskill->cooldown,newskill->weapon[0],newskill->weapon[1],newskill->weapon[2],newskill->weapon[3],newskill->weapon[4],newskill->c_class[0],newskill->c_class[1],newskill->c_class[2],newskill->c_class[3],newskill->c_class[4],newskill->rskill[0],newskill->rskill[1],newskill->rskill[2],newskill->lskill[0],newskill->lskill[1],newskill->lskill[2],newskill->buff[0],newskill->value1[0],newskill->value2[0],newskill->buff[1],newskill->value1[1],newskill->value2[1],newskill->buff[2],newskill->value1[2],newskill->value2[2],newskill->req[0],newskill->clevel,newskill->reqam[0],newskill->req[1],newskill->reqam[1],newskill->zuly,newskill->aoe,newskill->aoeradius,newskill->script,newskill->svalue1,newskill->nbuffs,"END");
+        Log(MSG_INFO,"SQL,%s,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%s",tmp,oldskill->id,oldskill->level,oldskill->sp,oldskill->type,oldskill->skilltype,oldskill->range,oldskill->target,oldskill->aoerange,oldskill->atkpower,oldskill->status[0],oldskill->status[1],oldskill->status[2],oldskill->success,oldskill->duration,oldskill->costtype[0],oldskill->costamount[0],oldskill->mp,oldskill->costtype[1],oldskill->costamount[1],oldskill->cooldown,oldskill->weapon[0],oldskill->weapon[1],oldskill->weapon[2],oldskill->weapon[3],oldskill->weapon[4],oldskill->c_class[0],oldskill->c_class[1],oldskill->c_class[2],oldskill->c_class[3],oldskill->c_class[4],oldskill->rskill[0],oldskill->rskill[1],oldskill->rskill[2],oldskill->lskill[0],oldskill->lskill[1],oldskill->lskill[2],oldskill->buff[0],oldskill->value1[0],oldskill->value2[0],oldskill->buff[1],oldskill->value1[1],oldskill->value2[1],oldskill->buff[2],oldskill->value1[2],oldskill->value2[2],oldskill->req[0],oldskill->clevel,oldskill->reqam[0],oldskill->req[1],oldskill->reqam[1],oldskill->zuly,oldskill->aoe,oldskill->aoeradius,oldskill->script,oldskill->svalue1,oldskill->nbuffs,"END");
+        DB->QFree( );
+    }
+
+    Log(MSG_INFO,"End Skill Export");
+
+
+    return true;
+}
+
+
+//News version (STB)
+bool CWorldServer::LoadSkillData( )
 {
 	Log( MSG_LOAD, "Skills data - STB        " );
     for (unsigned int i = 0; i<STB_SKILL.rowcount;i++)
     {
+        //LMA: Jumping non useful skills?
+        /*
+        if(STB_SKILL.rows[i][5]==0)
+        {
+            continue;
+        }
+        */
+
         CSkills* newskill = new (nothrow) CSkills;
         if(newskill==NULL)
         {
@@ -360,6 +447,7 @@ bool CWorldServer::LoadSkillData( )
         }
         char *tmp;
         newskill->id=i;
+
         newskill->level = STB_SKILL.rows[i][2];  // Skills Level
         newskill->sp = STB_SKILL.rows[i][3];     // Cost to get skill
         newskill->type = STB_SKILL.rows[i][4];   //
@@ -368,11 +456,26 @@ bool CWorldServer::LoadSkillData( )
         newskill->target = STB_SKILL.rows[i][7];    // Skill Target
         newskill->aoerange = STB_SKILL.rows[i][8]/100; // AOE Range
         newskill->atkpower = STB_SKILL.rows[i][9];     // Attack Power
+
+        //LMA: Patch for osRose.
+        //For us type is skilltype...
+        newskill->type=newskill->skilltype;
+
+        //LMA: Not the same IDs in ospRose and osRose...
+        /*
         newskill->status[0] = STB_SKILL.rows[i][11];  // status
         newskill->status[1] = STB_SKILL.rows[i][12];  // status
+        */
+        newskill->status[0] = STB_SKILL.rows[i][88];  // status
+        newskill->status[1] = STB_SKILL.rows[i][92];  // status
+        newskill->status[2] = STB_SKILL.rows[i][96];  // status
+
         newskill->success = STB_SKILL.rows[i][13];    // Success Rate
         if(newskill->success == 0)
+        {
             newskill->success = 100;                //success rate is stored as NULL where it is 100%. eg dual scratch
+        }
+
         newskill->duration = STB_SKILL.rows[i][14];   // Duration
         newskill->costtype[0] = STB_SKILL.rows[i][16];   //not all costs are in MP
         newskill->costamount[0] = STB_SKILL.rows[i][17]; //some are in HP or Stamina
@@ -398,17 +501,25 @@ bool CWorldServer::LoadSkillData( )
         newskill->lskill[1] = STB_SKILL.rows[i][42];    // Required Skill Level
         newskill->lskill[2] = STB_SKILL.rows[i][44];    // Required Skill Level
 
+        //LMA: Not the same IDs in ospRose and osRose...
+        //and we add the skill status (like poisoned...)
+        /*
         newskill->buff[0] = STB_SKILL.rows[i][21];      // Stat
         newskill->value1[0] = STB_SKILL.rows[i][22];    // Int Value
         newskill->value2[0] = STB_SKILL.rows[i][23];    // % Value
         newskill->buff[1] = STB_SKILL.rows[i][24];      // Stat
         newskill->value1[1] = STB_SKILL.rows[i][25];    // Int Value
         newskill->value2[1] = STB_SKILL.rows[i][26];    // % Value
-        
-        //WTF are these for???
-        //newskill->buff[2]=0;STB_SKILL.rows[i][11];//for damage support
-        //newskill->value1[2]=0;STB_SKILL.rows[i][9];//for damage support
-        //newskill->value2[2]=0;
+        */
+        newskill->buff[0] = STB_SKILL.rows[i][89];      // Stat
+        newskill->value1[0] = STB_SKILL.rows[i][90];    // Int Value
+        newskill->value2[0] = STB_SKILL.rows[i][91];    // % Value
+        newskill->buff[1] = STB_SKILL.rows[i][93];      // Stat
+        newskill->value1[1] = STB_SKILL.rows[i][94];    // Int Value
+        newskill->value2[1] = STB_SKILL.rows[i][95];    // % Value
+        newskill->buff[2] = STB_SKILL.rows[i][97];      // Stat
+        newskill->value1[2] = STB_SKILL.rows[i][98];    // Int Value
+        newskill->value2[2] = STB_SKILL.rows[i][99];    // % Value
 
         newskill->req[0] = STB_SKILL.rows[i][45];    //the requirement type (usually 31 = level)
         newskill->clevel = STB_SKILL.rows[i][46];    //requirement amount
@@ -436,16 +547,30 @@ bool CWorldServer::LoadSkillData( )
             newskill->script=0;
             newskill->svalue1=0;
         }
+
         newskill->nbuffs = 0;
         if(newskill->buff[0] != 0 || newskill->status[0] != 0)
+        {
             newskill->nbuffs += 1;
+        }
+
         if(newskill->buff[1]!= 0 || newskill->status[1] != 0)
+        {
             newskill->nbuffs += 2;
-        
+        }
+
+        //LMA: add the [2]?
+        if(newskill->buff[2]!= 0 || newskill->status[2] != 0)
+        {
+            newskill->nbuffs += 4;
+        }
 
         SkillList.push_back( newskill );
 	}
+
 	Log( MSG_LOAD, "Skills Data - STB loaded" );
+
+
     return true;
 }
 
@@ -2659,7 +2784,7 @@ bool CWorldServer::LoadConfig( )
         DB->QFree( );
         return false;
     }
-    if (mysql_num_rows(result) == 0) 
+    if (mysql_num_rows(result) == 0)
     {
         DB->QFree( );
         return false;
@@ -2703,7 +2828,7 @@ bool CWorldServer::LoadLTB( )
     {
         strcpy(GServer->Ltbstring[atoi(row[0])].NPCname,row[1]);
         strcpy(GServer->Ltbstring[atoi(row[0])].LTBstring,row[2]);
-    }  
+    }
     DB->QFree( );
     Log( MSG_INFO, "LTB Data Loaded" );
     return true;

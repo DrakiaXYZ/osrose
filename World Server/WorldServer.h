@@ -400,6 +400,8 @@ class CWorldServer : public CServerSocket
         bool LoadPYDropsData( );    //hidden
         bool LoadSkillBookDropsData( ); //hidden
         bool LoadChestData( );
+        bool LoadSkillDataOld( );  //LMA: Old version, for debug
+        bool LMACheckSkills( );  //LMA: for skill debug
         bool LoadSkillData( );
         bool LoadMonsters( );
         bool LoadNPCData( );
@@ -433,6 +435,7 @@ class CWorldServer : public CServerSocket
         vector<CCustomEvent*>   CustomEventList;        //Custom events list
 
         vector<CQuest*>         QuestList;              // Quest List
+        vector<CSkills*>        SkillListOld;              // Skills List (LMA: for debug)
         vector<CSkills*>        SkillList;              // Skills List
         vector<CMDrops*>        MDropList;              // Drops List
         vector<CMDrops*>        SkillbookList;          // Skillbook drop list (hidden)
