@@ -1297,7 +1297,7 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
 	    if((tmp = strtok(NULL, " "))==NULL) return true; int points=atoi(tmp);
 	    Log( MSG_GMACTION, " %s : /giveclanp %s, %i" , thisclient->CharInfo->charname, name, points);
 	    return pakGMClanPoints(thisclient, name, points);
-	}	
+	}
     else if(strcmp(command, "givefairy")==0)
     {
          if(Config.Command_GiveFairy > thisclient->Session->accesslevel)
@@ -1573,7 +1573,7 @@ else if (strcmp(command, "give2")==0)
     }
     else if(strcmp(command, "addquest")==0)
     {
-     
+
         if(Config.Command_Addquest > thisclient->Session->accesslevel)
 	         return true;
         if ((tmp = strtok(NULL, " "))==NULL) return true;
@@ -1590,7 +1590,7 @@ else if (strcmp(command, "give2")==0)
     }
     else if(strcmp(command, "listquest")==0)
     {
-         
+
         if(Config.Command_Listquest > thisclient->Session->accesslevel)
 	         return true;
         SendPM( thisclient, "Current Quests:" );
@@ -1611,7 +1611,7 @@ else if (strcmp(command, "give2")==0)
         sprintf(buf2, "%i ", thisclient->quest.flags[i]);
         buffer.append(buf2);
 //        if (i > 0 && i%10 == 0) {
-        if ((i + 1) % 10 == 0) {      
+        if ((i + 1) % 10 == 0) {
           SendPM(thisclient, (char*)buffer.c_str());
           buffer = "";
         }
@@ -1709,7 +1709,7 @@ else if (strcmp(command, "give2")==0)
         break;
       }
       SendPM( thisclient, "Set Var[%i][%i] = %i", vartype, var, val);
-    }    
+    }
 	else if (strcmp(command, "shoptype")==0)
 	{
          if(Config.Command_ShopType > thisclient->Session->accesslevel)
@@ -2022,7 +2022,7 @@ else if (strcmp(command, "give2")==0)
     else if (strcmp(command, "refine")==0)
     {
         if(Config.Command_Refine > thisclient->Session->accesslevel)
-            return true; 
+            return true;
         if ((tmp = strtok(NULL, " "))==NULL)return true;
         int slot = 7; //defaults to weapon
         int tipo;
@@ -2071,7 +2071,7 @@ else if (strcmp(command, "give2")==0)
         else
             itemrefine = atoi(tmp)<10?atoi(tmp)*16:9*16;
         thisclient->items[slot].refine = itemrefine;
-        
+
         BEGINPACKET( pak, 0x7a5);
 	    ADDWORD( pak, thisclient->clientid );
 	    ADDWORD( pak, slot);
@@ -2083,7 +2083,7 @@ else if (strcmp(command, "give2")==0)
         thisclient->UpdateInventory( slot );
         thisclient->SetStats( );
 		return true;
-    }    
+    }
     else if(strcmp(command, "settime")==0)
     {
         if(Config.Command_Settime > thisclient->Session->accesslevel)
@@ -2601,113 +2601,127 @@ else if (strcmp(command, "give2")==0)
          if(Config.Command_ConfigReset > thisclient->Session->accesslevel)
                         return true;
          char* action;
+         bool is_ok=false;
          //char* buffer;
          char buffer[200];
          if ((tmp = strtok(NULL, " ")) == NULL)return true; action = tmp;
          if(strcmp(action, "maxlevel")==0)
          {
             if ((tmp = strtok(NULL, " ")) == NULL) return true; UINT newval = atoi(tmp);
-            {        
+            {
                 Config.MaxLevel = newval;
                 char* confname = "default";
                 GServer->DB->QExecute("UPDATE list_config SET maxlevel=%i WHERE conf='%s'",newval,confname);
+                is_ok=true;
             }
          }
          if(strcmp(action, "xprate")==0)
          {
             if ((tmp = strtok(NULL, " ")) == NULL) return true; UINT newval = atoi(tmp);
-            {          
+            {
                 Config.EXP_RATE = newval;
                 char* confname = "default";
                 GServer->DB->QExecute("UPDATE list_config SET exp_rate=%i WHERE conf='%s'",newval,confname);
+                is_ok=true;
             }
          }
          if(strcmp(action, "droprate")==0)
          {
             if ((tmp = strtok(NULL, " ")) == NULL) return true; UINT newval = atoi(tmp);
-            {          
+            {
                 Config.DROP_RATE = newval;
                 char* confname = "default";
                 GServer->DB->QExecute("UPDATE list_config SET drop_rate=%i WHERE conf='%s'",newval,confname);
+                is_ok=true;
             }
          }
          if(strcmp(action, "droptype")==0)
          {
             if ((tmp = strtok(NULL, " ")) == NULL) return true; UINT newval = atoi(tmp);
-            {          
+            {
                 Config.DROP_TYPE = newval;
                 char* confname = "default";
                 GServer->DB->QExecute("UPDATE list_config SET drop_type=%i WHERE conf='%s'",newval,confname);
+                is_ok=true;
             }
          }
          if(strcmp(action, "zulyrate")==0)
          {
             if ((tmp = strtok(NULL, " ")) == NULL) return true; UINT newval = atoi(tmp);
-            {          
+            {
                 Config.ZULY_RATE = newval;
                 char* confname = "default";
                 GServer->DB->QExecute("UPDATE list_config SET zuly_rate=%i WHERE conf='%s'",newval,confname);
+                is_ok=true;
             }
          }
          if(strcmp(action, "savetime")==0)
          {
             if ((tmp = strtok(NULL, " ")) == NULL) return true; UINT newval = atoi(tmp);
-            {          
+            {
                 Config.SaveTime = newval;
                 char* confname = "default";
                 GServer->DB->QExecute("UPDATE list_config SET savetime=%i WHERE conf='%s'",newval,confname);
+                is_ok=true;
             }
          }
          if(strcmp(action, "partygap")==0)
          {
             if ((tmp = strtok(NULL, " ")) == NULL) return true; UINT newval = atoi(tmp);
-            {          
+            {
                 Config.Partygap = newval;
                 char* confname = "default";
                 GServer->DB->QExecute("UPDATE list_config SET Partygap=%i WHERE conf='%s'",newval,confname);
+                is_ok=true;
             }
          }
          if(strcmp(action, "maxstat")==0)
          {
             if ((tmp = strtok(NULL, " ")) == NULL) return true; UINT newval = atoi(tmp);
-            {          
+            {
                 Config.MaxStat = newval;
                 char* confname = "default";
                 GServer->DB->QExecute("UPDATE list_config SET MaxStat=%i WHERE conf='%s'",newval,confname);
+                is_ok=true;
             }
          }
          if(strcmp(action, "playerdmg")==0)
          {
             if ((tmp = strtok(NULL, " ")) == NULL) return true; UINT newval = atoi(tmp);
-            {          
+            {
                 Config.PlayerDmg = newval;
                 char* confname = "default";
                 GServer->DB->QExecute("UPDATE list_config SET player_damage=%i WHERE conf='%s'",newval,confname);
+                is_ok=true;
             }
          }
          if(strcmp(action, "monsterdmg")==0)
          {
             if ((tmp = strtok(NULL, " ")) == NULL) return true; UINT newval = atoi(tmp);
-            {          
+            {
                 Config.MonsterDmg = newval;
                 char* confname = "default";
                 GServer->DB->QExecute("UPDATE list_config SET monster_damage=%i WHERE conf='%s'",newval,confname);
+                is_ok=true;
             }
          }
          if(strcmp(action, "cfmode")==0)
          {
             if ((tmp = strtok(NULL, " ")) == NULL) return true; UINT newval = atoi(tmp);
-            {          
+            {
                 Config.Cfmode = newval;
                 char* confname = "default";
                 GServer->DB->QExecute("UPDATE list_config SET cfmode=%i WHERE conf='%s'",newval,confname);
+                is_ok=true;
             }
          }
-         else if(strcmp(action, "cmd")==0)
+         if(strcmp(action, "cmd")==0)
          {
             LoadConfigurations( "commands.ini" );
+            is_ok=true;
          }
-         else
+
+         if(!is_ok)
          {
              Log( MSG_INFO, "Unrecognized configreset command by GM %s" , thisclient->CharInfo->charname);
              //sprintf ( buffer, "/configreset %s is not a valid command", tmp );
@@ -2715,6 +2729,7 @@ else if (strcmp(command, "give2")==0)
              SendPM(thisclient, buffer);
              return true;
          }
+
          Log( MSG_GMACTION, " %s : /configreset %s" , thisclient->CharInfo->charname, action);
          sprintf ( buffer, "%s data has been reloaded", action );
          SendPM(thisclient, buffer);
@@ -3617,7 +3632,7 @@ bool CWorldServer::pakGMEventType(CPlayer* thisclient, int npctype, int dialog, 
     }
     if(type<0) type = 0;
     char buffer[200];
-    
+
     sprintf( buffer, "Event %i for NPC: %i, Dialog: %i (if dialog has changed, type /here to force refresh)", type, npctype, dialog);
     thisnpc->dialog = dialog;
     thisnpc->event = type;
@@ -3629,7 +3644,7 @@ bool CWorldServer::pakGMEventType(CPlayer* thisclient, int npctype, int dialog, 
 	ADDBYTE    ( pak, 0 );
     thisclient->client->SendPacket(&pak);
 
-    RESETPACKET( pak, 0x790 );    
+    RESETPACKET( pak, 0x790 );
     ADDWORD    ( pak, thisnpc->clientid );
     ADDWORD    ( pak, thisnpc->event );	  //LMA: Welcome in the real Word ^_^
     thisclient->client->SendPacket(&pak);
@@ -3996,7 +4011,7 @@ bool CWorldServer::pakGMClanPoints(CPlayer* thisclient, char* name, int points)
     	cryptPacket( (char*)&pak, GServer->cct );
     	send( csock, (char*)&pak, pak.Size, 0 );
     }
-    
+
     //2do:
     //Add the last packet needed?
     BEGINPACKET( pak, 0x7e0 );
@@ -4008,10 +4023,10 @@ bool CWorldServer::pakGMClanPoints(CPlayer* thisclient, char* name, int points)
     ADDWORD    ( pak, otherclient->Clan->logo );
     ADDBYTE    ( pak, otherclient->Clan->grade );
     ADDBYTE    ( pak, otherclient->Clan->clanrank);
-    ADDSTRING  ( pak, otherclient->Clan->clanname );            
+    ADDSTRING  ( pak, otherclient->Clan->clanname );
     ADDBYTE    ( pak, 0x00 );
     otherclient->client->SendPacket(&pak);
-        
+
 
      return true;
 }
@@ -4921,7 +4936,7 @@ bool CWorldServer::pakGMClass( CPlayer* thisclient, char* classid )
       thisclient->quest.JobVar[0] = 1;
       thisclient->quest.JobVar[1] = 2;
     }
-*/        
+*/
     bool changed = true;
     if ( thisclient->CharInfo->Job == classid_new )
        changed = false;
