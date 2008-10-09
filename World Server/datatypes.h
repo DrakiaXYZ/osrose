@@ -633,7 +633,7 @@ struct CSkills {
     UINT skilltype; // New
     UINT range;
     UINT target;
-    UINT status[2]; // New
+    UINT status[3]; // New LMA: 3 for osRose...
     UINT aoerange; // New
     UINT successrate; // New
     UINT costtype[2]; // New

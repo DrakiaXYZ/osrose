@@ -484,6 +484,7 @@ bool CWorldServer::LoadSkillData( )
         newskill->costamount[1] = STB_SKILL.rows[i][19]; // The second is normally cart gauge
         newskill->cooldown = STB_SKILL.rows[i][20];   // The time it takes to be able to use the skill again.
         //newskill->success=STB_SKILL.rows[i][69];    //Dunno what this field is really but it sure isn't success rate <_<
+
         newskill->weapon[0] = STB_SKILL.rows[i][30];    // Item Type must be equipped (Only 1)
         newskill->weapon[1] = STB_SKILL.rows[i][31];    // Item Type must be equipped
         newskill->weapon[2] = STB_SKILL.rows[i][32];    // Item Type must be equipped
@@ -511,6 +512,7 @@ bool CWorldServer::LoadSkillData( )
         newskill->value1[1] = STB_SKILL.rows[i][25];    // Int Value
         newskill->value2[1] = STB_SKILL.rows[i][26];    // % Value
         */
+
         newskill->buff[0] = STB_SKILL.rows[i][89];      // Stat
         newskill->value1[0] = STB_SKILL.rows[i][90];    // Int Value
         newskill->value2[0] = STB_SKILL.rows[i][91];    // % Value
@@ -527,6 +529,7 @@ bool CWorldServer::LoadSkillData( )
         newskill->req[1] = STB_SKILL.rows[i][47];    //the requirement type (in most cases blank)
         newskill->reqam[1] = STB_SKILL.rows[i][48];  //requirement amount
         newskill->zuly = (STB_SKILL.rows[i][85] * 100);    // Required zuly
+
         if ((STB_SKILL.rows[i][8])>0)
         {
             newskill->aoe = 1;
@@ -2782,7 +2785,7 @@ bool CWorldServer::LoadConfig( )
         DB->QFree( );
         return false;
     }
-    if (mysql_num_rows(result) == 0) 
+    if (mysql_num_rows(result) == 0)
     {
         DB->QFree( );
         return false;
@@ -2811,7 +2814,7 @@ bool CWorldServer::LoadConfig( )
        //GServer->Config.SAVETIME = atoi(row[17]);
        GServer->Config.Partygap = atoi(row[18]);
        GServer->Config.MaxStat = atoi(row[19]);
-       GServer->Config.Cfmode = atoi(row[20]);              
+       GServer->Config.Cfmode = atoi(row[20]);
     }
     DB->QFree( );
     Log( MSG_INFO, "Config Data Loaded" );
@@ -2835,7 +2838,7 @@ bool CWorldServer::LoadLTB( )
     {
         strcpy(GServer->Ltbstring[atoi(row[0])].NPCname,row[1]);
         strcpy(GServer->Ltbstring[atoi(row[0])].LTBstring,row[2]);
-    }  
+    }
     DB->QFree( );
     Log( MSG_INFO, "LTB Data Loaded" );
     return true;
