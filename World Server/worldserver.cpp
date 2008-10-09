@@ -194,6 +194,8 @@ CWorldServer::~CWorldServer( )
         delete MDropList.at(i);
     for(UINT i=0;i<NPCData.size();i++)
         delete NPCData.at(i);
+    /*
+    //LMA: Useless Vectors.
     for(UINT i=0;i<JemList.Data.size();i++)
         delete JemList.Data.at(i);
     for(UINT i=0;i<NaturalList.Data.size();i++)
@@ -206,11 +208,18 @@ CWorldServer::~CWorldServer( )
         delete SellList.Data.at(i);
     for(UINT i=0;i<UseList.Data.size();i++)
         delete UseList.Data.at(i);
+    */
+
     for(UINT i=0;i<MapList.Map.size();i++)
         delete MapList.Map.at(i);
+
+    /*
+    //LMA: Useless Vectors.
     for(UINT i=0;i<10;i++)
         for(UINT j=0;j<EquipList[i].Data.size();j++)
             delete EquipList[i].Data.at(j);
+    */
+
     for(UINT i=0;i<ClientList.size();i++)
     {
         delete (CPlayer*)ClientList.at(i)->player;

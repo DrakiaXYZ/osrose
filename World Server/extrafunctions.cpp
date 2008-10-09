@@ -606,7 +606,8 @@ CRespawnPoint* CWorldServer::GetRespawnByMap( int map )
 	return NULL;
 }
 
-// Search Skill By ID
+// Search Skill By ID (old version).
+/*
 CSkills* CWorldServer::GetSkillByID( unsigned int id )
 {
     unsigned int A=0,B=0,C=0;
@@ -616,10 +617,8 @@ CSkills* CWorldServer::GetSkillByID( unsigned int id )
         {
             CSkills* thisskill = (CSkills*) SkillList.at( A );
 			//LMA: bugs?
-			/*
-            if( id = thisskill->id );
-            return thisskill;
-			*/
+            //if( id = thisskill->id );
+            //return thisskill;
             if( id == thisskill->id )
 				return thisskill;
          }
@@ -640,6 +639,29 @@ CSkills* CWorldServer::GetSkillByID( unsigned int id )
     }
     Log( MSG_WARNING,"SKILL NOT FOUNDED! %i", id );
     return NULL;
+}
+*/
+
+
+// Search Skill By ID
+//LMA: new version since we load all skills from STB (even empty ones).
+CSkills* CWorldServer::GetSkillByID( unsigned int id )
+{
+    if (id>=SkillList.size())
+    {
+           Log( MSG_WARNING,"SKILL NOT FOUND! %i>=%i", id,SkillList.size());
+           return NULL;
+    }
+
+    CSkills* thisskill = (CSkills*) SkillList.at(id);
+    if (id!=thisskill->id)
+    {
+        Log( MSG_WARNING,"SKILL index error! %i!=%i", id,thisskill->id);
+        return NULL;
+    }
+
+
+    return thisskill;
 }
 
 // Get Monster Drop By ID
@@ -680,6 +702,8 @@ CMDrops* CWorldServer::GetDropData( unsigned int id )
 }
 
 // Get NPC Data by ID
+//lma: old version
+/*
 CNPCData* CWorldServer::GetNPCDataByID( unsigned int id )
 {
     unsigned int A=0,B=0,C=0;
@@ -707,6 +731,28 @@ CNPCData* CWorldServer::GetNPCDataByID( unsigned int id )
     }
     Log(MSG_WARNING,"NPC NOT FOUND! %i", id );
     return NULL;
+}
+*/
+
+// Get NPC Data by ID
+//LMA: new version since we load all NPC from STB (even empty ones).
+CNPCData* CWorldServer::GetNPCDataByID( unsigned int id )
+{
+    if (id>=NPCData.size())
+    {
+        Log( MSG_WARNING,"NPC NOT FOUND! %i>=%i", id,NPCData.size());
+        return NULL;
+    }
+
+    CNPCData* thisnpc = (CNPCData*) NPCData.at(id);
+    if(id!=thisnpc->id)
+    {
+        Log( MSG_WARNING,"NPC index error! %i!=%i", id,thisnpc->id);
+        return NULL;
+    }
+
+
+    return thisnpc;
 }
 
 // Get Consumible Item Info

@@ -947,28 +947,28 @@ struct CBValue
 struct CEquipList
 {
     CEquip *Index[MAX_EQUIP_DATA];
-    vector<CEquip*> Data;
+    //vector<CEquip*> Data;
     CEquip* nullequip;
 };
 
 struct CJemList
 {
     CJemData *Index[MAX_JEM_DATA];
-    vector<CJemData*> Data;
+    //vector<CJemData*> Data;
     CJemData* nulljem;
 };
 
 struct CNaturalList
 {
     CNaturalData *Index[MAX_NATURAL_DATA];
-    vector<CNaturalData*> Data;
+    //vector<CNaturalData*> Data;
     CNaturalData* nullnatural;
 };
 
 struct CPatList
 {
     CPatData *Index[MAX_PAT_DATA];
-    vector<CPatData*> Data;
+    //vector<CPatData*> Data;
     CPatData* nullpat;
 };
 
@@ -976,21 +976,21 @@ struct CProductList
 {
     //CProductData* Index[2000];
     CProductData* Index[MAX_PRODUCT_DATA];  //LMA: Sometimes 2000 wasn't enough, constant based now.
-    vector<CProductData*> Data;
+    //vector<CProductData*> Data;
     CProductData* nullproduct;
 };
 
 struct CSellList
 {
     CCSellData* Index[MAX_SELL_DATA];
-    vector<CCSellData*> Data;
+    //vector<CCSellData*> Data;
     CCSellData* nullsell;
 };
 
 struct CUseList
 {
     CUseData* Index[MAX_USE_DATA];
-    vector<CUseData*> Data;
+    //vector<CUseData*> Data;
     CUseData* nulluse;
 };
 

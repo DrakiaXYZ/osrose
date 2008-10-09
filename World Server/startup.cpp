@@ -170,11 +170,14 @@ bool CWorldServer::LoadNPCData( )
 	Log( MSG_LOAD, "NPC Data - STB               " );
     for (UINT i = 0; i<STB_NPC.rowcount; i++)
     {
+        //LMA: 2008/10/09: we use also empty lines, we use them as index...
         //checking if it's a NPC / monster or just an empty line.
+        /*
         if(STB_NPC.rows[i][8]==0)
         {
             continue;
         }
+        */
 
         CNPCData* newnpc = new (nothrow) CNPCData;
         if(newnpc==NULL)
@@ -432,6 +435,7 @@ bool CWorldServer::LoadSkillData( )
     for (unsigned int i = 0; i<STB_SKILL.rowcount;i++)
     {
         //LMA: Jumping non useful skills?
+        //No! we use it as index.
         /*
         if(STB_SKILL.rows[i][5]==0)
         {
@@ -1650,7 +1654,7 @@ bool CWorldServer::LoadEquip( )
 
             //LMA: raretype not handled !!
             //newequip->raretype = STB_ITEM[j].rows[i][47];
-            EquipList[newequip->equiptype].Data.push_back( newequip );
+            //EquipList[newequip->equiptype].Data.push_back( newequip );
             EquipList[newequip->equiptype].Index[newequip->id] = newequip; // Index to read more quickly the data
         }
     }
@@ -1740,7 +1744,7 @@ bool CWorldServer::LoadJemItem( )
         thisjem->stat1[1] = STB_ITEM[10].rows[i][17];
         thisjem->stat2[0] = STB_ITEM[10].rows[i][18];
         thisjem->stat2[1] = STB_ITEM[10].rows[i][19];
-        JemList.Data.push_back( thisjem );
+        //JemList.Data.push_back( thisjem );
         JemList.Index[thisjem->id] = thisjem;
     }
     Log( MSG_LOAD, "Jem Data loaded" );
@@ -1816,7 +1820,7 @@ bool CWorldServer::LoadNaturalItem( )
         thisnatural->weight = STB_ITEM[11].rows[i][7];
         thisnatural->quality = STB_ITEM[11].rows[i][8];
         thisnatural->pricevalue = STB_ITEM[11].rows[i][16];
-        NaturalList.Data.push_back( thisnatural );
+        //NaturalList.Data.push_back( thisnatural );
         NaturalList.Index[thisnatural->id] = thisnatural;
     }
 
@@ -1912,7 +1916,7 @@ bool CWorldServer::LoadPatItem( )
         newpat->attackdistance = STB_ITEM[13].rows[i][35];
         newpat->attackpower = STB_ITEM[13].rows[i][36];
         newpat->attackspeed = STB_ITEM[13].rows[i][37];
-        PatList.Data.push_back( newpat );
+        //PatList.Data.push_back( newpat );
         PatList.Index[newpat->id] = newpat;
     }
     Log( MSG_LOAD, "PAT Data loaded" );
@@ -1991,7 +1995,7 @@ bool CWorldServer::LoadProductItem( )
         newproduct->amount[2]=STB_PRODUCT.rows[i][7];
         newproduct->item[3]=STB_PRODUCT.rows[i][8];
         newproduct->amount[3]=STB_PRODUCT.rows[i][9];
-        ProductList.Data.push_back( newproduct );
+        //ProductList.Data.push_back( newproduct );
         ProductList.Index[newproduct->id] = newproduct;
     }
     Log( MSG_LOAD, "Product Data loaded" );
@@ -2063,7 +2067,7 @@ bool CWorldServer::LoadSellData( )
         {
             newsell->item[j-2] = STB_SELL.rows[i][j];
         }
-        SellList.Data.push_back( newsell );
+        //SellList.Data.push_back( newsell );
         SellList.Index[newsell->id] = newsell;
     }
     Log( MSG_LOAD, "Sell Data loaded" );
@@ -2153,7 +2157,7 @@ bool CWorldServer::LoadConsItem( )
         newuse->usecondition[1]= STB_ITEM[9].rows[i][18];
         newuse->useeffect[0]= STB_ITEM[9].rows[i][19];
         newuse->useeffect[1]= STB_ITEM[9].rows[i][20];
-        UseList.Data.push_back( newuse );
+        //UseList.Data.push_back( newuse );
         UseList.Index[newuse->id] = newuse;
     }
     Log( MSG_LOAD, "Consumable Data Loaded" );
