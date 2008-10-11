@@ -79,6 +79,12 @@ bool CWorldServer::InitDefaultValues()
     MapList.Index = new CMap*[300];
     MapList.max=300;
 
+    //Skills and NPC as static array too, but no init for this one.
+    SkillList=new CSkills*[STB_SKILL.rowcount];
+    maxSkills=STB_SKILL.rowcount;
+    NPCData=new CNPCData*[STB_NPC.rowcount];
+    maxNPC=STB_NPC.rowcount;
+
 
     //Equip null init
     CEquip* nullequip = new CEquip;
@@ -442,7 +448,12 @@ bool CWorldServer::LoadNPCData( )
         newnpc->lastskill=0;
         newnpc->sigskill=0;
         newnpc->delayskill=0;
+
+        #ifdef AUTOINDEX
+        NPCData[newnpc->id]=newnpc;
+        #else
         NPCData.push_back( newnpc );
+        #endif
     }
 
     STBFreeData(&STB_NPC);
@@ -601,17 +612,25 @@ bool CWorldServer::LMACheckStuff()
 }
 
 
-//LMA: We compare STB and SQL "skills" to check differences.
+//LMA: We compare STB and SQL "skills" to check differences (for debug purpose only!!!).
 bool CWorldServer::LMACheckSkills()
 {
     Log(MSG_INFO,"Begin Skill Export");
     Log(MSG_INFO,"STB/SQL,name,id,level,sp,type,skilltype,range,target,aoerange,atkpower,status[0],status[1],status[2],success,duration,costtype[0],costamount[0],mp,costtype[1],costamount[1],cooldown,weapon[0],weapon[1],weapon[2],weapon[3],weapon[4],c_class[0],c_class[1],c_class[2],c_class[3],c_class[4],rskill[0],rskill[1],rskill[2],lskill[0],lskill[1],lskill[2],buff[0],value1[0],value2[0],buff[1],value1[1],value2[1],buff[2],value1[2],value2[2],req[0],clevel,reqam[0],req[1],reqam[1],zuly,aoe,aoeradius,script,svalue1,nbuffs,END");
 
+    #ifdef AUTOINDEX
+    for (int i=0;i<maxSkills;i++)
+    #else
     for (int i=0;i<SkillList.size();i++)
+    #endif
     {
         CSkills* newskill=NULL;
         CSkills* oldskill=NULL;
+        #ifdef AUTOINDEX
+        newskill=SkillList[i];
+        #else
         newskill=SkillList.at(i);
+        #endif
 
         //jumping "void" skills.
         if(newskill->skilltype==0)
@@ -800,7 +819,11 @@ bool CWorldServer::LoadSkillData( )
             newskill->nbuffs += 4;
         }
 
+        #ifdef AUTOINDEX
+        SkillList[i]=newskill;
+        #else
         SkillList.push_back( newskill );
+        #endif
 	}
 
 	Log( MSG_LOAD, "Skills Data - STB loaded" );

@@ -30,7 +30,9 @@ CWorldServer::CWorldServer( string fn )
     //Clear or Vector list
     PartyList.clear();
     MDropList.clear();
+    #ifndef AUTOINDEX
     SkillList.clear();
+    #endif
     QuestList.clear();
     FairyList.clear();
     TeleGateList.clear();
@@ -224,12 +226,34 @@ CWorldServer::~CWorldServer( )
         delete TeleGateList.at(i);
     for(UINT i=0;i<QuestList.size();i++)
         delete QuestList.at(i);
-    for(UINT i=0;i<SkillList.size();i++)
-        delete SkillList.at(i);
     for(UINT i=0;i<MDropList.size();i++)
         delete MDropList.at(i);
+
+    #ifndef AUTOINDEX
+    for(UINT i=0;i<SkillList.size();i++)
+        delete SkillList.at(i);
     for(UINT i=0;i<NPCData.size();i++)
         delete NPCData.at(i);
+    #endif
+
+    #ifdef AUTOINDEX
+    //deleting arrays.
+    delete [] SkillList;
+    delete [] NPCData;
+
+    delete [] JemList.Index;
+    delete [] NaturalList.Index;
+    delete [] PatList.Index;
+    delete [] ProductList.Index;
+    delete [] SellList.Index;
+    delete [] UseList.Index;
+
+    for(UINT i=0;i<10;i++)
+    {
+        delete [] EquipList[i].Index;
+    }
+    #endif
+
     /*
     //LMA: Useless Vectors.
     for(UINT i=0;i<JemList.Data.size();i++)

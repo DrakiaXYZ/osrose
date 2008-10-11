@@ -647,6 +647,15 @@ CSkills* CWorldServer::GetSkillByID( unsigned int id )
 //LMA: new version since we load all skills from STB (even empty ones).
 CSkills* CWorldServer::GetSkillByID( unsigned int id )
 {
+    #ifdef AUTOINDEX
+    if (id>=maxSkills)
+    {
+           Log( MSG_WARNING,"SKILL NOT FOUND! %i>=%i", id,maxSkills);
+           return NULL;
+    }
+
+    CSkills* thisskill = SkillList[id];
+    #else
     if (id>=SkillList.size())
     {
            Log( MSG_WARNING,"SKILL NOT FOUND! %i>=%i", id,SkillList.size());
@@ -654,6 +663,9 @@ CSkills* CWorldServer::GetSkillByID( unsigned int id )
     }
 
     CSkills* thisskill = (CSkills*) SkillList.at(id);
+    #endif
+
+    //stupid test, but you never know...
     if (id!=thisskill->id)
     {
         Log( MSG_WARNING,"SKILL index error! %i!=%i", id,thisskill->id);
@@ -738,6 +750,15 @@ CNPCData* CWorldServer::GetNPCDataByID( unsigned int id )
 //LMA: new version since we load all NPC from STB (even empty ones).
 CNPCData* CWorldServer::GetNPCDataByID( unsigned int id )
 {
+    #ifdef AUTOINDEX
+    if (id>=maxNPC)
+    {
+        Log( MSG_WARNING,"NPC NOT FOUND! %i>=%i", id,maxNPC);
+        return NULL;
+    }
+
+    CNPCData* thisnpc = (CNPCData*) NPCData[id];
+    #else
     if (id>=NPCData.size())
     {
         Log( MSG_WARNING,"NPC NOT FOUND! %i>=%i", id,NPCData.size());
@@ -745,6 +766,9 @@ CNPCData* CWorldServer::GetNPCDataByID( unsigned int id )
     }
 
     CNPCData* thisnpc = (CNPCData*) NPCData.at(id);
+    #endif
+
+    //stupid test.
     if(id!=thisnpc->id)
     {
         Log( MSG_WARNING,"NPC index error! %i!=%i", id,thisnpc->id);

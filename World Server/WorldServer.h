@@ -443,11 +443,25 @@ class CWorldServer : public CServerSocket
         vector<CCustomEvent*>   CustomEventList;        //Custom events list
 
         vector<CQuest*>         QuestList;              // Quest List
-        vector<CSkills*>        SkillListOld;              // Skills List (LMA: for debug)
+        vector<CSkills*>        SkillListOld;           // Skills List (LMA: for debug)
+
+        #ifdef AUTOINDEX
+        CSkills                 **SkillList;
+        int                     maxSkills;              //Nb Skills
+        #else
         vector<CSkills*>        SkillList;              // Skills List
+        #endif
+
         vector<CMDrops*>        MDropList;              // Drops List
         vector<CMDrops*>        SkillbookList;          // Skillbook drop list (hidden)
+
+        #ifdef AUTOINDEX
+        CNPCData                **NPCData;
+        int                     maxNPC;                 //Nb NPC/Mobs
+        #else
         vector<CNPCData*>       NPCData;                // NPC/Mobs List
+        #endif
+
         vector<CParty*>         PartyList;              // Party List
         vector<CFairy*>         FairyList;              // Fairy List
         vector<CChest*>         ChestList;              // Chest List
