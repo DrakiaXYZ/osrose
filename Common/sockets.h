@@ -18,6 +18,7 @@
 
     depeloped with Main erose/hrose source server + some change from the original eich source
 */
+
 #ifndef __ROSE_SOCKETS__
 #define __ROSE_SOCKETS__
 // Comment the below to use the normal spawns instead of the IFO spawns
@@ -58,6 +59,7 @@
 #include <math.h>
 #include <pthread.h>
 #include <vector>
+#include <map>  //LMA: special for Drakia ^_^ (testing)
 #include <csignal>
 #include "log.h"
 #include "rosecrypt.hpp"
@@ -192,7 +194,7 @@ struct CROSEServerConfig
     int SlotChance; //hidden
     int RefineChance; //hidden
     int Rare_Refine;
-    int KillOnFail;    
+    int KillOnFail;
     int Cfmode;
     int MaxLevel;
     int EventType; //Event
@@ -236,7 +238,7 @@ struct CROSEServerConfig
     int Command_ChangeFairyStay;
     int Command_ChangeFairyTestMode;
     int Command_Class;
-    int Command_ConfigReset;    
+    int Command_ConfigReset;
     int Command_Convert;
     int Command_Debuff;
     int Command_DelSpawn;
@@ -279,7 +281,7 @@ struct CROSEServerConfig
     int Command_LevelUp;
     int Command_Listquest; // by Drakia
     int Command_Listqflag; // by Drakia
-    int Command_Listqvar; // by Drakia    
+    int Command_Listqvar; // by Drakia
     int Command_ManageFairy;
     int Command_MaxStats;
     int Command_Mdmg;

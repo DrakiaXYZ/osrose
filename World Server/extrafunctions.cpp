@@ -1202,8 +1202,13 @@ bool CWorldServer::IsValidItem(UINT type, UINT id )
     if(type<10)
     {
         //if(id>4999)
+        #ifdef AUTOINDEX
+        if(id>=EquipList[type].max)
+            return false;
+        #else
         if(id>=MAX_EQUIP_DATA)
             return false;
+        #endif
         if(EquipList[type].Index[id]->id==0)
             return false;
     }
@@ -1213,29 +1218,49 @@ bool CWorldServer::IsValidItem(UINT type, UINT id )
         {
             case 10:
                 //if(id>1999)
+                #ifdef AUTOINDEX
+                if(id>=UseList.max)
+                    return false;
+                #else
                 if(id>=MAX_USE_DATA)
                     return false;
+                #endif
                 if(UseList.Index[id]->id==0)
                     return false;
             break;
             case 11:
                 //if(id>3999)
+                #ifdef AUTOINDEX
+                if(id>=JemList.max)
+                    return false;
+                #else
                 if(id>=MAX_JEM_DATA)
                     return false;
+                #endif
                 if(JemList.Index[id]->id==0)
                     return false;
             break;
             case 12:
                 //if(id>999)
+                #ifdef AUTOINDEX
+                if(id>=NaturalList.max)
+                    return false;
+                #else
                 if(id>=MAX_NATURAL_DATA)
                     return false;
+                #endif
                 if(NaturalList.Index[id]->id==00)
                     return false;
             break;
             case 14:
                 //if(id>999)
+                #ifdef AUTOINDEX
+                if(id>=PatList.max)
+                    return false;
+                #else
                 if(id>=MAX_PAT_DATA)
                     return false;
+                #endif
                 if(PatList.Index[id]->id==00)
                     return false;
             break;

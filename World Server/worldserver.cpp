@@ -34,7 +34,9 @@ CWorldServer::CWorldServer( string fn )
     QuestList.clear();
     FairyList.clear();
     TeleGateList.clear();
-    //
+
+    #ifndef AUTOINDEX
+    //Equip null init
     CEquip* nullequip = new CEquip;
     nullequip->id = 0;
     nullequip->equiptype = 0;
@@ -66,9 +68,11 @@ CWorldServer::CWorldServer( string fn )
     for(int i=0;i<10;i++)
     {
         EquipList[i].nullequip = nullequip;
-        for(UINT j=0;j<5000;j++)
+        for(UINT j=0;j<MAX_EQUIP_DATA;j++)
             EquipList[i].Index[j] = nullequip;
     }
+
+    //natural null init
     CNaturalData* nullnatural = new CNaturalData;
     nullnatural->id = 0;
     nullnatural->type = 0;
@@ -78,6 +82,13 @@ CWorldServer::CWorldServer( string fn )
     nullnatural->quality = 0;
     nullnatural->pricevalue = 0;
     NaturalList.nullnatural = nullnatural;
+
+    for(UINT i=0;i<MAX_NATURAL_DATA;i++)
+    {
+        NaturalList.Index[i] = nullnatural;
+    }
+
+    //pat null init
     CPatData* nullpat = new CPatData;
     nullpat->id = 0;
     nullpat->type = 0;
@@ -94,17 +105,24 @@ CWorldServer::CWorldServer( string fn )
     nullpat->attackpower = 0;
     nullpat->attackspeed = 0;
     PatList.nullpat = nullpat;
+    for(UINT i=0;i<MAX_PAT_DATA;i++)
+    {
+        PatList.Index[i] = nullpat;
+    }
+
+    //sell null init
     CCSellData* nullsell = new CCSellData;
     nullsell->id = 0;
     for(UINT i=0;i<48;i++)
         nullsell->item[i] = 0;
     SellList.nullsell = nullsell ;
-    for(UINT i=0;i<1000;i++)
+
+    for(UINT i=0;i<MAX_SELL_DATA;i++)
     {
-        NaturalList.Index[i] = nullnatural;
-        PatList.Index[i] = nullpat;
         SellList.Index[i] = nullsell;
     }
+
+    //map null init
     CMap* nullzone = new CMap( );
     nullzone->id =0;
     nullzone->dayperiod = 1;
@@ -117,9 +135,14 @@ CWorldServer::CWorldServer( string fn )
     nullzone->MapTime = 0;
     nullzone->LastUpdate = 0;
     nullzone->CurrentTime = 0;
-    for(UINT i=0;i<300;i++)
+    for(UINT i=0;i<MAX_MAP_DATA;i++)
+    {
         MapList.Index[i] = nullzone;
+    }
+
     MapList.nullzone = nullzone;
+
+    //Use null init
     CUseData* nulluse = new CUseData;
     nulluse->id = 0;
     nulluse->restriction = 0;
@@ -135,6 +158,12 @@ CWorldServer::CWorldServer( string fn )
         nulluse->useeffect[i] = 0;
     }
     UseList.nulluse = nulluse;
+    for(UINT i=0;i<MAX_USE_DATA;i++)
+    {
+        UseList.Index[i] = nulluse;
+    }
+
+    //product null init
     CProductData* nullproduct = new CProductData;
     nullproduct->id = 0;
     for(UINT i=0;i<50;i++)
@@ -143,11 +172,12 @@ CWorldServer::CWorldServer( string fn )
         nullproduct->amount[i];
     }
     ProductList.nullproduct = nullproduct;
-    for(UINT i=0;i<2000;i++)
+    for(UINT i=0;i<MAX_PRODUCT_DATA;i++)
     {
-        UseList.Index[i] = nulluse;
         ProductList.Index[i] = nullproduct;
     }
+
+    //jem null init
     CJemData* nulljem = new CJemData;
     nulljem->id = 0;
     nulljem->type = 0;
@@ -162,8 +192,13 @@ CWorldServer::CWorldServer( string fn )
         nulljem->stat2[i] = 0;
     }
     JemList.nulljem = nulljem ;
-    for(UINT i=0;i<4000;i++)
+    for(UINT i=0;i<MAX_JEM_DATA;i++)
+    {
         JemList.Index[i] = nulljem;
+    }
+    #endif
+
+    //Stats null init
     for(UINT i=0;i<500;i++)
     {
         StatsList[i].stat[0] = 0;
@@ -171,6 +206,7 @@ CWorldServer::CWorldServer( string fn )
         StatsList[i].value[0] = 0;
         StatsList[i].value[1] = 0;
     }
+
     MapMutex = PTHREAD_MUTEX_INITIALIZER; //fast mutex
     SQLMutex = PTHREAD_MUTEX_INITIALIZER;
     PlayerMutex = PTHREAD_MUTEX_INITIALIZER;
@@ -476,6 +512,10 @@ bool CWorldServer::OnServerReady( )
 
     //Load our Server Info
     LoadSTBData( );
+    #ifdef AUTOINDEX
+    //LMA: init default values.
+    InitDefaultValues();
+    #endif
     LoadZoneData( );
     LoadGrids( );   //resetting grids...
     LoadConsItem( );
@@ -497,6 +537,7 @@ bool CWorldServer::OnServerReady( )
     /*
     LoadSkillDataOld( );
     LMACheckSkills();
+    LMACheckStuff();
     */
     //End debug.
 

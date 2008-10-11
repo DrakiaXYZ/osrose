@@ -50,6 +50,216 @@ bool CWorldServer::LoadSTBData( )
 	STBStoreData("3DData\\STB\\LIST_BREAK.STB", &BreakData);
 }
 
+
+#ifdef AUTOINDEX
+//LMA: we init default values for some lists.
+bool CWorldServer::InitDefaultValues()
+{
+    //Creating indexes
+    for(int j=0;j<9;j++)
+    {
+        EquipList[j+1].Index = new CEquip*[STB_ITEM[j].rowcount];
+        EquipList[j+1].max=STB_ITEM[j].rowcount;
+    }
+
+    JemList.Index = new CJemData*[STB_ITEM[10].rowcount];
+    JemList.max=STB_ITEM[10].rowcount;
+    NaturalList.Index = new CNaturalData*[STB_ITEM[11].rowcount];
+    NaturalList.max=STB_ITEM[11].rowcount;
+    PatList.Index = new CPatData*[STB_ITEM[13].rowcount];
+    PatList.max=STB_ITEM[13].rowcount;
+    ProductList.Index = new CProductData*[STB_PRODUCT.rowcount];
+    ProductList.max=STB_PRODUCT.rowcount;
+    SellList.Index = new CCSellData*[STB_SELL.rowcount];
+    SellList.max=STB_SELL.rowcount;
+    UseList.Index = new CUseData*[STB_ITEM[9].rowcount];
+    UseList.max=STB_ITEM[9].rowcount;
+
+    //LMA: hard for now...
+    MapList.Index = new CMap*[300];
+    MapList.max=300;
+
+
+    //Equip null init
+    CEquip* nullequip = new CEquip;
+    nullequip->id = 0;
+    nullequip->equiptype = 0;
+    nullequip->type = 0;
+    nullequip->price = 0;
+    nullequip->pricerate = 0;
+    nullequip->weight = 0;
+    nullequip->quality = 0;
+    nullequip->level = 0;
+    nullequip->material = 0;
+    nullequip->defense = 0;
+    nullequip->magicresistence = 0;
+    nullequip->attackdistance = 0;
+    nullequip->movespeed = 0;
+    nullequip->attackpower = 0;
+    nullequip->attackspeed =0;
+    nullequip->itemgrade = 0;
+    for(int i=0;i<3;i++)
+    {
+        nullequip->occupation[i] = 0;
+        nullequip->condition1[i] = 0;
+        nullequip->condition2[i] = 0;
+    }
+    for(int i=0;i<2;i++)
+    {
+        nullequip->stat1[i] = 0;
+        nullequip->stat2[i] = 0;
+    }
+    for(int i=0;i<10;i++)
+    {
+        EquipList[i].nullequip = nullequip;
+        for(UINT j=0;j<EquipList[i].max;j++)
+            EquipList[i].Index[j] = nullequip;
+    }
+
+    //natural null init
+    CNaturalData* nullnatural = new CNaturalData;
+    nullnatural->id = 0;
+    nullnatural->type = 0;
+    nullnatural->price = 0;
+    nullnatural->pricerate = 0;
+    nullnatural->weight = 0;
+    nullnatural->quality = 0;
+    nullnatural->pricevalue = 0;
+    NaturalList.nullnatural = nullnatural;
+
+    for(UINT i=0;i<NaturalList.max;i++)
+    {
+        NaturalList.Index[i] = nullnatural;
+    }
+
+    //pat null init
+    CPatData* nullpat = new CPatData;
+    nullpat->id = 0;
+    nullpat->type = 0;
+    nullpat->price = 0;
+    nullpat->pricerate = 0;
+    nullpat->weight = 0;
+    nullpat->quality = 0;
+    nullpat->material = 0;
+    nullpat->partversion = 0;
+    nullpat->maxfuel = 0;
+    nullpat->fuelcons = 0;
+    nullpat->speed = 0;
+    nullpat->attackdistance = 0;
+    nullpat->attackpower = 0;
+    nullpat->attackspeed = 0;
+    PatList.nullpat = nullpat;
+    for(UINT i=0;i<PatList.max;i++)
+    {
+        PatList.Index[i] = nullpat;
+    }
+
+    //sell null init
+    CCSellData* nullsell = new CCSellData;
+    nullsell->id = 0;
+    for(UINT i=0;i<48;i++)
+        nullsell->item[i] = 0;
+    SellList.nullsell = nullsell ;
+
+    for(UINT i=0;i<SellList.max;i++)
+    {
+        SellList.Index[i] = nullsell;
+    }
+
+    //map null init
+    CMap* nullzone = new CMap( );
+    nullzone->id =0;
+    nullzone->dayperiod = 1;
+    nullzone->morningtime = 0;
+    nullzone->daytime = 0;
+    nullzone->eveningtime = 0;
+    nullzone->nighttime = 0;
+    nullzone->allowpvp = 0;
+    nullzone->allowpat = 0;
+    nullzone->MapTime = 0;
+    nullzone->LastUpdate = 0;
+    nullzone->CurrentTime = 0;
+    for(UINT i=0;i<MapList.max;i++)
+    {
+        MapList.Index[i] = nullzone;
+    }
+
+    MapList.nullzone = nullzone;
+
+    //Use null init
+    CUseData* nulluse = new CUseData;
+    nulluse->id = 0;
+    nulluse->restriction = 0;
+    nulluse->type = 0;
+    nulluse->price = 0;
+    nulluse->pricerate = 0;
+    nulluse->weight = 0;
+    nulluse->quality = 0;
+    nulluse->pricevalue = 0;
+    for(int i=0;i<2;i++)
+    {
+        nulluse->usecondition[i] = 0;
+        nulluse->useeffect[i] = 0;
+    }
+    UseList.nulluse = nulluse;
+    for(UINT i=0;i<UseList.max;i++)
+    {
+        UseList.Index[i] = nulluse;
+    }
+
+    //product null init
+    CProductData* nullproduct = new CProductData;
+    nullproduct->id = 0;
+    for(UINT i=0;i<50;i++)
+    {
+        nullproduct->item[i];
+        nullproduct->amount[i];
+    }
+    ProductList.nullproduct = nullproduct;
+    for(UINT i=0;i<ProductList.max;i++)
+    {
+        ProductList.Index[i] = nullproduct;
+    }
+
+    //jem null init
+    CJemData* nulljem = new CJemData;
+    nulljem->id = 0;
+    nulljem->type = 0;
+    nulljem->price = 0;
+    nulljem->pricerate = 0;
+    nulljem->weight = 0;
+    nulljem->quality = 0;
+    nulljem->material = 0;
+    for(int i=0;i<2;i++)
+    {
+        nulljem->stat1[i] = 0;
+        nulljem->stat2[i] = 0;
+    }
+    JemList.nulljem = nulljem ;
+    for(UINT i=0;i<JemList.max;i++)
+    {
+        JemList.Index[i] = nulljem;
+    }
+
+    /*
+    for(int j=0;j<9;j++)
+    {
+        Log(MSG_INFO,"%i::%i",j+1,EquipList[j+1].max);
+    }
+
+    Log(MSG_INFO,"%i",JemList.max);
+    Log(MSG_INFO,"%i",NaturalList.max);
+    Log(MSG_INFO,"%i",PatList.max);
+    Log(MSG_INFO,"%i",ProductList.max);
+    Log(MSG_INFO,"%i",SellList.max);
+    Log(MSG_INFO,"%i",UseList.max);
+    */
+
+
+    return true;
+}
+#endif
+
 //LMA: npc_data, sql version.
 /*
 bool CWorldServer::LoadNPCData( )
@@ -372,6 +582,24 @@ bool CWorldServer::LoadSkillDataOld( )
 
     return true;
 }
+
+//LMA: Stuff... Used for tests :)
+bool CWorldServer::LMACheckStuff()
+{
+    //test test :)
+
+    /*
+    int i=10;
+    CJemData* thisjem = JemList.Index[i];
+    CJemData* thisjemmap = JemList.DataMap[i];
+
+    Log(MSG_INFO,"Index: %i::%i, stat1[0] %i",i,thisjem->id,thisjem->stat1[0]);
+    Log(MSG_INFO,"IndexMap: %i::%i, stat1[0] %i",i,thisjemmap->id,thisjemmap->stat1[0]);
+    */
+
+    return true;
+}
+
 
 //LMA: We compare STB and SQL "skills" to check differences.
 bool CWorldServer::LMACheckSkills()
@@ -818,9 +1046,17 @@ bool CWorldServer::LoadRespawnData( )
 		thisrespawnpoint->masterdest = (atoi(row[5]) == 1);
 
         //LMA: check if out of memory.
+        #ifdef AUTOINDEX
+        if (thisrespawnpoint->destMap>=MapList.max)
+        #else
         if (thisrespawnpoint->destMap>=MAX_MAP_DATA)
+        #endif
         {
+           #ifdef AUTOINDEX
+           Log(MSG_WARNING,"RespawnZones, index overflow trapped %i>%i (increase MAX_MAP_DATA)",thisrespawnpoint->destMap,MapList.max);
+           #else
            Log(MSG_WARNING,"RespawnZones, index overflow trapped %i>%i (increase MAX_MAP_DATA)",thisrespawnpoint->destMap,MAX_MAP_DATA);
+           #endif
            delete thisrespawnpoint;
            continue;
         }
@@ -1150,9 +1386,17 @@ bool CWorldServer::LoadMonsterSpawn( )
             }
 
             //LMA: check if out of memory.
+            #ifdef AUTOINDEX
+            if (thisspawn->map>=MapList.max)
+            #else
             if (thisspawn->map>=MAX_MAP_DATA)
+            #endif
             {
+               #ifdef AUTOINDEX
+               Log(MSG_WARNING,"Spawn, index overflow trapped %i>%i (increase MAX_MAP_DATA)",thisspawn->map,MapList.max);
+               #else
                Log(MSG_WARNING,"Spawn, index overflow trapped %i>%i (increase MAX_MAP_DATA)",thisspawn->map,MAX_MAP_DATA);
+               #endif
                delete thisspawn;
                continue;
             }
@@ -1202,9 +1446,17 @@ bool CWorldServer::LoadNPCs( )
         thisnpc->dialog=atoi(row[7]);               //LMA tempdialog ID, used for events for example
 
         //LMA: check if out of memory.
+        #ifdef AUTOINDEX
+        if (thisnpc->posMap>=MapList.max)
+        #else
         if (thisnpc->posMap>=MAX_MAP_DATA)
+        #endif
         {
+           #ifdef AUTOINDEX
+           Log(MSG_WARNING,"NPC, index overflow trapped %i>%i (increase MAX_MAP_DATA)",thisnpc->posMap,MapList.max);
+           #else
            Log(MSG_WARNING,"NPC, index overflow trapped %i>%i (increase MAX_MAP_DATA)",thisnpc->posMap,MAX_MAP_DATA);
+           #endif
            delete thisnpc;
            continue;
         }
@@ -1593,12 +1845,14 @@ bool CWorldServer::LoadEquip( )
             newequip->id = i;
 
             //LMA: check if out of memory.
+            #ifndef AUTOINDEX
             if (newequip->id>=MAX_EQUIP_DATA)
             {
                Log(MSG_WARNING,"equip, index overflow trapped %i>%i (increase MAX_EQUIP_DATA)",newequip->id,MAX_EQUIP_DATA);
                delete newequip;
                continue;
             }
+            #endif
 
             newequip->equiptype = (j+1);
             newequip->type = STB_ITEM[j].rows[i][4];
@@ -1727,12 +1981,14 @@ bool CWorldServer::LoadJemItem( )
         thisjem->id = i;
 
         //LMA: check if out of memory.
+        #ifndef AUTOINDEX
         if (thisjem->id>=MAX_JEM_DATA)
         {
            Log(MSG_WARNING,"Jems, index overflow trapped %i>%i (increase MAX_JEM_DATA)",thisjem->id,MAX_JEM_DATA);
            delete thisjem;
            continue;
         }
+        #endif
 
         thisjem->type = STB_ITEM[10].rows[i][4];
         thisjem->price = STB_ITEM[10].rows[i][5];
@@ -1746,6 +2002,9 @@ bool CWorldServer::LoadJemItem( )
         thisjem->stat2[1] = STB_ITEM[10].rows[i][19];
         //JemList.Data.push_back( thisjem );
         JemList.Index[thisjem->id] = thisjem;
+
+        //LMA: testing maps :) Don't need to test keys since it's ++
+        //JemList.DataMap[i]=thisjem;
     }
     Log( MSG_LOAD, "Jem Data loaded" );
     return true;
@@ -1807,12 +2066,14 @@ bool CWorldServer::LoadNaturalItem( )
         thisnatural->id = i;
 
         //LMA: check if out of memory.
+        #ifndef AUTOINDEX
         if (thisnatural->id>=MAX_NATURAL_DATA)
         {
            Log(MSG_WARNING,"natural data, index overflow trapped %i>%i (increase MAX_NATURAL_DATA)",thisnatural->id,MAX_NATURAL_DATA);
            delete thisnatural;
            continue;
         }
+        #endif
 
         thisnatural->type = STB_ITEM[11].rows[i][4];
         thisnatural->price = STB_ITEM[11].rows[i][5];
@@ -1891,12 +2152,14 @@ bool CWorldServer::LoadPatItem( )
         newpat->id = i;
 
         //LMA: check if out of memory.
+        #ifndef AUTOINDEX
         if (newpat->id>=MAX_PAT_DATA)
         {
            Log(MSG_WARNING,"PAT Data, index overflow trapped %i>%i (increase MAX_PAT_DATA)",newpat->id,MAX_PAT_DATA);
            delete newpat;
            continue;
         }
+        #endif
 
         newpat->type = STB_ITEM[13].rows[i][4];
         newpat->price = STB_ITEM[13].rows[i][5];
@@ -1980,12 +2243,14 @@ bool CWorldServer::LoadProductItem( )
         newproduct->id = i;
 
         //LMA: check if out of memory.
+        #ifndef AUTOINDEX
         if (newproduct->id>=MAX_PRODUCT_DATA)
         {
            Log(MSG_WARNING,"Product Data, index overflow trapped %i>%i (increase MAX_PRODUCT_DATA)",newproduct->id,MAX_PRODUCT_DATA);
            delete newproduct;
            continue;
         }
+        #endif
 
         newproduct->item[0]=STB_PRODUCT.rows[i][2];
         newproduct->amount[0]=STB_PRODUCT.rows[i][3];
@@ -2056,12 +2321,14 @@ bool CWorldServer::LoadSellData( )
         newsell->id = i;
 
         //LMA: check if out of memory.
+        #ifndef AUTOINDEX
         if (newsell->id>=MAX_SELL_DATA)
         {
            Log(MSG_WARNING,"sell data, index overflow trapped %i>%i (increase MAX_SELL_DATA)",newsell->id,MAX_SELL_DATA);
            delete newsell;
            continue;
         }
+        #endif
 
         for(unsigned int j=2;j<STB_SELL.fieldcount;j++)
         {
@@ -2139,12 +2406,14 @@ bool CWorldServer::LoadConsItem( )
         newuse->id = i;
 
         //LMA: check if out of memory.
+        #ifndef AUTOINDEX
         if (newuse->id>=MAX_USE_DATA)
         {
            Log(MSG_WARNING,"Consummables, index overflow trapped %i>%i (increase MAX_USE_DATA)",newuse->id,MAX_USE_DATA);
            delete newuse;
            continue;
         }
+        #endif
 
         newuse->restriction = STB_ITEM[9].rows[i][3];
         newuse->type = STB_ITEM[9].rows[i][4];
@@ -2190,12 +2459,21 @@ bool CWorldServer::LoadZoneData( )
         newzone->id = GetUIntValue(",", &line);
 
         //LMA: check if out of memory.
+        #ifdef AUTOINDEX
+        if (newzone->id>=MapList.max)
+        #else
         if (newzone->id>=MAX_MAP_DATA)
+        #endif
         {
+           #ifdef AUTOINDEX
+           Log(MSG_WARNING,"zone_data.csv, index overflow trapped %i>%i (increase MAX_MAP_DATA)",newzone->id,MapList.max);
+           #else
            Log(MSG_WARNING,"zone_data.csv, index overflow trapped %i>%i (increase MAX_MAP_DATA)",newzone->id,MAX_MAP_DATA);
+           #endif
            delete newzone;
            continue;
         }
+        //#endif
 
         newzone->dayperiod = GetUIntValue(",");
         newzone->morningtime = GetUIntValue(",");

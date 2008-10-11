@@ -360,6 +360,12 @@ class CWorldServer : public CServerSocket
 
     	//----------------- Server StartUp Functions (startup.cpp)
     	bool LoadSTBData( );
+
+        #ifdef AUTOINDEX
+        //lma: initializing arrays default values...
+        bool InitDefaultValues();
+        #endif
+
     	bool LoadZoneData( );
     	bool LoadGrids( );         //LMA: maps
     	bool LoadConsItem( );
@@ -375,7 +381,7 @@ class CWorldServer : public CServerSocket
         bool LoadCustomTeleGate( );
         bool LoadCustomEvents( );
         bool LoadMonsterSpawn( );
-        bool LoadConfig( ); //New config loading        
+        bool LoadConfig( ); //New config loading
 #ifdef USEIFO
         bool LoadMobGroups( );
 #endif
@@ -403,6 +409,7 @@ class CWorldServer : public CServerSocket
         bool LoadChestData( );
         bool LoadSkillDataOld( );  //LMA: Old version, for debug
         bool LMACheckSkills( );  //LMA: for skill debug
+        bool LMACheckStuff();   //LMA: for different tests.
         bool LoadSkillData( );
         bool LoadMonsters( );
         bool LoadNPCData( );

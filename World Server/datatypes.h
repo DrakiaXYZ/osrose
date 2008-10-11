@@ -25,6 +25,9 @@
 #include "datatypes_compat.h"
 #define USENEWQUESTSYSTEM
 
+//LMA: testing auto index (Maxxon)
+#define AUTOINDEX
+
 //*upgraded status
 //#define NULL 2
 #define STRENGTH 10
@@ -227,16 +230,17 @@
 #define NB_CELL_MAX 400
 
 //LMA: max item list.
-#define MAX_PRODUCT_DATA 6000
-#define MAX_EQUIP_DATA 5100
-#define MAX_JEM_DATA 4000
-#define MAX_NATURAL_DATA 1000
-#define MAX_PAT_DATA 1000
-#define MAX_SELL_DATA 1000
-#define MAX_USE_DATA 2000
-#define MAX_MAP_DATA 300
-#define MAX_BREAK 3000
-
+#ifndef AUTOINDEX
+    #define MAX_PRODUCT_DATA 6000
+    #define MAX_EQUIP_DATA 5100
+    #define MAX_JEM_DATA 4000
+    #define MAX_NATURAL_DATA 1000
+    #define MAX_PAT_DATA 1000
+    #define MAX_SELL_DATA 1000
+    #define MAX_USE_DATA 2000
+    //#define MAX_BREAK 3000    //LMA: useless now
+    #define MAX_MAP_DATA 300
+#endif
 
 #include "../common/sockets.h"
 
@@ -946,57 +950,105 @@ struct CBValue
 // ITEMS
 struct CEquipList
 {
-    CEquip *Index[MAX_EQUIP_DATA];
+    #ifdef AUTOINDEX
+        CEquip **Index;
+        int max;
+    #else
+        CEquip *Index[MAX_EQUIP_DATA];
+    #endif
+
     //vector<CEquip*> Data;
     CEquip* nullequip;
 };
 
 struct CJemList
 {
-    CJemData *Index[MAX_JEM_DATA];
+    #ifdef AUTOINDEX
+        CJemData **Index;
+        int max;
+    #else
+        CJemData *Index[MAX_JEM_DATA];
+    #endif
+
     //vector<CJemData*> Data;
+    //std::map<int,CJemData*> DataMap; //LMA: testing map.
     CJemData* nulljem;
 };
 
 struct CNaturalList
 {
-    CNaturalData *Index[MAX_NATURAL_DATA];
+    #ifdef AUTOINDEX
+        CNaturalData **Index;
+        int max;
+    #else
+        CNaturalData *Index[MAX_NATURAL_DATA];
+    #endif
+
     //vector<CNaturalData*> Data;
     CNaturalData* nullnatural;
 };
 
 struct CPatList
 {
-    CPatData *Index[MAX_PAT_DATA];
+    #ifdef AUTOINDEX
+        CPatData **Index;
+        int max;
+    #else
+        CPatData *Index[MAX_PAT_DATA];
+    #endif
+
     //vector<CPatData*> Data;
     CPatData* nullpat;
 };
 
 struct CProductList
 {
-    //CProductData* Index[2000];
-    CProductData* Index[MAX_PRODUCT_DATA];  //LMA: Sometimes 2000 wasn't enough, constant based now.
+    #ifdef AUTOINDEX
+        CProductData **Index;  //LMA: Sometimes 2000 wasn't enough, constant based now.
+        int max;
+    #else
+        CProductData* Index[MAX_PRODUCT_DATA];  //LMA: Sometimes 2000 wasn't enough, constant based now.
+    #endif
+
     //vector<CProductData*> Data;
     CProductData* nullproduct;
 };
 
 struct CSellList
 {
-    CCSellData* Index[MAX_SELL_DATA];
+    #ifdef AUTOINDEX
+        CCSellData **Index;
+        int max;
+    #else
+        CCSellData* Index[MAX_SELL_DATA];
+    #endif
+
     //vector<CCSellData*> Data;
     CCSellData* nullsell;
 };
 
 struct CUseList
 {
-    CUseData* Index[MAX_USE_DATA];
+    #ifdef AUTOINDEX
+        CUseData **Index;
+        int max;
+    #else
+        CUseData* Index[MAX_USE_DATA];
+    #endif
+
     //vector<CUseData*> Data;
     CUseData* nulluse;
 };
 
 struct CMapList
 {
-    class CMap* Index[MAX_MAP_DATA];
+    #ifdef AUTOINDEX
+        class CMap **Index;
+        int max;
+    #else
+        class CMap* Index[MAX_MAP_DATA];
+    #endif
+
     vector<class CMap*> Map;
     class CMap* nullzone;
 };
