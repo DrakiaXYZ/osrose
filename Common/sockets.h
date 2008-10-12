@@ -58,7 +58,7 @@
 #include <assert.h>
 #include <math.h>
 #include <pthread.h>
-#include <vector>
+//#include <vector>
 #include <map>  //LMA: special for Drakia ^_^ (testing)
 #include <csignal>
 #include "log.h"
