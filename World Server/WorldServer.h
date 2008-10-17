@@ -381,7 +381,6 @@ class CWorldServer : public CServerSocket
         bool LoadCustomTeleGate( );
         bool LoadCustomEvents( );
         bool LoadMonsterSpawn( );
-        bool LoadConfig( ); //New config loading
 #ifdef USEIFO
         bool LoadMobGroups( );
 #endif
@@ -393,6 +392,7 @@ class CWorldServer : public CServerSocket
         void LoadQuestData( );
         bool LoadQuestSTB();
         bool LoadBreakChestBlueList( );
+        
 
         vector<CQuestTrigger*> TriggerList;
         fpQuestCond qstCondFunc[31];
@@ -406,6 +406,8 @@ class CWorldServer : public CServerSocket
         bool LoadDropsData( );
         bool LoadPYDropsData( );    //hidden
         bool LoadSkillBookDropsData( ); //hidden
+        bool LoadConfig( );
+        //bool LoadLTB( );        
         bool LoadChestData( );
         bool LoadSkillDataOld( );  //LMA: Old version, for debug
         bool LMACheckSkills( );  //LMA: for skill debug

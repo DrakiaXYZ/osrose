@@ -1,10 +1,10 @@
 /*
 MySQL Data Transfer
-Source Host: localhost
+Source Host: dhrr
 Source Database: osrose
-Target Host: localhost
+Target Host: dhrr
 Target Database: osrose
-Date: 10/8/2008 6:47:02 AM
+Date: 10/7/2008 8:06:54 PM
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -41,4 +41,4 @@ CREATE TABLE `list_config` (
 -- ----------------------------
 -- Records 
 -- ----------------------------
-INSERT INTO `list_config` VALUES ('1', '8', '0', '80', '3', '5', '5', '5', '5', '0', 'default', '100', '100', '100', '100', '100', '100', '50', '2', '120', '10', '300', '0');
+INSERT INTO `list_config` VALUES ('1', '8', '0', '80', '3', '5', '5', '5', '5', '0', 'default', '100', '100', '100', '100', '100', '100', '250', '2', '500', '10', '300', '0');

@@ -601,6 +601,8 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
         }
         return true;
     }
+//Old spawning gm command - commented out for now
+/*
     //******************************* START RESPAWN ***************************
     else if (strcmp(command, "SSPAWN")==0)
     { //STARTPOINT IDMOB CANTMIN CANTMAX RESPAWNTIME(s)  (3 points minimum)
@@ -767,6 +769,7 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
         }
         return true;
     }
+*/    
     else if(strcmp(command, "DELETESPAWN")==0)
     {
          if(Config.Command_DelSpawn > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)
@@ -1770,7 +1773,7 @@ else if (strcmp(command, "give2")==0)
         if ((tmp = strtok(NULL, " "))==NULL) return true; int statvalue    = atoi(tmp);
         if (statvalue > Config.MaxStat)  /// code by PurpleYouko for setting max stat to 300
             statvalue = Config.MaxStat;  /// extra code to match setting in worldserver.conf by Atomsk
-        Log( MSG_GMACTION, " %s : /stat %s,%i" , thisclient->CharInfo->charname, statname, statvalue);
+        Log( MSG_GMACTION, " %s : /stat %s %i" , thisclient->CharInfo->charname, statname, statvalue);
         return pakGMStat( thisclient , statname , statvalue);
     }
     else if (strcmp(command, "statp")==0)

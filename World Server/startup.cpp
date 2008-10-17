@@ -3116,11 +3116,20 @@ bool CWorldServer::LoadConfig( )
 // new update - from PurpleYouko
        GServer->Config.MaxLevel = atoi(row[15]);
        GServer->Config.DROP_TYPE = atoi(row[16]);
-       //GServer->Config.SAVETIME = atoi(row[17]);
+       GServer->Config.SAVETIME = atoi(row[17]);
        GServer->Config.Partygap = atoi(row[18]);
        GServer->Config.MaxStat = atoi(row[19]);
        GServer->Config.Cfmode = atoi(row[20]);
     }
+    //logging
+    //Log(MSG_INFO,"value GServer->Config.EXP_RATE=%i",GServer->Config.EXP_RATE);
+    //Log(MSG_INFO,"value row[0]=%s",row[0]);
+    
+/*    for (int k=0;k<21;k++)
+    {
+	Log(MSG_INFO,"value row[%i]=%s, atoi(row[%i])=%i",k,row[k],k,atoi(row[k]));
+    }
+*/    
     DB->QFree( );
     Log( MSG_INFO, "Config Data Loaded" );
     return true;

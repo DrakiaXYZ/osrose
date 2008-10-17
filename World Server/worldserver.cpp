@@ -535,6 +535,8 @@ bool CWorldServer::OnServerReady( )
 	MOVE_SPEED_MODIF = 100000;
 
     //Load our Server Info
+    LoadConfig( );
+    //LoadLTB( );
     LoadSTBData( );
     #ifdef AUTOINDEX
     //LMA: init default values.
@@ -556,6 +558,7 @@ bool CWorldServer::OnServerReady( )
     //LoadBreakList( );     // geo edit for disassemble // 22 oct 07
     LoadBreakChestBlueList();   //LMA: loading chests, breaks from STB...
     LoadSkillData( );
+    
 
     //LMA: for debug (load old skill system and compares to new one).
     /*
@@ -758,7 +761,7 @@ void CWorldServer::LoadConfigurations( char* file )
 	//Config.ZULY_RATE            = ConfigGetInt    ( file, "zuly_rate", 1 );
 	Config.WELCOME_MSG          = ConfigGetString ( file, "welcome_msg", "Welcome to Rose Online" );
     Config.AUTOSAVE             = ConfigGetInt    ( file, "autosave", 0 );
-	Config.SAVETIME             = ConfigGetInt    ( file, "savetime", 3600 );
+	//Config.SAVETIME             = ConfigGetInt    ( file, "savetime", 3600 );
     Config.MapDelay             = ConfigGetInt    ( file, "mapdelay", 10 );
     Config.WorldDelay           = ConfigGetInt    ( file, "worlddelay", 200 );
     Config.VisualDelay          = ConfigGetInt    ( file, "visualdelay", 500 );
