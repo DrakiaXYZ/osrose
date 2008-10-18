@@ -3721,8 +3721,11 @@ bool CWorldServer::pakGMLevel( CPlayer* thisclient, int level, char* name )
         otherclient->Stats->Level += level;
     else
         otherclient->Stats->Level = 1;
+    if (otherclient->Stats->Level > Config.MaxLevel) 
+        otherclient->Stats->Level = Config.MaxLevel;       
     if (otherclient->Stats->Level > 250)
-        otherclient->Stats->Level = 250;
+    //    otherclient->Stats->Level = 250;
+          SendPM (thisclient, "Relogin For Get new Level");
     otherclient->CharInfo->Exp = 0;
     if (level < 0) {
         otherclient->CharInfo->StatPoints = 0;

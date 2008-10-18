@@ -1,9 +1,9 @@
 [Editor_45]
-CursorCol=10
-CursorRow=3137
-TopLine=3129
+CursorCol=50
+CursorRow=3136
+TopLine=3117
 LeftChar=1
-Open=1
+Open=0
 Top=0
 [Editor_50]
 CursorCol=103
@@ -58,8 +58,8 @@ LeftChar=1
 Open=0
 Top=0
 CursorCol=9
-CursorRow=184
-TopLine=186
+CursorRow=199
+TopLine=177
 LeftChar=1
 [Editor_9]
 Open=0
@@ -260,9 +260,9 @@ LeftChar=1
 [Editor_34]
 Open=0
 Top=0
-CursorCol=1
-CursorRow=665
-TopLine=640
+CursorCol=10
+CursorRow=254
+TopLine=248
 LeftChar=1
 [Editor_35]
 Open=0
@@ -278,12 +278,12 @@ TopLine=701
 >>>>>>> .r85
 LeftChar=1
 [Editor_36]
-Open=0
+Open=1
 <<<<<<< .mine
-Top=0
-CursorCol=60
-CursorRow=2539
-TopLine=2503
+Top=1
+CursorCol=7
+CursorRow=3728
+TopLine=3694
 =======
 Top=0
 CursorCol=6
@@ -367,11 +367,11 @@ CursorRow=186
 TopLine=163
 LeftChar=1
 [Editor_48]
-Open=1
-Top=1
+Open=0
+Top=0
 CursorCol=5
 CursorRow=783
-TopLine=730
+TopLine=750
 LeftChar=1
 [Editor_49]
 Open=0
