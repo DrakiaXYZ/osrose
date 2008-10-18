@@ -558,7 +558,7 @@ bool CWorldServer::OnServerReady( )
     //LoadBreakList( );     // geo edit for disassemble // 22 oct 07
     LoadBreakChestBlueList();   //LMA: loading chests, breaks from STB...
     LoadSkillData( );
-    
+
 
     //LMA: for debug (load old skill system and compares to new one).
     /*
@@ -780,7 +780,7 @@ void CWorldServer::LoadConfigurations( char* file )
     //Config.SlotChance           = ConfigGetInt    ( file, "slotchance", 5); //hidden
     //Config.RefineChance         = ConfigGetInt    ( file, "refinechance", 5); //hidden
     //Config.Cfmode               = ConfigGetInt    ( file, "cfmode", 0);
-    Config.osRoseVer            = ConfigGetString    ( file, "osRoseVer", "79.999");
+    //Config.osRoseVer            = ConfigGetString    ( file, "osRoseVer", "79.999");
     ///Config.testgrid             = ConfigGetInt    ( file, "testgrid", 0); //LMA: maps tests grids (0=usual, 1=grid)
     ///Config.jrose                = ConfigGetInt    ( file, "jrose", 0); //LMA: Special code for jRose handling (163)
     ///Config.unionslaughter       = ConfigGetInt    ( file, "unionslaughter", 0); //LMA: is Union Slaughter active?

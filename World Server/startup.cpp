@@ -3099,6 +3099,7 @@ bool CWorldServer::LoadConfig( )
         DB->QFree( );
         return false;
     }
+
     while( row = mysql_fetch_row(result) )
     {
        GServer->Config.EXP_RATE = atoi(row[0]);
@@ -3125,7 +3126,7 @@ bool CWorldServer::LoadConfig( )
        GServer->Config.MaxStat = atoi(row[19]);
        GServer->Config.Cfmode = atoi(row[20]);
 // added to remove from worldserver.conf
-//need to remove old from worldserver.cpp 
+//need to remove old from worldserver.cpp
        GServer->Config.AutoSave = atoi(row[21]);
        GServer->Config.MapDelay = atoi(row[22]);
        GServer->Config.VisualDelay = atoi(row[23]);
@@ -3134,7 +3135,7 @@ bool CWorldServer::LoadConfig( )
        GServer->Config.FairyStay = atoi(row[26]);
        GServer->Config.FairyWait = atoi(row[27]);
        GServer->Config.FairyTestMode = atoi(row[28]);
-       //GServer->Config.osRoseVer = (row[29]);
+       GServer->Config.osRoseVer = strdup(row[29]);
        GServer->Config.testgrid = atoi(row[30]);
        GServer->Config.jrose = atoi(row[31]);
        GServer->Config.unionslaughter = atoi(row[32]);
@@ -3151,12 +3152,12 @@ bool CWorldServer::LoadConfig( )
     //logging
     //Log(MSG_INFO,"value GServer->Config.EXP_RATE=%i",GServer->Config.EXP_RATE);
     //Log(MSG_INFO,"value row[0]=%s",row[0]);
-    
+
 /*    for (int k=0;k<21;k++)
     {
 	Log(MSG_INFO,"value row[%i]=%s, atoi(row[%i])=%i",k,row[k],k,atoi(row[k]));
     }
-*/    
+*/
     DB->QFree( );
     Log( MSG_INFO, "Config Data Loaded" );
     return true;
