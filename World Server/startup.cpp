@@ -3084,7 +3084,11 @@ bool CWorldServer::LoadConfig( )
     MYSQL_ROW row;
     MYSQL_RES *result = DB->QStore("SELECT exp_rate, drop_rate, zuly_rate, blue_chance, stat_chance, slot_chance, \
         refine_chance, rare_refine, kill_on_fail, player_damage, monster_damage, player_acc, monster_acc, \
-        pvp_acc, skill_damage, maxlevel, drop_type, savetime, partygap, maxstat, cfmode  FROM list_config");
+        pvp_acc, skill_damage, maxlevel, drop_type, savetime, partygap, maxstat, cfmode, autosave, mapdelay, \
+        visualdelay, worlddelay, fairymode, fairystay, fairywait, fairytestmode, osrosever, testgrid, jrose, \
+        unionslaughter, unionduration, unionmin, unionslaughterloop, unionslaughterdelay_loop, unionwar, \
+        unionwarloop, unionwardelay_loop, unionwarduration, unionwarmin FROM list_config");
+
     if(result==NULL)
     {
         DB->QFree( );
@@ -3120,6 +3124,29 @@ bool CWorldServer::LoadConfig( )
        GServer->Config.Partygap = atoi(row[18]);
        GServer->Config.MaxStat = atoi(row[19]);
        GServer->Config.Cfmode = atoi(row[20]);
+// added to remove from worldserver.conf
+//need to remove old from worldserver.cpp 
+       GServer->Config.AutoSave = atoi(row[21]);
+       GServer->Config.MapDelay = atoi(row[22]);
+       GServer->Config.VisualDelay = atoi(row[23]);
+       GServer->Config.WorldDelay = atoi(row[24]);
+       GServer->Config.FairyMode = atoi(row[25]);
+       GServer->Config.FairyStay = atoi(row[26]);
+       GServer->Config.FairyWait = atoi(row[27]);
+       GServer->Config.FairyTestMode = atoi(row[28]);
+       //GServer->Config.osRoseVer = (row[29]);
+       GServer->Config.testgrid = atoi(row[30]);
+       GServer->Config.jrose = atoi(row[31]);
+       GServer->Config.unionslaughter = atoi(row[32]);
+       GServer->Config.unionduration = atoi(row[33]);
+       GServer->Config.unionmin = atoi(row[34]);
+       GServer->Config.unionslaughterloop = atoi(row[35]);
+       GServer->Config.unionslaughterdelay_loop = atoi(row[36]);
+       GServer->Config.unionwar = atoi(row[37]);
+       GServer->Config.unionwarloop = atoi(row[38]);
+       GServer->Config.unionwardelay_loop = atoi(row[39]);
+       GServer->Config.unionwarduration = atoi(row[40]);
+       GServer->Config.unionwarmin = atoi(row[41]);
     }
     //logging
     //Log(MSG_INFO,"value GServer->Config.EXP_RATE=%i",GServer->Config.EXP_RATE);
