@@ -265,12 +265,12 @@ CursorRow=254
 TopLine=248
 LeftChar=1
 [Editor_35]
-Open=0
+Open=1
 Top=0
 <<<<<<< .mine
-CursorCol=64
-CursorRow=922
-TopLine=887
+CursorCol=1
+CursorRow=939
+TopLine=921
 =======
 CursorCol=13
 CursorRow=712
@@ -281,9 +281,9 @@ LeftChar=1
 Open=1
 <<<<<<< .mine
 Top=1
-CursorCol=7
-CursorRow=3728
-TopLine=3694
+CursorCol=1
+CursorRow=5196
+TopLine=5164
 =======
 Top=0
 CursorCol=6
@@ -345,11 +345,11 @@ TopLine=7
 LeftChar=1
 [Editor_46]
 <<<<<<< .mine
-Open=0
+Open=1
 Top=0
-CursorCol=65
-CursorRow=1132
-TopLine=1132
+CursorCol=20
+CursorRow=2865
+TopLine=2844
 LeftChar=1
 =======
 Open=0

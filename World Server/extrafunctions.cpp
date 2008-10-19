@@ -933,8 +933,9 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
             else //Artisan 210-227 Bombs
             if (useitem->itemnum>209 && useitem->itemnum<228)
             {
-                useitem->usescript = 0; //not correct script ?
-                useitem->usetype = UseList.Index[useitem->itemnum]->useeffect[1]; // not correct ?
+                useitem->usescript = 6; //not correct script ?
+                useitem->usetype = UseList.Index[useitem->itemnum]->useeffect[0];
+                useitem->usevalue = UseList.Index[useitem->itemnum]->useeffect[1];
             }
 
             else //Dance Scroll

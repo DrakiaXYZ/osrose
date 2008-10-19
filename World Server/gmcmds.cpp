@@ -5185,12 +5185,14 @@ bool CWorldServer::pakGMGiveBuff(CPlayer* thisClient, CPlayer* targetClient, int
 bool CWorldServer::pakGMMaxStats( CPlayer* thisclient )
 {
 
-        pakGMStat(thisclient, "str", 300);
-        pakGMStat(thisclient, "dex", 300);
-        pakGMStat(thisclient, "con", 300);
-        pakGMStat(thisclient, "int", 300);
-        pakGMStat(thisclient, "cha", 300);
-        pakGMStat(thisclient, "sen", 300);
+        pakGMStat(thisclient, "str", Config.MaxStat);
+        pakGMStat(thisclient, "dex", Config.MaxStat);
+        pakGMStat(thisclient, "con", Config.MaxStat);
+        pakGMStat(thisclient, "int", Config.MaxStat);
+        pakGMStat(thisclient, "cha", Config.MaxStat);
+        pakGMStat(thisclient, "sen", Config.MaxStat);
+
+//changed from fixed 300 to Config.MaxStat controlled from list_config db  - rl2171
 
     return true;
 }
