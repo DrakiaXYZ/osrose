@@ -940,7 +940,7 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
 
             else //Dance Scroll
             if( (useitem->itemnum>370 && useitem->itemnum<377) ||
-                (useitem->itemnum>389 && useitem->itemnum<398) )
+                (useitem->itemnum>389 && useitem->itemnum<401) )
             {
                 //LMA: PY's code, different script for dance scrolls
                 /*useitem->usescript = 4;
@@ -993,8 +993,8 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
 //                else if(useitem->itemnum==944){useitem->usevalue = 172;} // Arua's Blessing
                 else{ useitem->usevalue = useitem->itemnum + 500; }
             }
-            else // Snowball
-            if( useitem->itemnum==326 )
+            else // Snowball & Rock
+            if( ( useitem->itemnum==326 ) || ( useitem->itemnum==327 ) )
             {
                 useitem->usescript = 6;
                 useitem->usetype = UseList.Index[useitem->itemnum]->useeffect[0];

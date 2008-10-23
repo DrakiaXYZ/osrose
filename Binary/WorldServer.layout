@@ -265,22 +265,22 @@ CursorRow=254
 TopLine=248
 LeftChar=1
 [Editor_35]
-Open=0
-Top=0
+Open=1
+Top=1
 <<<<<<< .mine
-CursorCol=1
-CursorRow=939
-TopLine=921
+CursorCol=36
+CursorRow=996
+TopLine=973
 =======
 CursorCol=13
 CursorRow=712
 TopLine=701
 >>>>>>> .r85
-LeftChar=1
+LeftChar=3
 [Editor_36]
-Open=1
+Open=0
 <<<<<<< .mine
-Top=1
+Top=0
 CursorCol=31
 CursorRow=3459
 TopLine=3438
