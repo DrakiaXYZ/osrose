@@ -933,7 +933,8 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
             else //Artisan 210-227 Bombs
             if (useitem->itemnum>209 && useitem->itemnum<228)
             {
-                useitem->usescript = 6; //not correct script ?
+                //useitem->usescript = 6; //not correct script ?
+                useitem->usescript = 16; //LMA: testing AOE.
                 useitem->usetype = UseList.Index[useitem->itemnum]->useeffect[0];
                 useitem->usevalue = UseList.Index[useitem->itemnum]->useeffect[1];
             }
@@ -999,6 +1000,13 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
                 useitem->usescript = 6;
                 useitem->usetype = UseList.Index[useitem->itemnum]->useeffect[0];
                 useitem->usevalue = UseList.Index[useitem->itemnum]->useeffect[1];
+
+                //LMA: Special for Rocks.
+                if(useitem->itemnum==327)
+                {
+                    useitem->usescript = 15;
+                }
+
             }
             else
             {

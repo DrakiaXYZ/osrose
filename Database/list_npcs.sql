@@ -39,11 +39,11 @@ INSERT INTO `list_npcs` VALUES (0, '[Keenu''s Daughter] Arisa', 1020, 1, 275.985
 INSERT INTO `list_npcs` VALUES (0, '[Lena''s Sister] Shirley', 1019, 1, 322.406, 5504.69, 5274.08, 119,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Righteous Crusader] Gawain', 1090, 2, 84.016, 5334.58, 5353.91, 190,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Righteous Crusader] Huffe', 1111, 2, 90.000, 5334.84, 5345.81, 211,0,0);
-INSERT INTO `list_npcs` VALUES (0, '[Righteous Crusader] Norg', 3023, 2, 95.984, 5325.12, 5350.00, 0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Righteous Crusader] Norg', 3023, 2, 95.984, 5325.12, 5350.00, 228,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Clan Owner] Burtland', 1115, 2, 90.000, 5289.10, 5264.10, 215,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Clan War Manager] Regina', 1751, 2, 90.000, 5290.17, 5244.25, 751,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Clan Merchant] Aliche Patt', 1752, 2, 90.000, 5288.35, 5260.53, 224,0,0);
-INSERT INTO `list_npcs` VALUES (0, '[Knight of Junon Order] Sammodell', 3021, 2, 275.984, 5328.78, 5131.26, 0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Knight of Junon Order] Sammodell', 3021, 2, 275.984, 5328.78, 5131.26, 226,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Founder of Junon Order] Raw', 1088, 2, 181.501, 5319.27, 5095.36, 188,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Elder of Junon Order] Gorthein', 1109, 2, 181.501, 5325.54, 5095.31, 209,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Guide] Eva', 1082, 2, 153.435, 5505.78, 5346.09, 182,0,0);
@@ -59,7 +59,7 @@ INSERT INTO `list_npcs` VALUES (0, '[Vicious Captain] Ruven', 1125, 2, 270.000, 
 INSERT INTO `list_npcs` VALUES (0, '[Manager of Ferrell] Arothel', 1089, 2, 270.000, 5713.43, 5360.16, 189,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Armor Merchant] Saki', 1094, 2, 258.129, 5721.80, 5290.79, 194,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Ferrell Guild Staff] Charrs', 1110, 2, 270.000, 5713.38, 5368.71, 210,0,0);
-INSERT INTO `list_npcs` VALUES (0, '[Ferrell Bank Guard] Arnold', 3024, 2, 264.016, 5721.48, 5364.74, 0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Ferrell Bank Guard] Arnold', 3024, 2, 264.016, 5721.48, 5364.74, 229,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Gypsy Merchant] Bellia', 1092, 2, 217.594, 5725.11, 5199.04, 192,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Weapon Merchant] Crune', 1093, 2, 335.763, 5728.67, 5224.89, 193,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Designer] Lisa', 1095, 2, 220.893, 5729.06, 5136.33, 195,0,0);
@@ -71,7 +71,7 @@ INSERT INTO `list_npcs` VALUES (0, '[Ferrell Guild Staff] Kiroth', 1098, 2, 275.
 INSERT INTO `list_npcs` VALUES (0, '[Ferrell Guild Staff] Hayen', 1099, 2, 258.129, 5603.77, 5046.12, 199,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Ferrell Guild Staff] Itz', 1100, 2, 270.000, 5603.69, 5034.52, 200,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Arumic Researcher] Carasia', 1112, 2, 197.989, 5730.57, 5094.06, 212,0,0);
-INSERT INTO `list_npcs` VALUES (0, '[Arumic Mercenary] Turenth', 3022, 2, 204.237, 5730.21, 5087.81, 0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Arumic Mercenary] Turenth', 3022, 2, 204.237, 5730.21, 5087.81, 227,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Livestock Farmer] Sicru', 1107, 2, 187.631, 5818.02, 5487.59, 207,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Ferrell Guild Staff] Rooen', 1513, 3, 0.000, 5104.48, 5019.71, 303,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Akram Minister] Rodath', 1086, 5, 90.000, 5155.07, 5279.92, 186,0,0);
@@ -118,13 +118,13 @@ INSERT INTO `list_npcs` VALUES (0, '[Old Man] Myad', 1041, 22, 17.989, 5078.07, 
 INSERT INTO `list_npcs` VALUES (0, '[Novice Designer] Cassirin', 1040, 22, 355.472, 5103.53, 5378.90, 140,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Fruit Store] Reene', 1039, 22, 26.565, 5061.58, 5342.24, 139,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Ferrell Guild Storage Keeper] Fabrizio', 1042, 22, 192.550, 5113.43, 5260.64, 143,0,0);
-INSERT INTO `list_npcs` VALUES (0, 'Melendino', 1473, 22, 142.406, 5107.44, 5013.71, 0,0,0);
+INSERT INTO `list_npcs` VALUES (0, 'Melendino', 1473, 22, 142.406, 5107.44, 5013.71, 16,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Visitor Guide] Ronway', 1031, 22, 246.969, 5147.55, 5356.75, 131,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Smith] Ronk', 1034, 22, 224.459, 5140.96, 5303.35, 134,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Akram Minister] Mairard', 1032, 22, 298.187, 5154.85, 5332.74, 132,0,0);
-INSERT INTO `list_npcs` VALUES (0, '[Mysterious Traveler] Edeline', 1200, 22, 160.035, 5175.09, 5020.77, 0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Mysterious Traveler] Edeline', 1200, 22, 160.035, 5175.09, 5020.77, 144,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[NoNameNPC]', 1198, 22, 148.307, 5280.66, 5160.09, 0,0,0);
-INSERT INTO `list_npcs` VALUES (0, '[Boy in the Hut]Huey', 1021, 22, 333.435, 5650.66, 5407.16, 0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Boy in the Hut]Huey', 1021, 22, 333.435, 5650.66, 5407.16, 142,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Ferrell Guild Staff] Peron', 1511, 22, 275.984, 5905.42, 5306.42, 301,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Ferrell Guild Staff] Seyon', 1036, 22, 293.031, 5882.08, 5420.74, 136,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Little Street Vendor] Pony', 1035, 22, 0.000, 5860.22, 5431.89, 135,0,0);

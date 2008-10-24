@@ -604,7 +604,7 @@ bool CCharacter::AoeSkill( CSkills* skill, CCharacter* Enemy )
         }
         if(GServer->IsMonInCircle( goodtarget,monster->Position->current,(float)skill->aoeradius+1))
         {
-            Log(MSG_INFO,"AOE Attack (1) monster %i",monster->montype);
+            Log(MSG_INFO,"AOE Attack (1) monster %i radius %.2f",monster->montype,(float)skill->aoeradius+1);
             UseAtkSkill( (CCharacter*) monster, skill );
         }
 

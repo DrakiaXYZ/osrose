@@ -2951,6 +2951,34 @@ bool CWorldServer::pakUseItem ( CPlayer* thisclient, CPacket* P )
             flag=true;
         }
         break;
+        case 15: //LMA: Rocks
+        {
+            WORD clientid = GETWORD((*P),2);
+            fPoint thispoint;
+            CMap* map = MapList.Index[thisclient->Position->Map];
+            CCharacter* character = map->GetCharInMap( clientid );
+            if(character==NULL) return true;
+            thisclient->StartAction( character, SKILL_ATTACK, thisuse->usevalue );
+            flag = true;
+        }
+        break;
+        case 16: //LMA: bombs
+        {
+            WORD clientid = GETWORD((*P),2);
+
+            //LMA: for now we use this...
+            fPoint thispoint;
+            CMap* map = MapList.Index[thisclient->Position->Map];
+            CCharacter* character = map->GetCharInMap( clientid );
+            if(character==NULL)
+            {
+                return true;
+            }
+
+            thisclient->StartAction( character, SKILL_ATTACK, thisuse->usevalue );
+            flag = true;
+        }
+        break;
     }
     if(flag == true)
     {
