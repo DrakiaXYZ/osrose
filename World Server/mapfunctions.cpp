@@ -301,6 +301,7 @@ void CMap::RespawnMonster( )
       {
         if (last_map!=thisgroup->map)
         {
+            /*
             for (int k=0;k<GServer->MapList.Map.size();k++)
             {
                 CMap* map = GServer->MapList.Map.at(k);
@@ -312,7 +313,11 @@ void CMap::RespawnMonster( )
                 }
 
             }
+            */
 
+            CMap* map = GServer->MapList.Index[thisgroup->map];
+            last_map=map->id;
+            is_night=map->IsNight();
         }
 
         if(!is_night)
