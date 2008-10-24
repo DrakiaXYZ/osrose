@@ -1,22 +1,22 @@
 /*
     Rose Online Server Emulator
     Copyright (C) 2006,2007 OSRose Team http://www.dev-osrose.com
-    
+
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
     as published by the Free Software Foundation; either version 2
     of the License, or (at your option) any later version.
-    
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-    
+
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-    depeloped with Main erose/hrose source server + some change from the original eich source        
+    depeloped with Main erose/hrose source server + some change from the original eich source
 */
 
 #include "worldmap.h"
@@ -63,40 +63,40 @@ CMap::~CMap( )
     }
 #endif
     for(UINT i=0;i<MonsterSpawnList.size();i++)
-        delete MonsterSpawnList.at(i);    
+        delete MonsterSpawnList.at(i);
     for(UINT i=0;i<MonsterList.size();i++)
-        delete MonsterList.at(i);            
+        delete MonsterList.at(i);
     for(UINT i=0;i<DropsList.size();i++)
-        delete DropsList.at(i);                                             
+        delete DropsList.at(i);
     for(UINT i=0;i<NPCList.size();i++)
-        delete NPCList.at(i);                                    
+        delete NPCList.at(i);
     for(UINT i=0;i<TeleGateList.size();i++)
-        delete TeleGateList.at(i);                                            
+        delete TeleGateList.at(i);
 }
 
 bool CMap::AddPlayer( CPlayer* player )
 {
-    PlayerList.push_back( player );    
+    PlayerList.push_back( player );
     return false;
 }
 
 bool CMap::RemovePlayer( CPlayer* player, bool clearobject )
 {
-    GServer->ClearClientID( player->clientid );            
+    GServer->ClearClientID( player->clientid );
     if(clearobject)
     {
         BEGINPACKET( pak, 0x794 );
         ADDWORD    ( pak, player->clientid );
         GServer->SendToVisible( &pak, player, false );
-    }    
+    }
     for(UINT i=0;i<PlayerList.size();i++)
     {
         if(PlayerList.at(i)==player)
         {
-            PlayerList.erase( PlayerList.begin()+i ); 
+            PlayerList.erase( PlayerList.begin()+i );
             return true;
         }
-    }    
+    }
     Log(MSG_WARNING, "Player not founded %s", player->CharInfo->charname );
     return false;
 }
@@ -106,14 +106,14 @@ bool CMap::RemovePlayer( CPlayer* player, bool clearobject )
 CMonster* CMap::AddMonster( UINT montype, fPoint position, UINT owner, CMDrops* MonsterDrop, CMDrops* MapDrop, UINT spawnid , bool GetDropData )
 {
     // check if is a valid monster
-    CNPCData* thisnpc = GServer->GetNPCDataByID( montype );  
-    if(thisnpc==NULL) 
+    CNPCData* thisnpc = GServer->GetNPCDataByID( montype );
+    if(thisnpc==NULL)
     {
         Log( MSG_WARNING, "Invalid montype %i", montype );
-        return NULL; 
+        return NULL;
     }
     CMonster* monster = new (nothrow) CMonster( position, montype, this->id, owner, spawnid  );
-    if(monster==NULL)     
+    if(monster==NULL)
     {
         Log( MSG_WARNING, "Error allocing memory" );
         return NULL;
@@ -124,30 +124,38 @@ CMonster* CMap::AddMonster( UINT montype, fPoint position, UINT owner, CMDrops* 
     if(GetDropData && owner==0)
     {
         monster->MonsterDrop->mobdrop = GServer->GetDropData( monster->thisnpc->dropid );
-        monster->MonsterDrop->mapdrop = GServer->GetDropData( id );        
+        monster->MonsterDrop->mapdrop = GServer->GetDropData( id );
     }
     else
     {
         monster->MonsterDrop->mobdrop = MonsterDrop;
-        monster->MonsterDrop->mapdrop = MapDrop;                
+        monster->MonsterDrop->mapdrop = MapDrop;
     }
     MonsterList.push_back( monster );
+
+    //LMA: daynight
+    monster->daynight=0;
+
     if(spawnid!=0)
     {
 #ifndef USEIFO
         CSpawnArea* thisspawn = GServer->GetSpawnArea( spawnid, this->id );
         if(thisspawn!=NULL)
             thisspawn->amon++;
+        //LMA: no daynight in this mode
 #else
         CMobGroup* thisgroup = GServer->GetMobGroup( spawnid, this->id );
         if(thisgroup!=NULL)
             thisgroup->active++;
+
+        //LMA: daynight
+        monster->daynight=thisgroup->daynight;
 #endif
-        
-    }    
+
+    }
     monster->SpawnTime = clock( );
     monster->OnSpawn( false );
-    
+
     //LMA BEGIN
     //20070621-211100/test
     //The bug still exists, I activate it...
@@ -161,22 +169,22 @@ CMonster* CMap::AddMonster( UINT montype, fPoint position, UINT owner, CMDrops* 
       }
     */
     //LMA END
-    
+
     monster->hitcount=0;
     monster->maxhitcount=0;
     monster->stay_still=false;
-    
+
     if(monster->thisnpc->id==659)
     {
        monster->maxhitcount=3;   //LMA: MoonChild
        monster->stay_still=true;
     }
-    
+
     if(monster->thisnpc->id==201)
     {
        monster->maxhitcount=1;   //LMA: Worm dragon
     }
-    
+
     if(monster->thisnpc->id==1572)
     {
        monster->maxhitcount=1;   //rl2171: Cursed Ant Vagabond
@@ -202,22 +210,22 @@ CMonster* CMap::AddMonster( UINT montype, fPoint position, UINT owner, CMDrops* 
     {
        monster->maxhitcount=1;   //rl2171: 3rd Turak
     }
-*/   
+*/
     //Sunrise, Sunset and Dusk Crystal in Junon Cartel
     if (monster->thisnpc->id>=431&&monster->thisnpc->id<=433)
-       monster->stay_still=true;    
+       monster->stay_still=true;
 
     //Rune Stone, Green, Blue, Red, White Crystal in Luna
 //    if (monster->thisnpc->id>=325&&monster->thisnpc->id<=329)
-//       monster->stay_still=true;    
+//       monster->stay_still=true;
 
     //Seal Stone
 //    if (monster->thisnpc->id>=451&&monster->thisnpc->id<=457)
-//       monster->stay_still=true;    
+//       monster->stay_still=true;
 
     //Clan Wars gate - wall
 //    if (monster->thisnpc->id>=1022&&monster->thisnpc->id<=1023)
-//       monster->stay_still=true;    
+//       monster->stay_still=true;
 
     //LMA: bonfire (and salamender...) don't move and don't attack ;)
     if (monster->IsBonfire())
@@ -233,9 +241,9 @@ CMonster* CMap::AddMonster( UINT montype, fPoint position, UINT owner, CMDrops* 
     monster->skillid=0;
     monster->range=0;
     monster->buffid=0;
-    
 
-    return monster; 
+
+    return monster;
 }
 
 // Delete a monster
@@ -269,11 +277,11 @@ bool CMap::DeleteMonster( CMonster* monster, bool clearobject, UINT i )
     {
         BEGINPACKET( pak, 0x799 );
         ADDWORD    ( pak, monster->clientid );
-        ADDWORD    ( pak, monster->clientid ); 
+        ADDWORD    ( pak, monster->clientid );
         ADDDWORD   ( pak, monster->Stats->HP );
-        ADDDWORD   ( pak, 16 );       
+        ADDDWORD   ( pak, 16 );
         GServer->SendToVisible( &pak, monster );
-    }               
+    }
     if(i!=0)
     {
         MonsterList.erase( MonsterList.begin()+i );
@@ -289,7 +297,7 @@ bool CMap::DeleteMonster( CMonster* monster, bool clearobject, UINT i )
             delete monster;
             return true;
         }
-    } 
+    }
     delete monster;
     return false;
 }
@@ -297,15 +305,15 @@ bool CMap::DeleteMonster( CMonster* monster, bool clearobject, UINT i )
 //add a new drop
 bool CMap::AddDrop( CDrop* drop )
 {
-    DropsList.push_back( drop );  
-    return true;   
+    DropsList.push_back( drop );
+    return true;
 }
 
 bool CMap::DeleteDrop( CDrop* drop )
-{ 
-    BEGINPACKET( pak, 0x794 );  
+{
+    BEGINPACKET( pak, 0x794 );
 	ADDWORD    ( pak, drop->clientid );
-	GServer->SendToVisible( &pak, drop );    
+	GServer->SendToVisible( &pak, drop );
     GServer->ClearClientID( drop->clientid );
     for(UINT j=0;j<DropsList.size();j++)
     {
@@ -316,7 +324,7 @@ bool CMap::DeleteDrop( CDrop* drop )
             return true;
         }
     }
-    delete drop;    
+    delete drop;
     return false;
 }
 
@@ -331,7 +339,7 @@ bool CMap::DeleteNPC( CNPC* npc )
     BEGINPACKET( pak, 0x794 );
     ADDWORD    ( pak, npc->clientid );
     GServer->SendToMap( &pak, npc->posMap );
-    GServer->ClearClientID( npc->clientid ); 	    
+    GServer->ClearClientID( npc->clientid );
     for(UINT j=0;j<NPCList.size();j++)
     {
         if(npc==NPCList.at(j))
@@ -341,7 +349,7 @@ bool CMap::DeleteNPC( CNPC* npc )
             return true;
         }
     }
-    delete npc;    
-    return false;    
+    delete npc;
+    return false;
     return true;
 }

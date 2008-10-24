@@ -1,22 +1,22 @@
 /*
     Rose Online Server Emulator
     Copyright (C) 2006,2007 OSRose Team http://www.dev-osrose.com
-    
+
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
     as published by the Free Software Foundation; either version 2
     of the License, or (at your option) any later version.
-    
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-    
+
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-    depeloped with Main erose/hrose source server + some change from the original eich source        
+    depeloped with Main erose/hrose source server + some change from the original eich source
 */
 
 #include "worldmap.h"
@@ -24,7 +24,7 @@
 // convert a monster to other
 CMonster* CMap::ConverToMonster( CMonster* monster, UINT newmontype, bool heal )
 {
-    CNPCData* thisnpc = GServer->GetNPCDataByID( newmontype );  
+    CNPCData* thisnpc = GServer->GetNPCDataByID( newmontype );
     if(thisnpc==NULL)// invalid type
         return NULL;
     monster->montype = newmontype;
@@ -35,7 +35,7 @@ CMonster* CMap::ConverToMonster( CMonster* monster, UINT newmontype, bool heal )
     if(monster->owner==0)
     {
         monster->MonsterDrop->mobdrop = GServer->GetDropData( monster->thisnpc->dropid );
-        monster->MonsterDrop->mapdrop = GServer->GetDropData( id );        
+        monster->MonsterDrop->mapdrop = GServer->GetDropData( id );
     }
     BEGINPACKET( pak, 0x774 );
     ADDWORD    ( pak, monster->clientid );
@@ -48,10 +48,10 @@ CMonster* CMap::ConverToMonster( CMonster* monster, UINT newmontype, bool heal )
 // convert a npc to other [not working]
 CMonster* CMap::ConverToMonster( CNPC* npc, UINT newmontype )
 {
-    CMonster* monster = AddMonster( newmontype, npc->pos, 0, NULL, NULL, 0, true );        
+    CMonster* monster = AddMonster( newmontype, npc->pos, 0, NULL, NULL, 0, true );
     if(monster==NULL) // invalid montype
         return NULL;
-    GServer->ClearClientID( monster->clientid );        
+    GServer->ClearClientID( monster->clientid );
     monster->clientid = npc->clientid;
     for(UINT i=0;i<NPCList.size();i++)
     {
@@ -62,7 +62,7 @@ CMonster* CMap::ConverToMonster( CNPC* npc, UINT newmontype )
     BEGINPACKET( pak, 0x774 );
     ADDWORD    ( pak, npc->clientid );
     ADDWORD    ( pak, newmontype );
-    GServer->SendToVisible( &pak, monster );    
+    GServer->SendToVisible( &pak, monster );
     return monster;
 }
 
@@ -74,23 +74,23 @@ bool CMap::TeleportPlayer( CPlayer* player, fPoint coord, bool TelePassenger )
     player->Position->current = coord; //TELEPORT ONLY
     player->Position->destiny = coord; //TELEPORT ONLY
     player->Session->inGame = false;
-    player->Position->lastMoveTime = clock();    
+    player->Position->lastMoveTime = clock();
     if(!allowpat || !TelePassenger)
     {
         if(!allowpat)
-            player->Status->Stance=0x03;        
+            player->Status->Stance=0x03;
         player->Ride->Drive = false;
-        player->Ride->charid= 0; 
-        player->Ride->Ride = false;       
-    }    
+        player->Ride->charid= 0;
+        player->Ride->Ride = false;
+    }
     AddPlayer( player );
 	BEGINPACKET( pak, 0x07a8 );
-	ADDWORD    ( pak, player->clientid );	
-	ADDWORD    ( pak, player->Position->Map );		
-	ADDFLOAT   ( pak, player->Position->current.x*100 );	
-	ADDFLOAT   ( pak, player->Position->current.y*100 );	
-    ADDWORD    ( pak, (player->Status->Stance==0x04?0x0201:0x0001) ); 
-	player->client->SendPacket( &pak );   
+	ADDWORD    ( pak, player->clientid );
+	ADDWORD    ( pak, player->Position->Map );
+	ADDFLOAT   ( pak, player->Position->current.x*100 );
+	ADDFLOAT   ( pak, player->Position->current.y*100 );
+    ADDWORD    ( pak, (player->Status->Stance==0x04?0x0201:0x0001) );
+	player->client->SendPacket( &pak );
     if( player->Ride->Drive && player->Ride->charid!=0 )
     {
             CPlayer* otherclient = GServer->GetClientByCID( player->Ride->charid );
@@ -103,14 +103,14 @@ bool CMap::TeleportPlayer( CPlayer* player, fPoint coord, bool TelePassenger )
                 else
                 {
                     otherclient->Ride->Drive = false;
-                    otherclient->Ride->charid= 0; 
-                    otherclient->Ride->Ride = false;                       
+                    otherclient->Ride->charid= 0;
+                    otherclient->Ride->Ride = false;
                 }
             }
     }
     GServer->pakClearUser( player );
-    GServer->ClearClientID( player->clientid );    
-    player->RestartPlayerVal( );    
+    GServer->ClearClientID( player->clientid );
+    player->RestartPlayerVal( );
     return true;
 }
 
@@ -120,7 +120,7 @@ CRespawnPoint* CMap::GetNearRespawn( CPlayer* player )
     CRespawnPoint* respawn = NULL;
     float distance = 0xffff;
     for(UINT i=0;i<RespawnList.size();i++)
-    {        
+    {
         float resdist = GServer->distance( player->Position->current, RespawnList.at(i)->dest );
         if( resdist < distance )
         {
@@ -136,9 +136,9 @@ CRespawnPoint* CMap::GetFirstRespawn( )
 {
     CRespawnPoint* respawn = NULL;
     for(UINT i=0;i<RespawnList.size();i++)
-    {        
+    {
         return RespawnList.at(i);
-    }    
+    }
     return respawn;
 }
 
@@ -150,7 +150,7 @@ CPlayer* CMap::GetPlayerInMap( UINT id )
         if(PlayerList.at(i)->clientid == id )
             return PlayerList.at(i);
     }
-    return NULL;    
+    return NULL;
 }
 
 // Search a client by charid
@@ -161,7 +161,7 @@ CPlayer* CMap::GetCharIDInMap( UINT id )
         if(PlayerList.at(i)->CharInfo->charid == id )
             return PlayerList.at(i);
     }
-    return NULL;        
+    return NULL;
 }
 
 // Search a monster by clientid
@@ -191,7 +191,7 @@ CNPC* CMap::GetNPCInMap( UINT id )
     {
         if(NPCList.at(i)->clientid == id )
             return NPCList.at(i);
-    }    
+    }
     return NULL;
 }
 
@@ -207,11 +207,11 @@ CNPC* CMap::GetNPCInMapQSD( UINT id )
     return NULL;
 }
 
-void CMap::UpdateTime( ) 
+void CMap::UpdateTime( )
 {
-    if(id==0) return;    
-    UINT etime = (UINT)round((clock() - LastUpdate)/1000);    
-    if(etime<10)return;         
+    if(id==0) return;
+    UINT etime = (UINT)round((clock() - LastUpdate)/1000);
+    if(etime<10)return;
     MapTime += (UINT)floor(etime/10);
     if(MapTime==0xffffffff)
         MapTime = 0;
@@ -220,24 +220,24 @@ void CMap::UpdateTime( )
     UINT ctime = MapTime%dayperiod;
     if(ctime>=morningtime && ctime<daytime)
     {
-        CurrentTime = MORNING; 
+        CurrentTime = MORNING;
     }
     else
     if(ctime>=daytime && ctime<eveningtime)
     {
-        CurrentTime = DAY; 
+        CurrentTime = DAY;
     }
     else
     if(ctime>=eveningtime && ctime<nighttime)
     {
-        CurrentTime = EVENING; 
-    }     
+        CurrentTime = EVENING;
+    }
     else
     if(ctime>=nighttime)
     {
-        CurrentTime = NIGHT; 
-    }             
-    LastUpdate = clock();     
+        CurrentTime = NIGHT;
+    }
+    LastUpdate = clock();
 }
 
 // Clean Drops
@@ -254,13 +254,13 @@ void CMap::CleanDrops( )
 // Respawn a Monster
 void CMap::RespawnMonster( )
 {
-  #ifndef USEIFO   
+  #ifndef USEIFO
     for(UINT k=0;k<MonsterSpawnList.size( );k++)
     {
-        CSpawnArea* thisspawn = MonsterSpawnList.at(k);                
+        CSpawnArea* thisspawn = MonsterSpawnList.at(k);
         clock_t rtime = clock() - thisspawn->lastRespawnTime;
         if((rtime > thisspawn->respawntime*CLOCKS_PER_SEC && thisspawn->amon<thisspawn->max) || thisspawn->amon<thisspawn->min )
-        {         
+        {
             //LMA: handling spawns of some bosses according to some spawn kills.
             if (thisspawn->nb_trigger>0)
             {
@@ -272,27 +272,58 @@ void CMap::RespawnMonster( )
                   fPoint position = GServer->RandInPoly( thisspawn->points, thisspawn->pcount );
                   AddMonster( thisspawn->bossid, position, 0, thisspawn->bossdrop, thisspawn->mapdrop, thisspawn->id);
                   thisspawn->cu_trigger=0;
-                  
+
                   //We jump (boss counts for one monster).
                   continue;
                }
-               
-            } 
-            
+
+            }
+
             fPoint position = GServer->RandInPoly( thisspawn->points, thisspawn->pcount );
             AddMonster( thisspawn->montype, position, 0, thisspawn->mobdrop, thisspawn->mapdrop, thisspawn->id );
-            thisspawn->lastRespawnTime = clock();                                  
+            thisspawn->lastRespawnTime = clock();
         }
-    }                  
+    }
 #else
-    for (UINT j = 0; j < MobGroupList.size(); j++) {
-      CMobGroup* thisgroup = MobGroupList.at(j);
+    //LMA: daynight
+    int last_map=0;
+    bool is_night=false;
+    for (UINT j = 0; j < MobGroupList.size(); j++)
+    {
+       CMobGroup* thisgroup = MobGroupList.at(j);
+
       clock_t rtime = clock() - thisgroup->lastRespawnTime;
       if (rtime < thisgroup->respawntime*CLOCKS_PER_SEC || thisgroup->active >= thisgroup->limit)
         continue;
-     for (UINT k = thisgroup->active; k < thisgroup->limit; k++) {
+
+      //LMA: We don't update a group if it's not the night and those monsters come only at night...
+      if(thisgroup->daynight==2)
+      {
+        if (last_map!=thisgroup->map)
+        {
+            for (int k=0;k<GServer->MapList.Map.size();k++)
+            {
+                CMap* map = GServer->MapList.Map.at(k);
+                if (map->id==thisgroup->map)
+                {
+                    last_map=map->id;
+                    is_night=map->IsNight();
+                    break;
+                }
+
+            }
+
+        }
+
+        if(!is_night)
+            continue;
+      }
+
+     for (UINT k = thisgroup->active; k < thisgroup->limit; k++)
+     {
         CMob *thismob;
-        if (thisgroup->tacMobs.size() > 0 && thisgroup->basicKills >= thisgroup->tacticalpoints) {
+        if (thisgroup->tacMobs.size() > 0 && thisgroup->basicKills >= thisgroup->tacticalpoints)
+        {
           thismob = thisgroup->tacMobs.at(thisgroup->curTac);
           thisgroup->basicKills = 0;
           thisgroup->curTac++;
@@ -302,11 +333,15 @@ void CMap::RespawnMonster( )
           thisgroup->curBasic++;
           if (thisgroup->curBasic >= thisgroup->basicMobs.size()) thisgroup->curBasic = 0;
         }
-        for (UINT i = 0; i < thismob->amount; i++) {
+
+        for (UINT i = 0; i < thismob->amount; i++)
+        {
           fPoint position = GServer->RandInCircle( thisgroup->point, thisgroup->range );
           AddMonster( thismob->mobId, position, 0, thismob->mobdrop, thismob->mapdrop, thisgroup->id );
         }
+
       }
+
     }
 #endif
 
@@ -333,6 +368,6 @@ CCharacter* CMap::GetCharInMap( unsigned int id )
     }
     CPlayer* player = GetPlayerInMap( id );
     if(player!=NULL)
-        return (CCharacter*) player;        
+        return (CCharacter*) player;
     return NULL;
 }

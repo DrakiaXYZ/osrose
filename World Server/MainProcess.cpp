@@ -441,6 +441,14 @@ PVOID MapProcess( PVOID TS )
                 if (!ok_cont)
                     continue;
 
+                //LMA: daynight stuff :) kinda vampire code for spawns ^_^
+                if(monster->daynight==2&&!map->IsNight())
+                {
+                    //Bye bye little monster...
+                    map->DeleteMonster( monster, true, j );
+                    continue;
+                }
+
                //LMA begin
                //20070621-211100
                 //Beans for CF...

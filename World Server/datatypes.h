@@ -849,6 +849,7 @@ struct CMobGroup {
   UINT limit;
   UINT active;
   UINT tacticalpoints;
+  UINT daynight;    //LMA: day, night or both?
   UINT respawntime;
   UINT basicKills;
   UINT curTac;
