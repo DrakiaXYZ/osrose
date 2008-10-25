@@ -1202,10 +1202,15 @@ bool CWorldServer::LoadMobGroups()
   //MYSQL_RES *result = DB->QStore("SELECT `id`, `map`, `x`, `y`, `range`, `respawntime`, `limit`, `tacticalpoints`, `moblist` FROM `list_mobgroups`");
 
   //LMA: Day and night (for Halloween)
-  MYSQL_RES *result = DB->QStore("SELECT `id`, `map`, `x`, `y`, `range`, `respawntime`, `limit`, `tacticalpoints`, `moblist`,`daynight`  FROM `list_mobgroups`");
+  MYSQL_RES *result = DB->QStore("SELECT `id`, `map`, `x`, `y`, `range`, `respawntime`, `limit`, `tacticalpoints`, `moblist`,`daynight`,`isactive`  FROM `list_mobgroups`");
   if (result == NULL) return false;
   while (row = mysql_fetch_row(result))
   {
+    //LMA: Active spawn?
+    int is_active=atoi(row[10]);
+    if(is_active==0)
+        continue;
+
     CMobGroup* thisgroup = new (nothrow) CMobGroup;
     if (thisgroup == NULL)
     {
@@ -1322,10 +1327,16 @@ bool CWorldServer::LoadMobGroupsSpecial()
   bool flag = true;
   char* tmp = NULL;
   //LMA: Day and night (for Halloween)
-  MYSQL_RES *result = DB->QStore("SELECT `id`, `map`, `x`, `y`, `range`, `respawntime`, `limit`, `tacticalpoints`, `moblist`,`daynight`  FROM `list_mobgroups_special`");
+  MYSQL_RES *result = DB->QStore("SELECT `id`, `map`, `x`, `y`, `range`, `respawntime`, `limit`, `tacticalpoints`, `moblist`,`daynight`,`isactive`  FROM `list_mobgroups_special`");
   if (result == NULL) return false;
   while (row = mysql_fetch_row(result))
   {
+
+    //LMA: Active spawn?
+    int is_active=atoi(row[10]);
+    if(is_active==0)
+        continue;
+
     CMobGroup* thisgroup = new (nothrow) CMobGroup;
     if (thisgroup == NULL)
     {
