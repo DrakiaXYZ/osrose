@@ -268,15 +268,15 @@ LeftChar=1
 Open=1
 Top=1
 <<<<<<< .mine
-CursorCol=36
-CursorRow=996
-TopLine=973
+CursorCol=244
+CursorRow=972
+TopLine=956
 =======
 CursorCol=13
 CursorRow=712
 TopLine=701
 >>>>>>> .r85
-LeftChar=3
+LeftChar=175
 [Editor_36]
 Open=0
 <<<<<<< .mine
@@ -348,8 +348,8 @@ LeftChar=1
 Open=0
 Top=0
 CursorCol=20
-CursorRow=2865
-TopLine=2844
+CursorRow=2802
+TopLine=2802
 LeftChar=1
 =======
 Open=0

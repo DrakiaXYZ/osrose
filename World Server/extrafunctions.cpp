@@ -969,7 +969,7 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
                 useitem->usevalue = UseList.Index[useitem->itemnum]->useeffect[1];
             }
             else // Summons
-            if( (useitem->itemnum>400 && useitem->itemnum<440) || (useitem->itemnum==496) || (useitem->itemnum==594) || (useitem->itemnum>915 && useitem->itemnum<918) || (useitem->itemnum>939 && useitem->itemnum<943) )
+            if( (useitem->itemnum>400 && useitem->itemnum<440) || (useitem->itemnum==496) || (useitem->itemnum==594) || (useitem->itemnum>915 && useitem->itemnum<918) || (useitem->itemnum>939 && useitem->itemnum<943) || (useitem->itemnum==1055) )
             {
                 if( thisclient->CharInfo->stamina<101 )
                     return NULL;
@@ -983,6 +983,7 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
                 else if(useitem->itemnum==940){useitem->usevalue = 994;} // Easter Bunny
                 else if(useitem->itemnum==941){useitem->usevalue = 995;} // Easter Egg
                 else if(useitem->itemnum==942){useitem->usevalue = 1472;} // Soccer Ball Pet
+                else if(useitem->itemnum==1055){useitem->usevalue = 251;} //Candle Ghost Pet
                 else if(useitem->itemnum==594)
                 {
                      // Lucky Ghost
