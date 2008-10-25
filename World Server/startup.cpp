@@ -3159,8 +3159,27 @@ bool CWorldServer::LoadBreakChestBlueList()
 
                         if(rewnum==0||rewtype>14||rewtype==0)
                         {
-                            Log(MSG_WARNING,"Problem getting item from Break STB: %i",BreakData.rows[i][2+j*3]);
+                            //Log(MSG_WARNING,"Problem getting item from Break STB (line %i): %i error %i::%i",i,BreakData.rows[i][2+j*3],rewtype,rewnum);
                             isok=false;
+                        }
+
+                        //other chance (halloween candle ghost, itemnum>1000)
+                        if(!isok)
+                        {
+                            isok=true;
+                            rewtype=int(BreakData.rows[i][2+j*3]/1000000);
+                            rewnum=BreakData.rows[i][2+j*3]%1000000;
+
+                            if(rewnum==0||rewtype>14||rewtype==0)
+                            {
+                                Log(MSG_WARNING,"Problem getting item from Break STB (line %i): %i",i,BreakData.rows[i][2+j*3]);
+                                isok=false;
+                            }
+                            else
+                            {
+                                //Log(MSG_WARNING,"Item from Break STB retrieved (line %i): %i item (%i::%i)",i,BreakData.rows[i][2+j*3],rewtype,rewnum);
+                            }
+
                         }
 
                         if(!isok)
