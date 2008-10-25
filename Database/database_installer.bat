@@ -65,6 +65,8 @@ echo creating list_quest_qsd table
 %mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < list_quest_qsd.sql
 echo creating list_mobgroups table
 %mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < list_mobgroups.sql
+echo creating list_mobgroups_special table
+%mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < list_mobgroups_special.sql
 echo creating list_config table
 %mysqlPath% -h %host% -u %user% --password=%pass% -D %db% <list_config.sql
 

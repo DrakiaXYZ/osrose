@@ -383,6 +383,7 @@ class CWorldServer : public CServerSocket
         bool LoadMonsterSpawn( );
 #ifdef USEIFO
         bool LoadMobGroups( );
+        bool LoadMobGroupsSpecial( );   //LMA: Special Spawns (Halloween for example)
 #endif
         bool LoadRespawnData( );
 
@@ -392,7 +393,7 @@ class CWorldServer : public CServerSocket
         void LoadQuestData( );
         bool LoadQuestSTB();
         bool LoadBreakChestBlueList( );
-        
+
 
         vector<CQuestTrigger*> TriggerList;
         fpQuestCond qstCondFunc[31];
@@ -407,7 +408,7 @@ class CWorldServer : public CServerSocket
         bool LoadPYDropsData( );    //hidden
         bool LoadSkillBookDropsData( ); //hidden
         bool LoadConfig( );
-        //bool LoadLTB( );        
+        //bool LoadLTB( );
         bool LoadChestData( );
         bool LoadSkillDataOld( );  //LMA: Old version, for debug
         bool LMACheckSkills( );  //LMA: for skill debug

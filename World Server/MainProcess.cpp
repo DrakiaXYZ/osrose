@@ -442,7 +442,7 @@ PVOID MapProcess( PVOID TS )
                     continue;
 
                 //LMA: daynight stuff :) kinda vampire code for spawns ^_^
-                if(monster->daynight==2&&!map->IsNight())
+                if((monster->daynight!=0)&&((monster->daynight==2&&!map->IsNight())||(monster->daynight==1&&map->IsNight())))
                 {
                     //Bye bye little monster...
                     map->DeleteMonster( monster, true, j );

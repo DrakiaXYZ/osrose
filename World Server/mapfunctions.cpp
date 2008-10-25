@@ -297,30 +297,31 @@ void CMap::RespawnMonster( )
         continue;
 
       //LMA: We don't update a group if it's not the night and those monsters come only at night...
+      /*
       if(thisgroup->daynight==2)
       {
         if (last_map!=thisgroup->map)
         {
-            /*
-            for (int k=0;k<GServer->MapList.Map.size();k++)
-            {
-                CMap* map = GServer->MapList.Map.at(k);
-                if (map->id==thisgroup->map)
-                {
-                    last_map=map->id;
-                    is_night=map->IsNight();
-                    break;
-                }
-
-            }
-            */
-
             CMap* map = GServer->MapList.Index[thisgroup->map];
             last_map=map->id;
             is_night=map->IsNight();
         }
 
         if(!is_night)
+            continue;
+      }
+      */
+      //LMA: handling day and night this time.
+      if(thisgroup->daynight!=0)
+      {
+        if (last_map!=thisgroup->map)
+        {
+            CMap* map = GServer->MapList.Index[thisgroup->map];
+            last_map=map->id;
+            is_night=map->IsNight();
+        }
+
+        if((thisgroup->daynight==2&&!is_night)||(thisgroup->daynight==1&&is_night))
             continue;
       }
 

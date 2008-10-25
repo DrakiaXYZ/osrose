@@ -593,6 +593,7 @@ bool CWorldServer::OnServerReady( )
     LoadMonsterSpawn( );
 #else
     LoadMobGroups( );
+    LoadMobGroupsSpecial( );    //LMA: Special spawns (Halloween for example).
 #endif
     LoadNPCs( );
     LoadMonsters( );
