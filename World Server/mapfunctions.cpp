@@ -215,6 +215,7 @@ void CMap::UpdateTime( )
     MapTime += (UINT)floor(etime/10);
     if(MapTime==0xffffffff)
         MapTime = 0;
+    ZoneTime = int(MapTime / 17895697);
     if(dayperiod==0)
         dayperiod=1;
     UINT ctime = MapTime%dayperiod;

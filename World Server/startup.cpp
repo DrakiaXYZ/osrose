@@ -50,6 +50,34 @@ bool CWorldServer::LoadSTBData( )
 	STBStoreData("3DData\\STB\\LIST_BREAK.STB", &BreakData);
 }
 
+//LMA: loading LTB (for AIP)
+bool CWorldServer::LoadLTB( )
+{
+    Log(MSG_INFO, "Loading LTB strings");
+    LTBStoreData("3DData\\AI\\ULNGTB_AI.LTB",&MyLTB);
+
+    if (MyLTB.record.size()==0)
+    {
+        return true;
+    }
+
+    Ltbstring = new CLTBstring*[MyLTB.record.size()];
+
+    for (unsigned int k=0;k<MyLTB.record.size();k++)
+    {
+        //cout << "IndexMyLTB " << k << " NPC: " << MyLTB.record.at(k).name.c_str() << ", sentence: " << MyLTB.record.at(k).sentence.c_str() << endl;
+        CLTBstring* tempLTB = new CLTBstring;
+        tempLTB->NPCname=new char[MyLTB.record.at(k).name.size()+1];
+        strcpy (tempLTB->NPCname, MyLTB.record.at(k).name.c_str());
+        tempLTB->LTBstring=new char[MyLTB.record.at(k).sentence.size()+1];
+        strcpy (tempLTB->LTBstring, MyLTB.record.at(k).sentence.c_str());
+        GServer->Ltbstring[k]=tempLTB;
+    }
+
+    Log( MSG_INFO, "LTB Data Loaded" );
+
+    return true;
+}
 
 #ifdef AUTOINDEX
 //LMA: we init default values for some lists.
@@ -404,6 +432,7 @@ bool CWorldServer::LoadNPCData( )
 
         newnpc->id = i;
         newnpc->life = 0;    //LMA: non sense, it's the name lol
+        newnpc->stance = mRUNNING;  //AIP
         newnpc->wspeed = STB_NPC.rows[i][2];
         newnpc->rspeed = STB_NPC.rows[i][3];
         newnpc->dspeed = STB_NPC.rows[i][4];
@@ -607,6 +636,7 @@ bool CWorldServer::LMACheckStuff()
     Log(MSG_INFO,"Index: %i::%i, stat1[0] %i",i,thisjem->id,thisjem->stat1[0]);
     Log(MSG_INFO,"IndexMap: %i::%i, stat1[0] %i",i,thisjemmap->id,thisjemmap->stat1[0]);
     */
+
 
     return true;
 }
@@ -1623,6 +1653,7 @@ bool CWorldServer::LoadNPCs( )
            continue;
         }
 
+        thisnpc->lastAiUpdate=clock();
 		MapList.Index[thisnpc->posMap]->AddNPC( thisnpc );
 	}
 	DB->QFree( );

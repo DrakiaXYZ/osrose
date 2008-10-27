@@ -178,6 +178,7 @@ struct CROSEServerConfig
     UINT MapDelay;
     UINT VisualDelay;
     UINT WorldDelay;
+    UINT AIWatch;                    //LMA: AIP, Set an AI script number to watch for. Debug only
     char* WELCOME_MSG;
     UINT DROP_TYPE;
     int MaxStat;

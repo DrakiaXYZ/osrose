@@ -63,6 +63,42 @@ bool CWorldServer::SendGlobalMSG( CPlayer* thisclient, char msg[200] )
            return true;
 }
 
+// NPC Announce to the server
+bool CWorldServer::NPCAnnounce( char msg[200], char npc[50])
+{
+    BEGINPACKET( pak, 0x702 );
+    ADDSTRING( pak, npc );
+	ADDSTRING( pak, "> " );
+	ADDSTRING( pak, msg);
+	ADDBYTE( pak, 0x00);
+	SendToAll( &pak );
+	return true;
+}
+
+// NPC Whisper to a character
+bool CWorldServer::NPCWhisper( CPlayer* thisclient, CMonster* thismon, char msg[200], char npc[50] )
+{
+    BEGINPACKET( pak, 0x0784 );
+    ADDSTRING( pak, npc );
+    ADDBYTE( pak, 0 );
+    ADDSTRING( pak, msg );
+    ADDBYTE( pak, 0 );
+    thisclient->client->SendPacket(&pak);
+    return true;
+}
+
+// NPC Shout to the current map
+bool CWorldServer::NPCShout( CMonster* thismon, char msg[200], char npc[50] )
+{
+    BEGINPACKET(pak, 0x0785);
+	ADDSTRING  ( pak, npc );
+	ADDBYTE    ( pak, 0 );
+	ADDSTRING  ( pak, msg );
+	ADDBYTE    ( pak, 0 );
+	SendToMap  ( &pak, thismon->Position->Map );
+	return true;
+}
+
 
 // Send a PM from a specific NPC using the blue text of the shout system. Used in custom quests
 bool CWorldServer::NPCMessage( CPlayer* thisclient, char msg[200], char npc[50] )

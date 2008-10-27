@@ -566,6 +566,7 @@ bool CWorldServer::OnServerReady( )
     LMACheckSkills();
     LMACheckStuff();
     */
+
     //End debug.
 
     //Load our Server Info
@@ -598,7 +599,10 @@ bool CWorldServer::OnServerReady( )
     LoadNPCs( );
     LoadMonsters( );
     LoadUpgrade( );
+    LoadLTB();  //LMA: Loading LTB for AIP.
+    LoadAipData();  //LMA: loading AIP.
     CleanConnectedList( );
+
     Log(MSG_INFO, "Database Loaded                      " );
     pthread_create( &WorldThread[WORLD_THREAD], &at, WorldProcess, NULL);
     pthread_create( &WorldThread[VISUALITY_THREAD], &at, VisibilityProcess, NULL);

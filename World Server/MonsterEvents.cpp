@@ -23,6 +23,9 @@
 // called when a monster is attacked  [attack/use atk skill/use buff/run/summon]
 bool CMonster::OnBeAttacked( CCharacter* Enemy )
 {
+
+    Battle->hitby = Enemy->clientid;
+
     if(!IsOnBattle( ))
     {
         //Some monsters do not attack and stay still (mc)
@@ -660,3 +663,51 @@ bool CMonster::Turak3(CMonster* monster,CMap* map)
 }
 
 */
+
+
+//LMA: AIP
+void CMonster::DoAi(int ainumber,char type)//ainumber is monster->AI type is add=0 idle=1 attacking=2 attacked=3 after killing target=4 hp<1=5
+{
+    CAip* script = NULL;
+    int AIWatch = GServer->Config.AIWatch;
+    int aiindex = (ainumber*0x10000)+(type*0x100);
+    if(type == 5)
+    {
+        Log(MSG_INFO,"Monster died. Activating AI type 5");
+    }
+    for(unsigned j=0; j < GServer->AipList.size(); j++)
+    {
+        if (GServer->AipList.at(j)->AipID == aiindex)
+        {
+            script = GServer->AipList.at(j);
+            if(ainumber == AIWatch)Log(MSG_DEBUG, "Record count = %i",script->recordcount[type]);
+            if(ainumber == AIWatch)Log(MSG_DEBUG, "aiCondition type: %i AI index: %i condition count %i", type, aiindex, script->ConditionCount);
+            int success = AI_SUCCESS; //needs to be AI_SUCCESS otherwise would not perform conditionless actions
+            int thisaction = 0;
+            for (dword i = 0; i < script->ConditionCount; i++)
+            {
+                int command = script->Conditions[i]->opcode;
+                if (command > 30 || command < 0) continue;
+                success = (*GServer->aiCondFunc[command])(GServer, this, script->Conditions[i]->data);
+                if(ainumber == AIWatch)Log(MSG_DEBUG, "aiCondition %03u returned %d", command, success);
+                if (success == AI_FAILURE)
+                    break;
+            }
+            if (success == AI_SUCCESS)
+            {
+                for (dword i = 0; i < script->ActionCount; i++)
+                {
+                    int command = script->Actions[i]->opcode;
+                    if (command > 38 || command < 0) continue;
+                    success = (*GServer->aiActFunc[command])(GServer, this, script->Actions[i]->data);
+                    if(ainumber == AIWatch)Log(MSG_DEBUG, "aiAction: %03u returned %d", command, success);
+                }
+                if(success == AI_SUCCESS)
+                    return; //automatically return after performing the first successful action
+            }
+            aiindex++;
+        }
+        else if(GServer->AipList.at(j)->AipID > aiindex)return;
+    }
+    return;
+}

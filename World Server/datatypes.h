@@ -25,6 +25,9 @@
 #include "datatypes_compat.h"
 #define USENEWQUESTSYSTEM
 
+//LMA: Skill system from ospRose
+#define SKILLOSPROSE
+
 //LMA: testing auto index (Maxxon)
 #define AUTOINDEX
 
@@ -116,6 +119,7 @@
 #define UNK1 0x01
 #define MAX_HP_MP 0x02//revizar
 #define POISED 0x04
+#define POISONED 0x04
 #define FLAMED 0x08
 //#define UNK2 0x08
 #define MP_UP 0x10//revizar
@@ -155,6 +159,7 @@
 #define UNK5 0x80
 
 //Stance
+#define mRUNNING 1
 #define ATTACKING 1
 #define WALKING 2
 #define RUNNING 3
@@ -241,6 +246,85 @@
     //#define MAX_BREAK 3000    //LMA: useless now
     #define MAX_MAP_DATA 300
 #endif
+
+// Status Type (osPRose)
+#define sNone 0
+#define sPoison1 7
+#define sPoison2 8
+#define sPoison3 9
+#define sPoison4 10
+#define sPoison5 11
+#define sMaxHPUp 12
+#define sMaxMPUp 13
+#define sDash 14
+#define sSlow 15
+#define sHasteAtk 16
+#define sSlowAtk 17
+#define sAtkUp 18
+#define sAtkDown 19
+#define sDefUp 20
+#define sDefDown 21
+#define sMResUp 22
+#define sMResDown 23
+#define sAccUp 24
+#define sAccDown 25
+#define sCritUp 26
+#define sCritDown 27
+#define sDodgeUp 28
+#define sDodgeDown 29
+#define sMute 30
+#define sSleep 31
+#define sFaint 32
+#define sCamo 33
+#define sInvis 34
+#define sShield 35
+#define sAddDmg 36
+#define sCurse 37
+#define sRecover 38
+#define sDispell 39
+#define sHPMPRest 40
+#define sHPMPRest2 41
+#define sHPMPRest3 42
+
+#define sHPDown 43
+#define sMaxHPUp2 44
+#define sMaxMPUp2 45
+#define sDash2 46
+#define sHasteAtk2 47
+#define sAtkUp2 48
+#define sDefUp2 49
+#define sMResUp2 50
+#define sAccUp2 51
+#define sCritUp2 52
+#define sDodgeUp2 53
+#define sAddDmg2 54
+#define sDetect 55
+#define sTaunt 56
+#define sInvinc 57
+#define sFlame 58
+#define sDefDown2 59
+#define sSlow2 60
+#define sFlame2 61
+#define sHPRes100 62
+#define sHPRes200 63
+#define sHPRes300 64
+#define sHPRes40  65
+#define sHPRes80  66
+#define sHPRes120 67
+#define sMPRes40  68
+#define sMPRes80  69
+#define sMPRes120 70
+#define sMPRes10  71
+#define sMPRes15  72
+#define sMPRes20  73
+#define sFlame3 74
+#define sHPRes160 75
+#define sMPRes25  76
+#define sFlame4 77
+#define sFlame5 78
+#define sFlame6 79
+#define sFlame7 80
+
 
 #include "../common/sockets.h"
 
@@ -360,6 +444,7 @@ struct CNPCData {
     UINT life;
     UINT wspeed;
     UINT rspeed;
+    BYTE stance;    //LMA: AIP?
     UINT dspeed;
     UINT weapon;
     UINT subweapon;
@@ -393,6 +478,7 @@ struct CNPCData {
     UINT delayskill;   //delay between two skills
     UINT side;  //hidden
     UINT sidechance;  //hidden
+    UINT refNPC;    //LMA: AIP?
 };
 
 // Store the damage for monster to give exp
@@ -581,6 +667,7 @@ struct CNPC {
 	CNPCData* thisnpc;
 	unsigned dialog;
 	long int event;
+	clock_t lastAiUpdate;   //LMA: AIP.
 };
 
 // Item data object
@@ -598,6 +685,32 @@ struct CSTBData {
 	int** rows;
 };
 #endif
+
+//LMA: For LTB.
+struct NPCLTB
+{
+    string name;
+    string sentence;
+};
+
+struct LTBData
+{
+    int nb_sentence;
+	vector <NPCLTB> record;
+};
+
+struct CLTBstring
+{
+    char * LTBstring;
+    char * NPCname;
+};
+
+struct Dialog
+{
+    long int dialognb;
+    DWORD offsetd;
+    WORD lengthd;
+};
 
 // -----------------------------------------------------------------------------------------
 // Skill Data

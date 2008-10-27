@@ -431,6 +431,18 @@ PVOID MapProcess( PVOID TS )
             {
                 CMonster* monster = map->MonsterList.at(j);
 
+                //LMA: AIP CODE
+				if(monster->hitcount == 0xFF)//this is a delay for new monster spawns this might olso fix invisible monsters(if they attack directly on spawning the client dosn't get the attack packet(its not in it's visible list yet))
+                {
+                    if(1000 < (UINT)GServer->round((clock( ) - monster->lastAiUpdate)))
+                    {
+                        monster->hitcount = 0;
+                        monster->DoAi(monster->thisnpc->AI, 0);
+                        monster->lastAiUpdate=clock();
+                    }
+                }
+                //END AIP CODE
+
                 //LMA: maps (using grid now?)
                  ok_cont=false;
                  if (GServer->Config.testgrid!=0)
@@ -514,6 +526,7 @@ PVOID MapProcess( PVOID TS )
                 //20070621-211100
                 //patch for quest 2010, purified rackies
                 //They have to disepear in time...
+                /*LMA: handled by AIP?
                 if (monster->montype==95)
                 {
                        UINT etime = (UINT)round((clock( ) - monster->SpawnTime));
@@ -529,6 +542,7 @@ PVOID MapProcess( PVOID TS )
                         monster->UpdatePosition(monster->stay_still);
                 }
                 //LMA END
+                */
 
                //Let's kill the bonfires after 2 minutes.. by Terr0risT
                 if (monster->IsBonfire( ))
@@ -541,7 +555,8 @@ PVOID MapProcess( PVOID TS )
                     }
 
 
-//A lot of code only for ghosts ======================================================================
+                /*LMA: handled by AIP?
+                //A lot of code only for ghosts ======================================================================
                 if((map->IsNight( ) || map->ghost==2))
                 {
                     if (monster->IsGhostSeed( ))
@@ -579,6 +594,7 @@ PVOID MapProcess( PVOID TS )
                     map->DeleteMonster( monster, true, j );
                     continue;
                 }
+                */
 
 
                 //General monsters===============================================================
@@ -588,7 +604,19 @@ PVOID MapProcess( PVOID TS )
                     monster->UpdatePosition(monster->stay_still);
                 if(monster->IsOnBattle( ))
                 {
-                    monster->DoAttack( );
+                    //monster->DoAttack( );
+                    if(2000<(UINT)GServer->round((clock( ) - monster->lastAiUpdate)))
+                    {
+                         monster->DoAi(monster->thisnpc->AI, 2);
+                         monster->lastAiUpdate = clock();
+                         //Log(MSG_INFO,"Monster type: %i current HP: %i",monster->montype, monster->Stats->HP);
+                    }
+                    else
+                    {
+                         //Log(MSG_INFO,"Monster doing attack");
+                         monster->DoAttack( );
+                    }
+
                       //LMA: TEST for monsters attack skills...
                     if (fmmonstertype>0&&fmmonstertype==monster->montype&&fskill>0&&(ftypeskill>=1&&ftypeskill<=3))
                     {
@@ -716,6 +744,14 @@ PVOID MapProcess( PVOID TS )
                         monster->Turak3(monster,map);      //rl2171: 3rd Turak under attack (LMA)
 */
                 }
+                else if(!monster->IsOnBattle() && !monster->IsDead( ))
+                {
+                    if(2000<(UINT)GServer->round((clock( ) - monster->lastAiUpdate)))
+                    {
+                        monster->DoAi(monster->thisnpc->AI, 1);
+                        monster->lastAiUpdate = clock();
+                    }
+                }
 				else
 				{
 					if(monster->IsSummon( ))
@@ -732,10 +768,39 @@ PVOID MapProcess( PVOID TS )
 						}
 					}
 				}
+
                 monster->RefreshBuff( );
                 if(monster->IsDead( ))
+                {
+                    monster->DoAi(monster->thisnpc->AI, 5);
                     monster->OnDie( );
+                }
+
             }
+
+            //LMA: AIP for NPC.
+            for(UINT j=0;j<map->NPCList.size();j++)
+            {
+                CNPC* npc = map->NPCList.at(j);
+                if(npc->thisnpc->AI != 0)
+                {
+                     if(60000<(UINT)GServer->round((clock( ) - npc->lastAiUpdate))) //check every minute. Conditions seem to be based on 6 minute segments
+                     {
+                         CNPCData* thisnpc = GServer->GetNPCDataByID( npc->npctype );
+                         if(thisnpc == NULL)
+                         {
+                             Log( MSG_WARNING, "Invalid montype %i", npc->npctype );
+                             continue;
+                         }
+                         CMonster* monster = new (nothrow) CMonster( npc->pos, npc->npctype, map->id, 0, 0  );
+                         monster->thisnpc = thisnpc;
+                         monster->DoAi(monster->thisnpc->AI, 1);
+                         delete monster;
+                         npc->lastAiUpdate = clock();
+                     }
+                }
+            }
+
             pthread_mutex_unlock( &map->MonsterMutex );
         }
         pthread_mutex_unlock( &GServer->MapMutex );

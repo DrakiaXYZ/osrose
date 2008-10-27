@@ -38,6 +38,9 @@
 #include "quest/QuestTrigger.h"
 #endif
 
+//LMA: LTB:
+#include "ltbhandler.h"
+
 #define MAXVISUALRANGE 100
 #define MINVISUALRANGE 60
 #define ClearItem(i) { i.appraised=false; i.count=0; i.durability=0; i.itemnum=0; i.itemtype=0; i.lifespan=0; i.refine=0; i.socketed=false; i.stats=0; i.gem=0; }
@@ -52,6 +55,13 @@
 
 //LMA: UW
 #define MAP_UW 8           //Union wars map.
+
+//LMA: LTB.
+#define LTBINDEX 0
+#define LTBENGLISH 2
+
+//LMA: AIP
+#include "aip/Aip.h"
 
 //LMA TESTLOOP
 extern UINT lma_loop;
@@ -99,6 +109,19 @@ class CWorldServer : public CServerSocket
         //------------------ QUEST DATA (quest.cpp)
     	bool pakGiveQuest( CPlayer* thisclient, CPacket* P );
 
+        #ifdef SKILLOSPROSE
+    	//------------------ BUFFS (buff.cpp)
+            CBValue GetBuffValue( CSkills* thisskill, CCharacter* character, UINT Evalue, UINT i, UINT up, UINT down, UINT CurrentValue, bool Buff=true, bool Status=false );
+        	//CBValue GetBuffValue( CSkills* thisskill, CCharacter* character, UINT Evalue, UINT i, UINT up, UINT down, UINT CurrentValue, bool Buff=true );
+            bool CheckABuffs( CSkills* thisskill, CCharacter* character, int Evalue ,int i);
+            //bool CheckDBuffs( CSkills* thisskill, CCharacter* character, int Evalue ,int i);
+        	bool AddBuffs( CSkills* thisskill, CCharacter* character, int Evalue , bool flag);
+        	//bool AddDeBuffs( CSkills* thisskill, CCharacter* character, int Evalue );
+        	bool AddBuffs( CSkills* thisskill, CCharacter* character, int Evalue );
+        	bool InstantBuff( CSkills* thisskill, CCharacter* character, int Evalue, int i );
+            UINT BuildUpBuffs( CCharacter* player );
+            UINT BuildDeBuffs( CCharacter* player );
+        #else
     	//------------------ BUFFS (buff.cpp)
         	CBValue GetBuffValue( CSkills* thisskill, CCharacter* character, UINT Evalue, UINT i, UINT up, UINT down, UINT CurrentValue, bool Buff=true, bool Status=false );
             bool CheckABuffs( CSkills* thisskill, CCharacter* character, int Evalue ,int i);
@@ -106,6 +129,8 @@ class CWorldServer : public CServerSocket
         	bool AddBuffs( CSkills* thisskill, CCharacter* character, int Evalue , bool flag);
         	bool AddDeBuffs( CSkills* thisskill, CCharacter* character, int Evalue );
         	bool AddBuffs( CSkills* thisskill, CCharacter* character, int Evalue );
+        #endif
+
 
     	//------------------ SERVER EXTRAS (extrafunctions.cpp)
         bool IsValidItem(UINT type, UINT id );
@@ -366,6 +391,7 @@ class CWorldServer : public CServerSocket
         bool InitDefaultValues();
         #endif
 
+        bool LoadLTB( );    //LMA: LTB.
     	bool LoadZoneData( );
     	bool LoadGrids( );         //LMA: maps
     	bool LoadConsItem( );
@@ -404,6 +430,16 @@ class CWorldServer : public CServerSocket
         bool LoadQuestData( );
 #endif
 
+        //LMA: AIP:
+        inline int round(double x) {return int(x > 0.0 ? x + 0.5 : x - 0.5);};
+        vector<CAip*> AipList;
+        fpAiCond aiCondFunc[31];
+        fpAiAct aiActFunc[38];
+        int ObjVar[2000][20];  //NPC variables used in AI
+        // AIP Functions
+        void ReadAIP(strings path, dword index);
+        void LoadAipData();
+
         bool LoadDropsData( );
         bool LoadPYDropsData( );    //hidden
         bool LoadSkillBookDropsData( ); //hidden
@@ -430,7 +466,13 @@ class CWorldServer : public CServerSocket
         //bool SendPM( CPlayer* thisclient, char msg[200] );
         bool SendPM( CPlayer* thisclient, char* Format, ... );
         bool SendGlobalMSG( CPlayer* thisclient, char msg[200] );
-        bool NPCMessage( CPlayer* thisclient, char msg[200], char npc[50] );  //Custom Events
+
+        //LMA: AIP and custom events.
+        bool NPCShout( CMonster* thismon, char msg[200], char npc[50] );
+        bool NPCWhisper( CPlayer* thisclient, CMonster* thismon, char msg[200], char npc[50] );
+        bool NPCAnnounce( char msg[200], char npc[50] );
+        bool NPCMessage( CPlayer* thisclient, char msg[200], char npc[50] );
+
         UINT GetMaxPartyExp( UINT partylevel );
         bool DoSkillScript( CCharacter* character, CSkills* thisskill );
 
@@ -482,6 +524,8 @@ class CWorldServer : public CServerSocket
         CUseList                UseList;
         CMapList                MapList;
 
+        LTBData                 MyLTB;                  //LMA: LTB
+        CLTBstring              **Ltbstring;            //LMA: LTB
         CSTBData				STB_NPC;				// NPC data
         CSTBData                STB_SKILL;              // Skill data
         CSTBData                STB_STATUS;             // Status Data

@@ -71,6 +71,7 @@ class CMap
     UINT daytime;      // day start time
     UINT eveningtime;  // evening start time
     UINT nighttime;    // nighttime start time
+    UINT ZoneTime;     // how many 6 minute segments since start of the day
     UINT ghost;        // ghosttime?
     BYTE allowpvp;     // pvp allowed?
     bool allowpat;     // pat allowed?

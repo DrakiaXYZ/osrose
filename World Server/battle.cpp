@@ -40,7 +40,17 @@ void CCharacter::DoAttack( )
                 return;
             }
             if(IsTargetReached( Enemy ) && CanAttack( ))
+            {
                 NormalAttack( Enemy );
+
+                if (Enemy->IsMonster()) // do monster AI script when monster is attacked.
+                {
+                    CMonster* monster = GServer->GetMonsterByID(Enemy->clientid, Enemy->Position->Map);
+                    monster->DoAi(monster->thisnpc->AI, 3);
+                }
+
+            }
+
         }
         break;
         case SKILL_ATTACK://skill attack
@@ -58,7 +68,17 @@ void CCharacter::DoAttack( )
                 return;
             }
             if(IsTargetReached( Enemy, skill ) && CanAttack( ))
+            {
                 SkillAttack( Enemy, skill );
+
+                if (Enemy->IsMonster())
+                {
+                    CMonster* monster = GServer->GetMonsterByID(Enemy->clientid, Enemy->Position->Map);
+                    monster->DoAi(monster->thisnpc->AI, 3);
+                }
+
+            }
+
         }
         break;
         case MONSTER_SKILL_ATTACK://LMA: monster skill attack
@@ -340,6 +360,7 @@ void CCharacter::NormalAttack( CCharacter* Enemy )
     if(!Enemy->IsSummon( ) && Enemy->IsMonster( ))
     {
         Enemy->AddDamage( this, hitpower );
+        Enemy->damagecounter += hitpower;// is for AI
     }
 
     Enemy->Stats->HP -= hitpower;
@@ -817,6 +838,7 @@ void CCharacter::UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff )
     if(!Enemy->IsSummon( ) && Enemy->IsMonster( ))
     {
         Enemy->AddDamage( this, skillpower );
+        Enemy->damagecounter+=skillpower;// is for AI
     }
     Enemy->Stats->HP -= skillpower;
 
@@ -887,7 +909,8 @@ void CCharacter::UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff )
         if (deBuff) return;
 
         //GOTO debuffing section
-        bflag = GServer->AddDeBuffs( skill, Enemy, GetInt( ) );
+        //bflag = GServer->AddDeBuffs( skill, Enemy, GetInt( ) );
+        bflag = GServer->AddBuffs( skill, Enemy, GetInt( ) ); // send to AddBuffs instead.
 
         //Send (de)buff information to the whole world
         if(skill->nbuffs>0 && bflag)

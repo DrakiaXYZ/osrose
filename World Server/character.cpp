@@ -101,6 +101,12 @@ CCharacter::CCharacter( )
     Status->Mute = 0xff;
     Status->Flame = 0xff;
     Status->Sleep = 0xff;
+
+    //LMA: ospRose.
+    Status->Stuned = 0xff;
+    Status->Poisoned = 0xff;
+    Status->Muted = 0xff;
+
         // Stance
     Status->Stance = RUNNING;
     for(int i=0;i<30;i++)

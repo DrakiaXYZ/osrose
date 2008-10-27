@@ -248,7 +248,8 @@ void CMonster::Move( )
 	ADDFLOAT   ( pak, Position->destiny.x*100 );
 	ADDFLOAT   ( pak, Position->destiny.y*100 );
 	ADDWORD    ( pak, 0xcdcd );
-	ADDBYTE    ( pak, 0x01 );
+	//ADDBYTE    ( pak, 0x01 );
+	ADDBYTE	   ( pak, thisnpc->stance );    //AIP
 	GServer->SendToVisible(&pak, this);
 }
 
@@ -265,6 +266,7 @@ void CMonster::MoveTo( fPoint nPos, bool randcircle )
 	ADDFLOAT   ( pak, Position->destiny.x*100 );
 	ADDFLOAT   ( pak, Position->destiny.y*100 );
 	ADDWORD    ( pak, 0xcdcd );
-	ADDBYTE    ( pak, 0x01 );
+	//ADDBYTE    ( pak, 0x01 );
+	ADDBYTE    ( pak, thisnpc->stance); //AIP
 	GServer->SendToVisible(&pak, this );
 }

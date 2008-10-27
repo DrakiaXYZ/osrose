@@ -121,6 +121,7 @@ CMonster* CMap::AddMonster( UINT montype, fPoint position, UINT owner, CMDrops* 
     monster->thisnpc = thisnpc;
     monster->SetStats( );
     monster->Stats->HP = monster->Stats->MaxHP;
+    monster->Status->spawnid = spawnid; //this way we can easily find which spawn a mob belongs to
     if(GetDropData && owner==0)
     {
         monster->MonsterDrop->mobdrop = GServer->GetDropData( monster->thisnpc->dropid );
@@ -153,8 +154,11 @@ CMonster* CMap::AddMonster( UINT montype, fPoint position, UINT owner, CMDrops* 
 #endif
 
     }
+
     monster->SpawnTime = clock( );
     monster->OnSpawn( false );
+    monster->lastAiUpdate = clock();
+    monster->hitcount = 0xFF;
 
     //LMA BEGIN
     //20070621-211100/test

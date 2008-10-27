@@ -59,6 +59,7 @@ class CMonster : public CCharacter
         vector<MonsterDamage*> PlayersDamage;
 
         // Monster Functions
+        void DoAi(int ainumber,char type);  //LMA: AIP.
         bool SetStats( );
         bool UnspawnMonster( );
       	bool IsGhost( );

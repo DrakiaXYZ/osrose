@@ -391,6 +391,219 @@ unsigned int CCharacter::GetInt( )
 }
 
 
+#ifdef SKILLOSPROSE
+void CCharacter::RefreshBuff( )
+{
+    bool bflag = false;
+    for( UINT i=0;i<30;i++)
+    {
+        if(MagicStatus[i].Buff == 0) continue;
+        clock_t etime = clock() - MagicStatus[i].BuffTime;
+        if( etime >= MagicStatus[i].Duration * CLOCKS_PER_SEC )
+        {
+            switch(MagicStatus[i].Status)
+            {
+                case 18: // attack power up
+                case 19: // attack power down
+                case 48: // attack power up
+                    if(i<15)
+                        Status->Attack_up = 0xff;
+                    else
+                        Status->Attack_down = 0xff;
+                    Stats->Attack_Power = GetAttackPower( );
+                break;
+                case 20: // def up
+                case 21: // def down
+                case 49: // def up
+                    if(i<15)
+                        Status->Defense_up= 0xff;
+                    else
+                        Status->Defense_down = 0xff;
+                    Stats->Defense = GetDefense( );
+                break;
+                case 24: //accuracy up
+                case 25: //accuracy down
+                case 51: //attack accuracy up.
+                    if(i<15)
+                        Status->Accury_up= 0xff;
+                    else
+                        Status->Accury_down = 0xff;
+                    Stats->Accury = GetAccury( );
+                break;
+                case 22: // macic resistance up
+                case 23: // magic resistance down
+                case 50: // magic resistance up
+                    if(i<15)
+                        Status->Magic_Defense_up = 0xff;
+                    else
+                        Status->Magic_Defense_down = 0xff;
+                    Stats->Magic_Defense = GetMagicDefense( );
+                break;
+                case 28: //dodge up
+                case 29: //dodge down
+                case 53: //dodge rate up
+                    if(i<15)
+                        Status->Dodge_up = 0xff;
+                    else
+                        Status->Dodge_down = 0xff;
+                    Stats->Dodge = GetDodge( );
+                break;
+                case 14: //dash
+                case 15: //slow
+                case 46: //movement speed increased
+                    if(i<15)
+                        Status->Dash_up = 0xff;
+                    else
+                        Status->Dash_down = 0xff;
+                    Stats->Move_Speed = GetMoveSpeed( );
+                break;
+                case 16: // haste attack
+                case 17: // slow attack
+                case 47: // attack speed up
+                    if(i<15)
+                        Status->Haste_up = 0xff;
+                    else
+                        Status->Haste_down = 0xff;
+                    Stats->Attack_Speed = GetAttackSpeed( );
+                break;
+                case 26: // crit up
+                case 27: // crit down
+                case 52: // crit up
+                    if(i<15)
+                        Status->Critical_up = 0xff;
+                    else
+                        Status->Critical_down = 0xff;
+                    Stats->Critical = GetCritical( );
+                break;
+                case 12: // max HP up
+                case 44: // max HP up
+                    if(i<15)
+                        Status->HP_up = 0xff;
+                    else
+                        Status->HP_down = 0xff;
+                    Stats->MaxHP = GetMaxHP( );
+                break;
+                case 13: // max MP up
+                case 45: // max MP up
+                    if(i<15)
+                        Status->MP_up = 0xff;
+                    else
+                        Status->MP_down = 0xff;
+                    Stats->MaxMP = GetMaxMP( );
+                break;
+                case 32: // faint
+                     Status->Stuned = 0xff;
+                     Status->CanAttack = true;
+                     //printf("removing stun\n");
+                break;
+                case 7: case 8: case 9: case 10: case 11: //poisoned
+                     Status->Poisoned = 0xff;
+                     //printf("removing poison\n");
+                break;
+                case 30: // muted
+                     Status->Muted = 0xff;
+                     Status->CanCastSkill = true;
+                break;
+                case 31: // sleep May need to be fixed later to accomodate multiple status effects.
+                     Status->Sleep = 0xff;
+                     Status->CanMove = true;
+                     Status->CanCastSkill = true;
+                     Status->CanAttack = true;
+                break;
+                case 54: //A_GMExtra_Damage:
+                case 36: //A_Extra_Damage:
+                     if(i<15)
+                     {
+                        Status->ExtraDamage_up = 0xff;
+                        Stats->ExtraDamage = 0xff;
+                     }
+                     else
+                     {
+                         Status->ExtraDamage_down = 0xff;
+                         Stats->ExtraDamage = 0xff;
+                     }
+
+                break;
+                case 56: // Taunt
+                     Status->Taunt = 0xff;
+                break;
+            }
+
+            MagicStatus[i].Status = 0;
+            MagicStatus[i].Buff = 0;
+            MagicStatus[i].BuffTime = 0;
+            MagicStatus[i].Duration = 0;
+            MagicStatus[i].Value = 0;
+            bflag = true;
+        }
+        else if (MagicStatus[i].Status >= 7 && MagicStatus[i].Status <= 11 && etime > 1*CLOCKS_PER_SEC) //Do poison dmg every 1.5 seconds
+        {
+             Stats->HP -= MagicStatus[i].Status; //Actually take 7, 8, 9, 10 or 11 from the health. Based on the Status itself
+             MagicStatus[i].BuffTime += 1*CLOCKS_PER_SEC;
+             MagicStatus[i].Duration -= 1;
+             //printf("did %i poison dmg to the player, still %i seconds and %i HP remain \n", MagicStatus[i].Status, MagicStatus[i].Duration, Stats->HP);
+
+             //A bunch of messy code to send dmg packet
+             BEGINPACKET( pak, 0x7b6 );
+             ADDWORD    ( pak, clientid );
+             ADDWORD    ( pak, 0 );
+             ADDDWORD   ( pak, 0x000007f8 );
+             ADDBYTE    ( pak, 0x00 );
+             ADDDWORD   ( pak, MagicStatus[i].Status );
+
+             //If Enemy is killed
+             if( IsDead())
+             {
+                 //printf("char died\n");
+                 CDrop* thisdrop = NULL;
+                 ADDDWORD   ( pak, 16 );
+                 if( !IsSummon( ) && !IsPlayer( ))
+                 {
+                     thisdrop = GetDrop( );
+                     if( thisdrop!=NULL)
+                     {
+                         ADDFLOAT   ( pak, thisdrop->pos.x*100 );
+                         ADDFLOAT   ( pak, thisdrop->pos.y*100 );
+                         if( thisdrop->type==1)
+                         {
+                             ADDDWORD( pak, 0xccccccdf );
+                             ADDDWORD( pak, thisdrop->amount );
+                            ADDDWORD( pak, 0xcccccccc );
+                            ADDWORD ( pak, 0xcccc );
+                         }
+                         else
+                         {
+                             ADDDWORD   ( pak, GServer->BuildItemHead( thisdrop->item ) );
+                             ADDDWORD   ( pak, GServer->BuildItemData( thisdrop->item ) );
+                            ADDDWORD( pak, 0x00000000 );
+                            ADDWORD ( pak, 0x0000 );
+                         }
+                         ADDWORD    ( pak, thisdrop->clientid );
+                         ADDWORD    ( pak, thisdrop->owner );
+                         CMap* map = GServer->MapList.Index[thisdrop->posMap];
+                         map->AddDrop( thisdrop );
+                     }
+                 }
+                 GServer->SendToVisible( &pak, this, thisdrop );
+             }
+
+             //If enemy is still alive
+             else
+             {
+                 ADDDWORD   ( pak, 4 );
+                 GServer->SendToVisible( &pak, this );
+             }
+         }
+    }
+    if(bflag)
+    {
+        BEGINPACKET( pak,0x7b7 );
+        ADDWORD    ( pak, clientid );
+        ADDDWORD   ( pak, GServer->BuildBuffs( this ) );
+        GServer->SendToVisible( &pak, this );
+    }
+}
+#else
 // Check For Debuffs
 void CCharacter::RefreshBuff( )
 {
@@ -649,6 +862,7 @@ void CCharacter::RefreshBuff( )
         GServer->SendToVisible( &pak, this );
     }
 }
+#endif
 
 // VIRTUAL [return party pointer]
 CParty* CCharacter::GetParty( )
