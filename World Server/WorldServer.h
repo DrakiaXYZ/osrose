@@ -58,6 +58,7 @@
 
 //LMA: LTB.
 #define LTBINDEX 0
+#define LTBKOREAN 1
 #define LTBENGLISH 2
 
 //LMA: AIP

@@ -63,6 +63,7 @@ void LTBStoreData(char* filename, LTBData* data)
     int lang=0;
     int no_block=0;
     NPCLTB templtb;
+    string korean_save="";
 
 	for (unsigned int k=0;k<list_dialog.size();k++)
 	{
@@ -73,10 +74,22 @@ void LTBStoreData(char* filename, LTBData* data)
 		{
             templtb.name="NoName";
             templtb.sentence="NoSentence";
+            korean_save="";
 		}
 
 		if(list_dialog[k].offsetd==0)
 		{
+            if (lang==LTBENGLISH)
+            {
+                //did we have Korean sentence?
+                if (korean_save!="")
+                {
+                    templtb.sentence=korean_save;
+                }
+
+                data->record.push_back(templtb);
+            }
+
 			continue;
 		}
 
@@ -85,7 +98,7 @@ void LTBStoreData(char* filename, LTBData* data)
 		string temp;
 		fseek(fh,list_dialog[k].offsetd,SEEK_SET);
 
-		if(lang!=LTBENGLISH&&lang!=LTBINDEX)
+		if(lang!=LTBENGLISH&&lang!=LTBINDEX&&lang!=LTBKOREAN)
 		{
 		    fread(&tempfield,list_dialog[k].lengthd*2,1,fh);
 		    continue;
@@ -100,14 +113,27 @@ void LTBStoreData(char* filename, LTBData* data)
             temp+=templma[0];
 		}
 
-        if (lang==LTBENGLISH)
+        //We save Korean as well...
+        switch (lang)
         {
-            templtb.sentence=temp;
-            data->record.push_back(templtb);
-            continue;
+            case LTBKOREAN:
+            {
+                korean_save=temp;
+            }
+            break;
+            case LTBENGLISH:
+            {
+                templtb.sentence=temp;
+                data->record.push_back(templtb);
+            }
+            break;
+            default:
+            {
+                templtb.name=temp;
+            }
+            break;
         }
 
-        templtb.name=temp;
 	}
 
     //closing the file...
