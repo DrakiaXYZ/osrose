@@ -244,6 +244,7 @@ struct SESSION
 	int accesslevel;
 	bool isLoggedIn;
 	bool inGame;
+    bool codedebug;
 };
 
 struct RIDE

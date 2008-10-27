@@ -138,6 +138,7 @@ CPlayer::CPlayer( CClientSocket* CLIENT )
     CharType = TPLAYER;
 
     questdebug = false;
+    Session->codedebug = false;
     Saved = false;
     isInvisibleMode = false;
     Fairy = false;

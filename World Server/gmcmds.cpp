@@ -1549,6 +1549,26 @@ else if (strcmp(command, "give2")==0)
 
         SendPM(thisclient, line0 );
     }
+    else if(strcmp(command, "debugmode")==0)
+    {
+        if(thisclient->Session->accesslevel <= 100)
+	                    return true;
+        char buffer2[200];
+        if( thisclient->Session->codedebug )
+        {
+            thisclient->Session->codedebug = false;
+
+            sprintf ( buffer2, "Debug Mode disabled" );
+            SendPM(thisclient, buffer2);
+        }
+        else
+        {
+            thisclient->Session->codedebug = true;
+            sprintf ( buffer2, "Debug Mode enabled" );
+            SendPM(thisclient, buffer2);
+        }
+        return true;
+    }
     else if(strcmp(command, "iquest")==0)
     {
          if(Config.Command_IQuest > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)
