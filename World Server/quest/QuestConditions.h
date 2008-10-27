@@ -1,6 +1,11 @@
 // Props to ExJam for this code :D Ported to OSpRose by Drakia
 #define QUESTCOND(cond) int QUEST_COND_ ## cond (class CWorldServer* server, class CPlayer* client, byte* raw)
 typedef int (*fpQuestCond)(class CWorldServer*, class CPlayer*, byte*);
+
+//LMA: for AIP we need one that handles CCharacter.
+#define QUESTCONDC(cond) int QUEST_CONDC_ ## cond (class CWorldServer* server, class CCharacter* client, byte* raw)
+typedef int (*fpQuestCondC)(class CWorldServer*, class CCharacter*, byte*);
+
 #define GETCONDDATA(cond) STR_COND_ ## cond  * data = (STR_COND_ ## cond *)raw
 
 QUESTCOND(000);QUESTCOND(001);QUESTCOND(002);
@@ -14,6 +19,20 @@ QUESTCOND(021);QUESTCOND(022);QUESTCOND(023);
 QUESTCOND(024);QUESTCOND(025);QUESTCOND(026);
 QUESTCOND(027);QUESTCOND(028);QUESTCOND(029);
 QUESTCOND(030);
+
+//LMA: For AIP
+QUESTCONDC(000);QUESTCONDC(001);QUESTCONDC(002);
+QUESTCONDC(003);QUESTCONDC(004);QUESTCONDC(005);
+QUESTCONDC(006);QUESTCONDC(007);QUESTCONDC(008);
+QUESTCONDC(009);QUESTCONDC(010);QUESTCONDC(011);
+QUESTCONDC(012);QUESTCONDC(013);QUESTCONDC(014);
+QUESTCONDC(015);QUESTCONDC(016);QUESTCONDC(017);
+QUESTCONDC(018);QUESTCONDC(019);QUESTCONDC(020);
+QUESTCONDC(021);QUESTCONDC(022);QUESTCONDC(023);
+QUESTCONDC(024);QUESTCONDC(025);QUESTCONDC(026);
+QUESTCONDC(027);QUESTCONDC(028);QUESTCONDC(029);
+QUESTCONDC(030);
+
 
 struct STR_COND_000 {
 	int iQuestSN;

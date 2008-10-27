@@ -24,6 +24,14 @@
 CPlayer::CPlayer( CClientSocket* CLIENT )
 {
     client = CLIENT;
+    is_invisible=false;
+
+    //Special AIP case.
+    if (CLIENT==NULL)
+    {
+        is_invisible=true;
+    }
+
     // USED ITEM
     UsedItem = new USEDITEM;
     assert(UsedItem);

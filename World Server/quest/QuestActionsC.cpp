@@ -1,13 +1,15 @@
 // Props to ExJam for this code :D Ported to OSpRose by Drakia
+
+//LMA: This file if specifically for CCharacter QSD (NPC, monsters...)
 #include "../worldserver.h"
 #ifdef USENEWQUESTSYSTEM
-
-dword GetRewardValue(dword function, dword amount, CPlayer* client, word nDupCNT){
+dword GetRewardValueC(dword function, dword amount, CCharacter* client, word nDupCNT){
 	switch(function){
 		case 0:
 		{
 			dword tempVal = amount + 0x1E;
-      tempVal *= client->Attr->Cha + 0x0a; // We need to add a way to get all stats totals (Including buff, E, etc) - Drakia
+            //tempVal *= client->Attr->Cha + 0x0a; // We need to add a way to get all stats totals (Including buff, E, etc) - Drakia
+            tempVal *= 1 + 0x0a; // We need to add a way to get all stats totals (Including buff, E, etc) - Drakia
 			tempVal *= (100 & 0xFFFF);//World Rate
 			tempVal *= 0x14;//Fame + 0x14
 			tempVal = ((tempVal / (client->Stats->Level + 0x46)) / 0x7530) + amount;
@@ -17,7 +19,8 @@ dword GetRewardValue(dword function, dword amount, CPlayer* client, word nDupCNT
 		case 1:
 		{
 			dword tempVal = (client->Stats->Level + 3) * amount;
-			tempVal *= (client->Attr->Cha >> 1) + client->Stats->Level + 0x28;
+			//tempVal *= (client->Attr->Cha >> 1) + client->Stats->Level + 0x28;
+			tempVal *= 1 + client->Stats->Level + 0x28;
 			tempVal *= (100 & 0xFFFF);//World Rate
 			return tempVal / 0x2710;
 		}
@@ -29,7 +32,8 @@ dword GetRewardValue(dword function, dword amount, CPlayer* client, word nDupCNT
 		case 5:
 		{
 			dword tempVal = amount + 0x14;
-			tempVal *= client->Attr->Cha + 0x0a;
+			//tempVal *= client->Attr->Cha + 0x0a;
+			tempVal *= 1 + 0x0a;
 			tempVal *= (100 & 0xFFFF);//World Rate
 			tempVal *= 0x14;//Fame + 0x14
 			tempVal = ((tempVal / (client->Stats->Level + 0x46)) / 0x7530) + amount;
@@ -39,7 +43,8 @@ dword GetRewardValue(dword function, dword amount, CPlayer* client, word nDupCNT
 		case 4:
 		{
 			dword tempVal = amount + 0x2;
-			tempVal *= (client->Attr->Cha + client->Stats->Level + 0x28);
+			//tempVal *= (client->Attr->Cha + client->Stats->Level + 0x28);
+			tempVal *= (1 + client->Stats->Level + 0x28);
 			tempVal *= 0x28;//Fame + 0x28
 			tempVal *= (100 & 0xFFFF);//World Rate
 			return tempVal / 0x222E0;
@@ -48,7 +53,8 @@ dword GetRewardValue(dword function, dword amount, CPlayer* client, word nDupCNT
 		case 6:
 		{
 			dword tempVal = amount + 0x14;
-			tempVal *= client->Attr->Cha + client->Stats->Level;
+			//tempVal *= client->Attr->Cha + client->Stats->Level;
+			tempVal *= 1 + client->Stats->Level;
 			tempVal *= 0x14;//Fame + 0x14
 			tempVal *= (100 & 0xFFFF);//World Rate
 			return (tempVal / 0x2DC6C0) + amount;
@@ -59,14 +65,13 @@ dword GetRewardValue(dword function, dword amount, CPlayer* client, word nDupCNT
 }
 
 //Update Quest
-QUESTREWD(000){
+QUESTREWDC(000){
+    /*
 	GETREWDDATA(000);
 
 	switch(data->btOp){//0 remove, 1 start, 2 replace quest keep items, 3 replace quest delete items, 4 select
 		case 0:
 		{
-      if( client->questdebug )
-        server->SendPM(client, "Remove Quest: %u", data->iQuestSN);
       if (client->ActiveQuest == data->iQuestSN) client->ActiveQuest = 0;
 			for(dword i = 0; i < 10; i++){
 				if(client->quest.quests[i].QuestID != data->iQuestSN) continue;
@@ -78,8 +83,6 @@ QUESTREWD(000){
 		break;
 		case 1:
 		{
-      if( client->questdebug )
-        server->SendPM(client, "Start Quest: %u", data->iQuestSN);
 			for(dword i = 0; i < 10; i++){
 			  if(client->quest.quests[i].QuestID == data->iQuestSN) return QUEST_SUCCESS;
 				if(client->quest.quests[i].QuestID != 0) continue;
@@ -93,8 +96,6 @@ QUESTREWD(000){
 		break;
 		case 2:
 		{
-      if( client->questdebug )
-        server->SendPM(client, "Replace Quest, keep items: %u", data->iQuestSN);
 			for(dword i = 0; i < 10; i++){
 				if(client->quest.quests[i].QuestID != client->ActiveQuest) continue;
 				client->quest.quests[i].QuestID = data->iQuestSN;
@@ -106,8 +107,6 @@ QUESTREWD(000){
 		break;
 		case 3:
 		{
-      if( client->questdebug )
-        server->SendPM(client, "Replace Quest, delete items: %u", data->iQuestSN);
 			for(dword i = 0; i < 10; i++){
 				if(client->quest.quests[i].QuestID != client->ActiveQuest) continue;
 				memset(&client->quest.quests[i], 0, sizeof(SQuest));
@@ -120,20 +119,21 @@ QUESTREWD(000){
 		break;
 		case 4:
 		{
-      if( client->questdebug )
-        server->SendPM(client, "Select Quest: %u", data->iQuestSN);
 			client->ActiveQuest = data->iQuestSN;
 		}
 		break;
 	}
+	*/
+
+	Log(MSG_WARNING,"Monster/NPC using QuestAction 000");
+
 	return QUEST_SUCCESS;
 }
 
 //Update Quest Items
-QUESTREWD(001){
+QUESTREWDC(001){
     GETREWDDATA(001);
-  if( client->questdebug )
-    server->SendPM(client, "Update Quest Item (uiItemSN: %u btOp: %u nDupCNT: %u)", data->uiItemSN, data->btOp, data->nDupCNT);
+    /*
 	CItem tmpItem;
 	tmpItem.itemtype = data->uiItemSN / 1000;
 	tmpItem.itemnum = data->uiItemSN % 1000;
@@ -145,40 +145,40 @@ QUESTREWD(001){
 	  return QUEST_FAILURE;
                          }
 	curQuest->AddItem(&tmpItem, data->btOp);
-
-                         return QUEST_SUCCESS;
+    */
+    Log(MSG_WARNING,"Monster/NPC using QuestAction 001");
+    return QUEST_SUCCESS;
 }
 
 //Set Quest Variable
-QUESTREWD(002){
+QUESTREWDC(002){
+    /*
     GETREWDDATA(002);
 	for(dword i = 0; i < data->iDataCnt; i++){
 		dword address = i * sizeof(STR_QUEST_DATA);
 		address += (dword)data;
 		address += 4;
 		STR_QUEST_DATA* curQst = (STR_QUEST_DATA*)address;
-    if( client->questdebug )
-      server->SendPM(client, "Set quest var[%#04x][%i] - %i (Op: %i)", curQst->m_wVarTYPE, curQst->m_wVarNO, curQst->nValue, curQst->btOp );
 
 		word nValue = curQst->nValue;
 		word tempValue = client->GetQuestVar(curQst->m_wVarTYPE, curQst->m_wVarNO);
 		OperateValues<word>(curQst->btOp, &tempValue, curQst->nValue);
 		client->SetQuestVar(curQst->m_wVarTYPE, curQst->m_wVarNO, tempValue);
     }
-
+    */
+    Log(MSG_WARNING,"Monster/NPC using QuestAction 002");
 	return QUEST_SUCCESS;
 }
 
 //Update Stats
-QUESTREWD(003){
+QUESTREWDC(003){
+    /*
 	GETREWDDATA(003);
 	for(dword i = 0; i < data->iDataCnt; i++){
 		dword address = i * 0x0C;
 		address += (dword)data;
 		address += 4;
 		STR_ABIL_DATA* curAbil = (STR_ABIL_DATA*)address;
-    if( client->questdebug )
-      server->SendPM(client, "Update stat %i - %i (Op: %i)", curAbil->iType, curAbil->iValue, curAbil->btOp);
 
 		switch( curAbil->iType )
 		{
@@ -256,23 +256,26 @@ QUESTREWD(003){
 			break;
 		}
 	}
+	*/
+	Log(MSG_WARNING,"Monster/NPC using QuestAction 003");
 	return QUEST_SUCCESS;
 }
 
 //Set Quest Variable
-QUESTREWD(004){
-	return QUEST_REWD_002(server, client, raw);
+QUESTREWDC(004){
+	//return QUEST_REWDC_002(server, client, raw);
+	Log(MSG_WARNING,"Monster/NPC using QuestAction 004");
+	return QUEST_SUCCESS;
 }
 
 //Give Reward
-QUESTREWD(005){
+QUESTREWDC(005){
+    /*
 	GETREWDDATA(005);
 	switch(data->btTarget){
 		case 0://EXP
 		{
-      if( client->questdebug )
-        server->SendPM(client, "Give EXP: %i", data->iValue);
-			client->CharInfo->Exp += GetRewardValue(data->btEquation, data->iValue, client, 0);
+			client->CharInfo->Exp += GetRewardValueC(data->btEquation, data->iValue, client, 0);
 			BEGINPACKET(pak, 0x79b);
 			ADDDWORD(pak, client->CharInfo->Exp);
 			ADDDWORD(pak, client->CharInfo->stamina);
@@ -282,9 +285,7 @@ QUESTREWD(005){
 		break;
 		case 1://Zuly
 		{
-      if( client->questdebug )
-        server->SendPM(client, "Give Zuly: %i", data->iValue);
-			client->CharInfo->Zulies += GetRewardValue(data->btEquation, data->iValue, client, 1);//dunno nDupCount for this one!
+			client->CharInfo->Zulies += GetRewardValueC(data->btEquation, data->iValue, client, 1);//dunno nDupCount for this one!
 			BEGINPACKET(pak, 0x71D);
 			ADDQWORD(pak, client->CharInfo->Zulies);
 			client->client->SendPacket(&pak);
@@ -297,12 +298,9 @@ QUESTREWD(005){
             nItem.itemtype = data->iItemSN / 1000;
             nItem.itemnum = data->iItemSN % 1000;
             if(nItem.IsStackable()){
-                nItem.count = GetRewardValue(data->btEquation, data->iValue, client, 0);
+                nItem.count = GetRewardValueC(data->btEquation, data->iValue, client, 0);
             } else
                 nItem.count = 1;
-
-            if( client->questdebug )
-                server->SendPM(client, "Give item [%i][%i]x%i", nItem.itemtype, nItem.itemnum, nItem.count);
 
             //Maxxon: How is durability done in Evo?
             //nItem.durability = GServer->EquipList[nItem.itemtype].Index[nItem.itemnum]->d;
@@ -334,85 +332,90 @@ QUESTREWD(005){
         break;
 
 	}
-
+    */
+    Log(MSG_WARNING,"Monster/NPC using QuestAction 005");
 	return QUEST_SUCCESS;
 }
 
 //Restore HP/MP
-QUESTREWD(006){
+QUESTREWDC(006){
+    /*
 	GETREWDDATA(006);
-  if( client->questdebug )
-    server->SendPM(client, "Restore %i%% HP, %i%% MP", data->iPercentOfHP, data->iPercentOfMP);
-	client->Stats->HP = (long int)((float)client->Stats->MaxHP / 100.0f) * data->iPercentOfHP;
+  client->Stats->HP = (long int)((float)client->Stats->MaxHP / 100.0f) * data->iPercentOfHP;
 	client->Stats->MP = (long int)((float)client->Stats->MaxHP / 100.0f) * data->iPercentOfMP;
-
+    */
+    Log(MSG_WARNING,"Monster/NPC using QuestAction 006");
 	return QUEST_SUCCESS;
 }
 
 //Teleport
-QUESTREWD(007){
+QUESTREWDC(007){
+    /*
 	GETREWDDATA(007);
 	fPoint thispoint;
 	thispoint.x = floor(((float)data->iX)/100);
 	thispoint.y = floor(((float)data->iY)/100);
-  if( client->questdebug )
-    server->SendPM(client, "Teleport [%i][%f][%f]", data->iZoneSN, thispoint.x, thispoint.y);
 	GServer->TeleportTo(client, data->iZoneSN, thispoint);
+	*/
+	Log(MSG_WARNING,"Monster/NPC using QuestAction 007");
 	return QUEST_SUCCESS;
 }
 
 //Spawn Monster
-QUESTREWD(008){
+QUESTREWDC(008){
     GETREWDDATA(008);
 
-        Log(MSG_DEBUG,"BEGIN QUESTREWD(008)");
-        fPoint position;
-  dword mapId;
-  if(data->iX == 0 || data->iY == 0 || data->iZoneSN == 0){
-    position.x = client->Position->current.x;
-    position.y = client->Position->current.y;
-    mapId = client->Position->Map;
-  }else{
+    Log(MSG_DEBUG,"BEGIN QUESTREWDC(008)");
+    fPoint position;
+    dword mapId;
+    if(data->iX == 0 || data->iY == 0 || data->iZoneSN == 0)
+    {
+        position.x = client->Position->current.x;
+        position.y = client->Position->current.y;
+        mapId = client->Position->Map;
+    }
+    else
+    {
         position.x = data->iX / 100;
         position.y = data->iY / 100;
-    mapId = data->iZoneSN;
-  }
-	for(dword i = 0; i < data->iHowMany; i++) {
-		fPoint pos = GServer->RandInCircle( position, data->iRange );
+        mapId = data->iZoneSN;
+    }
 
-  //LMA: coming from AIP.
-    //if( client->questdebug&&!client->is_invisible)
-        //server->SendPM(client, "Spawn mob[%i] @ %f, %f", data->iMonsterSN, pos.x, pos.y);
+    for(dword i = 0; i < data->iHowMany; i++)
+    {
+        fPoint pos = GServer->RandInCircle( position, data->iRange );
+
         Log(MSG_INFO, "Spawn mob[%i] @ map %i (%f,%f)", data->iMonsterSN, mapId,pos.x, pos.y);
-		CMap* map = GServer->MapList.Index[mapId];
-		CMonster* mon = map->AddMonster( data->iMonsterSN, pos, 0, NULL, NULL, 0 , true );
-		if(data->iMonsterSN > 750 && data->iMonsterSN < 755) // ghost rackies = non aggresive
+        CMap* map = GServer->MapList.Index[mapId];
+        CMonster* mon = map->AddMonster( data->iMonsterSN, pos, 0, NULL, NULL, 0 , true );
+        if(data->iMonsterSN > 750 && data->iMonsterSN < 755) // ghost rackies = non aggresive
         {
             mon->thisnpc->aggresive = 0;
-        } else {
+        }
+        else
+        {
             mon->thisnpc->aggresive = 999; // Force the mob to be agressive.
         }
-		mon->lastSighCheck = 0; // Force sight check instantly.
+
+        mon->lastSighCheck = 0; // Force sight check instantly.
     }
-    Log(MSG_DEBUG,"END QUESTREWD(008)");
-	return QUEST_SUCCESS;
+
+    Log(MSG_DEBUG,"END QUESTREWDC(008)");
+    return QUEST_SUCCESS;
 }
 
 //Execute Quest Trigger
-QUESTREWD(009){
+QUESTREWDC(009){
 	GETREWDDATA(009);
 	char* tempName = reinterpret_cast<char*>(&data->szNextTriggerSN) - 2;
 	dword hash = MakeStrHash(tempName);
-  if( client->questdebug )
-    server->SendPM(client, "Execute Quest Trigger %s[%d] [%08x]", tempName, data->shNameLen, hash);
 	return client->ExecuteQuestTrigger(hash);
     return QUEST_SUCCESS;
 }
 
 //Reset Stats
-QUESTREWD(010){
-  if( client->questdebug )
-    server->SendPM(client, "Reset Stats");
+QUESTREWDC(010){
+    /*
 	client->CharInfo->StatPoints = 0;
 
 	client->Attr->Str = 15;
@@ -426,12 +429,14 @@ QUESTREWD(010){
 		client->CharInfo->StatPoints += 10;
 		client->CharInfo->StatPoints += i / 2;
 	}
-
+    */
+    Log(MSG_WARNING,"Monster/NPC using QuestAction 010");
 	return QUEST_SUCCESS;
 }
 
 //Update Object Var
-QUESTREWD(011){
+QUESTREWDC(011)
+{
 	GETREWDDATA(011);
 	/*if(entity->_EntityType != ENTITY_NPC) return QUEST_FAILURE;
 
@@ -450,11 +455,73 @@ QUESTREWD(011){
 	}
 
 	return QUEST_SUCCESS;*/
-	return QUEST_FAILURE; // We can't do this yet I don't think? - Drakia
+
+	if(data->btWho == 0)
+	{
+	    //Npc
+        CMonster* monster = reinterpret_cast<CMonster*>(client);
+        if(monster == NULL)
+        {
+            Log(MSG_DEBUG,"QUESTREWDC(011) failed (monster null)");
+            return QUEST_FAILURE;
+        }
+
+        short tempval = GServer->ObjVar[monster->thisnpc->refNPC][data->nVarNo];
+        Log(MSG_DEBUG,"QSD Set variable NPC %i, data->btOp=%i, data->iValue=%i, data->nVarNo=%i",monster->thisnpc->refNPC,data->btOp,data->iValue,data->nVarNo);
+
+        switch(data->btOp)
+        {
+        case 5:
+            tempval = data->iValue;
+            break;
+        case 6:
+            tempval += data->iValue;
+            break;
+        case 7:
+            tempval -= data->iValue;
+        case 9:
+            tempval++;
+            break;
+        default:
+            return AI_FAILURE;
+            break;
+        }
+
+        if(tempval < 0)tempval = 0;
+        GServer->ObjVar[monster->thisnpc->refNPC][data->nVarNo] = tempval;
+
+		if(data->nVarNo==0)
+		{
+		    //event, we have to update...
+		    monster->thisnpc->eventid=tempval;
+            BEGINPACKET( pak, 0x790 );
+            ADDWORD    ( pak, monster->thisnpc->refNPC );
+            ADDWORD    ( pak, tempval );
+            GServer->SendToVisible(&pak,client);
+            //GServer->SendToMap(&pak,monster->Position->Map);
+            Log(MSG_INFO,"QUESTREWDC(011) Changing event for npc %i to %i",monster->thisnpc->refNPC,tempval);
+		}
+
+	}
+	else if	(data->btWho == 1)
+	{
+	    //Event
+	    /*
+		short VarValue = server->EventVar.GetVar(data->nVarNo);
+		OperateValues(data->btOp, &VarValue, (short)data->iValue);
+		server->EventVar.SetVar(data->nVarNo, VarValue);
+		*/
+        Log(MSG_DEBUG,"SERVER EVENT IN QUESTREWDC(011)");
+        //return QUEST_SUCCESS;
+	}
+
+
+	Log(MSG_WARNING,"Monster/NPC using QuestAction 011");
+	return QUEST_SUCCESS;
 }
 
 //NPC Speak
-QUESTREWD(012){
+QUESTREWDC(012){
 	/*if(entity->_EntityType != ENTITY_NPC) return QUEST_FAILURE;
 	GETREWDDATA(012);
 
@@ -483,78 +550,105 @@ QUESTREWD(012){
 	delete [] sayStr;
 
 	return QUEST_SUCCESS;*/
-	Log(MSG_WARNING,"A NPC TRYES TO SHOUT!!!");
-	return QUEST_FAILURE; // This is cool and all, but we lack the stuff to do it - Drakia
+
+	GETREWDDATA(012);
+	//2do: check length + check msg ID...
+	CMonster* thisMonster = reinterpret_cast<CMonster*>(client);
+
+	if(data->btMsgType == 1)
+	{
+	    Log(MSG_DEBUG,"%s shouts Nb %i::%s",GServer->LtbstringQSD[data->iStrID]->NPCname,data->iStrID,GServer->LtbstringQSD[data->iStrID]->LTBstring);
+        GServer->NPCShout(thisMonster,GServer->LtbstringQSD[data->iStrID]->LTBstring,GServer->LtbstringQSD[data->iStrID]->NPCname);
+	}
+	else if(data->btMsgType == 2)
+	{
+	    Log(MSG_DEBUG,"%s announces Nb %i::%s",GServer->LtbstringQSD[data->iStrID]->NPCname,data->iStrID,GServer->LtbstringQSD[data->iStrID]->LTBstring);
+	    GServer->NPCAnnounce(GServer->LtbstringQSD[data->iStrID]->LTBstring,GServer->LtbstringQSD[data->iStrID]->NPCname);
+	}
+
+
+	return QUEST_SUCCESS;
 }
 
 //Unknown
-QUESTREWD(013){
+QUESTREWDC(013){
+    Log(MSG_WARNING,"Monster/NPC using QuestAction 013");
 	return QUEST_SUCCESS;
 }
 
 //Learn Skill
-QUESTREWD(014){
+QUESTREWDC(014){
+    /*
     GETREWDDATA(014);
-  if( client->questdebug )
-    server->SendPM(client, "Learn skill: %i", data->iSkillNo);
     GServer->LearnSkill(client, data->iSkillNo, false);
 //	GServer->LearnSkill(client, data->iSkillNo);
+    */
+    Log(MSG_WARNING,"Monster/NPC using QuestAction 014");
 	return QUEST_SUCCESS;
 }
 
 //Set Quest Flag
-QUESTREWD(015){
+QUESTREWDC(015){
+    /*
 	GETREWDDATA(015);
-  if( client->questdebug )
-    server->SendPM(client, "Set QFlag[%i]=%i", data->nSN, data->btOp);
 	client->quest.SetFlag(data->nSN, (data->btOp == 1)?true:false);
+	*/
+	Log(MSG_WARNING,"Monster/NPC using QuestAction 015");
 	return QUEST_SUCCESS;
 }
 
 //Unknown
-QUESTREWD(016){
+QUESTREWDC(016){
+    Log(MSG_WARNING,"Monster/NPC using QuestAction 016");
 	return QUEST_SUCCESS;
 }
 
 //Reset All Quest Flags
-QUESTREWD(017){
-  if( client->questdebug )
-    server->SendPM(client, "Reset all quest flags");
-	memset(&client->quest.flags, 0, 64);
+QUESTREWDC(017){
+    /*
+  memset(&client->quest.flags, 0, 64);
+  */
+  Log(MSG_WARNING,"Monster/NPC using QuestAction 017");
 	return QUEST_SUCCESS;
 }
 
 //Send Announcement
-QUESTREWD(018){
+QUESTREWDC(018){
+    /*
     GETREWDDATA(018);
+    */
+    Log(MSG_WARNING,"Monster/NPC using QuestAction 018 (annoucment?)");
 	return QUEST_SUCCESS;
 }
 
 //Execute Quest Trigger in Other Map
-QUESTREWD(019){
+QUESTREWDC(019){
+    Log(MSG_WARNING,"Monster/NPC using QuestAction 019");
 	return QUEST_SUCCESS;
 }
 
 //PvP Status
-QUESTREWD(020){
+QUESTREWDC(020){
+    Log(MSG_WARNING,"Monster/NPC using QuestAction 020");
 	return QUEST_SUCCESS;
 }
 
 //Set Respawn Position
-QUESTREWD(021){
+QUESTREWDC(021){
+    Log(MSG_WARNING,"Monster/NPC using QuestAction 021");
 	return QUEST_SUCCESS;
 }
 
 //Unknown
-QUESTREWD(022){
+QUESTREWDC(022){
+    Log(MSG_WARNING,"Monster/NPC using QuestAction 022");
 	return QUEST_SUCCESS;
 }
 
 //Raise Clan Grade - This is not the least bit efficient - Drakia
-QUESTREWD(023){
+QUESTREWDC(023){
+    /*
     GETREWDDATA(023);
-  if( client->questdebug )
-    server->SendPM(client, "Raise clan grade");
     for(UINT i=0;i<GServer->MapList.Map.size();i++)
     {
         CMap* map = GServer->MapList.Map.at(i);
@@ -590,38 +684,43 @@ QUESTREWD(023){
         }
     }
     GServer->DB->QExecute("UPDATE list_clan SET grade=%i WHERE id=%i", client->Clan->grade, client->Clan->clanid);
+    */
+    Log(MSG_WARNING,"Monster/NPC using QuestAction 023");
 	return QUEST_SUCCESS;
 }
 
 //Clan Money
-QUESTREWD(024){
+QUESTREWDC(024){
+    Log(MSG_WARNING,"Monster/NPC using QuestAction 024");
 	return QUEST_SUCCESS;
 }
 
 //Clan Points
-QUESTREWD(025){
+QUESTREWDC(025){
+    Log(MSG_WARNING,"Monster/NPC using QuestAction 025");
 	return QUEST_SUCCESS;
 }
 
 //Clan Skill
-QUESTREWD(026){
+QUESTREWDC(026){
+    Log(MSG_WARNING,"Monster/NPC using QuestAction 026");
 	return QUEST_SUCCESS;
 }
 
 //Clan Contribution
-QUESTREWD(027){
+QUESTREWDC(027){
+    Log(MSG_WARNING,"Monster/NPC using QuestAction 027");
 	return QUEST_SUCCESS;
 }
 
 //Clan Teleportation - Again, not efficient. Maybe keep a list of pointers to clan members? - Drakia
-QUESTREWD(028){
+QUESTREWDC(028){
+    /*
     GETREWDDATA(028);
     fPoint telepos;
     fPoint newPos;
     telepos.x = data->iX/100;
     telepos.y = data->iY/100;
-  if( client->questdebug )
-    server->SendPM(client, "Clan teleport to [%i][%f][%f]", data->nZoneNo, telepos.x, telepos.y);
     for(UINT i=0;i<GServer->MapList.Map.size();i++)
     {
         CMap* map = GServer->MapList.Map.at(i);
@@ -635,16 +734,15 @@ QUESTREWD(028){
             GServer->TeleportTo(player, data->nZoneNo, newPos );
         }
     }
+    */
+    Log(MSG_WARNING,"Monster/NPC using QuestAction 028");
 	return QUEST_SUCCESS;
 }
 
 //Unspawn a NPC
-QUESTREWD(034){
+QUESTREWDC(034){
+    /*
     GETREWDDATA(034);
-
-    if (client->questdebug) {
-        server->SendPM(client, "removing selected NPC");
-    }
 
     if (client->quest.selectedNpc == NULL) {
         // WTF?
@@ -661,8 +759,12 @@ QUESTREWD(034){
             return QUEST_SUCCESS;
         }
     }
-
     return QUEST_FAILURE;
+    */
+
+    Log(MSG_WARNING,"Monster/NPC using QuestAction 034");
+    return QUEST_SUCCESS;
 }
 
 #endif
+

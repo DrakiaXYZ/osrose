@@ -26,6 +26,7 @@ CCharacter::CCharacter( )
 {
     // STATS
     Stats = new STATS;
+    refnpc=NULL;
     assert(Stats);
     Stats->Level = 0;
     Stats->HP = 0;
@@ -134,6 +135,68 @@ bool CCharacter::UpdateValues( )
 {
     return true;
 }
+
+//LMA: AIP (qsd quests).
+#ifdef USENEWQUESTSYSTEM
+int CCharacter::ExecuteQuestTrigger(dword hash)
+{
+    CQuestTrigger* trigger = NULL;
+    CQuestTrigger* nexttrigger = NULL;
+    for(unsigned j=0; j < GServer->TriggerList.size(); j++)
+    {
+      if (GServer->TriggerList.at(j)->TriggerHash == hash)
+      {
+        trigger = GServer->TriggerList.at(j);
+        nexttrigger = GServer->TriggerList.at(j + 1);
+        break;
+      }
+    }
+
+    if (trigger == NULL) return QUEST_FAILURE;
+
+    int success = QUEST_SUCCESS;
+    Log(MSG_DEBUG, "Trigger Executed: %s[%i]", trigger->TriggerName, trigger->CheckNext);
+
+    for (dword i = 0; i < trigger->ConditionCount; i++)
+    {
+      int command = trigger->Conditions[i]->opcode;
+      if (command > 30 || command < 0) continue;
+      success = (*GServer->qstCondFuncC[command])(GServer, this, trigger->Conditions[i]->data);
+      Log(MSG_DEBUG, "Condition %03u returned %d", command, success);
+
+      if (success == QUEST_FAILURE)
+      {
+        if (!trigger->CheckNext)
+        {
+            Log(MSG_DEBUG,"No checknext, FAILURE");
+            return success;
+        }
+        else
+        {
+            Log(MSG_DEBUG,"checknext, FAILURE");
+            return ExecuteQuestTrigger(nexttrigger->TriggerHash);
+        }
+
+      }
+
+      Log(MSG_DEBUG,"Quest cdt success");
+    }
+
+    for (dword i = 0; i < trigger->ActionCount; i++)
+    {
+      int command = trigger->Actions[i]->opcode;
+      if ((command > 28 || command < 0) && command != 34)
+      {
+          Log(MSG_DEBUG, "unknown Action command %i", command);
+          continue;
+      }
+
+      Log(MSG_DEBUG,"QSD ACT %03u BEGIN",command);
+      Log(MSG_DEBUG, "Reward %03u returned %d", command, (*GServer->qstRewdFuncC[command])(GServer, this, trigger->Actions[i]->data));
+    }
+    return success;
+}
+#endif
 
 // update position
 void CCharacter::UpdatePosition( bool monster_stay_still )

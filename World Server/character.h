@@ -47,6 +47,12 @@ class CCharacter
         MAGICSTATUS MagicStatus[30];
         int AIVar[20];  //LMA: AIP.
 
+        //LMA: for AIP.
+        CNPC* refnpc;
+       #ifdef USENEWQUESTSYSTEM
+       int ExecuteQuestTrigger(dword hash);
+       #endif
+
        // Battle Functions
         void DoAttack( );
         void NormalAttack( CCharacter* Enemy );

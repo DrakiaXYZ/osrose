@@ -50,6 +50,7 @@ class CPlayer: public CCharacter
     UINT FairyListIndex;
 
     // variables
+    bool is_invisible;  //LMA: for AIP.
     unsigned int hits;
     USEDITEM* UsedItem;
     INFO* CharInfo;
@@ -89,7 +90,7 @@ class CPlayer: public CCharacter
     UINT quickbar[MAX_QUICKBAR];
     int p_skills;
 
-#ifdef USENEWQUESTSYSTEM    
+#ifdef USENEWQUESTSYSTEM
     // ExJam Quest Code - Info
     DWORD ActiveQuest;  //active quest #
     int CheckQuest; // The currently checked quest.
@@ -165,7 +166,7 @@ class CPlayer: public CCharacter
         bool SaveQuest( QUESTS* myquest );       //LMA: Saving quests data (Mysql 4.1+ function).
         bool PlasticSurgeon(CQuest* thisquest);      //LMA: Plastic Surgery coupons
         bool CheckItem(int itemnb,int familyid,int nb);   //Check if a peculiar item is in inventory
-        
+
 #ifdef USENEWQUESTSYSTEM
         // ExJam Quest Code
         void savequests( CPlayer* thisclient );
@@ -173,7 +174,7 @@ class CPlayer: public CCharacter
         int GetQuestVar(short nVarType, short nVarNO);
         void SetQuestVar(short nVarType, short nVarNO, short nValue);
         int ExecuteQuestTrigger(dword hash);
-#else                
+#else
         // quest
         bool AddQuest( unsigned long int questid );
         bool DelInactiveQuest( unsigned long int questid );    //LMA

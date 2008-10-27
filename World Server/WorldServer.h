@@ -426,6 +426,10 @@ class CWorldServer : public CServerSocket
         fpQuestCond qstCondFunc[31];
         fpQuestRewd qstRewdFunc[35];
 
+        //LMA: for AIP:
+        fpQuestCondC qstCondFuncC[31];
+        fpQuestRewdC qstRewdFuncC[35];
+
         CSTBData                STB_QUEST;
 #else
         bool LoadQuestData( );
@@ -526,7 +530,9 @@ class CWorldServer : public CServerSocket
         CMapList                MapList;
 
         LTBData                 MyLTB;                  //LMA: LTB
+        LTBData                 MyLTBQSD;               //LMA: LTB for QSD
         CLTBstring              **Ltbstring;            //LMA: LTB
+        CLTBstring              **LtbstringQSD;         //LMA: LTB for QSD
         CSTBData				STB_NPC;				// NPC data
         CSTBData                STB_SKILL;              // Skill data
         CSTBData                STB_STATUS;             // Status Data

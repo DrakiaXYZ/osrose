@@ -679,37 +679,88 @@ void CMonster::DoAi(int ainumber,char type)//ainumber is monster->AI type is add
         Log(MSG_INFO,"Monster died. Activating AI type 5");
     }
 
+    //LMA: halloween debug (Odelo).
+    bool lma_debug=false;
+    int nb_turns=0;
+    if(ainumber==1116)
+    {
+        lma_debug=true;
+    }
+
+
     for(unsigned j=0; j < GServer->AipList.size(); j++)
     {
         if (GServer->AipList.at(j)->AipID == aiindex)
         {
+            nb_turns++;
+            if (lma_debug)
+                Log(MSG_INFO,"BEGIN CDT Turn %i",nb_turns);
+
             script = GServer->AipList.at(j);
+            /*
             if(ainumber == AIWatch)Log(MSG_DEBUG, "Record count = %i",script->recordcount[type]);
             if(ainumber == AIWatch)Log(MSG_DEBUG, "aiCondition type: %i AI index: %i condition count %i", type, aiindex, script->ConditionCount);
+            */
+            if (lma_debug)
+            {
+                Log(MSG_DEBUG, "DoAI1116 script %i, Record count = %i",script->AipID,script->recordcount[type]);
+                Log(MSG_DEBUG, "DoAI1116 aiCondition type: %i AI index: %i condition count %i", type, aiindex, script->ConditionCount);
+            }
+
             int success = AI_SUCCESS; //needs to be AI_SUCCESS otherwise would not perform conditionless actions
             int thisaction = 0;
+
             for (dword i = 0; i < script->ConditionCount; i++)
             {
                 int command = script->Conditions[i]->opcode;
                 if (command > 30 || command < 0) continue;
                 success = (*GServer->aiCondFunc[command])(GServer, this, script->Conditions[i]->data);
                 if(ainumber == AIWatch)Log(MSG_DEBUG, "aiCondition %03u returned %d", command, success);
+
                 if (success == AI_FAILURE)
+                {
+                    if (lma_debug)
+                        Log(MSG_DEBUG, "aiCondition %03u, %i/%i Failure.",command,i,script->ConditionCount-1);
                     break;
+                }
+                else
+                {
+                    if (lma_debug)
+                        Log(MSG_DEBUG, "aiCondition %03u, %i/%i Success.",command,i,script->ConditionCount-1);
+                }
+
             }
+
+            if (lma_debug)
+                Log(MSG_INFO,"END CDT Turn %i",nb_turns);
+
+
             if (success == AI_SUCCESS)
             {
+                if (lma_debug)
+                    Log(MSG_INFO,"BEGIN ACT Turn %i",nb_turns);
+
                 for (dword i = 0; i < script->ActionCount; i++)
                 {
                     int command = script->Actions[i]->opcode;
                     if (command > 38 || command < 0) continue;
                     success = (*GServer->aiActFunc[command])(GServer, this, script->Actions[i]->data);
                     if(ainumber == AIWatch)Log(MSG_DEBUG, "aiAction: %03u returned %d", command, success);
+
+                    if(lma_debug)
+                        Log(MSG_DEBUG, "aiAction: %03u returned %d, %i/%i", command, success,i,script->ActionCount-1);
                 }
 
                 if(success == AI_SUCCESS)
                 {
+                  if(lma_debug)
+                        Log(MSG_INFO,"END ACT SUCCESS Turn %i",nb_turns);
                     return; //automatically return after performing the first successful action
+                }
+                else
+                {
+                  if(lma_debug)
+                        Log(MSG_INFO,"END ACT FAILURE Turn %i",nb_turns);
                 }
 
             }

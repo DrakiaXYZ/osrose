@@ -2,7 +2,7 @@
 #include "../worldserver.h"
 #ifdef USENEWQUESTSYSTEM
 
-void CWorldServer::ReadQSD(strings path, dword index){	
+void CWorldServer::ReadQSD(strings path, dword index){
 	CRoseFile* fh = new CRoseFile(path, FM_READ | FM_BINARY);
 	if(fh->IsOpen()) { // goto done;
 
@@ -59,7 +59,7 @@ void CWorldServer::ReadQSD(strings path, dword index){
 	}
 }else
      Log( MSG_ERROR, "QSD File: '%s'", path );
-     
+
     fh->Close();
 	delete fh;
 }
@@ -67,7 +67,7 @@ void CWorldServer::ReadQSD(strings path, dword index){
 
 void CWorldServer::LoadQuestData(){
 	CStrStb* stbQuest = new CStrStb("3ddata/stb/LIST_QUESTDATA.STB");
-	
+
 	char buffer [100];
 
 	for(dword i = 1; i < stbQuest->Rows(); i++){
@@ -148,6 +148,72 @@ void CWorldServer::LoadQuestData(){
 	qstRewdFunc[27] = &QUEST_REWD_027;
 	qstRewdFunc[28] = &QUEST_REWD_028;
 	qstRewdFunc[34] = &QUEST_REWD_034;
+
+
+    //LMA: AIP
+	qstCondFuncC[0] = &QUEST_CONDC_000;
+	qstCondFuncC[1] = &QUEST_CONDC_001;
+	qstCondFuncC[2] = &QUEST_CONDC_002;
+	qstCondFuncC[3] = &QUEST_CONDC_003;
+	qstCondFuncC[4] = &QUEST_CONDC_004;
+	qstCondFuncC[5] = &QUEST_CONDC_005;
+	qstCondFuncC[6] = &QUEST_CONDC_006;
+	qstCondFuncC[7] = &QUEST_CONDC_007;
+	qstCondFuncC[8] = &QUEST_CONDC_008;
+	qstCondFuncC[9] = &QUEST_CONDC_009;
+	qstCondFuncC[10] = &QUEST_CONDC_010;
+	qstCondFuncC[11] = &QUEST_CONDC_011;
+	qstCondFuncC[12] = &QUEST_CONDC_012;
+	qstCondFuncC[13] = &QUEST_CONDC_013;
+	qstCondFuncC[14] = &QUEST_CONDC_014;
+	qstCondFuncC[15] = &QUEST_CONDC_015;
+	qstCondFuncC[16] = &QUEST_CONDC_016;
+	qstCondFuncC[17] = &QUEST_CONDC_017;
+	qstCondFuncC[18] = &QUEST_CONDC_018;
+	qstCondFuncC[19] = &QUEST_CONDC_019;
+	qstCondFuncC[20] = &QUEST_CONDC_020;
+	qstCondFuncC[21] = &QUEST_CONDC_021;
+	qstCondFuncC[22] = &QUEST_CONDC_022;
+	qstCondFuncC[23] = &QUEST_CONDC_023;
+	qstCondFuncC[24] = &QUEST_CONDC_024;
+	qstCondFuncC[25] = &QUEST_CONDC_025;
+	qstCondFuncC[26] = &QUEST_CONDC_026;
+	qstCondFuncC[27] = &QUEST_CONDC_027;
+	qstCondFuncC[28] = &QUEST_CONDC_028;
+	qstCondFuncC[29] = &QUEST_CONDC_029;
+	qstCondFuncC[30] = &QUEST_CONDC_030;
+
+	qstRewdFuncC[0] = &QUEST_REWDC_000;
+	qstRewdFuncC[1] = &QUEST_REWDC_001;
+	qstRewdFuncC[2] = &QUEST_REWDC_002;
+	qstRewdFuncC[3] = &QUEST_REWDC_003;
+	qstRewdFuncC[4] = &QUEST_REWDC_004;
+	qstRewdFuncC[5] = &QUEST_REWDC_005;
+	qstRewdFuncC[6] = &QUEST_REWDC_006;
+	qstRewdFuncC[7] = &QUEST_REWDC_007;
+	qstRewdFuncC[8] = &QUEST_REWDC_008;
+	qstRewdFuncC[9] = &QUEST_REWDC_009;
+	qstRewdFuncC[10] = &QUEST_REWDC_010;
+	qstRewdFuncC[11] = &QUEST_REWDC_011;
+	qstRewdFuncC[12] = &QUEST_REWDC_012;
+	qstRewdFuncC[13] = &QUEST_REWDC_013;
+	qstRewdFuncC[14] = &QUEST_REWDC_014;
+	qstRewdFuncC[15] = &QUEST_REWDC_015;
+	qstRewdFuncC[16] = &QUEST_REWDC_016;
+	qstRewdFuncC[17] = &QUEST_REWDC_017;
+	qstRewdFuncC[18] = &QUEST_REWDC_018;
+	qstRewdFuncC[19] = &QUEST_REWDC_019;
+	qstRewdFuncC[20] = &QUEST_REWDC_020;
+	qstRewdFuncC[21] = &QUEST_REWDC_021;
+	qstRewdFuncC[22] = &QUEST_REWDC_022;
+	qstRewdFuncC[23] = &QUEST_REWDC_023;
+	qstRewdFuncC[24] = &QUEST_REWDC_024;
+	qstRewdFuncC[25] = &QUEST_REWDC_025;
+	qstRewdFuncC[26] = &QUEST_REWDC_026;
+	qstRewdFuncC[27] = &QUEST_REWDC_027;
+	qstRewdFuncC[28] = &QUEST_REWDC_028;
+	qstRewdFuncC[34] = &QUEST_REWDC_034;
+
 
 	delete stbQuest;
 }

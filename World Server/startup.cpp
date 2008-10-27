@@ -55,14 +55,15 @@ bool CWorldServer::LoadLTB( )
 {
     Log(MSG_INFO, "Loading LTB strings");
     LTBStoreData("3DData\\AI\\ULNGTB_AI.LTB",&MyLTB);
+    LTBStoreData("3DData\\QUESTDATA\\ULNGTB_QST.LTB",&MyLTBQSD);
 
-    if (MyLTB.record.size()==0)
+    if (MyLTB.record.size()==0||MyLTBQSD.record.size()==0)
     {
         return true;
     }
 
+    //LTB for AIP
     Ltbstring = new CLTBstring*[MyLTB.record.size()];
-
     for (unsigned int k=0;k<MyLTB.record.size();k++)
     {
         //cout << "IndexMyLTB " << k << " NPC: " << MyLTB.record.at(k).name.c_str() << ", sentence: " << MyLTB.record.at(k).sentence.c_str() << endl;
@@ -72,6 +73,19 @@ bool CWorldServer::LoadLTB( )
         tempLTB->LTBstring=new char[MyLTB.record.at(k).sentence.size()+1];
         strcpy (tempLTB->LTBstring, MyLTB.record.at(k).sentence.c_str());
         GServer->Ltbstring[k]=tempLTB;
+    }
+
+    //LTB for QSD
+    LtbstringQSD = new CLTBstring*[MyLTBQSD.record.size()];
+    for (unsigned int k=0;k<MyLTBQSD.record.size();k++)
+    {
+        //cout << "IndexMyLTBQSD " << k << " NPC: " << MyLTBQSD.record.at(k).name.c_str() << ", sentence: " << MyLTBQSD.record.at(k).sentence.c_str() << endl;
+        CLTBstring* tempLTB = new CLTBstring;
+        tempLTB->NPCname=new char[2]; //No name for QSD actually :)
+        strcpy (tempLTB->NPCname, " ");
+        tempLTB->LTBstring=new char[MyLTBQSD.record.at(k).sentence.size()+1];
+        strcpy (tempLTB->LTBstring, MyLTBQSD.record.at(k).sentence.c_str());
+        GServer->LtbstringQSD[k]=tempLTB;
     }
 
     Log( MSG_INFO, "LTB Data Loaded" );

@@ -798,7 +798,10 @@ PVOID MapProcess( PVOID TS )
                          }
                          CMonster* monster = new (nothrow) CMonster( npc->pos, npc->npctype, map->id, 0, 0  );
                          monster->thisnpc = thisnpc;
-                         Log(MSG_DEBUG,"DoAIP mainprocess NPC %i,1",monster->thisnpc->AI);
+
+                         if (monster->thisnpc->AI==1116)
+                            Log(MSG_DEBUG,"DoAIP mainprocess NPC %i,1",monster->thisnpc->AI);
+
                          monster->DoAi(monster->thisnpc->AI, 1);
                          delete monster;
                          npc->lastAiUpdate = clock();

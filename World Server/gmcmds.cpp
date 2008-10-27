@@ -3676,7 +3676,7 @@ bool CWorldServer::pakGMEventType(CPlayer* thisclient, int npctype, int dialog, 
     //Saving in database
     //DB->QExecute("UPDATE npc_data SET dialog=%i, eventid=%i WHERE id=%i", dialog, type,npctype);
     //New way.
-    DB->QExecute("UPDATE npc_data SET tempdialogid=%i, eventid=%i WHERE type=%i", dialog, type,npctype);
+    DB->QExecute("UPDATE list_npc SET tempdialogid=%i, eventid=%i WHERE type=%i", dialog, type,npctype);
 
 
 	return true;

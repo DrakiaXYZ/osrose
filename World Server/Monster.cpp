@@ -23,6 +23,11 @@
 // update attack values and destiny  position
 bool CMonster::UpdateValues( )
 {
+    //LMA: All should be handled by AIP now...
+    //2do: test if bonfire like stuff disepear.
+    return true;
+
+    /*
     //LMA: Some special case where special monsters stay still (mc, bonfires and so on...)
     if(stay_still&&(!IsBonfire()))
        return true;
@@ -104,6 +109,7 @@ bool CMonster::UpdateValues( )
             OnEnemyOnSight( player );
     }
     return true;
+    */
 }
 
 // Spawn a monster

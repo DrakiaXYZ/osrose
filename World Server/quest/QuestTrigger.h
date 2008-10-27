@@ -6,7 +6,7 @@ public:
 		int opcode;
 		byte* data;
 	};
-	
+
 	strings TriggerName;
 	dword TriggerHash;
 
@@ -87,6 +87,9 @@ template <class T> int OperateValues(byte btOp, T* value1PTR, T value2){
 	}
 }
 dword GetRewardValue(dword function, dword amount, CPlayer* client, word nDupCNT);
+
+//LMA: AIP
+dword GetRewardValue(dword function, dword amount, CCharacter* client, word nDupCNT);
 
 #include "QuestConditions.h"
 #include "QuestActions.h"

@@ -16,9 +16,9 @@
 			<Add option="-g" />
 		</Compiler>
 		<Linker>
-			<Add library="..\..\codeblocks\plugins\lib\libpthreadGC2.a" />
-			<Add library="..\..\codeblocks\plugins\lib\libmysql.a" />
-			<Add library="..\..\codeblocks\mingw\w32api-3.6\lib\libws2_32.a" />
+			<Add library="..\..\CBNB5208\plugins\lib\libpthreadGC.a" />
+			<Add library="..\..\CBNB5208\plugins\lib\libmysql.a" />
+			<Add library="..\..\..\..\..\mingw\lib\libws2_32.a" />
 		</Linker>
 		<Unit filename="..\Common\SocketBase.cpp" />
 		<Unit filename="..\Common\SocketClient.cpp" />
@@ -84,8 +84,10 @@
 		<Unit filename="..\World Server\quest\CStrStb.hpp" />
 		<Unit filename="..\World Server\quest\QuestActions.cpp" />
 		<Unit filename="..\World Server\quest\QuestActions.h" />
+		<Unit filename="..\World Server\quest\QuestActionsC.cpp" />
 		<Unit filename="..\World Server\quest\QuestConditions.cpp" />
 		<Unit filename="..\World Server\quest\QuestConditions.h" />
+		<Unit filename="..\World Server\quest\QuestConditionsC.cpp" />
 		<Unit filename="..\World Server\quest\QuestTrigger.h" />
 		<Unit filename="..\World Server\quest\Quests.cpp" />
 		<Unit filename="..\World Server\quest\strhashing.cpp" />

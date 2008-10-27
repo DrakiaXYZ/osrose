@@ -1,6 +1,11 @@
 // Props to ExJam for this code :D Ported to OSpRose by Drakia
 #define QUESTREWD(reward) int QUEST_REWD_ ## reward (class CWorldServer* server, class CPlayer* client, byte* raw)
 typedef int (*fpQuestRewd)(class CWorldServer*, class CPlayer*, byte*);
+
+//LMA: AIP
+#define QUESTREWDC(reward) int QUEST_REWDC_ ## reward (class CWorldServer* server, class CCharacter* client, byte* raw)
+typedef int (*fpQuestRewdC)(class CWorldServer*, class CCharacter*, byte*);
+
 #define GETREWDDATA(rewd) STR_REWD_ ## rewd * data = (STR_REWD_ ## rewd *)raw
 
 QUESTREWD(000);QUESTREWD(001);QUESTREWD(002);
@@ -13,6 +18,19 @@ QUESTREWD(018);QUESTREWD(019);QUESTREWD(020);
 QUESTREWD(021);QUESTREWD(022);QUESTREWD(023);
 QUESTREWD(024);QUESTREWD(025);QUESTREWD(026);
 QUESTREWD(027);QUESTREWD(028);QUESTREWD(034);
+
+//LMA: For AIP
+QUESTREWDC(000);QUESTREWDC(001);QUESTREWDC(002);
+QUESTREWDC(003);QUESTREWDC(004);QUESTREWDC(005);
+QUESTREWDC(006);QUESTREWDC(007);QUESTREWDC(008);
+QUESTREWDC(009);QUESTREWDC(010);QUESTREWDC(011);
+QUESTREWDC(012);QUESTREWDC(013);QUESTREWDC(014);
+QUESTREWDC(015);QUESTREWDC(016);QUESTREWDC(017);
+QUESTREWDC(018);QUESTREWDC(019);QUESTREWDC(020);
+QUESTREWDC(021);QUESTREWDC(022);QUESTREWDC(023);
+QUESTREWDC(024);QUESTREWDC(025);QUESTREWDC(026);
+QUESTREWDC(027);QUESTREWDC(028);QUESTREWDC(034);
+
 
 struct STR_REWD_000 {
 	dword iQuestSN;
@@ -205,23 +223,23 @@ struct STR_REWD_028 {
 // use LUA function
 struct STR_REWD_029 {
 };
- 
+
 // skill reset
 struct STR_REWD_030 {
 };
- 
+
 // unknown start
 struct STR_REWD_031 {
 };
- 
+
 struct STR_REWD_032 {
 };
- 
+
 struct STR_REWD_033 {
 };
 // unknown end
- 
+
 // unspawn NPC
 struct STR_REWD_034 {
 };
- 
+
