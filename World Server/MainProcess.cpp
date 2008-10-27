@@ -436,6 +436,7 @@ PVOID MapProcess( PVOID TS )
                 {
                     if(1000 < (UINT)GServer->round((clock( ) - monster->lastAiUpdate)))
                     {
+                        //Log(MSG_DEBUG,"DoAIP mainprocess monster loop %i",monster->thisnpc->AI);
                         monster->hitcount = 0;
                         monster->DoAi(monster->thisnpc->AI, 0);
                         monster->lastAiUpdate=clock();
@@ -607,6 +608,7 @@ PVOID MapProcess( PVOID TS )
                     //monster->DoAttack( );
                     if(2000<(UINT)GServer->round((clock( ) - monster->lastAiUpdate)))
                     {
+                        //Log(MSG_DEBUG,"DoAIP mainprocess monster on battle %i,2",monster->thisnpc->AI);
                          monster->DoAi(monster->thisnpc->AI, 2);
                          monster->lastAiUpdate = clock();
                          //Log(MSG_INFO,"Monster type: %i current HP: %i",monster->montype, monster->Stats->HP);
@@ -748,6 +750,7 @@ PVOID MapProcess( PVOID TS )
                 {
                     if(2000<(UINT)GServer->round((clock( ) - monster->lastAiUpdate)))
                     {
+                        //Log(MSG_DEBUG,"DoAIP mainprocess monster iddle? %i,1",monster->thisnpc->AI);
                         monster->DoAi(monster->thisnpc->AI, 1);
                         monster->lastAiUpdate = clock();
                     }
@@ -772,6 +775,7 @@ PVOID MapProcess( PVOID TS )
                 monster->RefreshBuff( );
                 if(monster->IsDead( ))
                 {
+                    //Log(MSG_DEBUG,"DoAIP mainprocess monster is dead %i",monster->thisnpc->AI);
                     monster->DoAi(monster->thisnpc->AI, 5);
                     monster->OnDie( );
                 }
@@ -794,6 +798,7 @@ PVOID MapProcess( PVOID TS )
                          }
                          CMonster* monster = new (nothrow) CMonster( npc->pos, npc->npctype, map->id, 0, 0  );
                          monster->thisnpc = thisnpc;
+                         Log(MSG_DEBUG,"DoAIP mainprocess NPC %i,1",monster->thisnpc->AI);
                          monster->DoAi(monster->thisnpc->AI, 1);
                          delete monster;
                          npc->lastAiUpdate = clock();

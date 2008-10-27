@@ -289,12 +289,12 @@ AICOND(007)
 {
 	//byte cPercent;	//Pos: 0x00
 	//Random number 0->100 if random number < cPercent then return true
-	Log(MSG_DEBUG, "AICOND(007) called");
+	//Log(MSG_DEBUG, "AICOND(007) called");
     GETAICONDDATA(007);
     //byte rand = rg.IRandom(0, 100) & 0xFF;
     //srand(time(NULL));
     byte brand = rand()%100;
-    Log(MSG_DEBUG, "brand =  %i chance = %i", brand, data->cPercent);
+    //Log(MSG_DEBUG, "brand =  %i chance = %i (brand<chance=>success)", brand, data->cPercent);
 	if(brand < data->cPercent) return AI_SUCCESS;
 	return AI_FAILURE;
 }

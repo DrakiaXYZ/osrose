@@ -47,6 +47,8 @@ bool CMonster::OnBeAttacked( CCharacter* Enemy )
 bool CMonster::OnDie( )
 {
     CMap* map = GServer->MapList.Index[Position->Map];
+    /*
+    //AIP should do it...
     if(map->ghost!=0)
     {
      if((map->IsNight( ) || map->ghost==2) && !IsGhost( ) && !IsGhostSeed( ) && !IsSummon( ))
@@ -58,6 +60,7 @@ bool CMonster::OnDie( )
             }
         }
     }
+    */
 
     //LMA: Union Wars :)
     //A stone has been killed?
@@ -675,6 +678,7 @@ void CMonster::DoAi(int ainumber,char type)//ainumber is monster->AI type is add
     {
         Log(MSG_INFO,"Monster died. Activating AI type 5");
     }
+
     for(unsigned j=0; j < GServer->AipList.size(); j++)
     {
         if (GServer->AipList.at(j)->AipID == aiindex)
@@ -702,12 +706,21 @@ void CMonster::DoAi(int ainumber,char type)//ainumber is monster->AI type is add
                     success = (*GServer->aiActFunc[command])(GServer, this, script->Actions[i]->data);
                     if(ainumber == AIWatch)Log(MSG_DEBUG, "aiAction: %03u returned %d", command, success);
                 }
+
                 if(success == AI_SUCCESS)
+                {
                     return; //automatically return after performing the first successful action
+                }
+
             }
+
             aiindex++;
         }
-        else if(GServer->AipList.at(j)->AipID > aiindex)return;
+        else if(GServer->AipList.at(j)->AipID > aiindex)
+        {
+            return;
+        }
+
     }
     return;
 }

@@ -988,10 +988,16 @@ AIACT(028)
             // don't think this is possible. No way to get a character to send it to??
         break;
         case 1: //shout to map
+        {
+            Log(MSG_INFO,"NPC shout to map.");
             GServer->NPCShout(thisMonster,GServer->Ltbstring[data->iStrID]->LTBstring,GServer->Ltbstring[data->iStrID]->NPCname);
+        }
         break;
         case 2: //announce to server.
+        {
+            Log(MSG_INFO,"NPC announce to server.");
             GServer->NPCAnnounce(GServer->Ltbstring[data->iStrID]->LTBstring,GServer->Ltbstring[data->iStrID]->NPCname);
+        }
         break;
     }
 
