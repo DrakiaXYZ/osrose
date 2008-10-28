@@ -775,7 +775,7 @@ PVOID MapProcess( PVOID TS )
                 monster->RefreshBuff( );
                 if(monster->IsDead( ))
                 {
-                    //Log(MSG_DEBUG,"DoAIP mainprocess monster is dead %i",monster->thisnpc->AI);
+                    Log(MSG_DEBUG,"DoAIP mainprocess monster is dead %i",monster->thisnpc->AI);
                     monster->DoAi(monster->thisnpc->AI, 5);
                     monster->OnDie( );
                 }
@@ -802,7 +802,19 @@ PVOID MapProcess( PVOID TS )
                          if (monster->thisnpc->AI==1116)
                             Log(MSG_DEBUG,"DoAIP mainprocess NPC %i,1",monster->thisnpc->AI);
 
+                         int lma_previous_eventID=thisnpc->eventid;
                          monster->DoAi(monster->thisnpc->AI, 1);
+
+                         //LMA: check if eventID changed, if we do it in AIP conditions / actions, it just fails...
+                         if (lma_previous_eventID!=monster->thisnpc->eventid)
+                         {
+                            Log(MSG_WARNING,"Event ID not the same NPC %i from %i to %i in map %i !",npc->npctype,lma_previous_eventID,monster->thisnpc->eventid,map->id);
+                            BEGINPACKET( pak, 0x790 );
+                            ADDWORD    ( pak, npc->npctype );
+                            ADDWORD    ( pak, monster->thisnpc->eventid );
+                            GServer->SendToAllInMap  ( &pak,map->id);
+                         }
+
                          delete monster;
                          npc->lastAiUpdate = clock();
                      }

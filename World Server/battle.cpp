@@ -159,7 +159,7 @@ void CCharacter::DoAttack( )
                      }
                      if(IsTargetReached( Enemy, skill ) && CanAttack( ))
                      {
-                        Log(MSG_INFO,"%i:: DeBuff time for %i",clientid,Enemy->clientid);
+                        //Log(MSG_INFO,"%i:: DeBuff time for %i",clientid,Enemy->clientid);
                         DebuffSkill( Enemy, skill );
                      }
                     }break;
@@ -173,7 +173,7 @@ void CCharacter::DoAttack( )
                             }
                             if(IsTargetReached( Target, skill ) && CanAttack( ))
                             {
-                               Log(MSG_INFO,"%i:: Buff time for %i",clientid,Target->clientid);
+                               //Log(MSG_INFO,"%i:: Buff time for %i",clientid,Target->clientid);
                                BuffSkill( Target, skill );
                             }
                     }break;

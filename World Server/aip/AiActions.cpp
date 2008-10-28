@@ -758,19 +758,34 @@ AIACT(023)
 {
 	//Commit suicide
 	Log(MSG_DEBUG, "AIACT(023) BEGIN");
-    entity->Stats->HP = 0;
+    //entity->Stats->HP = 0;
+
+
+    //LMA: we let him die later, it seems we never come back from DoAI in this case...
     CMonster* thisMonster = reinterpret_cast<CMonster*>(entity);
     Log(MSG_DEBUG, "AIACT(023) Before suicide from monstertype %i",thisMonster->montype);
 
+    /*
     BEGINPACKET( pak, 0x799 );
     ADDWORD    ( pak, entity->clientid );
     ADDWORD    ( pak, entity->clientid );
     ADDDWORD   ( pak, 0x8005 );
     GServer->SendToVisible( &pak, entity );
+    */
+
+    entity->Stats->HP = -1;
+    BEGINPACKET( pak, 0x799 );
+    ADDWORD    ( pak, entity->clientid );
+    ADDWORD    ( pak, entity->clientid );
+    ADDDWORD   ( pak, thisMonster->thisnpc->hp*thisMonster->thisnpc->level );
+    ADDDWORD   ( pak, 16 );
+    GServer->SendToVisible( &pak, entity );
 
     //Log(MSG_DEBUG, "AIACT(023) suicide monstertype %i",thisMonster->montype);
-    thisMonster->DoAi(thisMonster->thisnpc->AI, 5);
-    Log(MSG_DEBUG, "AIACT(023) END suicide from monstertype %i",thisMonster->montype);
+    //thisMonster->DoAi(thisMonster->thisnpc->AI, 5);
+
+    //Log(MSG_DEBUG, "AIACT(023) END suicide from monstertype %i",thisMonster->montype);
+    Log(MSG_DEBUG, "AIACT(023) END suicide");
 	return AI_SUCCESS;
 }
 

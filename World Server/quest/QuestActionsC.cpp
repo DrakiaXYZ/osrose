@@ -497,9 +497,9 @@ QUESTREWDC(011)
             BEGINPACKET( pak, 0x790 );
             ADDWORD    ( pak, monster->thisnpc->refNPC );
             ADDWORD    ( pak, tempval );
-            GServer->SendToVisible(&pak,client);
-            //GServer->SendToMap(&pak,monster->Position->Map);
-            Log(MSG_INFO,"QUESTREWDC(011) Changing event for npc %i to %i",monster->thisnpc->refNPC,tempval);
+            //GServer->SendToVisible(&pak,client);
+            GServer->SendToAllInMap(&pak,monster->Position->Map);
+            Log(MSG_INFO,"QUESTREWDC(011) Changing event for npc %i to %i, map %i",monster->thisnpc->refNPC,tempval,monster->Position->Map);
 		}
 
 	}
