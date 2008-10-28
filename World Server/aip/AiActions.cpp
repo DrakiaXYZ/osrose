@@ -977,6 +977,15 @@ AIACT(025)
     if(tempval < 0)tempval = 0;
     GServer->ObjVar[monster->thisnpc->refNPC][data->btVarIDX] = tempval;
 
+    //LMA: EventID changed?
+    //Mainprocess will take care of it since we don't have client ID here.
+    if(data->btVarIDX==0)
+    {
+        Log(MSG_DEBUG,"AIACT(025) eventID has changed from %i to %i",monster->thisnpc->eventid,tempval);
+        monster->thisnpc->eventid=tempval;
+    }
+
+
 	return AI_SUCCESS;
 }
 

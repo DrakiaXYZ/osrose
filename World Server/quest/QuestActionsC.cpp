@@ -492,13 +492,16 @@ QUESTREWDC(011)
 
 		if(data->nVarNo==0)
 		{
-		    //event, we have to update...
+		    //LMA: event, we have to update, not here because we need the clientID :(
+		    //mainprocess will do it for us ;)
 		    monster->thisnpc->eventid=tempval;
+		    /*
             BEGINPACKET( pak, 0x790 );
-            ADDWORD    ( pak, monster->thisnpc->refNPC );
+            ADDWORD    ( pak, monster->thisnpc->clientid );
             ADDWORD    ( pak, tempval );
             //GServer->SendToVisible(&pak,client);
             GServer->SendToAllInMap(&pak,monster->Position->Map);
+            */
             Log(MSG_INFO,"QUESTREWDC(011) Changing event for npc %i to %i, map %i",monster->thisnpc->refNPC,tempval,monster->Position->Map);
 		}
 

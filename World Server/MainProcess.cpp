@@ -802,17 +802,19 @@ PVOID MapProcess( PVOID TS )
                          if (monster->thisnpc->AI==1116)
                             Log(MSG_DEBUG,"DoAIP mainprocess NPC %i,1",monster->thisnpc->AI);
 
-                         int lma_previous_eventID=thisnpc->eventid;
+                         int lma_previous_eventID=npc->thisnpc->eventid;
                          monster->DoAi(monster->thisnpc->AI, 1);
 
                          //LMA: check if eventID changed, if we do it in AIP conditions / actions, it just fails...
                          if (lma_previous_eventID!=monster->thisnpc->eventid)
                          {
-                            Log(MSG_WARNING,"Event ID not the same NPC %i from %i to %i in map %i !",npc->npctype,lma_previous_eventID,monster->thisnpc->eventid,map->id);
+                            Log(MSG_WARNING,"Event ID not the same NPC %i from %i to %i in map %i, npc->thisnpc->eventid=%i !",npc->npctype,lma_previous_eventID,monster->thisnpc->eventid,map->id,npc->thisnpc->eventid);
+                            npc->thisnpc->eventid=monster->thisnpc->eventid;
+                            //LMA: We have to change the event ID here since we didn't send the clientID :(
                             BEGINPACKET( pak, 0x790 );
-                            ADDWORD    ( pak, npc->npctype );
-                            ADDWORD    ( pak, monster->thisnpc->eventid );
-                            GServer->SendToAllInMap  ( &pak,map->id);
+                            ADDWORD    ( pak, npc->clientid );
+                            ADDWORD    ( pak, npc->thisnpc->eventid );
+                            GServer->SendToAllInMap(&pak,map->id);
                          }
 
                          delete monster;
