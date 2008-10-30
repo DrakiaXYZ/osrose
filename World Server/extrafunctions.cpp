@@ -2677,7 +2677,7 @@ void CWorldServer::UWNPCdialogs(int status)
         Log(MSG_INFO,"Changing dialog UW NPC %i, eventid: %i",list_npc[k],thisnpc->event);
 
         //Saving in database
-        DB->QExecute("UPDATE npc_data SET eventid=%i WHERE id=%i", eventid,list_npc[k]);
+        DB->QExecute("UPDATE list_npcs SET eventid=%i WHERE type=%i", eventid, list_npc[k]);
      }
 
 

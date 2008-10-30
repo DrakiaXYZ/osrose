@@ -1,22 +1,22 @@
 /*
     Rose Online Server Emulator
     Copyright (C) 2006,2007 OSRose Team http://www.dev-osrose.com
-    
+
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
     as published by the Free Software Foundation; either version 2
     of the License, or (at your option) any later version.
-    
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-    
+
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-    depeloped with Main erose/hrose source server + some change from the original eich source        
+    depeloped with Main erose/hrose source server + some change from the original eich source
 */
 #include "loginserver.h"
 
@@ -24,14 +24,14 @@
 CLoginServer::CLoginServer( string fn )
 {
     filename = fn;
-    LoadConfigurations( (char*)filename.c_str() );    
-    GServer = this; 
+    LoadConfigurations( (char*)filename.c_str() );
+    GServer = this;
 }
 
-// Destructor	
+// Destructor
 CLoginServer::~CLoginServer( )
 {
-    
+
 }
 
 // Create client socket (alloc memory)
@@ -48,8 +48,8 @@ CLoginClient* CLoginServer::CreateClientSocket( )
 //20070623, 224500
 bool CLoginServer::Ping()
 {
-         //Bogus request (checking if quest 1 exists).
-        if(DB->QStore( "SELECT id FROM quest_data WHERE id='1'")==NULL)
+         //Bogus request (checking if npc 1 exists).
+        if(DB->QStore( "SELECT id FROM list_npcs WHERE id='1'")==NULL)
         {
              Log( MSG_INFO, "MySQL Ping Time Error on port %u",DB->Port);
         }
@@ -58,7 +58,7 @@ bool CLoginServer::Ping()
             Log( MSG_INFO, "MySQL Ping Time Ok on port %u",DB->Port);
             DB->QFree( );
         }
-        
+
      return true;
 }
 //LMA END
@@ -74,8 +74,8 @@ void CLoginServer::DeleteClientSocket( CClientSocket* thisclient )
             CServers* thisserver = ServerList.at( i );
             if(client->userid == thisserver->id)
             {
-                Log( MSG_INFO, "Server #%i disconnected", thisserver->id ); 
-                DB->QExecute( "DELETE FROM channels WHERE id=%u and type=1", thisserver->id );             
+                Log( MSG_INFO, "Server #%i disconnected", thisserver->id );
+                DB->QExecute( "DELETE FROM channels WHERE id=%u and type=1", thisserver->id );
                 ServerList.erase( ServerList.begin()+i );
                 delete thisserver;
                 break;
@@ -84,14 +84,14 @@ void CLoginServer::DeleteClientSocket( CClientSocket* thisclient )
     }
     else
     {
-    	Log( MSG_INFO, "User disconnected" );            
+    	Log( MSG_INFO, "User disconnected" );
     }
 	delete (CLoginClient*)thisclient;
 }
 
 /**
 	* check on the database if a client is banned
-	* @param ClientInfo sockaddr_in structure 
+	* @param ClientInfo sockaddr_in structure
 	* @return true if the client is banned else false
 */
 bool CLoginServer::isBanned( sockaddr_in* ClientInfo )
@@ -135,10 +135,10 @@ bool CLoginServer::isBanned( sockaddr_in* ClientInfo )
 bool CLoginServer::OnServerReady( )
 {
     DB->QExecute("DELETE FROM channels WHERE id=%i and type=%i", Config.ServerID, Config.ServerType );
-    if(!DB->QExecute("INSERT INTO channels (id,type,name,host,port,lanip,lansubmask,connected,maxconnections,owner) VALUES (%u,%i,'%s','%s',%u,'%s','%s',0,%i,0)", 
+    if(!DB->QExecute("INSERT INTO channels (id,type,name,host,port,lanip,lansubmask,connected,maxconnections,owner) VALUES (%u,%i,'%s','%s',%u,'%s','%s',0,%i,0)",
             Config.ServerID, Config.ServerType, Config.ServerName, Config.LoginIP, Config.LoginPort, Config.LanIP, Config.LanSubnet, Config.MaxConnections ))
         Log(MSG_WARNING, "Error accessing to database, the other server will not connect to LoginServer" );
-    return true;    
+    return true;
 }
 
 // Load Server configuration
@@ -156,15 +156,15 @@ void CLoginServer::LoadConfigurations( char* file )
     Config.LoginIP              = ConfigGetString ( file, "serverip", "127.0.0.1" );
 	Config.LoginPort            = ConfigGetInt    ( file, "serverport", 29000 );
     Config.ServerName           = ConfigGetString ( file, "servername", "Loginserver" );
-    Config.Connection           = ConfigGetInt    ( file, "connection", 0 );        
+    Config.Connection           = ConfigGetInt    ( file, "connection", 0 );
     Config.LanIP                = ConfigGetString ( file, "lanip", "192.168.0.1" );
     Config.LanSubnet            = ConfigGetString ( file, "lansubmask", "192.168.0" );
 	//Passwords
 	Config.LoginPass            = ConfigGetInt    ( file, "loginpass", 123456 );
-	Config.CharPass             = ConfigGetInt    ( file, "charpass", 123456 );	
-	Config.WorldPass            = ConfigGetInt    ( file, "worldpass", 123456 );	
+	Config.CharPass             = ConfigGetInt    ( file, "charpass", 123456 );
+	Config.WorldPass            = ConfigGetInt    ( file, "worldpass", 123456 );
     //Login
-    Config.MinimumAccessLevel   = ConfigGetInt    ( file, "accesslevel", 100 );    	
+    Config.MinimumAccessLevel   = ConfigGetInt    ( file, "accesslevel", 100 );
 	Config.usethreads           = ConfigGetInt    ( file, "usethreads", 0 )==0?false:true;
     Config.CreateLoginAccount   = ConfigGetInt    ( file, "CreateLoginAccount", 0 )==0?false:true;
     Config.checkGameGuard       = ConfigGetInt    ( file, "checkGameGuard", 1)==0?false:true;
@@ -175,10 +175,10 @@ bool CLoginServer::OnReceivePacket( CClientSocket* thisclient, CPacket *P )
 {
 	switch( P->Command )
 	{
-	   case 0x500: return pakConnectToChar    ( (CLoginClient*)thisclient, P );        
+	   case 0x500: return pakConnectToChar    ( (CLoginClient*)thisclient, P );
 	   case 0x703: return pakEncryptionRequest( (CLoginClient*)thisclient, P );
 	   case 0x708: return pakUserLogin        ( (CLoginClient*)thisclient, P );
-	   case 0x704: return pakGetServers       ( (CLoginClient*)thisclient, P ); 
+	   case 0x704: return pakGetServers       ( (CLoginClient*)thisclient, P );
 	   case 0x70a: return pakGetIP            ( (CLoginClient*)thisclient, P );
 	   case 0x808: return pakGameGuard        ( (CLoginClient*)thisclient, P );
     	default:

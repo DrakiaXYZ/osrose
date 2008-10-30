@@ -300,8 +300,8 @@ CWorldServer::~CWorldServer( )
 //20070623, 224500
 bool CWorldServer::Ping()
 {
-         //Bogus request (checking if quest 1 exists).
-        if(DB->QStore( "SELECT id FROM quest_data WHERE id='1'")==NULL)
+         //Bogus request (checking if npc ID 1 exists).
+        if(DB->QStore( "SELECT id FROM list_npcs WHERE id='1'")==NULL)
         {
              Log( MSG_INFO, "MySQL Ping Time Error on port %u",DB->Port);
         }

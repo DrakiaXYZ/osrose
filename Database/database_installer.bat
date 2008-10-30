@@ -59,11 +59,10 @@ echo creating list_clans table
 %mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < list_clan.sql
 echo creating list_friend table
 %mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < list_friend.sql
-echo creating list_quest table
-%mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < list_quest.sql
 echo creating list_quest_qsd table
 %mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < list_quest_qsd.sql
-echo creating list_mobgroups table
+echo creating list_mobgroups table !!! THIS CAN BE VERY LONG !!!
+echo Note: !!! THIS CAN BE VERY LONG !!!
 %mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < list_mobgroups.sql
 echo creating list_mobgroups_special table
 %mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < list_mobgroups_special.sql
@@ -80,12 +79,6 @@ echo updating spawnareas
 %mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < list_spawnareas.sql
 echo updating telegates
 %mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < list_telegates.sql
-echo updating npc_data
-%mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < npc_data.sql
-echo updating quest_data
-%mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < quest_data.sql
-echo updating skills_data
-%mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < skills_data.sql
 echo updating storage
 %mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < storage.sql
 echo updating extra_stats
@@ -96,8 +89,6 @@ echo item_drops
 %mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < item_drops.sql
 echo ban_list
 %mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < ban_list.sql
-echo item_reference
-%mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < item_reference.sql
 echo custom events
 %mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < list_customevents.sql
 echo custom gates
@@ -108,8 +99,7 @@ echo skillbooks
 %mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < list_skillbooks.sql
 echo wishlist
 %mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < wishlist.sql
-echo npc data sell
-%mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < npc_data_sell.sql
+
 
 :end
 echo.
