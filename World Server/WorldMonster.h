@@ -52,7 +52,8 @@ class CMonster : public CCharacter
         UINT bonushp;
         UINT bonusmp;
         UINT range;
-
+        int aip_npctype;    //LMA: AIP
+        int aip_clientid;   //LMA: AIP
     	CParty* thisparty;
     	CNPCData* thisnpc;
 

@@ -557,7 +557,6 @@ QUESTREWDC(012){
 	GETREWDDATA(012);
 	//2do: check length + check msg ID...
 	CMonster* thisMonster = reinterpret_cast<CMonster*>(client);
-
 	if(data->btMsgType == 1)
 	{
 	    Log(MSG_DEBUG,"%s shouts Nb %i::%s",GServer->LtbstringQSD[data->iStrID]->NPCname,data->iStrID,GServer->LtbstringQSD[data->iStrID]->LTBstring);

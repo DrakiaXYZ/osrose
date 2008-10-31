@@ -4933,11 +4933,13 @@ bool CWorldServer::pakGMnpcshout( CPlayer* thisclient, char* shan, char* aipqsd,
 	{
 	    if ( strcmp ( aipqsd , "aip" )==0)
 	    {
-	        GServer->NPCShout(thisMonster,GServer->Ltbstring[ltbid]->LTBstring,GServer->Ltbstring[ltbid]->NPCname);
+	        //GServer->NPCShout(thisMonster,GServer->Ltbstring[ltbid]->LTBstring,GServer->Ltbstring[ltbid]->NPCname);
+	        GServer->NPCShout(thisMonster,GServer->Ltbstring[ltbid]->LTBstring,GServer->GetNPCNameByType(thisnpc->npctype));
 	    }
 	    else
 	    {
-	        GServer->NPCShout(thisMonster,GServer->LtbstringQSD[ltbid]->LTBstring,GServer->LtbstringQSD[ltbid]->NPCname);
+	        //GServer->NPCShout(thisMonster,GServer->LtbstringQSD[ltbid]->LTBstring,GServer->LtbstringQSD[ltbid]->NPCname);
+	        GServer->NPCShout(thisMonster,GServer->LtbstringQSD[ltbid]->LTBstring,GServer->GetNPCNameByType(thisnpc->npctype));
 	    }
 
 	}

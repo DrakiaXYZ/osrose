@@ -467,6 +467,19 @@ CNPC* CWorldServer::GetNPCByID( UINT id, UINT map )
 	return NULL;
 }
 
+//LMA: getting the npc name.
+char* CWorldServer::GetNPCNameByType(UINT id)
+{
+    char* temp="";
+    if(NpcNameList.find(id)==NpcNameList.end())
+    {
+        return temp;
+    }
+
+
+    return NpcNameList[id];
+}
+
 // Get Telegate by ID
 CTeleGate* CWorldServer::GetTeleGateByID( unsigned int id )
 {

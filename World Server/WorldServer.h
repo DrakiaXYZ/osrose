@@ -189,6 +189,7 @@ class CWorldServer : public CServerSocket
     	CDrop* GetDropByID( UINT id, UINT map=0 );
         CChest* GetChestByID( UINT id );
     	CNPC* GetNPCByID( UINT id, UINT map=0 );
+    	char* GetNPCNameByType(UINT id);    //LMA: getting the npc name.
         CNPC* GetNPCByType( UINT npctype );
         CDrop* GetDrop( CMonster* thismon );
         CDrop* GetPYDrop( CMonster* thismon, UINT droptype );   //hidden
@@ -492,6 +493,7 @@ class CWorldServer : public CServerSocket
     	char*					cct;					// Encryption table for char server
 
     	vector<CTeleGate*>		TeleGateList;			// Telegates List
+    	map<int,char*>          NpcNameList;            //LMA: npc name map.
         vector<CCustomGate*>    CustomGateList;         // Custom Telegate list
         vector<CCustomEvent*>   CustomEventList;        //Custom events list
 

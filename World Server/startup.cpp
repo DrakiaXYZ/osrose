@@ -1623,7 +1623,8 @@ bool CWorldServer::LoadNPCs( )
 {
 	Log( MSG_LOAD, "NPC spawn                   " );
 	MYSQL_ROW row;
-	MYSQL_RES *result = DB->QStore("SELECT type,map,dir,x,y,dialogid,eventid,tempdialogid FROM list_npcs");
+	NpcNameList.clear();
+	MYSQL_RES *result = DB->QStore("SELECT type,map,dir,x,y,dialogid,eventid,tempdialogid,name FROM list_npcs");
 	if(result==NULL) return false;
 	while(row = mysql_fetch_row(result))
     {
@@ -1648,6 +1649,8 @@ bool CWorldServer::LoadNPCs( )
             delete thisnpc;
             continue;
         }
+
+        NpcNameList[thisnpc->npctype]=row[8];    //LMA: NPC Name list.
 
         thisnpc->thisnpc->dialogid = atoi(row[5]); //This is global to NPC type (original dialog)
         //thisnpc->dialog=thisnpc->thisnpc->dialogid;

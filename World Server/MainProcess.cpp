@@ -797,6 +797,8 @@ PVOID MapProcess( PVOID TS )
                              continue;
                          }
                          CMonster* monster = new (nothrow) CMonster( npc->pos, npc->npctype, map->id, 0, 0  );
+                         monster->aip_npctype=npc->npctype;
+                         monster->aip_clientid=npc->clientid;
                          monster->thisnpc = thisnpc;
 
                          if (monster->thisnpc->AI==1116)
