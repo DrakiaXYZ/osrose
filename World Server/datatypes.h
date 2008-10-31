@@ -701,8 +701,12 @@ struct LTBData
 
 struct CLTBstring
 {
-    char * LTBstring;
-    char * NPCname;
+    /*
+    char LTBstring[200];
+    char NPCname[50];
+    */
+    char* LTBstring;
+    char* NPCname;
 };
 
 struct Dialog

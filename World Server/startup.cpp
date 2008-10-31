@@ -85,7 +85,7 @@ bool CWorldServer::LoadLTB( )
     {
         //cout << "IndexMyLTBQSD " << k << " NPC: " << MyLTBQSD.record.at(k).name.c_str() << ", sentence: " << MyLTBQSD.record.at(k).sentence.c_str() << endl;
         CLTBstring* tempLTB = new CLTBstring;
-        tempLTB->NPCname=new char[2]; //No name for QSD actually :)
+        tempLTB->NPCname=new char[2];
         strcpy (tempLTB->NPCname, " ");
         tempLTB->LTBstring=new char[MyLTBQSD.record.at(k).sentence.size()+1];
         strcpy (tempLTB->LTBstring, MyLTBQSD.record.at(k).sentence.c_str());
@@ -1650,7 +1650,7 @@ bool CWorldServer::LoadNPCs( )
             continue;
         }
 
-        NpcNameList[thisnpc->npctype]=row[8];    //LMA: NPC Name list.
+        NpcNameList[thisnpc->npctype]=strdup(row[8]);    //LMA: NPC Name list.
 
         thisnpc->thisnpc->dialogid = atoi(row[5]); //This is global to NPC type (original dialog)
         //thisnpc->dialog=thisnpc->thisnpc->dialogid;

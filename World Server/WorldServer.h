@@ -475,9 +475,9 @@ class CWorldServer : public CServerSocket
         bool SendGlobalMSG( CPlayer* thisclient, char msg[200] );
 
         //LMA: AIP and custom events.
-        //bool NPCShout( CMonster* thismon, char msg[200], char npc[50] );
+        //bool NPCShout( CMonster* thismon, char msg[200], char npc[50], int mapid=0);
+        bool NPCShout( CMonster* thismon, char* msg, char* npc, int mapid=0);
         //bool NPCAnnounce( char msg[200], char npc[50] );
-        bool NPCShout( CMonster* thismon, char* msg, char* npc );
         bool NPCAnnounce( char* msg, char* npc );
         bool NPCWhisper( CPlayer* thisclient, CMonster* thismon, char msg[200], char npc[50] );
         bool NPCMessage( CPlayer* thisclient, char msg[200], char npc[50] );

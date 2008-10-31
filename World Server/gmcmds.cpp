@@ -4928,18 +4928,15 @@ bool CWorldServer::pakGMnpcshout( CPlayer* thisclient, char* shan, char* aipqsd,
         return true;
     }
 
-    CMonster* thisMonster = reinterpret_cast<CMonster*>(thisnpc);
 	if(strcmp ( shan , "shout" ) == 0)
 	{
 	    if ( strcmp ( aipqsd , "aip" )==0)
 	    {
-	        //GServer->NPCShout(thisMonster,GServer->Ltbstring[ltbid]->LTBstring,GServer->Ltbstring[ltbid]->NPCname);
-	        GServer->NPCShout(thisMonster,GServer->Ltbstring[ltbid]->LTBstring,GServer->GetNPCNameByType(thisnpc->npctype));
+	        GServer->NPCShout(NULL,GServer->Ltbstring[ltbid]->LTBstring,GServer->GetNPCNameByType(thisnpc->npctype),thisnpc->posMap);
 	    }
 	    else
 	    {
-	        //GServer->NPCShout(thisMonster,GServer->LtbstringQSD[ltbid]->LTBstring,GServer->LtbstringQSD[ltbid]->NPCname);
-	        GServer->NPCShout(thisMonster,GServer->LtbstringQSD[ltbid]->LTBstring,GServer->GetNPCNameByType(thisnpc->npctype));
+	        GServer->NPCShout(NULL,GServer->LtbstringQSD[ltbid]->LTBstring,GServer->GetNPCNameByType(thisnpc->npctype),thisnpc->posMap);
 	    }
 
 	}
@@ -4947,11 +4944,11 @@ bool CWorldServer::pakGMnpcshout( CPlayer* thisclient, char* shan, char* aipqsd,
 	{
 	    if ( strcmp ( aipqsd , "aip" )==0)
 	    {
-	        GServer->NPCAnnounce(GServer->Ltbstring[ltbid]->LTBstring,GServer->Ltbstring[ltbid]->NPCname);
+	        GServer->NPCAnnounce(GServer->Ltbstring[ltbid]->LTBstring,GServer->GetNPCNameByType(thisnpc->npctype));
 	    }
 	    else
 	    {
-	        GServer->NPCAnnounce(GServer->LtbstringQSD[ltbid]->LTBstring,GServer->LtbstringQSD[ltbid]->NPCname);
+	        GServer->NPCAnnounce(GServer->LtbstringQSD[ltbid]->LTBstring,GServer->GetNPCNameByType(thisnpc->npctype));
 	    }
 
 	}

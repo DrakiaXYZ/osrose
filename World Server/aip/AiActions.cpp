@@ -1016,6 +1016,13 @@ AIACT(028)
 
     dword npcId = 0;
     //if(entity->_EntityType == ENTITY_NPC)
+
+    if(data->iStrID>=GServer->maxltbaip)
+    {
+        Log(MSG_INFO,"AIACT(028) AIP LTB index error %i>=%i",data->iStrID,GServer->maxltbaip);
+        return AI_SUCCESS;
+    }
+
     CMonster* thisMonster = reinterpret_cast<CMonster*>(entity);
     switch(data->btMsgType)
     {
@@ -1024,14 +1031,16 @@ AIACT(028)
         break;
         case 1: //shout to map
         {
-            Log(MSG_INFO,"NPC shout to map.");
-            GServer->NPCShout(thisMonster,GServer->Ltbstring[data->iStrID]->LTBstring,GServer->Ltbstring[data->iStrID]->NPCname);
+            Log(MSG_INFO,"AIP NPC %s (%i) shouts to map.",GServer->GetNPCNameByType(thisMonster->aip_npctype),thisMonster->aip_npctype);
+            //GServer->NPCShout(thisMonster,GServer->Ltbstring[data->iStrID]->LTBstring,GServer->Ltbstring[data->iStrID]->NPCname);
+            GServer->NPCShout(thisMonster,GServer->LtbstringQSD[data->iStrID]->LTBstring,GServer->GetNPCNameByType(thisMonster->aip_npctype));
         }
         break;
         case 2: //announce to server.
         {
-            Log(MSG_INFO,"NPC announce to server.");
-            GServer->NPCAnnounce(GServer->Ltbstring[data->iStrID]->LTBstring,GServer->Ltbstring[data->iStrID]->NPCname);
+            Log(MSG_INFO,"AIP NPC %s (%i) announces to server.",GServer->GetNPCNameByType(thisMonster->aip_npctype),thisMonster->aip_npctype);
+            //GServer->NPCAnnounce(GServer->Ltbstring[data->iStrID]->LTBstring,GServer->Ltbstring[data->iStrID]->NPCname);
+            GServer->NPCAnnounce(GServer->Ltbstring[data->iStrID]->LTBstring,GServer->GetNPCNameByType(thisMonster->aip_npctype));
         }
         break;
     }

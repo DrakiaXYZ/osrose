@@ -470,11 +470,13 @@ CNPC* CWorldServer::GetNPCByID( UINT id, UINT map )
 //LMA: getting the npc name.
 char* CWorldServer::GetNPCNameByType(UINT id)
 {
-    char* temp="";
     if(NpcNameList.find(id)==NpcNameList.end())
     {
-        return temp;
+        Log(MSG_INFO,"npc %i not found",id);
+        return "";
     }
+
+    Log(MSG_INFO,"npc %i found %s",id,NpcNameList[id]);
 
 
     return NpcNameList[id];

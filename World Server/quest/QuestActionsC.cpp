@@ -556,16 +556,24 @@ QUESTREWDC(012){
 
 	GETREWDDATA(012);
 	//2do: check length + check msg ID...
+    if(data->iStrID>=GServer->maxltbqsd)
+    {
+        Log(MSG_INFO,"QUESTREWDC(012) QSD LTB index error %i>=%i",data->iStrID,GServer->maxltbqsd);
+        return QUEST_SUCCESS;
+    }
+
 	CMonster* thisMonster = reinterpret_cast<CMonster*>(client);
 	if(data->btMsgType == 1)
 	{
-	    Log(MSG_DEBUG,"%s shouts Nb %i::%s",GServer->LtbstringQSD[data->iStrID]->NPCname,data->iStrID,GServer->LtbstringQSD[data->iStrID]->LTBstring);
-        GServer->NPCShout(thisMonster,GServer->LtbstringQSD[data->iStrID]->LTBstring,GServer->LtbstringQSD[data->iStrID]->NPCname);
+	    //Log(MSG_DEBUG,"%s shouts Nb %i::%s",GServer->LtbstringQSD[data->iStrID]->NPCname,data->iStrID,GServer->LtbstringQSD[data->iStrID]->LTBstring);
+        //GServer->NPCShout(thisMonster,GServer->LtbstringQSD[data->iStrID]->LTBstring,GServer->LtbstringQSD[data->iStrID]->NPCname);
+        Log(MSG_DEBUG,"%s (%i) shouts Nb %i::%s",GServer->GetNPCNameByType(thisMonster->aip_npctype),thisMonster->aip_npctype,data->iStrID,GServer->LtbstringQSD[data->iStrID]->LTBstring);
+        GServer->NPCShout(thisMonster,GServer->LtbstringQSD[data->iStrID]->LTBstring,GServer->GetNPCNameByType(thisMonster->aip_npctype));
 	}
 	else if(data->btMsgType == 2)
 	{
-	    Log(MSG_DEBUG,"%s announces Nb %i::%s",GServer->LtbstringQSD[data->iStrID]->NPCname,data->iStrID,GServer->LtbstringQSD[data->iStrID]->LTBstring);
-	    GServer->NPCAnnounce(GServer->LtbstringQSD[data->iStrID]->LTBstring,GServer->LtbstringQSD[data->iStrID]->NPCname);
+	    Log(MSG_DEBUG,"%s (%i) announces Nb %i::%s",GServer->GetNPCNameByType(thisMonster->aip_npctype),thisMonster->aip_npctype,data->iStrID,GServer->LtbstringQSD[data->iStrID]->LTBstring);
+	    GServer->NPCAnnounce(GServer->LtbstringQSD[data->iStrID]->LTBstring,GServer->GetNPCNameByType(thisMonster->aip_npctype));
 	}
 
 
