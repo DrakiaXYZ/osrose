@@ -64,7 +64,9 @@ bool CWorldServer::SendGlobalMSG( CPlayer* thisclient, char msg[200] )
 }
 
 // NPC Announce to the server
-bool CWorldServer::NPCAnnounce( char msg[200], char npc[50])
+//LMA: char* time
+//bool CWorldServer::NPCAnnounce( char msg[200], char npc[50])
+bool CWorldServer::NPCAnnounce( char* msg, char* npc)
 {
     BEGINPACKET( pak, 0x702 );
     ADDSTRING( pak, npc );
@@ -88,7 +90,9 @@ bool CWorldServer::NPCWhisper( CPlayer* thisclient, CMonster* thismon, char msg[
 }
 
 // NPC Shout to the current map
-bool CWorldServer::NPCShout( CMonster* thismon, char msg[200], char npc[50] )
+//LMA: char* time
+//bool CWorldServer::NPCShout( CMonster* thismon, char msg[200], char npc[50] )
+bool CWorldServer::NPCShout( CMonster* thismon, char* msg, char* npc)
 {
     BEGINPACKET(pak, 0x0785);
 	ADDSTRING  ( pak, npc );

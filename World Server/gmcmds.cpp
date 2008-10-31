@@ -55,6 +55,18 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
         Log( MSG_GMACTION, " %s : /allskill %s", thisclient->CharInfo->charname, name);
         return pakGMAllSkill(thisclient, name);
         }
+
+   else if (strcmp(command, "npcltb")==0) /* LMA:npc shouts or announces with LTB string */
+   {
+        if(Config.Command_NpcLtb > thisclient->Session->accesslevel)
+        return true;
+        if ((tmp = strtok(NULL, " "))==NULL) return true; char* shan=tmp;
+        if ((tmp = strtok(NULL, " "))==NULL) return true; char* aipqsd=tmp;
+        if ((tmp = strtok(NULL, " "))==NULL) return true; int npctype=atoi(tmp);
+        if ((tmp = strtok(NULL, " "))==NULL) return true; int ltbid=atoi(tmp);
+        return pakGMnpcshout(thisclient,shan,aipqsd,npctype,ltbid);
+        }
+
    else if (strcmp(command, "delskills")==0) /* Remove all Skill from a Player - modified by rl2171 */
    {
         if(Config.Command_DelSkills > thisclient->Session->accesslevel)
@@ -4874,6 +4886,77 @@ bool CWorldServer::pakGMKillInRange( CPlayer* thisclient, int range )
             map->DeleteMonster( thismon );
         }
     }
+    return true;
+}
+
+
+//LMA: NPC shouts or announces with LTB.
+bool CWorldServer::pakGMnpcshout( CPlayer* thisclient, char* shan, char* aipqsd, int npctype, int ltbid )
+{
+    if ( strcmp ( shan , "shout" ) != 0 && strcmp ( shan , "ann" ) != 0)
+    {
+        return true;
+    }
+
+    if ( strcmp ( aipqsd , "aip" ) != 0 && strcmp ( aipqsd , "qsd" ) != 0)
+    {
+        return true;
+    }
+
+    if (strcmp ( aipqsd , "aip" )==0)
+    {
+        if(ltbid>=maxltbaip)
+        {
+            return true;
+        }
+
+    }
+
+    if (strcmp ( aipqsd , "qsd" )==0)
+    {
+        if(ltbid>=maxltbqsd)
+        {
+            return true;
+        }
+
+    }
+
+    //checking NPC
+    CNPC* thisnpc = GetNPCByType(npctype);
+    if(thisnpc==NULL)
+    {
+        return true;
+    }
+
+    CMonster* thisMonster = reinterpret_cast<CMonster*>(thisnpc);
+	if(strcmp ( shan , "shout" ) == 0)
+	{
+	    if ( strcmp ( aipqsd , "aip" )==0)
+	    {
+	        GServer->NPCShout(thisMonster,GServer->Ltbstring[ltbid]->LTBstring,GServer->Ltbstring[ltbid]->NPCname);
+	    }
+	    else
+	    {
+	        GServer->NPCShout(thisMonster,GServer->LtbstringQSD[ltbid]->LTBstring,GServer->LtbstringQSD[ltbid]->NPCname);
+	    }
+
+	}
+	else
+	{
+	    if ( strcmp ( aipqsd , "aip" )==0)
+	    {
+	        GServer->NPCAnnounce(GServer->Ltbstring[ltbid]->LTBstring,GServer->Ltbstring[ltbid]->NPCname);
+	    }
+	    else
+	    {
+	        GServer->NPCAnnounce(GServer->LtbstringQSD[ltbid]->LTBstring,GServer->LtbstringQSD[ltbid]->NPCname);
+	    }
+
+	}
+
+	Log( MSG_GMACTION, " %s : /npcltb %s %s %i %i", thisclient->CharInfo->charname,shan,aipqsd,npctype,ltbid);
+
+
     return true;
 }
 

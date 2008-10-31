@@ -144,6 +144,7 @@ class CWorldServer : public CServerSocket
     	bool CheckInventorySlot( CPlayer* thisclient, int slot );
     	bool pakGMClass( CPlayer* thisclient, char* classid );
         bool pakGMKillInRange( CPlayer* thisclient, int range );
+        bool pakGMnpcshout( CPlayer* thisclient, char* shan, char* aipqsd, int npctype, int ltbid );    //LMA: LTB use.
     	bool pakGMHide( CPlayer* thisclient, int mode );
     	void SendToVisible( CPacket* pak, CPlayer* thisclient, bool thisclient=true );
     	void SendToVisible( CPacket* pak, CPlayer* thisclient, CPlayer* xotherclient );
@@ -473,9 +474,11 @@ class CWorldServer : public CServerSocket
         bool SendGlobalMSG( CPlayer* thisclient, char msg[200] );
 
         //LMA: AIP and custom events.
-        bool NPCShout( CMonster* thismon, char msg[200], char npc[50] );
+        //bool NPCShout( CMonster* thismon, char msg[200], char npc[50] );
+        //bool NPCAnnounce( char msg[200], char npc[50] );
+        bool NPCShout( CMonster* thismon, char* msg, char* npc );
+        bool NPCAnnounce( char* msg, char* npc );
         bool NPCWhisper( CPlayer* thisclient, CMonster* thismon, char msg[200], char npc[50] );
-        bool NPCAnnounce( char msg[200], char npc[50] );
         bool NPCMessage( CPlayer* thisclient, char msg[200], char npc[50] );
 
         UINT GetMaxPartyExp( UINT partylevel );
@@ -533,6 +536,8 @@ class CWorldServer : public CServerSocket
         LTBData                 MyLTBQSD;               //LMA: LTB for QSD
         CLTBstring              **Ltbstring;            //LMA: LTB
         CLTBstring              **LtbstringQSD;         //LMA: LTB for QSD
+        int                     maxltbaip;              //LMA: max aip ltb
+        int                     maxltbqsd;              //LMA: max qsd ltb
         CSTBData				STB_NPC;				// NPC data
         CSTBData                STB_SKILL;              // Skill data
         CSTBData                STB_STATUS;             // Status Data

@@ -53,6 +53,8 @@ bool CWorldServer::LoadSTBData( )
 //LMA: loading LTB (for AIP)
 bool CWorldServer::LoadLTB( )
 {
+    maxltbaip=0;
+    maxltbqsd=0;
     Log(MSG_INFO, "Loading LTB strings");
     LTBStoreData("3DData\\AI\\ULNGTB_AI.LTB",&MyLTB);
     LTBStoreData("3DData\\QUESTDATA\\ULNGTB_QST.LTB",&MyLTBQSD);
@@ -63,6 +65,7 @@ bool CWorldServer::LoadLTB( )
     }
 
     //LTB for AIP
+    maxltbaip=MyLTB.record.size();
     Ltbstring = new CLTBstring*[MyLTB.record.size()];
     for (unsigned int k=0;k<MyLTB.record.size();k++)
     {
@@ -76,6 +79,7 @@ bool CWorldServer::LoadLTB( )
     }
 
     //LTB for QSD
+    maxltbqsd=MyLTBQSD.record.size();
     LtbstringQSD = new CLTBstring*[MyLTBQSD.record.size()];
     for (unsigned int k=0;k<MyLTBQSD.record.size();k++)
     {

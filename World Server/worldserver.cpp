@@ -891,6 +891,7 @@ void CWorldServer::LoadCommandLevels( void )
     Config.Command_Moveto = ConfigGetInt    ( "commands.ini", "moveto", 299 );
     Config.Command_Mute = ConfigGetInt    ( "commands.ini", "mute", 299 );
     Config.Command_Npc = ConfigGetInt    ( "commands.ini", "npc", 299 );
+    Config.Command_NpcLtb = ConfigGetInt    ( "commands.ini", "npcltb", 299 );
     Config.Command_Pak = ConfigGetInt    ( "commands.ini", "pak", 299 );
     Config.Command_Pak2 = ConfigGetInt    ( "commands.ini", "pak2", 299 );
     Config.Command_Pakm = ConfigGetInt    ( "commands.ini", "pakm", 299 );

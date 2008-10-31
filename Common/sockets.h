@@ -293,6 +293,7 @@ struct CROSEServerConfig
     int Command_Moveto;
     int Command_Mute;
     int Command_Npc;
+    int Command_NpcLtb; //LMA: npc shouts or announces LTB string
     int Command_Pak;
     int Command_Pak2;
     int Command_Pakm;
