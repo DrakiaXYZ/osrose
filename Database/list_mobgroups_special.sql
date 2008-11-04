@@ -17,23 +17,25 @@ CREATE TABLE `list_mobgroups_special` (
 `whatisit` varchar(20) default NULL,
 PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
-INSERT INTO `list_mobgroups_special` VALUES (0, 2, 5514.00, 5363.00, 10, 20, 8, 200, '3012,1,0|3012,1,0|3012,1,0|3013,1,0|3013,1,0|3013,1,0',2,1,'Halloween_2008_JP');
-INSERT INTO `list_mobgroups_special` VALUES (0, 2, 5567.00, 5365.00, 10, 20, 5, 200, '3009,1,0|3009,1,0|3009,1,0|3010,1,0|3010,1,0|3010,1,0',2,1,'Halloween_2008_JP');
-INSERT INTO `list_mobgroups_special` VALUES (0, 2, 5706.00, 5362.00, 10, 20, 5, 200, '3012,1,0|3012,1,0|3012,1,0|3013,1,0|3013,1,0|3013,1,0',2,1,'Halloween_2008_JP');
-INSERT INTO `list_mobgroups_special` VALUES (0, 2, 5704.00, 5285.00, 10, 20, 5, 200, '3012,1,0|3012,1,0|3012,1,0|3013,1,0|3013,1,0|3013,1,0',2,1,'Halloween_2008_JP');
-INSERT INTO `list_mobgroups_special` VALUES (0, 2, 5706.00, 5203.00, 10, 20, 5, 200, '3009,1,0|3009,1,0|3009,1,0|3010,1,0|3010,1,0|3010,1,0',2,1,'Halloween_2008_JP');
-INSERT INTO `list_mobgroups_special` VALUES (0, 2, 5695.00, 5098.00, 10, 20, 7, 200, '3012,1,0|3012,1,0|3012,1,0|3013,1,0|3013,1,0|3013,1,0',2,1,'Halloween_2008_JP');
-INSERT INTO `list_mobgroups_special` VALUES (0, 2, 5565.00, 5075.00, 10, 20, 7, 200, '3009,1,0|3009,1,0|3009,1,0|3010,1,0|3010,1,0|3010,1,0',2,1,'Halloween_2008_JP');
-INSERT INTO `list_mobgroups_special` VALUES (0, 2, 5459.00, 5075.00, 10, 20, 9, 200, '3012,1,0|3012,1,0|3012,1,0|3013,1,0|3013,1,0|3013,1,0',2,1,'Halloween_2008_JP');
-INSERT INTO `list_mobgroups_special` VALUES (0, 2, 5381.00, 5675.00, 10, 20, 5, 200, '3012,1,0|3012,1,0|3012,1,0|3013,1,0|3013,1,0|3013,1,0',2,1,'Halloween_2008_JP');
-INSERT INTO `list_mobgroups_special` VALUES (0, 2, 5385.00, 5146.00, 10, 20, 6, 200, '3009,1,0|3009,1,0|3009,1,0|3010,1,0|3010,1,0|3010,1,0',2,1,'Halloween_2008_JP');
-INSERT INTO `list_mobgroups_special` VALUES (0, 2, 5384.00, 5276.00, 10, 20, 9, 200, '3012,1,0|3012,1,0|3012,1,0|3013,1,0|3013,1,0|3013,1,0',2,1,'Halloween_2008_JP');
-INSERT INTO `list_mobgroups_special` VALUES (0, 2, 5395.00, 5364.00, 10, 20, 5, 200, '3009,1,0|3009,1,0|3009,1,0|3010,1,0|3010,1,0|3010,1,0',2,1,'Halloween_2008_JP');
-INSERT INTO `list_mobgroups_special` VALUES (0, 2, 5481.00, 5364.00, 10, 20, 5, 200, '3012,1,0|3012,1,0|3012,1,0|3013,1,0|3013,1,0|3013,1,0',2,1,'Halloween_2008_JP');
+INSERT INTO `list_mobgroups_special` VALUES (0, 2, 5514.00, 5363.00, 10, 20, 8, 200, '3012,1,0|3012,1,0|3012,1,0|3013,1,0|3013,1,0|3013,1,0',2,0,'Halloween_2008_JP');
+INSERT INTO `list_mobgroups_special` VALUES (0, 2, 5567.00, 5365.00, 10, 20, 5, 200, '3009,1,0|3009,1,0|3009,1,0|3010,1,0|3010,1,0|3010,1,0',2,0,'Halloween_2008_JP');
+INSERT INTO `list_mobgroups_special` VALUES (0, 2, 5706.00, 5362.00, 10, 20, 5, 200, '3012,1,0|3012,1,0|3012,1,0|3013,1,0|3013,1,0|3013,1,0',2,0,'Halloween_2008_JP');
+INSERT INTO `list_mobgroups_special` VALUES (0, 2, 5704.00, 5285.00, 10, 20, 5, 200, '3012,1,0|3012,1,0|3012,1,0|3013,1,0|3013,1,0|3013,1,0',2,0,'Halloween_2008_JP');
+INSERT INTO `list_mobgroups_special` VALUES (0, 2, 5706.00, 5203.00, 10, 20, 5, 200, '3009,1,0|3009,1,0|3009,1,0|3010,1,0|3010,1,0|3010,1,0',2,0,'Halloween_2008_JP');
+INSERT INTO `list_mobgroups_special` VALUES (0, 2, 5695.00, 5098.00, 10, 20, 7, 200, '3012,1,0|3012,1,0|3012,1,0|3013,1,0|3013,1,0|3013,1,0',2,0,'Halloween_2008_JP');
+INSERT INTO `list_mobgroups_special` VALUES (0, 2, 5565.00, 5075.00, 10, 20, 7, 200, '3009,1,0|3009,1,0|3009,1,0|3010,1,0|3010,1,0|3010,1,0',2,0,'Halloween_2008_JP');
+INSERT INTO `list_mobgroups_special` VALUES (0, 2, 5459.00, 5075.00, 10, 20, 9, 200, '3012,1,0|3012,1,0|3012,1,0|3013,1,0|3013,1,0|3013,1,0',2,0,'Halloween_2008_JP');
+INSERT INTO `list_mobgroups_special` VALUES (0, 2, 5381.00, 5675.00, 10, 20, 5, 200, '3012,1,0|3012,1,0|3012,1,0|3013,1,0|3013,1,0|3013,1,0',2,0,'Halloween_2008_JP');
+INSERT INTO `list_mobgroups_special` VALUES (0, 2, 5385.00, 5146.00, 10, 20, 6, 200, '3009,1,0|3009,1,0|3009,1,0|3010,1,0|3010,1,0|3010,1,0',2,0,'Halloween_2008_JP');
+INSERT INTO `list_mobgroups_special` VALUES (0, 2, 5384.00, 5276.00, 10, 20, 9, 200, '3012,1,0|3012,1,0|3012,1,0|3013,1,0|3013,1,0|3013,1,0',2,0,'Halloween_2008_JP');
+INSERT INTO `list_mobgroups_special` VALUES (0, 2, 5395.00, 5364.00, 10, 20, 5, 200, '3009,1,0|3009,1,0|3009,1,0|3010,1,0|3010,1,0|3010,1,0',2,0,'Halloween_2008_JP');
+INSERT INTO `list_mobgroups_special` VALUES (0, 2, 5481.00, 5364.00, 10, 20, 5, 200, '3012,1,0|3012,1,0|3012,1,0|3013,1,0|3013,1,0|3013,1,0',2,0,'Halloween_2008_JP');
 INSERT INTO `list_mobgroups_special` VALUES (0, 2, 5283.00, 5495.00, 10, 20, 9, 200, '3009,1,0|3009,1,0|3009,1,0|3010,1,0|3010,1,0|3010,1,0',2,1,'Halloween_2008_JP');
-INSERT INTO `list_mobgroups_special` VALUES (0, 2, 5390.00, 5518.00, 10, 20, 6, 200, '3012,1,0|3012,1,0|3012,1,0|3013,1,0|3013,1,0|3013,1,0',2,1,'Halloween_2008_JP');
-INSERT INTO `list_mobgroups_special` VALUES (0, 2, 5504.00, 5521.00, 10, 20, 8, 200, '3012,1,0|3012,1,0|3012,1,0|3013,1,0|3013,1,0|3013,1,0',2,1,'Halloween_2008_JP');
-INSERT INTO `list_mobgroups_special` VALUES (0, 2, 5532.00, 5472.00, 10, 20, 6, 200, '3009,1,0|3009,1,0|3009,1,0|3010,1,0|3010,1,0|3010,1,0',2,1,'Halloween_2008_JP');
-INSERT INTO `list_mobgroups_special` VALUES (0, 2, 5624.00, 5485.00, 10, 20, 8, 200, '3012,1,0|3012,1,0|3012,1,0|3013,1,0|3013,1,0|3013,1,0',2,1,'Halloween_2008_JP');
-INSERT INTO `list_mobgroups_special` VALUES (0, 2, 5714.00, 5498.00, 10, 20, 9, 200, '3012,1,0|3012,1,0|3012,1,0|3013,1,0|3013,1,0|3013,1,0',2,1,'Halloween_2008_JP');
-INSERT INTO `list_mobgroups_special` VALUES (0, 2, 5788.00, 5498.00, 10, 20, 7, 200, '3009,1,0|3009,1,0|3009,1,0|3010,1,0|3010,1,0|3010,1,0',2,1,'Halloween_2008_JP');
+INSERT INTO `list_mobgroups_special` VALUES (0, 2, 5390.00, 5518.00, 10, 20, 6, 200, '3012,1,0|3012,1,0|3012,1,0|3013,1,0|3013,1,0|3013,1,0',2,0,'Halloween_2008_JP');
+INSERT INTO `list_mobgroups_special` VALUES (0, 2, 5504.00, 5521.00, 10, 20, 8, 200, '3012,1,0|3012,1,0|3012,1,0|3013,1,0|3013,1,0|3013,1,0',2,0,'Halloween_2008_JP');
+INSERT INTO `list_mobgroups_special` VALUES (0, 2, 5532.00, 5472.00, 10, 20, 6, 200, '3009,1,0|3009,1,0|3009,1,0|3010,1,0|3010,1,0|3010,1,0',2,0,'Halloween_2008_JP');
+INSERT INTO `list_mobgroups_special` VALUES (0, 2, 5624.00, 5485.00, 10, 20, 8, 200, '3012,1,0|3012,1,0|3012,1,0|3013,1,0|3013,1,0|3013,1,0',2,0,'Halloween_2008_JP');
+INSERT INTO `list_mobgroups_special` VALUES (0, 2, 5714.00, 5498.00, 10, 20, 9, 200, '3012,1,0|3012,1,0|3012,1,0|3013,1,0|3013,1,0|3013,1,0',2,0,'Halloween_2008_JP');
+INSERT INTO `list_mobgroups_special` VALUES (0, 2, 5788.00, 5498.00, 10, 20, 7, 200, '3009,1,0|3009,1,0|3009,1,0|3010,1,0|3010,1,0|3010,1,0',2,0,'Halloween_2008_JP');
+INSERT INTO `list_mobgroups_special` VALUES (0, 29, 5067.43, 5358.85, 1, 1200, 1, 200, '3016,10,0|3016,10,0|3016,10,0|3016,10,0|3016,10,0|3016,10,1|3016,10,1',0,0,'Halloween_2008_DoD_Grand_Pumpkin');
+
