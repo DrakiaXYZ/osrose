@@ -461,7 +461,7 @@ bool CWorldServer::pakSpawnNPC( CPlayer* thisclient, CNPC* thisnpc )
         Log(MSG_INFO,"Event number %i for NPC %i",thisnpc->event, thisnpc->npctype);
         ADDWORD ( pak, thisnpc->event);
     }
-    else
+    else if(thisnpc->npctype!=1115)
     {
         ADDWORD ( pak, 0 );
      }

@@ -514,12 +514,11 @@ QUESTREWDC(011)
 		OperateValues(data->btOp, &VarValue, (short)data->iValue);
 		server->EventVar.SetVar(data->nVarNo, VarValue);
 		*/
-        Log(MSG_DEBUG,"SERVER EVENT IN QUESTREWDC(011)");
+        Log(MSG_WARNING,"SERVER EVENT IN QUESTREWDC(011)");
         //return QUEST_SUCCESS;
 	}
 
 
-	Log(MSG_WARNING,"Monster/NPC using QuestAction 011");
 	return QUEST_SUCCESS;
 }
 

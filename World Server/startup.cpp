@@ -1656,6 +1656,7 @@ bool CWorldServer::LoadNPCs( )
         //thisnpc->dialog=thisnpc->thisnpc->dialogid;
         //thisnpc->event=thisnpc->thisnpc->eventid; //LMA Event.
         thisnpc->event=atoi(row[6]);                //LMA Event.
+        thisnpc->thisnpc->eventid=thisnpc->event;            //LMA Event (left for compatibility).
         thisnpc->dialog=atoi(row[7]);               //LMA tempdialog ID, used for events for example
 
         //LMA: check if out of memory.

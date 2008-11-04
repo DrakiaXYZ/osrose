@@ -280,7 +280,7 @@ QUESTCONDC(011){
 	// Don't think we've implemented NPC's having quests. - Drakia
 
     GETCONDDATA(011);
-	Log(MSG_DEBUG,"QSD, nVarNo = %i, iValue = %i, btOp = %i",data->nVarNo, data->iValue,data->btOp);
+	Log(MSG_DEBUG,"QSDC(011) nVarNo = %i, iValue = %i, btOp = %i",data->nVarNo, data->iValue,data->btOp);
 	CMonster* monster = reinterpret_cast<CMonster*>(client);
 	if(monster == NULL)
 	{
@@ -292,7 +292,7 @@ QUESTCONDC(011){
 	int ObjvarIndex = data->nVarNo;
 
 	int tempval = GServer->ObjVar[refNPC][ObjvarIndex];
-	Log(MSG_DEBUG,"Retrieved ObjVar value %i successfully NPC %i", tempval,monster->thisnpc->refNPC);
+	Log(MSG_DEBUG,"QSDC(011) Retrieved ObjVar[%i]=%i successfully NPC %i",ObjvarIndex,tempval,monster->thisnpc->refNPC);
 	switch(data->btOp)
 	{
         case 0:

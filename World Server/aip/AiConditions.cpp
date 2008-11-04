@@ -543,7 +543,7 @@ AICOND(014)
 	int ObjvarIndex = data->btVarIDX;
 
 	int tempval = GServer->ObjVar[refNPC][ObjvarIndex];
-	Log(MSG_DEBUG,"Retrieved ObjVar value %i successfully NPC %i", tempval,monster->thisnpc->refNPC);
+	Log(MSG_DEBUG,"AIC(014) Retrieved ObjVar[%i]=%i successfully NPC %i",ObjvarIndex,tempval,monster->thisnpc->refNPC);
 	switch(data->btOp)
 	{
         case 0:

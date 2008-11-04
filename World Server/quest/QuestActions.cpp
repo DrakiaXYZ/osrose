@@ -450,7 +450,9 @@ QUESTREWD(011){
 	}
 
 	return QUEST_SUCCESS;*/
-	return QUEST_FAILURE; // We can't do this yet I don't think? - Drakia
+
+	//LMA: 2do
+	return QUEST_FAILURE;
 }
 
 //NPC Speak

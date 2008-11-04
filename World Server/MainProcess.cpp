@@ -812,6 +812,7 @@ PVOID MapProcess( PVOID TS )
                          {
                             Log(MSG_WARNING,"Event ID not the same NPC %i from %i to %i in map %i, npc->thisnpc->eventid=%i !",npc->npctype,lma_previous_eventID,monster->thisnpc->eventid,map->id,npc->thisnpc->eventid);
                             npc->thisnpc->eventid=monster->thisnpc->eventid;
+                            npc->event=npc->thisnpc->eventid;
                             //LMA: We have to change the event ID here since we didn't send the clientID :(
                             BEGINPACKET( pak, 0x790 );
                             ADDWORD    ( pak, npc->clientid );
