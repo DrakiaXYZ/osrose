@@ -1109,6 +1109,9 @@ void CPlayer::UpdateInventory( unsigned int slot1, unsigned int slot2 )
     }
     client->SendPacket( &pak );
 
+    //LMA: debug.
+    //Log(MSG_INFO,"Slot %i, H%i, D%i, Slot %i, H%i, D%i",slot1,GServer->BuildItemHead( items[slot1] ),GServer->BuildItemData( items[slot1] ),slot2,GServer->BuildItemHead( items[slot2] ),GServer->BuildItemData( items[slot2] ));
+
     //LMA: MySQL Save slot
     if(slot1!=0xffff)
          SaveSlot41(slot1);

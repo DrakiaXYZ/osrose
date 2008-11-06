@@ -144,6 +144,7 @@ void CWorldServer::pakInventory( CPlayer *thisclient )
 	//ADDWORD( pak, 0 );
 	for(unsigned j=0; j<140; j++)
     {
+        //Log(MSG_INFO,"Sending item slot %i, %i::%i; head %i, data %i",j,thisclient->items[j].itemtype,thisclient->items[j].itemnum,BuildItemHead( thisclient->items[j]) ,BuildItemData( thisclient->items[j]));
        	ADDDWORD( pak, BuildItemHead( thisclient->items[j] ) );
        	ADDDWORD( pak, BuildItemData( thisclient->items[j] ) );
         ADDDWORD( pak, 0x00000000 );
@@ -824,10 +825,29 @@ bool CWorldServer::pakChangeEquip( CPlayer* thisclient, CPacket* P )
         return true;
 	WORD srcslot = GETWORD((*P), 0);
 	WORD destslot = GETWORD((*P), 2);
+
+	//Log(MSG_INFO,"Trying to move item %i::%i (slot %i) to slot %i (where is %i::%i)",thisclient->items[srcslot].itemtype,thisclient->items[srcslot].itemnum,srcslot,destslot,thisclient->items[destslot].itemtype,thisclient->items[destslot].itemnum);
 	if(!CheckInventorySlot(thisclient, srcslot))
 	   return false;
 	if(!CheckInventorySlot(thisclient, destslot))
 	   return false;
+
+    //LMA: it seems naRose sends the swap weirdly sometimes...
+    if(thisclient->items[srcslot].itemtype==0||thisclient->items[srcslot].itemnum==0)
+    {
+        //Log(MSG_WARNING,"Problem when trying to change slot %i to %i (item not there anymore?)",srcslot,destslot);
+        int tempslot=0;
+        tempslot=destslot;
+        destslot=srcslot;
+        srcslot=tempslot;
+        if(thisclient->items[srcslot].itemtype==0||thisclient->items[srcslot].itemnum==0)
+        {
+            Log(MSG_WARNING,"Problem (2) when trying to change slot %i to %i (item not there anymore?)",srcslot,destslot);
+            return true;
+        }
+
+    }
+
     if (destslot < 13 && GServer->EquipList[thisclient->items[srcslot].itemtype].Index[thisclient->items[srcslot].itemnum]->level > thisclient->Stats->Level)
        return true;
 	if( destslot==0 ) destslot = thisclient->GetNewItemSlot( thisclient->items[srcslot] );
@@ -850,10 +870,15 @@ bool CWorldServer::pakChangeEquip( CPlayer* thisclient, CPacket* P )
             }
         }
     }
+
 	CItem tmpitm = thisclient->items[srcslot];
 	thisclient->items[srcslot] = thisclient->items[destslot];
 	thisclient->items[destslot] = tmpitm;
 	thisclient->UpdateInventory( srcslot, destslot );
+
+    //LMA: test.
+    //Log(MSG_INFO,"Item Srcslot (after UV) %i, %i::%i",srcslot,thisclient->items[srcslot].itemtype,thisclient->items[srcslot].itemnum);
+
 	BEGINPACKET( pak, 0x7a5 );
 	ADDWORD    ( pak, thisclient->clientid );
 	ADDWORD    ( pak, srcslot );
@@ -861,6 +886,19 @@ bool CWorldServer::pakChangeEquip( CPlayer* thisclient, CPacket* P )
 	ADDWORD    ( pak, BuildItemRefine( thisclient->items[srcslot] ) );
 	ADDWORD    ( pak, thisclient->Stats->Move_Speed );
 	SendToVisible( &pak, thisclient );
+
+	//LMA: narose sends change a new way sometimes...
+    if (destslot<10)
+    {
+        BEGINPACKET( pak, 0x7a5 );
+        ADDWORD    ( pak, thisclient->clientid );
+        ADDWORD    ( pak, destslot );
+        ADDWORD    ( pak, thisclient->items[destslot].itemnum );
+        ADDWORD    ( pak, BuildItemRefine( thisclient->items[destslot] ) );
+        ADDWORD    ( pak, thisclient->Stats->Move_Speed );
+        SendToVisible( &pak, thisclient );
+    }
+
     if( srcslot==7 || destslot==7 )
     {
         // if is two hand weapon, we have to check if have shield and unequip it

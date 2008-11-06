@@ -23,14 +23,16 @@
 // Build Item Head
 unsigned CWorldServer::BuildItemHead( CItem thisitem )
 {
-	if (thisitem.count==0) return 0;
+	//if (thisitem.count==0) return 0;
+	if (thisitem.count==0||thisitem.itemnum==0||thisitem.itemtype==0) return 0;
     return ( ( thisitem.itemnum & 0x7ffffff ) << 5 ) | ( thisitem.itemtype & 0x1f );
 }
 
 // Build Item Data
 unsigned CWorldServer::BuildItemData( CItem thisitem )
 {
-	if (thisitem.count==0) return 0;
+	//if (thisitem.count==0) return 0;
+	if (thisitem.count==0||thisitem.itemnum==0||thisitem.itemtype==0) return 0;
 	if ( thisitem.itemtype >= 10 && thisitem.itemtype <= 13 )
     {
 		return thisitem.count;
