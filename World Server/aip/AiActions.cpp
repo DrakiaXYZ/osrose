@@ -69,7 +69,7 @@ AIACT(003)
 	ADDWORD    ( pak, 0xcdcd );
 	ADDBYTE    ( pak, monster->thisnpc->stance );
 	GServer->SendToVisible(&pak, entity);
-    //Log(MSG_DEBUG, "move1 stance monster %i, %i",monster->montype,data->cSpeed);
+    //Log(MSG_DEBUG, "move1 monster %i, stance %i",monster->montype,data->cSpeed);
     //Log(MSG_DEBUG, "move(1)");
 	return AI_SUCCESS;
 }

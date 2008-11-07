@@ -357,7 +357,7 @@ bool CCharacter::stopMoving()
 // VIRTUAL [add player damage]
 void CCharacter::AddDamage( CCharacter* enemy, long int hitpower)
 {
-
+    Log(MSG_INFO,"In CCharacter::AddDamage");
 }
 
 // return character target

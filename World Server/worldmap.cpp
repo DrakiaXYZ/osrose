@@ -121,6 +121,8 @@ CMonster* CMap::AddMonster( UINT montype, fPoint position, UINT owner, CMDrops* 
     monster->thisnpc = thisnpc;
     monster->SetStats( );
     monster->Stats->HP = monster->Stats->MaxHP;
+    monster->Stats->MP = monster->Stats->MaxMP;
+
     monster->Status->spawnid = spawnid; //this way we can easily find which spawn a mob belongs to
     if(GetDropData && owner==0)
     {

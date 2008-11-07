@@ -826,6 +826,9 @@ void CCharacter::UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff )
         }
     }
     //Tell enemy he's attacked & add damage & send the dmg packet
+
+    Log(MSG_INFO,"Atk Skill damage %li, monster HP before %li",skillpower,Enemy->Stats->HP);
+
     bool bflag = false;
     Enemy->OnBeAttacked( this );
     if(skillpower<=0) skillpower = 0;
@@ -841,6 +844,7 @@ void CCharacter::UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff )
         Enemy->damagecounter+=skillpower;// is for AI
     }
     Enemy->Stats->HP -= skillpower;
+    Log(MSG_INFO,"Atk Skill damage %li, monster HP after %li",skillpower,Enemy->Stats->HP);
 
     // actually the target was hit, if it was sleeping, set duration of
     // sleep to 0. map process will remove sleep then at next player-update
@@ -858,6 +862,7 @@ void CCharacter::UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff )
     //If Enemy is killed
     if(Enemy->IsDead())
     {
+        Log(MSG_INFO,"Ennemy is dead");
         //LMA: Union Wars
         if (IsPlayer()&&Enemy->IsPlayer()&&(Position->Map==8||Position->Map==9))
         {
@@ -903,6 +908,7 @@ void CCharacter::UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff )
     //If enemy is still alive
     else
     {
+        Log(MSG_INFO,"The ennemy is still alive");
         ADDDWORD   ( pak, 4 );
         GServer->SendToVisible( &pak, Enemy );
 

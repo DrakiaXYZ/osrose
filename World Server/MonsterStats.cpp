@@ -155,9 +155,9 @@ bool CMonster::SetStats( )
     Stats->Magic_Defense = GetMagicDefense( );
     Stats->Attack_Distance = GetAttackDistance( );
     Stats->MaxHP = GetMaxHP( );
-    Stats->HP = Stats->MaxHP;
     Stats->MaxMP = GetMaxMP( );
-    Stats->MP = Stats->MaxMP;
+    //Stats->HP = Stats->MaxHP;
+    //Stats->MP = Stats->MaxMP;
 
     for(int i=0;i<20;i++)
     {

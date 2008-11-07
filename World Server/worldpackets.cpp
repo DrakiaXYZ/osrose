@@ -2086,10 +2086,12 @@ bool CWorldServer::pakStartSkill ( CPlayer* thisclient, CPacket* P )
     }
     if( isSkillTargetFriendly( thisskill ) )
     {
+        Log(MSG_INFO,"Buff because friendly");
         thisclient->StartAction( character, SKILL_BUFF, skillid );
     }
     else
     {
+        Log(MSG_INFO,"Attack because foe");
         thisclient->StartAction( character, SKILL_ATTACK, skillid );
     }
 	return true;
