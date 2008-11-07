@@ -23,6 +23,13 @@
 // Send Characters information
 void CWorldServer::pakPlayer( CPlayer *thisclient )
 {
+    bool has_cart=false;
+    bool has_cg=false;
+    int nb_30=30;
+    int nb_skills=0;
+    bool is_dual_scratch=false;
+
+
 	CRespawnPoint* thisrespawn = GetRespawnByID( thisclient->Position->respawn );
 	if(thisrespawn!=NULL)
 	{
@@ -45,6 +52,20 @@ void CWorldServer::pakPlayer( CPlayer *thisclient )
        thisclient->Stats->HP=thisclient->GetMaxHP();
     if (thisclient->Stats->MP>thisclient->GetMaxMP())
        thisclient->Stats->MP=thisclient->GetMaxMP();
+
+    //LMA: Checking if a player has a CG or cart license ^_^
+    //checking too if dual scratch is in the basic skill list...
+	for(int i=0; i<42; i++)
+	{
+	    if(thisclient->bskills[i]==5000)
+            has_cart=true;
+	    if(thisclient->bskills[i]==5001)
+            has_cg=true;
+        if(thisclient->bskills[i]==101)
+            is_dual_scratch=true;
+        if(is_dual_scratch&&has_cg&&has_cart)
+            break;
+	}
 
     BEGINPACKET( pak, 0x715 );
     ADDBYTE    ( pak, thisclient->CharInfo->Sex );               // Sex
@@ -111,10 +132,21 @@ void CWorldServer::pakPlayer( CPlayer *thisclient )
     //TEST
     //for(int i=0; i<326; i++) ADDBYTE( pak, 0 );
     for(int i=0; i<320; i++) ADDBYTE( pak, 0 );
-    ADDWORD( pak, 3500 );   //LMA: Value for driving skill so it doesn't say missing conditions ?
+
+    //LMA: Value for driving skill so it doesn't say missing conditions ?
+    if (has_cart)
+    {
+        ADDWORD( pak, 3500 );
+    }
+    else
+    {
+        ADDWORD( pak, 0 );
+    }
+
     ADDWORD( pak, 0 );
     ADDWORD( pak, 0 );
 
+    /*
 	for(int i=0; i<MAX_SKILL; i++) // Class Skills
         ADDWORD( pak, thisclient->cskills[i].id+thisclient->cskills[i].level-1 );
 
@@ -123,10 +155,58 @@ void CWorldServer::pakPlayer( CPlayer *thisclient )
     for(int i=0; i<260; i++)  ADDWORD( pak, 0 );
     //ADDWORD( pak, 5000 ); //Driving skill
     //for(int i=0; i<259; i++)  ADDWORD( pak, 0 );
+    */
 
+    //LMA: test 2008/11/07 (reorganisation)
+ 	for(int i=0; i<MAX_SKILL; i++) // Class Skills
+        ADDWORD( pak, thisclient->cskills[i].id+thisclient->cskills[i].level-1 );
 
-	for(int i=0; i<42; i++)       // Basic Skills
+    //Driving skill.
+    if(has_cart)
+    {
+        nb_30--;
+        ADDWORD( pak, 5000 );
+    }
+
+    //CG skill ?
+    if (has_cg)
+    {
+        nb_30--;
+        ADDWORD( pak, 5001 );
+    }
+
+    for(int i=0; i<nb_30; i++)  ADDWORD( pak, 0 );
+
+    //Unique
+    for(int i=0; i<30; i++)  ADDWORD( pak, 0 );
+
+    //Mileage
+    for(int i=0; i<200; i++)  ADDWORD( pak, 0 );
+    //LMA: End test.
+
+    //Basic Skills
+	for(int i=0; i<42; i++)
+	{
+	    //already handled before (cart and CG) :)
+	    if(thisclient->bskills[i]==5000||thisclient->bskills[i]==5001)
+	        continue;
 		ADDWORD( pak, thisclient->bskills[i] );
+
+		if (is_dual_scratch&&thisclient->bskills[i]>0)
+            nb_skills++;
+	}
+
+	//remaining of basic skills (sort of...)
+	if (has_cart)
+        ADDWORD( pak,0);
+	if (has_cg)
+        ADDWORD( pak,0);
+
+    //Ok let's guess Dual Scratch index (60=class skills, nb_skills = basic skills, 4= whatever...)...
+    thisclient->dual_scratch_index=0;
+    if (nb_skills>0)
+        thisclient->dual_scratch_index=60+nb_skills+4;
+
 	for(int i=0; i<48; i++)       // QuickBar
         ADDWORD( pak, thisclient->quickbar[i] );
 	ADDDWORD   ( pak, thisclient->CharInfo->charid );	            // CharID
@@ -1966,8 +2046,9 @@ bool CWorldServer::pakStartSkill ( CPlayer* thisclient, CPacket* P )
     UINT targetid = GETWORD( (*P), 0 );
     BYTE skillnum = GETBYTE( (*P), 2 );
 
-//    if(skillnum>=MAX_SKILL)
-    if(skillnum>=MAX_SKILL&&skillnum!=83)  //dual scratch temp fix
+    //    if(skillnum>=MAX_SKILL)
+    //if(skillnum>=MAX_SKILL&&skillnum!=83)  //double scratch temp fix
+    if(skillnum>=MAX_SKILL&&skillnum!=thisclient->dual_scratch_index)  //double scratch fix
     {
         Log( MSG_HACK, "Invalid Skill id %i for %s ", skillnum, thisclient->CharInfo->charname );
         return true;
@@ -1975,14 +2056,15 @@ bool CWorldServer::pakStartSkill ( CPlayer* thisclient, CPacket* P )
 
     Log( MSG_INFO, "pakStartSkill for %s (%i)", thisclient->CharInfo->charname,skillnum);
 
-//   unsigned int skillid = thisclient->cskills[skillnum].id+thisclient->cskills[skillnum].level-1;
-       unsigned int skillid=101;
+    //   unsigned int skillid = thisclient->cskills[skillnum].id+thisclient->cskills[skillnum].level-1;
+    unsigned int skillid=101;
 
-    if(skillnum!=83) //dual scratch temp fix
+    //if(skillnum!=83) //dual scratch temp fix
+    if(skillnum!=thisclient->dual_scratch_index) //dual scratch fix
     {
         skillid = thisclient->cskills[skillnum].id+thisclient->cskills[skillnum].level-1;
     }
-CMap* map = MapList.Index[thisclient->Position->Map];
+    CMap* map = MapList.Index[thisclient->Position->Map];
     CCharacter* character = map->GetCharInMap( targetid );
     if(character==NULL) return true;
 

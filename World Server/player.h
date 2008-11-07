@@ -89,6 +89,7 @@ class CPlayer: public CCharacter
     UINT bskills[MAX_BASICSKILL];
     UINT quickbar[MAX_QUICKBAR];
     int p_skills;
+    int dual_scratch_index; //LMA: trying to guess dual scratch skill index...
 
 #ifdef USENEWQUESTSYSTEM
     // ExJam Quest Code - Info
