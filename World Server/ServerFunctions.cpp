@@ -106,6 +106,19 @@ bool CWorldServer::NPCShout( CMonster* thismon, char* msg, char* npc,int mapid)
 }
 
 
+bool CWorldServer::NPCShout2( CMonster* thismon, char* msg, char* npc )
+{
+    BEGINPACKET(pak, 0x0785);
+	ADDSTRING  ( pak, npc );
+	ADDBYTE    ( pak, 0 );
+	ADDSTRING  ( pak, msg );
+	ADDBYTE    ( pak, 0 );
+	SendToMap  ( &pak, thismon->Position->Map );
+	return true;
+}
+
+
+
 // Send a PM from a specific NPC using the blue text of the shout system. Used in custom quests
 bool CWorldServer::NPCMessage( CPlayer* thisclient, char msg[200], char npc[50])
 {

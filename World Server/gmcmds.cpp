@@ -1014,7 +1014,8 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
             refine = 0;
         else
             refine=atoi(tmp);
-        refine *= 16;
+        //LMA: why *=16???
+        //refine *= 16;
         BEGINPACKET( pak, 0);
         if(EquipList[2].Index[id]!=NULL)
         {
@@ -1028,6 +1029,8 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
     		thisclient->items[2].socketed = false;
     		thisclient->items[2].appraised = true;
         	thisclient->items[2].gem = 0;
+        	thisclient->items[2].sp_value=0;
+        	thisclient->items[2].last_sp_value=0;
             thisclient->UpdateInventory( 2 );
 
     	    RESETPACKET( pak, 0x7a5);
@@ -1050,6 +1053,8 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
     		thisclient->items[3].socketed = false;
     		thisclient->items[3].appraised = true;
         	thisclient->items[3].gem = 0;
+        	thisclient->items[3].sp_value=0;
+        	thisclient->items[3].last_sp_value=0;
             thisclient->UpdateInventory( 3 );
 
 	        RESETPACKET( pak, 0x7a5);
@@ -1072,6 +1077,8 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
     		thisclient->items[5].socketed = false;
     		thisclient->items[5].appraised = true;
         	thisclient->items[5].gem = 0;
+        	thisclient->items[5].sp_value=0;
+        	thisclient->items[5].last_sp_value=0;
 
             thisclient->UpdateInventory( 4 );
 
@@ -1095,6 +1102,8 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
     		thisclient->items[6].socketed = false;
     		thisclient->items[6].appraised = true;
         	thisclient->items[6].gem = 0;
+        	thisclient->items[6].sp_value=0;
+        	thisclient->items[6].last_sp_value=0;
 
             thisclient->UpdateInventory( 6 );
 
@@ -1192,6 +1201,7 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
 	   thisclient->items[slot].socketed = socket;
 	   thisclient->items[slot].appraised = true;
 	   thisclient->items[slot].gem = 0;
+	   thisclient->items[slot].sp_value=0;
 	   BEGINPACKET( pak, 0x7a5);
 	   ADDWORD( pak, thisclient->clientid );
 	   ADDWORD( pak, slot);
@@ -3481,7 +3491,15 @@ bool CWorldServer::pakGMItem( CPlayer* thisclient, UINT itemid, UINT itemtype, U
     item.appraised        = 1;
     item.gem = 0;
     item.sp_value=0;
+    item.last_sp_value=0;
     unsigned newslot = thisclient->GetNewItemSlot( item );
+
+    //LMA: PAT:
+    if (newslot>=135&&newslot<=136)
+    {
+        item.sp_value=item.lifespan*10;
+    }
+
     if (newslot != 0xffff)
     {
         thisclient->items[newslot] = item;
@@ -4571,6 +4589,14 @@ bool CWorldServer::pakGMItemtoplayer(CPlayer* thisclient, char* name , UINT item
     item.socketed        = itemsocket;
     item.appraised        = 1;
     item.gem = 0;
+    item.last_sp_value=0;
+    item.sp_value=0;
+
+    //LMA: Fuel for PAT.
+    if (item.itemnum>=135&&item.itemnum<=136)
+    {
+        item.sp_value=item.lifespan*10;
+    }
 
    CPlayer* otherclient = GetClientByCharName ( name );
 

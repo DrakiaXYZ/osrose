@@ -479,6 +479,7 @@ class CWorldServer : public CServerSocket
         bool NPCShout( CMonster* thismon, char* msg, char* npc, int mapid=0);
         //bool NPCAnnounce( char msg[200], char npc[50] );
         bool NPCAnnounce( char* msg, char* npc );
+        bool NPCShout2( CMonster* thismon, char* msg, char* npc );
         bool NPCWhisper( CPlayer* thisclient, CMonster* thismon, char msg[200], char npc[50] );
         bool NPCMessage( CPlayer* thisclient, char msg[200], char npc[50] );
 

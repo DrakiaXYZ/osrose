@@ -1970,7 +1970,7 @@ bool CWorldServer::pakStartSkill ( CPlayer* thisclient, CPacket* P )
     if(skillnum>=MAX_SKILL&&skillnum!=83)  //dual scratch temp fix
     {
         Log( MSG_HACK, "Invalid Skill id %i for %s ", skillnum, thisclient->CharInfo->charname );
-        return false;
+        return true;
     }
 
     Log( MSG_INFO, "pakStartSkill for %s (%i)", thisclient->CharInfo->charname,skillnum);
