@@ -202,10 +202,10 @@ void CWorldServer::pakPlayer( CPlayer *thisclient )
 	if (has_cg)
         ADDWORD( pak,0);
 
-    //Ok let's guess Dual Scratch index (60=class skills, nb_skills = basic skills, 4= whatever...)...
+    //Ok let's guess Dual Scratch index (60=class skills, nb_skills = basic skills, 3= whatever...)...
     thisclient->dual_scratch_index=0;
     if (nb_skills>0)
-        thisclient->dual_scratch_index=60+nb_skills+4;
+        thisclient->dual_scratch_index=60+nb_skills+3;
 
 	for(int i=0; i<48; i++)       // QuickBar
         ADDWORD( pak, thisclient->quickbar[i] );
