@@ -192,8 +192,8 @@ void CWorldServer::pakPlayer( CPlayer *thisclient )
 	        continue;
 		ADDWORD( pak, thisclient->bskills[i] );
 
-		if (is_dual_scratch&&thisclient->bskills[i]>0&&thisclient->bskills[i]<=101)
-            nb_skills++;
+		if (is_dual_scratch&&nb_skills==0&&thisclient->bskills[i]==101)
+            nb_skills=i;
 	}
 
 	//remaining of basic skills (sort of...)
@@ -202,10 +202,12 @@ void CWorldServer::pakPlayer( CPlayer *thisclient )
 	if (has_cg)
         ADDWORD( pak,0);
 
-    //Ok let's guess Dual Scratch index (60=class skills, nb_skills = basic skills, 3= whatever...)...
+    //Ok let's guess Dual Scratch index (64=first offset of basic skills)...
     thisclient->dual_scratch_index=0;
     if (nb_skills>0)
-        thisclient->dual_scratch_index=60+nb_skills+3;
+        thisclient->dual_scratch_index=64+nb_skills;
+
+    Log(MSG_INFO,"Dual scratch at index: %i",thisclient->dual_scratch_index);
 
 	for(int i=0; i<48; i++)       // QuickBar
         ADDWORD( pak, thisclient->quickbar[i] );
@@ -2816,7 +2818,7 @@ bool CWorldServer::pakSkillSelf( CPlayer* thisclient, CPacket* P )
     if(num>=MAX_SKILL)
     {
         Log( MSG_HACK, "Invalid Skill id %i for %s ", num, thisclient->CharInfo->charname );
-        return false;
+        return true;
     }
 
     Log( MSG_INFO, "pakSkillSelf for %s (%i)", thisclient->CharInfo->charname,num);
