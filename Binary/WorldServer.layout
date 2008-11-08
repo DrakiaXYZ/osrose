@@ -280,10 +280,10 @@ LeftChar=1
 [Editor_36]
 Open=1
 <<<<<<< .mine
-Top=1
-CursorCol=48
-CursorRow=2744
-TopLine=1
+Top=0
+CursorCol=33
+CursorRow=1901
+TopLine=1870
 =======
 Top=0
 CursorCol=6
@@ -367,11 +367,11 @@ CursorRow=186
 TopLine=163
 LeftChar=1
 [Editor_48]
-Open=0
-Top=0
-CursorCol=5
-CursorRow=783
-TopLine=750
+Open=1
+Top=1
+CursorCol=60
+CursorRow=803
+TopLine=778
 LeftChar=1
 [Editor_49]
 Open=0

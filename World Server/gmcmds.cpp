@@ -608,7 +608,7 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
             fPoint coord;
             coord.x = x;
             coord.y = y;
-            SendPM(thisclient, "teleport to map: %i %i",map,MapList.Index[map]->id);
+            SendPM(thisclient, "teleport to map: %i",map);
             MapList.Index[map]->TeleportPlayer( thisclient, coord, false );
             Log( MSG_GMACTION, " %s : /go %i" , thisclient->CharInfo->charname, loc);
         }
@@ -1898,6 +1898,7 @@ else if (strcmp(command, "give2")==0)
              SendPM(thisclient, "You need at least 50% HP in order to warp");
              return true;
         }
+        SendPM(thisclient, "Go to map: %i",map);
         Log( MSG_GMACTION, " %s : /gotomap %i" , thisclient->CharInfo->charname, map);
 		return pakGMGotomap(thisclient, map);
     }

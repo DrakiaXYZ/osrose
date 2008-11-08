@@ -800,7 +800,7 @@ void CWorldServer::LoadConfigurations( char* file )
     ///Config.unionwardelay_loop        = ConfigGetInt    ( file, "unionwardelay_loop", 1); //LMA: delay between 2 loops (minutes)
     //LMA
 
-    Log (MSG_INFO, "osRose Revision %s", Config.osRoseVer );
+    Log (MSG_INFO, "osRose - http://forum.dev-osrose.com");
 
     //LMA: jRose.
     if(Config.jrose==1)
