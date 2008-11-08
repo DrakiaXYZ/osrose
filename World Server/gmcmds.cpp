@@ -608,6 +608,7 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
             fPoint coord;
             coord.x = x;
             coord.y = y;
+            SendPM(thisclient, "teleport to map: %i %i",map,MapList.Index[map]->id);
             MapList.Index[map]->TeleportPlayer( thisclient, coord, false );
             Log( MSG_GMACTION, " %s : /go %i" , thisclient->CharInfo->charname, loc);
         }
@@ -2638,6 +2639,111 @@ else if (strcmp(command, "give2")==0)
              SendPM(thisclient, buffer);
          }
     }
+    // mystat2 - by PurpleYouko - from osprose to test  
+	else if(strcmp(command, "mystat2")==0)
+    {
+         if ((tmp = strtok(NULL, " "))==NULL)return true;
+         if(strcmp(tmp, "ap")==0)
+         {
+             char buffer2[200];
+             sprintf ( buffer2, "My Attack Power is %i", thisclient->Stats->Attack_Power );
+             SendPM(thisclient, buffer2);
+         }
+         else if(strcmp(tmp, "acc")==0)
+         {
+             char buffer2[200];
+             sprintf ( buffer2, "My Accuracy is %i", thisclient->Stats->Accury );
+             SendPM(thisclient, buffer2); 
+         }
+         else if(strcmp(tmp, "hp")==0)
+         {
+             char buffer2[200];
+             sprintf ( buffer2, "My current HP is %i", thisclient->Stats->HP );
+             SendPM(thisclient, buffer2); 
+         }
+         else if(strcmp(tmp, "mp")==0)
+         {
+             char buffer2[200];
+             sprintf ( buffer2, "My current MP is %i", thisclient->Stats->MP );
+             SendPM(thisclient, buffer2); 
+         }
+         else if(strcmp(tmp, "maxhp")==0)
+         {
+             char buffer2[200];
+             sprintf ( buffer2, "My Maximum HP is %i", thisclient->GetMaxHP());
+             SendPM(thisclient, buffer2); 
+         }
+         else if(strcmp(tmp, "maxmp")==0)
+         {
+             char buffer2[200];
+             sprintf ( buffer2, "My maximum MP is %i", thisclient->GetMaxMP());
+             SendPM(thisclient, buffer2); 
+         }
+         else if(strcmp(tmp, "dodge")==0) 
+         {
+             char buffer2[200];
+             sprintf ( buffer2, "My dodge is %i", thisclient->Stats->Dodge);
+             SendPM(thisclient, buffer2);  
+         }
+         else if(strcmp(tmp, "def")==0) 
+         {
+             char buffer2[200];
+             sprintf ( buffer2, "My defense is %i", thisclient->Stats->Defense);
+             SendPM(thisclient, buffer2);  
+         }
+         else if(strcmp(tmp, "mdef")==0) 
+         {
+             char buffer2[200];
+             sprintf ( buffer2, "My Magic defense is %i", thisclient->Stats->Magic_Defense);
+             SendPM(thisclient, buffer2);  
+         }
+         else if(strcmp(tmp, "crit")==0) 
+         {
+             char buffer2[200];
+             sprintf ( buffer2, "My critical is %i", thisclient->Stats->Critical);
+             SendPM(thisclient, buffer2);  
+         }
+         else if(strcmp(tmp, "mspd")==0) 
+         {
+             char buffer2[200];
+             sprintf ( buffer2, "My move speed is %i", thisclient->Stats->Move_Speed);
+             SendPM(thisclient, buffer2);  
+         }
+         else if(strcmp(tmp, "aspd")==0) 
+         {
+             char buffer2[200];
+             sprintf ( buffer2, "My attack speed is %i", thisclient->Stats->Attack_Speed);
+             SendPM(thisclient, buffer2);  
+         }
+//         else if(strcmp(tmp, "xprate")==0)
+//         {
+//             char buffer2[200];
+//             sprintf ( buffer2, "My xp rate is %i", thisclient->Stats->xprate);
+//             SendPM(thisclient, buffer2);     
+//         }
+         else if(strcmp(tmp, "stamina")==0)
+         {
+             char buffer2[200];
+             sprintf ( buffer2, "My Stamina is %i", thisclient->CharInfo->stamina);
+             SendPM(thisclient, buffer2); 
+         }
+//         else if(strcmp(tmp, "weight")==0)
+//         {
+//             int weight = thisclient->GetCurrentWeight();
+//             int maxweight = thisclient->GetMaxWeight();
+//             char buffer2[200];
+//             sprintf ( buffer2, "My current weight is %i. max weight = %i", weight,maxweight);
+//             SendPM(thisclient, buffer2); 
+//         }
+         else if(strcmp(tmp, "clan")==0)
+         {
+             SendPM(thisclient, "My clan id is: %i My clan rank is: %i", thisclient->Clan->clanid, thisclient->Clan->clanrank);    
+         }
+         else if(strcmp(tmp, "map")==0)
+         {
+             SendPM(thisclient, "My current map is: %i ", thisclient->Position->Map);  
+         }
+    }    
 
     // configreset - by PurpleYouko
     else if (strcmp(command, "configreset")==0) // *** RELOAD DATA FILES ******
@@ -3449,6 +3555,8 @@ bool CWorldServer::pakGMMon( CPlayer* thisclient, int montype, int moncount )
         fPoint position = RandInCircle( thisclient->Position->current, 10 );
         CMap* map = MapList.Index[thisclient->Position->Map];
         map->AddMonster( montype, position, 0, NULL, NULL, 0 , true );
+        SendPM(thisclient,"%i monsters of type %i summoned at position %f %f Map: %i",moncount,montype,position.x, position.y,map->id);
+
 	}
 	return true;
 }
