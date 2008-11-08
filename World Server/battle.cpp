@@ -359,11 +359,15 @@ void CCharacter::NormalAttack( CCharacter* Enemy )
         hitpower = 0; // dodged
     if(!Enemy->IsSummon( ) && Enemy->IsMonster( ))
     {
-        Enemy->AddDamage( this, hitpower );
-        Enemy->damagecounter += hitpower;// is for AI
+        Enemy->AddDamage( this, (long long) hitpower );
+        Enemy->damagecounter += (long long) hitpower;// is for AI
     }
 
-    Enemy->Stats->HP -= hitpower;
+    Enemy->Stats->HP -=  (long long) hitpower;
+    if (Enemy->IsMonster())
+        Log(MSG_INFO,"Normal Attack, monster HP %I64i, hitpower %li",Enemy->Stats->HP,hitpower);
+    else
+        Log(MSG_INFO,"Normal Attack, Player HP %li, hitpower %li",Enemy->Stats->HP,hitpower);
 
     // actually the target was hit, if it was sleeping, set duration of
     // sleep to 0. map process will remove sleep then at next player-update
@@ -840,10 +844,10 @@ void CCharacter::UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff )
     }
     if(!Enemy->IsSummon( ) && Enemy->IsMonster( ))
     {
-        Enemy->AddDamage( this, skillpower );
-        Enemy->damagecounter+=skillpower;// is for AI
+        Enemy->AddDamage( this, (long long) skillpower );
+        Enemy->damagecounter+= (long long) skillpower;// is for AI
     }
-    Enemy->Stats->HP -= skillpower;
+    Enemy->Stats->HP -=  (long long) skillpower;
     Log(MSG_INFO,"Atk Skill damage %li, monster HP after %li",skillpower,Enemy->Stats->HP);
 
     // actually the target was hit, if it was sleeping, set duration of

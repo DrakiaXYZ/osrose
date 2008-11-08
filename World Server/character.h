@@ -35,7 +35,8 @@ class CCharacter
         BYTE CharType; // 0 = undefined | 1 = player | 2 = monster | 3 = summon
         CCharacter* nearChar;
         CCharacter* findChar;
-        int damagecounter;
+        //int damagecounter;
+        long long damagecounter;
 
         //LMA: maps grids
         int last_map;
@@ -95,7 +96,8 @@ class CCharacter
 
             // Functions
             virtual CDrop* GetDrop( );
-            virtual void AddDamage( CCharacter* enemy, long int hitpower);
+            //virtual void AddDamage( CCharacter* enemy, long int hitpower);
+            virtual void AddDamage( CCharacter* enemy, long long hitpower);
             virtual void UpdatePosition( bool monster_stay_still);       //LMA: changed for some monsters.
             virtual bool UpdateValues( );
             virtual void ReduceABC( );
@@ -113,7 +115,8 @@ class CCharacter
             virtual unsigned int GetCritical( );
             virtual unsigned int GetAttackSpeed( );
             virtual unsigned int GetMoveSpeed( );
-            virtual unsigned int GetMaxHP( );
+            //virtual unsigned int GetMaxHP( );
+            virtual unsigned long long GetMaxHP( );
             virtual unsigned int GetMaxMP( );
             virtual float GetAttackDistance( );
             virtual unsigned int GetInt( );

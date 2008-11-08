@@ -1239,7 +1239,8 @@ unsigned int CPlayer::GetMoveSpeed( )
 }
 
 // Return Max HP
-unsigned int CPlayer::GetMaxHP( )
+//unsigned int CPlayer::GetMaxHP( )
+unsigned long long CPlayer::GetMaxHP( )
 {
 	if (Stats->Level<1) Stats->Level=1;
 	unsigned int hpmax = (unsigned int)floor(((sqrt(Stats->Level + 20) * (Stats->Level + 5 )) * 3.5) + ((Attr->Str + Attr->Estr) << 1));

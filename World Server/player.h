@@ -199,7 +199,10 @@ class CPlayer: public CCharacter
         unsigned int GetAttackSpeed( );
         unsigned int GetMoveSpeed( );
         unsigned int GetCartSpeed( );
-        unsigned int GetMaxHP( );
+
+        //unsigned int GetMaxHP( );
+        unsigned long long GetMaxHP( );
+
         unsigned int GetMaxMP( );
         float GetAttackDistance( );
         unsigned int GetHPRegenAmount( );

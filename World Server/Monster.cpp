@@ -163,6 +163,14 @@ void CMonster::SpawnMonster( CPlayer* player, CMonster* thismon )
     	ADDWORD    ( pak, 0x0000 );
     }
 	ADDBYTE    ( pak, 0x00 );
+
+    //LMA: Little check, for now we "only" have a DWORD for monster's HP so there is a limit
+    //broken by some monsters (Turak boss)
+    if(Stats->HP>MAXHPMOB)
+    {
+        Stats->HP=(long long) MAXHPMOB;
+    }
+
 	ADDDWORD   ( pak, Stats->HP );
 	if(thismon->owner != player->clientid)
         {

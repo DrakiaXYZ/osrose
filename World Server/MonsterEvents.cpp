@@ -88,14 +88,16 @@ bool CMonster::OnDie( )
     UINT special_exp=0;
     UINT special_lvl=0;
 
+
     if (map->is_cf==1)
     {
        //what monster is dead?
        if(this->montype==map->id_def_mon)
        {
            //oh my god, they killed a j&b !! (or the monster with exp)
-           special_exp=(UINT) map->mon_lvl;
-           special_lvl= (UINT) map->mon_exp;
+           special_exp=(UINT) map->mon_exp;
+           special_lvl= (UINT) map->mon_lvl;
+           Log(MSG_INFO,"special_exp %i, special lvl %i",special_exp,special_lvl);
        }
        else
        {

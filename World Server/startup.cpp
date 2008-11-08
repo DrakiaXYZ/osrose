@@ -458,7 +458,6 @@ bool CWorldServer::LoadNPCData( )
         newnpc->subweapon = STB_NPC.rows[i][6];
         newnpc->level = STB_NPC.rows[i][7];
         newnpc->hp = STB_NPC.rows[i][8];
-
         newnpc->atkpower = STB_NPC.rows[i][9];
         newnpc->hitrate = STB_NPC.rows[i][10];
         newnpc->defense = STB_NPC.rows[i][11];

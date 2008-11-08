@@ -1099,6 +1099,13 @@ bool CWorldServer::pakStartAttack( CPlayer* thisclient, CPacket* P )
 	if(character->IsMonster())
 	{
 	   // SET MONSTER HEALTH
+        //LMA: Little check, for now we "only" have a DWORD for monster's HP so there is a limit
+        //broken by some monsters (Turak boss)
+        if(character->Stats->HP>MAXHPMOB)
+        {
+            character->Stats->HP=(long long) MAXHPMOB;
+        }
+
 	   BEGINPACKET( pak, 0x79f );
 	   ADDWORD    ( pak, character->clientid );
 	   ADDDWORD   ( pak, character->Stats->HP );
@@ -2070,6 +2077,11 @@ bool CWorldServer::pakStartSkill ( CPlayer* thisclient, CPacket* P )
 
 	if(character->IsMonster())
 	{
+        if(character->Stats->HP>MAXHPMOB)
+        {
+            character->Stats->HP=(long long) MAXHPMOB;
+        }
+
 	   BEGINPACKET( pak, 0x79f );
 	   ADDWORD( pak, character->clientid );
 	   ADDWORD( pak, character->Stats->HP );
@@ -4893,6 +4905,11 @@ bool CWorldServer::pakShowHeal( CPlayer* thisclient, CPacket* P )
     if(character->IsMonster())
     {
     	// SET MONSTER HEALTH
+        if(character->Stats->HP>MAXHPMOB)
+        {
+            character->Stats->HP=(long long) MAXHPMOB;
+        }
+
     	BEGINPACKET( pak, 0x79f );
     	ADDWORD( pak, character->clientid );
     	ADDWORD( pak, character->Stats->HP );

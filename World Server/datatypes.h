@@ -326,13 +326,17 @@
 #define sFlame7 80
 
 
+//LMA: Max hp mob
+#define MAXHPMOB 0xFFFFFFFF
+
 #include "../common/sockets.h"
 
 // Hold party experience when kill a moster
 struct CPartyExp
 {
     class CParty* thisparty;
-    UINT exp;
+    //UINT exp;
+    unsigned long long exp;
     UINT num;
     UINT partymember[50];
     UINT maxlevel;
@@ -449,7 +453,8 @@ struct CNPCData {
     UINT weapon;
     UINT subweapon;
     UINT level;
-    UINT hp;
+    //UINT hp;
+    unsigned long long hp;
     UINT atkpower;
     UINT hitrate;
     UINT defense;
@@ -457,7 +462,8 @@ struct CNPCData {
     UINT dodge;
     float atkspeed;
     UINT AI;
-    UINT exp;
+    //UINT exp;
+    unsigned long long exp;
   	UINT dropid;
   	UINT money;
   	UINT item;
@@ -485,7 +491,8 @@ struct CNPCData {
 struct MonsterDamage
 {
     UINT charid;
-    long int damage;
+    //long int damage;
+    long long damage;
 };
 
 struct CDropInfo

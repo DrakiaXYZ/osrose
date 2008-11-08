@@ -53,10 +53,14 @@ struct POSITION
 struct STATS
 {
     int Level;
-    long int HP;
-    long int MP;
+    long long HP;
+    long long MP;
+    /*
     unsigned int MaxHP;
     unsigned int MaxMP;
+    */
+    unsigned long long MaxHP;
+    unsigned long long MaxMP;
 
 
     unsigned int Attack_Power;
@@ -218,11 +222,12 @@ struct INFO
     BYTE Sex;
     UINT Face;
     UINT Hair;
-    UINT Exp;
+    //UINT Exp;
+    unsigned long long Exp;
     UINT Job;
-//    long int Zulies;
-//    long int Storage_Zulies;
-//  DevilKing's update for more than 2 billion zuly
+    //long int Zulies;
+    //long int Storage_Zulies;
+    //DevilKing's update for more than 2 billion zuly
     unsigned long int Zulies;
     unsigned long int Storage_Zulies;
     long int LastGlobal;

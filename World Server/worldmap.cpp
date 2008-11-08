@@ -123,6 +123,13 @@ CMonster* CMap::AddMonster( UINT montype, fPoint position, UINT owner, CMDrops* 
     monster->Stats->HP = monster->Stats->MaxHP;
     monster->Stats->MP = monster->Stats->MaxMP;
 
+    //LMA: Little check, for now we "only" have a DWORD for monster's HP so there is a limit
+    //broken by some monsters (Turak boss)
+    if(monster->Stats->HP>MAXHPMOB)
+    {
+        monster->Stats->HP=(long long) MAXHPMOB;
+    }
+
     monster->Status->spawnid = spawnid; //this way we can easily find which spawn a mob belongs to
     if(GetDropData && owner==0)
     {

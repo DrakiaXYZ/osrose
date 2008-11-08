@@ -170,7 +170,9 @@ bool CMonster::IsMonster( )
     return true;
 }
 
-void CMonster::AddDamage( CCharacter* enemy, long int hitpower)
+//LMA: moving to long long...
+//void CMonster::AddDamage( CCharacter* enemy, long long hitpower)
+void CMonster::AddDamage( CCharacter* enemy, long long hitpower)
 {
     Log(MSG_INFO,"In CMonster::AddDamage");
 
@@ -201,7 +203,11 @@ void CMonster::AddDamage( CCharacter* enemy, long int hitpower)
         if(thisplayer->charid == player->CharInfo->charid)
         {
             if( hitpower > Stats->HP )
-                hitpower += (long int)Stats->HP + (long int)( Stats->HP * 0.10 );
+            {
+                //hitpower += (long int)Stats->HP + (long int)( Stats->HP * 0.10 );
+                hitpower += Stats->HP + (long long) ( Stats->HP * 0.10 );
+            }
+
             thisplayer->damage += hitpower;
             return;
         }
@@ -209,7 +215,10 @@ void CMonster::AddDamage( CCharacter* enemy, long int hitpower)
     MonsterDamage* newplayer = new MonsterDamage;
     newplayer->charid = player->CharInfo->charid;
     if( hitpower > Stats->HP )
-        hitpower += (long int)Stats->HP + (long int)( Stats->HP  * 0.10 );
+    {
+        //hitpower += (long int)Stats->HP + (long int)( Stats->HP  * 0.10 );
+        hitpower += Stats->HP + (long long)( Stats->HP  * 0.10 );
+    }
     newplayer->damage = hitpower;
     PlayersDamage.push_back( newplayer );
 }
