@@ -172,7 +172,7 @@ bool CPlayer::loaddata( )
     bool do_save=false;
     int cur_cskills[5];
     int max_skills[5];
-    int coff[MAX_SKILL];
+    int coff[MAX_CLASS_SKILL];
     int uoff[MAX_UNIQUE_SKILL];
     int moff[MAX_MILEAGE_SKILL];
     char* tab_names[]={"class","driving","basic","unique","mileage"};
@@ -190,12 +190,9 @@ bool CPlayer::loaddata( )
     max_skills[3]=120;
     max_skills[4]=320;
 
-    for (int i=0;i<5;i++)
-        cur_max_skills[i]=0;
-
     //Browsing supposed basic skills.
     good_family=2;
-	for(UINT i=0;i<MAX_BASICSKILL;i++)
+	for(UINT i=0;i<MAX_BASIC_SKILL;i++)
     {
         char* tmp=strtok((i==0?row[20]:NULL), ",");
         if (tmp==NULL)
@@ -343,7 +340,7 @@ bool CPlayer::loaddata( )
 
     //class skills.
     good_family=0;
-	for(UINT i=0;i<MAX_SKILL;i++)
+	for(UINT i=0;i<MAX_CLASS_SKILL;i++)
     {
         coff[i]=-1;
         char* tmp=strtok((i==0?row[21]:NULL), ",");
@@ -380,7 +377,7 @@ bool CPlayer::loaddata( )
     }
 
     //getting class levels now.
-	for(UINT i=0;i<MAX_SKILL;i++)
+	for(UINT i=0;i<MAX_CLASS_SKILL;i++)
     {
         char* tmp=strtok((i==0?row[22]:NULL), ",");
         int temp=1;
@@ -418,7 +415,13 @@ bool CPlayer::loaddata( )
         cskills[moff[i]].level=temp;
     }
 
+    //First free offset.
+    for (int i=0;i<5;i++)
+        cur_max_skills[i]=cur_cskills[i];
+
     //reconstructing all the skills again...
+    //Not needed...
+    /*
     //driving skills.
     int cpt=0;
     for (int i=60;i<MAX_DRIVING_SKILL;i++)
@@ -483,6 +486,7 @@ bool CPlayer::loaddata( )
         }
 
     }
+    */
 
     if (do_save)
         saveskills();
@@ -1560,66 +1564,69 @@ void CPlayer::saveskills( )
     char mlevel[1024];
 
     //class skills and level.
-    for(UINT i=0;i<MAX_SKILL;i++)
+    for(UINT i=0;i<MAX_CLASS_SKILL;i++)
     {
         if(i==0)
         {
-           sprintf(&sclass[i], "%i",cskills[i].id);
-           sprintf(&slevel[i], "%i",cskills[i].level);
+           sprintf(&sclass[0], "%i",cskills[i].id);
+           sprintf(&slevel[0], "%i",cskills[i].level);
         }
         else
         {
            sprintf(&sclass[strlen(sclass)], ",%i",cskills[i].id);
            sprintf(&slevel[strlen(slevel)], ",%i",cskills[i].level);
         }
+
     }
 
-    //unique skills and level.
-    for(UINT i=0;i<MAX_UNIQUE_SKILL;i++)
+    //unique skills.
+    for(UINT i=90;i<90+MAX_UNIQUE_SKILL;i++)
     {
-        if(i==0)
+        if(i==90)
         {
-           sprintf(&uclass[i], "%i",uskills[i].id);
-           sprintf(&ulevel[i], "%i",uskills[i].level);
+           sprintf(&uclass[0], "%i",cskills[i].id);
+           sprintf(&ulevel[0], "%i",cskills[i].level);
         }
         else
         {
-           sprintf(&uclass[strlen(uclass)], ",%i",uskills[i].id);
-           sprintf(&ulevel[strlen(ulevel)], ",%i",uskills[i].level);
+           sprintf(&uclass[strlen(uclass)], ",%i",cskills[i].id);
+           sprintf(&ulevel[strlen(ulevel)], ",%i",cskills[i].level);
         }
+
     }
 
     //mileage skills and level.
-    for(UINT i=0;i<MAX_MILEAGE_SKILL;i++)
+    for(UINT i=120;i<120+MAX_MILEAGE_SKILL;i++)
     {
-        if(i==0)
+        if(i==120)
         {
-           sprintf(&mclass[i], "%i",mskills[i].id);
-           sprintf(&mlevel[i], "%i",mskills[i].level);
+           sprintf(&mclass[0], "%i",cskills[i].id);
+           sprintf(&mlevel[0], "%i",cskills[i].level);
         }
         else
         {
-           sprintf(&mclass[strlen(mclass)], ",%i",mskills[i].id);
-           sprintf(&mlevel[strlen(mlevel)], ",%i",mskills[i].level);
+           sprintf(&mclass[strlen(mclass)], ",%i",cskills[i].id);
+           sprintf(&mlevel[strlen(mlevel)], ",%i",cskills[i].level);
         }
+
     }
 
     //basic skills.
-    for(UINT i=0;i<MAX_BASICSKILL;i++)
+    for(UINT i=320;i<320+MAX_BASIC_SKILL;i++)
     {
-        if(i==0)
-            sprintf(&basic[i], "%i",bskills[i]);
+        if(i==320)
+            sprintf(&basic[0], "%i",cskills[i].id);
         else
-            sprintf(&basic[strlen(basic)], ",%i",bskills[i]);
+            sprintf(&basic[strlen(basic)], ",%i",cskills[i].id);
     }
 
     //driving skills.
-    for(UINT i=0;i<MAX_DRIVING_SKILL;i++)
+    for(UINT i=60;i<60+MAX_DRIVING_SKILL;i++)
     {
-        if(i==0)
-            sprintf(&drive[i], "%i",dskills[i]);
+        if(i==60)
+            sprintf(&drive[0], "%i",cskills[i]);
         else
-            sprintf(&drive[strlen(drive)], ",%i",dskills[i]);
+            sprintf(&drive[strlen(drive)], ",%i",cskills[i]);
     }
 
     //LMA: Saving Skills Data for a player.
@@ -1723,9 +1730,29 @@ int CPlayer::GoodSkill(int skill_id)
 //LMA: Find a skill offset for cskills...
 int CPlayer::FindSkillOffset(int family)
 {
-    int begin=0;
-    int end=0;
+    int begin[5];
+    int end[5];
 
+    begin[0]=0;
+    begin[1]=60;
+    begin[2]=320;
+    begin[3]=90;
+    begin[4]=120;
+    end[0]=60;
+    end[1]=90;
+    end[2]=362;
+    end[3]=120;
+    end[4]=320;
+
+    int res=cur_max_skills[family];
+
+    if (res<end[family])
+    {
+        cur_max_skills[family]++;
+        return res;
+    }
+
+    /*
     switch(family)
     {
         case 0:
@@ -1737,13 +1764,13 @@ int CPlayer::FindSkillOffset(int family)
         case 1:
         {
             begin=60;
-            end=64;
+            end=90;
         }
         break;
         case 2:
         {
-            begin=64;
-            end=90;
+            begin=320;
+            end=362;
         }
         break;
         case 3:
@@ -1767,12 +1794,14 @@ int CPlayer::FindSkillOffset(int family)
         if(cskills[i].id==0)
             return i;
     }
+    */
 
 
     return -1;
 }
 
-//LMA: Save some skills informations for later...
+//LMA: Save some skills informations for later... (useless)
+/*
 void CPlayer::SaveSkillInfo(int family,int offset,int id,int level)
 {
     //No need for class.
@@ -1816,8 +1845,10 @@ void CPlayer::SaveSkillInfo(int family,int offset,int id,int level)
 
     return;
 }
+*/
 
-//LMA: Upgrade a skill level...
+//LMA: Upgrade a skill level (useless)...
+/*
 void CPlayer::UpgradeSkillInfo(int offset,int skillid,int nb_upgrade)
 {
     //no need for class.
@@ -1885,3 +1916,4 @@ void CPlayer::UpgradeSkillInfo(int offset,int skillid,int nb_upgrade)
 
     return;
 }
+*/

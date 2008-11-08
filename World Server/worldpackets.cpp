@@ -70,12 +70,14 @@ void CWorldServer::pakPlayer( CPlayer *thisclient )
 	*/
 
 	//driving skills :)
-	for (int i=0;i<MAX_DRIVING_SKILL;i++)
+	for (int i=60;i<60+MAX_DRIVING_SKILL;i++)
 	{
-	    if (thisclient->dskills[i]==5000)
+	    if (thisclient->cskills[i].id==5000)
             has_cart=true;
-	    if (thisclient->dskills[i]==5001)
+	    if (thisclient->cskills[i].id==5001)
             has_cg=true;
+        if (thisclient->cskills[i].id==0)
+            break;
 	}
 
     BEGINPACKET( pak, 0x715 );
@@ -169,41 +171,31 @@ void CWorldServer::pakPlayer( CPlayer *thisclient )
     */
 
     //LMA: test 2008/11/07 (reorganisation)
- 	for(int i=0; i<MAX_SKILL; i++) // Class Skills
+ 	for(int i=0; i<MAX_CLASS_SKILL; i++) // Class Skills
         ADDWORD( pak, thisclient->cskills[i].id+thisclient->cskills[i].level-1 );
 
     //Driving skill.
-    if(has_cart)
-    {
-        nb_30--;
-        ADDWORD( pak, 5000 );
-    }
-
-    //CG skill ?
-    if (has_cg)
-    {
-        nb_30--;
-        ADDWORD( pak, 5001 );
-    }
-
-    for(int i=0; i<nb_30; i++)
-        ADDWORD( pak, 0 );
+	//driving skills :)
+	for (int i=60;i<60+MAX_DRIVING_SKILL;i++)
+	{
+        ADDWORD( pak, thisclient->cskills[i].id );
+	}
 
     //Unique
-    for(int i=0; i<MAX_UNIQUE_SKILL; i++)
+    for(int i=90; i<90+MAX_UNIQUE_SKILL; i++)
     {
-        ADDWORD( pak, thisclient->uskills[i].id+thisclient->uskills[i].level-1 );
+        ADDWORD( pak, thisclient->cskills[i].id+thisclient->cskills[i].level-1 );
     }
 
     //Mileage
-    for(int i=0; i<MAX_MILEAGE_SKILL; i++)
+    for(int i=120; i<120+MAX_MILEAGE_SKILL; i++)
     {
-        ADDWORD( pak, thisclient->mskills[i].id+thisclient->mskills[i].level-1 );
+        ADDWORD( pak, thisclient->cskills[i].id+thisclient->cskills[i].level-1 );
     }
     //LMA: End test.
 
     //Basic Skills
-	for(int i=0; i<MAX_BASICSKILL; i++)
+	for(int i=320; i<320+MAX_BASIC_SKILL; i++)
 	{
 	    /*
 	    //already handled before (cart and CG) :)
@@ -215,7 +207,7 @@ void CWorldServer::pakPlayer( CPlayer *thisclient )
             nb_skills=i;
         */
 
-        ADDWORD( pak, thisclient->bskills[i] );
+        ADDWORD( pak, thisclient->cskills[i].id);
 	}
 
 	//remaining of basic skills (sort of...)
@@ -3288,9 +3280,9 @@ bool  CWorldServer::pakLevelUpSkill( CPlayer *thisclient, CPacket* P )
             hasPreskill ++; // no preskill defined in this element so give a credit then skip to the next preskill.
             continue;
         }
-    //Log( MSG_INFO, "[DEBUG] Checking %i / 3, preskill %i",i,preskill);
+        //Log( MSG_INFO, "[DEBUG] Checking %i / 3, preskill %i",i,preskill);
 
-   for(int skillid=0;skillid<MAX_SKILL;skillid++)
+        for(int skillid=0;skillid<MAX_ALL_SKILL;skillid++)
         {
             //Log( MSG_INFO, "[DEBUG] Skillid %i < %u",skillid,MAX_SKILL);
             if(thisclient->cskills[skillid].id == thisskill->rskill[i] && thisclient->cskills[skillid].level >= thisskill->lskill[i])
@@ -3340,7 +3332,7 @@ bool  CWorldServer::pakLevelUpSkill( CPlayer *thisclient, CPacket* P )
        thisclient->cskills[pos].level+=1;
        thisclient->cskills[pos].thisskill = thisskill;
 
-       thisclient->UpgradeSkillInfo(pos,thisclient->cskills[pos].id,1);
+       //thisclient->UpgradeSkillInfo(pos,thisclient->cskills[pos].id,1);
        thisclient->saveskills();
     }
 

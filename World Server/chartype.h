@@ -23,7 +23,7 @@
 #define MAX_STORAGE 160
 #define MAX_ITEMMALL 48
 #define MAX_INVENTORY 140
-#define MAX_BASICSKILL 42
+#define MAX_BASIC_SKILL 42
 #define MAX_QUICKBAR 48
 //#define ClearBattle(i) { i->target=0;i->atktarget=0; i->bufftarget=0; i->skilltarget=0; i->skillid=0; i->atktype=0; i->contatk = false;  }
 #define ClearBattle(i) { i->target=0;i->atktarget=0; i->bufftarget=0; i->skilltarget=0; i->skillid=0; i->atktype=0; i->contatk = false; i->hitby=0;  }

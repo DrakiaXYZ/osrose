@@ -225,16 +225,17 @@ QUESTCOND(009){
 	//int checkVal = (data->btOp)?QUEST_SUCCESS:QUEST_FAILURE;
   if( client->questdebug )
     server->SendPM(client, "Check Skill: %i", data->iSkillSN1);
+    /*
 	for(dword i = 0; i < MAX_BASICSKILL; i++){
         if(client->bskills[i] == data->iSkillSN1)
         	return (data->btOp)?QUEST_SUCCESS:QUEST_FAILURE;
-        /* if(client->askill[i] == data->iSkillSN1)
-        	return (data->btOp)?QUEST_SUCCESS:QUEST_FAILURE;
-        if(client->pskill[i] == data->iSkillSN1)
-        	return (data->btOp)?QUEST_SUCCESS:QUEST_FAILURE; */
+        // if(client->askill[i] == data->iSkillSN1)
+        //	return (data->btOp)?QUEST_SUCCESS:QUEST_FAILURE;
+        //if(client->pskill[i] == data->iSkillSN1)
+        //	return (data->btOp)?QUEST_SUCCESS:QUEST_FAILURE;
     }
+    */
 
-	//for (dword i = 0; i < MAX_SKILL; i++) {
 	for (dword i = 0; i < MAX_ALL_SKILL; i++) {
         if(client->cskills[i].id == data->iSkillSN1)
         	return (data->btOp)?QUEST_SUCCESS:QUEST_FAILURE;

@@ -920,7 +920,7 @@ bool CWorldServer::LearnSkill( CPlayer* thisclient, UINT skill, bool takeSP)
                 thisclient->cskills[index].thisskill = thisskill;
 
                 //in the good family now.
-                thisclient->SaveSkillInfo(family,thisclient->cur_max_skills[family],skill,1);
+                //thisclient->SaveSkillInfo(family,thisclient->cur_max_skills[family],skill,1);
                 thisclient->saveskills();
 
                 BEGINPACKET( pak, 0x7b0 );

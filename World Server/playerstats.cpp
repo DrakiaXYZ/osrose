@@ -104,10 +104,27 @@ unsigned int CPlayer::GetAccury( )
         }
     }
     UINT Extra = 0;
-    for(UINT i=0;i<MAX_SKILL;i++)
+    for(UINT i=0;i<MAX_ALL_SKILL;i++)
     {
-        if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+        /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+            continue;*/
+
+        //Some skills are not worthy to search in
+        if(cskills[i].id==0&&i<60)
+        {
+            i=89;
             continue;
+        }
+
+        if(cskills[i].id==0&&(i>60&&i<120))
+        {
+            i=119;
+            continue;
+        }
+
+        if(cskills[i].id==0&&i>=120)
+            break;
+
         if( cskills[i].thisskill->type == 15 ) //Pasive
         {
             for(UINT j=0;j<3;j++ )
@@ -183,10 +200,26 @@ unsigned int CPlayer::GetCritical( )
 {
     UINT Critical = 0;
     Critical = (UINT)floor(((Attr->Con + Attr->Econ + 20)*0.2) + Attr->Sen + Attr->Esen );
-    for(UINT i=0;i<MAX_SKILL;i++)
+    for(UINT i=0;i<MAX_ALL_SKILL;i++)
     {
-        if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+        /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+            continue;*/
+        //Some skills are not worthy to search in
+        if(cskills[i].id==0&&i<60)
+        {
+            i=89;
             continue;
+        }
+
+        if(cskills[i].id==0&&(i>60&&i<120))
+        {
+            i=119;
+            continue;
+        }
+
+        if(cskills[i].id==0&&i>=120)
+            break;
+
     	if( cskills[i].thisskill->type == 15 ) //Pasive
         {   // Passive skill fixed by tomiz
             for( UINT j=0;j<3;j++ )
@@ -372,10 +405,26 @@ unsigned int CPlayer::GetAttackPower( )
         case ONE_HAND_SWORD://one hand sword
         {
             attack += (UINT)floor( (Attr->Str + Attr->Estr)*0.75 + Stats->Level*0.2 + ((Attr->Str + Attr->Estr)*0.05 + 29) * weaponatk * 0.03333334 );
-            for(UINT i=0;i<MAX_SKILL;i++)
+            for(UINT i=0;i<MAX_ALL_SKILL;i++)
             {
-                if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+                /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+                    continue;*/
+                //Some skills are not worthy to search in
+                if(cskills[i].id==0&&i<60)
+                {
+                    i=89;
                     continue;
+                }
+
+                if(cskills[i].id==0&&(i>60&&i<120))
+                {
+                    i=119;
+                    continue;
+                }
+
+                if(cskills[i].id==0&&i>=120)
+                    break;
+
                 if( cskills[i].thisskill->type == 15 ) //Pasive
                 {
                     for( UINT j=0;j<3;j++ )
@@ -397,10 +446,26 @@ unsigned int CPlayer::GetAttackPower( )
         break;
         case ONE_HAND_BUNT_SWORD://one hand blunt sword
             attack += (UINT)floor( (Attr->Str + Attr->Estr)*0.75 + Stats->Level*0.2 + ((Attr->Str + Attr->Estr)*0.05 + 29) * weaponatk * 0.03333334 );
-            for(UINT i=0;i<MAX_SKILL;i++)
+            for(UINT i=0;i<MAX_ALL_SKILL;i++)
             {
-                if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+                /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+                    continue;*/
+                //Some skills are not worthy to search in
+                if(cskills[i].id==0&&i<60)
+                {
+                    i=89;
                     continue;
+                }
+
+                if(cskills[i].id==0&&(i>60&&i<120))
+                {
+                    i=119;
+                    continue;
+                }
+
+                if(cskills[i].id==0&&i>=120)
+                    break;
+
                 if( cskills[i].thisskill->type == 15 ) //Pasive
                 {
                     for( UINT j=0;j<3;j++ )
@@ -422,10 +487,26 @@ unsigned int CPlayer::GetAttackPower( )
         case TWO_HAND_SWORD://two hand sword
         {
             attack += (UINT)floor( (Attr->Str + Attr->Estr)*0.75 + Stats->Level*0.2 + ((Attr->Str + Attr->Estr)*0.05 + 29) * weaponatk * 0.03333334 );
-            for(UINT i=0;i<MAX_SKILL;i++)
+            for(UINT i=0;i<MAX_ALL_SKILL;i++)
             {
-                if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+                /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+                    continue;*/
+                //Some skills are not worthy to search in
+                if(cskills[i].id==0&&i<60)
+                {
+                    i=89;
                     continue;
+                }
+
+                if(cskills[i].id==0&&(i>60&&i<120))
+                {
+                    i=119;
+                    continue;
+                }
+
+                if(cskills[i].id==0&&i>=120)
+                    break;
+
                 if( cskills[i].thisskill->type == 15 ) //Pasive
                 {
                     for( UINT j=0;j<3;j++ )
@@ -448,10 +529,26 @@ unsigned int CPlayer::GetAttackPower( )
         case SPEAR://spear
         {
             attack += (UINT)floor( (Attr->Str + Attr->Estr)*0.75 + Stats->Level*0.2 + ((Attr->Str + Attr->Estr)*0.05 + 29) * weaponatk * 0.03333334 );
-            for(UINT i=0;i<MAX_SKILL;i++)
+            for(UINT i=0;i<MAX_ALL_SKILL;i++)
             {
-                if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+                /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+                    continue;*/
+                //Some skills are not worthy to search in
+                if(cskills[i].id==0&&i<60)
+                {
+                    i=89;
                     continue;
+                }
+
+                if(cskills[i].id==0&&(i>60&&i<120))
+                {
+                    i=119;
+                    continue;
+                }
+
+                if(cskills[i].id==0&&i>=120)
+                    break;
+
                 if( cskills[i].thisskill->type == 15 ) //Pasive
                 {
                     for( UINT j=0;j<3;j++ )
@@ -474,10 +571,26 @@ unsigned int CPlayer::GetAttackPower( )
         case TWO_HAND_AXE://two hand axe
         {
             attack += (UINT)floor( (Attr->Str + Attr->Estr)*0.75 + Stats->Level*0.2 + ((Attr->Str + Attr->Estr)*0.05 + 29) * weaponatk * 0.03333334 );
-            for(UINT i=0;i<MAX_SKILL;i++)
+            for(UINT i=0;i<MAX_ALL_SKILL;i++)
             {
-                if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
-                    continue;
+                /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+                    continue;*/
+            //Some skills are not worthy to search in
+            if(cskills[i].id==0&&i<60)
+            {
+                i=89;
+                continue;
+            }
+
+            if(cskills[i].id==0&&(i>60&&i<120))
+            {
+                i=119;
+                continue;
+            }
+
+            if(cskills[i].id==0&&i>=120)
+                break;
+
                 if( cskills[i].thisskill->type == 15 ) //Pasive
                 {
                     for( UINT j=0;j<3;j++ )
@@ -503,10 +616,26 @@ unsigned int CPlayer::GetAttackPower( )
             if(items[132].count>0)
                 arrows = GServer->NaturalList.Index[items[132].itemnum]->quality*0.5;
             attack += (UINT)floor((((Attr->Str + Attr->Estr) + Stats->Level)*0.1) + ((Attr->Dex + Attr->Edex)*0.04 + (Attr->Sen + Attr->Esen)*0.03 + 29) * weaponatk * 0.03333334 + (Attr->Dex+Attr->Edex)*0.52 + arrows);
-            for(UINT i=0;i<MAX_SKILL;i++)
+            for(UINT i=0;i<MAX_ALL_SKILL;i++)
             {
-                if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+                /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+                    continue;*/
+                //Some skills are not worthy to search in
+                if(cskills[i].id==0&&i<60)
+                {
+                    i=89;
                     continue;
+                }
+
+                if(cskills[i].id==0&&(i>60&&i<120))
+                {
+                    i=119;
+                    continue;
+                }
+
+                if(cskills[i].id==0&&i>=120)
+                    break;
+
                 if( cskills[i].thisskill->type == 15 ) //Pasive
                 {
                     for( UINT j=0;j<3;j++ )
@@ -532,10 +661,26 @@ unsigned int CPlayer::GetAttackPower( )
             if(items[133].count>1)
                 bullets = GServer->NaturalList.Index[items[133].itemnum]->quality * 0.8;
             attack += (UINT)floor( (Attr->Con + Attr->Econ)*0.47 + bullets + Stats->Level*0.1 + (Attr->Dex + Attr->Edex)*0.3 + ((Attr->Con + Attr->Econ)*0.04 + (Attr->Sen + Attr->Esen)*0.05 + 29) * weaponatk * 0.03333334);
-            for(UINT i=0;i<MAX_SKILL;i++)
+            for(UINT i=0;i<MAX_ALL_SKILL;i++)
             {
-                if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+                /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+                    continue;*/
+                //Some skills are not worthy to search in
+                if(cskills[i].id==0&&i<60)
+                {
+                    i=89;
                     continue;
+                }
+
+                if(cskills[i].id==0&&(i>60&&i<120))
+                {
+                    i=119;
+                    continue;
+                }
+
+                if(cskills[i].id==0&&i>=120)
+                    break;
+
                 if( cskills[i].thisskill->type == 15 ) //Pasive
                 {
                     for( UINT j=0;j<3;j++ )
@@ -562,10 +707,26 @@ unsigned int CPlayer::GetAttackPower( )
                 cannons = GServer->NaturalList.Index[items[134].itemnum]->quality;
             }
             attack += (UINT)floor( cannons*0.8 + Stats->Level*0.1 + (Attr->Str + Attr->Estr)*0.32 + (Attr->Con + Attr->Econ)*0.45 + ((Attr->Con + Attr->Econ)*0.04 + (Attr->Sen + Attr->Esen)*0.05 + 29) * weaponatk * 0.03333334 );
-            for(UINT i=0;i<MAX_SKILL;i++)
+            for(UINT i=0;i<MAX_ALL_SKILL;i++)
             {
-                if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+                /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+                    continue;*/
+                //Some skills are not worthy to search in
+                if(cskills[i].id==0&&i<60)
+                {
+                    i=89;
                     continue;
+                }
+
+                if(cskills[i].id==0&&(i>60&&i<120))
+                {
+                    i=119;
+                    continue;
+                }
+
+                if(cskills[i].id==0&&i>=120)
+                    break;
+
                 if( cskills[i].thisskill->type == 15 ) //Pasive
                 {
                     for( UINT j=0;j<3;j++ )
@@ -587,10 +748,26 @@ unsigned int CPlayer::GetAttackPower( )
         case STAFF://staff
         {
             attack += (UINT)floor( Stats->Level*0.2 + ((Attr->Int + Attr->Eint)+(Attr->Str + Attr->Estr))*0.4 + ((Attr->Int + Attr-> Eint)*0.05 + 29) * weaponatk * 0.03333334 );
-            for(UINT i=0;i<MAX_SKILL;i++)
+            for(UINT i=0;i<MAX_ALL_SKILL;i++)
             {
-                if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+                /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+                    continue;*/
+                //Some skills are not worthy to search in
+                if(cskills[i].id==0&&i<60)
+                {
+                    i=89;
                     continue;
+                }
+
+                if(cskills[i].id==0&&(i>60&&i<120))
+                {
+                    i=119;
+                    continue;
+                }
+
+                if(cskills[i].id==0&&i>=120)
+                    break;
+
                 if( cskills[i].thisskill->type == 15 ) //Pasive
                 {
                     for( UINT j=0;j<3;j++ )
@@ -612,10 +789,26 @@ unsigned int CPlayer::GetAttackPower( )
         case WAND://wand
         {
             attack += (UINT)floor( Stats->Level*0.2 + (Attr->Int + Attr->Eint)*0.6 + ( ((Attr->Sen + Attr->Esen)*0.1 +26) * 0.03703704 * weaponatk )  );
-            for(UINT i=0;i<MAX_SKILL;i++)
+            for(UINT i=0;i<MAX_ALL_SKILL;i++)
             {
-                if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+                /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+                    continue;*/
+                //Some skills are not worthy to search in
+                if(cskills[i].id==0&&i<60)
+                {
+                    i=89;
                     continue;
+                }
+
+                if(cskills[i].id==0&&(i>60&&i<120))
+                {
+                    i=119;
+                    continue;
+                }
+
+                if(cskills[i].id==0&&i>=120)
+                    break;
+
                 if( cskills[i].thisskill->type == 15 ) //Pasive
                 {
                     for( UINT j=0;j<3;j++ )
@@ -637,10 +830,26 @@ unsigned int CPlayer::GetAttackPower( )
         case KATAR://katar
         {
             attack += (UINT)floor( Stats->Level*0.2 + (Attr->Str + Attr->Estr)*0.42 + (Attr->Dex + Attr->Edex)*0.55 + ((Attr->Dex + Attr->Edex)*0.05 + 20) * weaponatk * 0.0476190);
-            for(UINT i=0;i<MAX_SKILL;i++)
+            for(UINT i=0;i<MAX_ALL_SKILL;i++)
             {
-                if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+                /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+                    continue;*/
+                //Some skills are not worthy to search in
+                if(cskills[i].id==0&&i<60)
+                {
+                    i=89;
                     continue;
+                }
+
+                if(cskills[i].id==0&&(i>60&&i<120))
+                {
+                    i=119;
+                    continue;
+                }
+
+                if(cskills[i].id==0&&i>=120)
+                    break;
+
                 if( cskills[i].thisskill->type == 15 ) //Pasive
                 {
                     for( UINT j=0;j<3;j++ )
@@ -662,10 +871,26 @@ unsigned int CPlayer::GetAttackPower( )
         case DOUBLE_SWORD://double sword
         {
             attack += (UINT)floor( Stats->Level*0.2 + (Attr->Str + Attr->Estr)*0.63 + (Attr->Dex + Attr->Edex)*0.45 + ((Attr->Dex + Attr->Edex)*0.05 + 25) * weaponatk * 0.03846154);
-            for(UINT i=0;i<MAX_SKILL;i++)
+            for(UINT i=0;i<MAX_ALL_SKILL;i++)
             {
-                if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+                /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+                    continue;*/
+                //Some skills are not worthy to search in
+                if(cskills[i].id==0&&i<60)
+                {
+                    i=89;
                     continue;
+                }
+
+                if(cskills[i].id==0&&(i>60&&i<120))
+                {
+                    i=119;
+                    continue;
+                }
+
+                if(cskills[i].id==0&&i>=120)
+                    break;
+
                 if( cskills[i].thisskill->type == 15 ) //Pasive
                 {
                     for( UINT j=0;j<3;j++ )
@@ -783,10 +1008,26 @@ unsigned int CPlayer::GetDefense( )
     }
     if(items[8].count>0)//Defense from shield (pasive skill)
     {
-        for(UINT i=0;i<MAX_SKILL;i++)
+        for(UINT i=0;i<MAX_ALL_SKILL;i++)
         {
-            if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+            /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+                continue;*/
+            //Some skills are not worthy to search in
+            if(cskills[i].id==0&&i<60)
+            {
+                i=89;
                 continue;
+            }
+
+            if(cskills[i].id==0&&(i>60&&i<120))
+            {
+                i=119;
+                continue;
+            }
+
+            if(cskills[i].id==0&&i>=120)
+                break;
+
             if( cskills[i].thisskill->type == 15 ) //Pasive
             {
                 for( UINT j=0;j<3;j++ )
@@ -803,10 +1044,26 @@ unsigned int CPlayer::GetDefense( )
         }
     }
 
-    for(UINT i=0;i<MAX_SKILL;i++)//Defense from pasive skills
+    for(UINT i=0;i<MAX_ALL_SKILL;i++)//Defense from pasive skills
     {
-        if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+        /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+            continue;*/
+        //Some skills are not worthy to search in
+        if(cskills[i].id==0&&i<60)
+        {
+            i=89;
             continue;
+        }
+
+        if(cskills[i].id==0&&(i>60&&i<120))
+        {
+            i=119;
+            continue;
+        }
+
+        if(cskills[i].id==0&&i>=120)
+            break;
+
         if( cskills[i].thisskill->type == 15 ) //Pasive
         {
             for( UINT j=0;j<3;j++ )
@@ -913,10 +1170,26 @@ unsigned int CPlayer::GetAttackSpeed( )
     switch(weapontype)
     {
         case 231://bow
-            for(UINT i=0;i<MAX_SKILL;i++)
+            for(UINT i=0;i<MAX_ALL_SKILL;i++)
             {
-                if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+                /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+                    continue;*/
+                //Some skills are not worthy to search in
+                if(cskills[i].id==0&&i<60)
+                {
+                    i=89;
                     continue;
+                }
+
+                if(cskills[i].id==0&&(i>60&&i<120))
+                {
+                    i=119;
+                    continue;
+                }
+
+                if(cskills[i].id==0&&i>=120)
+                    break;
+
                 if( cskills[i].thisskill->type == 15 ) //Pasive
                 {
                     for( UINT j=0;j<3;j++ )
@@ -936,10 +1209,26 @@ unsigned int CPlayer::GetAttackSpeed( )
         break;
         case 253:
         case 232://Gun
-            for(UINT i=0;i<MAX_SKILL;i++)
+            for(UINT i=0;i<MAX_ALL_SKILL;i++)
             {
-                if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+                /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+                    continue;*/
+                //Some skills are not worthy to search in
+                if(cskills[i].id==0&&i<60)
+                {
+                    i=89;
                     continue;
+                }
+
+                if(cskills[i].id==0&&(i>60&&i<120))
+                {
+                    i=119;
+                    continue;
+                }
+
+                if(cskills[i].id==0&&i>=120)
+                    break;
+
                 if( cskills[i].thisskill->type == 15 ) //Pasive
                 {
                     for( UINT j=0;j<3;j++ )
@@ -958,10 +1247,27 @@ unsigned int CPlayer::GetAttackSpeed( )
             }
         break;
         case 233://Gun
-            for(UINT i=0;i<MAX_SKILL;i++)
+            for(UINT i=0;i<MAX_ALL_SKILL;i++)
             {
-                if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+                /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+                    continue;*/
+
+                //Some skills are not worthy to search in
+                if(cskills[i].id==0&&i<60)
+                {
+                    i=89;
                     continue;
+                }
+
+                if(cskills[i].id==0&&(i>60&&i<120))
+                {
+                    i=119;
+                    continue;
+                }
+
+                if(cskills[i].id==0&&i>=120)
+                    break;
+
                 if( cskills[i].thisskill->type == 15 ) //Pasive
                 {
                     for( UINT j=0;j<3;j++ )
@@ -980,10 +1286,26 @@ unsigned int CPlayer::GetAttackSpeed( )
             }
         break;
         case 251://katar
-            for(UINT i=0;i<MAX_SKILL;i++)
+            for(UINT i=0;i<MAX_ALL_SKILL;i++)
             {
-                if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+                /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+                    continue;*/
+                //Some skills are not worthy to search in
+                if(cskills[i].id==0&&i<60)
+                {
+                    i=89;
                     continue;
+                }
+
+                if(cskills[i].id==0&&(i>60&&i<120))
+                {
+                    i=119;
+                    continue;
+                }
+
+                if(cskills[i].id==0&&i>=120)
+                    break;
+
                 if( cskills[i].thisskill->type == 15 ) //Pasive
                 {
                     for( UINT j=0;j<3;j++ )
@@ -1002,10 +1324,26 @@ unsigned int CPlayer::GetAttackSpeed( )
             }
         break;
         case 252://dual weapon
-            for(UINT i=0;i<MAX_SKILL;i++)
+            for(UINT i=0;i<MAX_ALL_SKILL;i++)
             {
-                if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+                /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+                    continue;*/
+                //Some skills are not worthy to search in
+                if(cskills[i].id==0&&i<60)
+                {
+                    i=89;
                     continue;
+                }
+
+                if(cskills[i].id==0&&(i>60&&i<120))
+                {
+                    i=119;
+                    continue;
+                }
+
+                if(cskills[i].id==0&&i>=120)
+                    break;
+
                 if( cskills[i].thisskill->type == 15 ) //Pasive
                 {
                     for( UINT j=0;j<3;j++ )
@@ -1158,10 +1496,26 @@ unsigned int CPlayer::GetMoveSpeed( )
                         mspeed += GServer->StatsList[items[i].stats].value[1];
                 }
             }
-            for(UINT i=0;i<MAX_SKILL;i++)
+            for(UINT i=0;i<MAX_ALL_SKILL;i++)
             {
-                if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+                /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+                    continue;*/
+                //Some skills are not worthy to search in
+                if(cskills[i].id==0&&i<60)
+                {
+                    i=89;
                     continue;
+                }
+
+                if(cskills[i].id==0&&(i>60&&i<120))
+                {
+                    i=119;
+                    continue;
+                }
+
+                if(cskills[i].id==0&&i>=120)
+                    break;
+
                 if( cskills[i].thisskill->type == 15 ) //Pasive
                 {
                     for( UINT j=0;j<3;j++ )
@@ -1253,10 +1607,26 @@ unsigned long long CPlayer::GetMaxHP( )
             hpmax += 300;
         break;
     }
-    for(UINT i=0;i<MAX_SKILL;i++)
+    for(UINT i=0;i<MAX_ALL_SKILL;i++)
     {
-        if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+        /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+            continue;*/
+        //Some skills are not worthy to search in
+        if(cskills[i].id==0&&i<60)
+        {
+            i=89;
             continue;
+        }
+
+        if(cskills[i].id==0&&(i>60&&i<120))
+        {
+            i=119;
+            continue;
+        }
+
+        if(cskills[i].id==0&&i>=120)
+            break;
+
         if( cskills[i].thisskill->type == 15 ) //Pasive
         {
             for(UINT j=0;j<3;j++ )
@@ -1375,10 +1745,26 @@ unsigned int CPlayer::GetMaxMP( )
     maxmp = (UINT)floor((Stats->Level + JobValue) * Mult + ((Attr->Int + Attr->Eint) << 2));
 
 
-    for(UINT i=0;i<MAX_SKILL;i++)
+    for(UINT i=0;i<MAX_ALL_SKILL;i++)
     {
-        if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+        /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+            continue;*/
+        //Some skills are not worthy to search in
+        if(cskills[i].id==0&&i<60)
+        {
+            i=89;
             continue;
+        }
+
+        if(cskills[i].id==0&&(i>60&&i<120))
+        {
+            i=119;
+            continue;
+        }
+
+        if(cskills[i].id==0&&i>=120)
+            break;
+
         if( cskills[i].thisskill->type == 15 ) //Pasive
         {
             for(UINT j=0;j<3;j++ )
@@ -1456,10 +1842,26 @@ unsigned int CPlayer::GetHPRegenAmount( )
     /*LMA: handled elsewhere.
     if( Status->Stance == 1 )
         amount *= 4;*/
-    for(UINT i=0;i<MAX_SKILL;i++)
+    for(UINT i=0;i<MAX_ALL_SKILL;i++)
     {
-        if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+        /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+            continue;*/
+        //Some skills are not worthy to search in
+        if(cskills[i].id==0&&i<60)
+        {
+            i=89;
             continue;
+        }
+
+        if(cskills[i].id==0&&(i>60&&i<120))
+        {
+            i=119;
+            continue;
+        }
+
+        if(cskills[i].id==0&&i>=120)
+            break;
+
         if( cskills[i].thisskill->type == 15 ) //Pasive
         {
             for(UINT j=0;j<3;j++ )
@@ -1530,10 +1932,26 @@ unsigned int CPlayer::GetMPRegenAmount( )
     if( Status->Stance == 1 )
         amount *= 4;
     */
-    for(UINT i=0;i<MAX_SKILL;i++)
+    for(UINT i=0;i<MAX_ALL_SKILL;i++)
     {
-        if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+        /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+            continue;*/
+        //Some skills are not worthy to search in
+        if(cskills[i].id==0&&i<60)
+        {
+            i=89;
             continue;
+        }
+
+        if(cskills[i].id==0&&(i>60&&i<120))
+        {
+            i=119;
+            continue;
+        }
+
+        if(cskills[i].id==0&&i>=120)
+            break;
+
         if( cskills[i].thisskill->type == 15 ) //Pasive
         {
             for(UINT j=0;j<3;j++ )
@@ -1601,10 +2019,26 @@ unsigned int CPlayer::GetMaxWeight( )
     UINT weight = 0;
     weight = ((Attr->Str + Attr->Estr) + (Attr->Str + Attr->Estr)*2) * 2 + Stats->Level+220 + (Stats->Level+220)*4;
     UINT Extra = 0;
-    for(UINT i=0;i<MAX_SKILL;i++)
+    for(UINT i=0;i<MAX_ALL_SKILL;i++)
     {
-        if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+        /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+            continue;*/
+        //Some skills are not worthy to search in
+        if(cskills[i].id==0&&i<60)
+        {
+            i=89;
             continue;
+        }
+
+        if(cskills[i].id==0&&(i>60&&i<120))
+        {
+            i=119;
+            continue;
+        }
+
+        if(cskills[i].id==0&&i>=120)
+            break;
+
         if( cskills[i].thisskill->type == 15 ) //Pasive
         {
             for(UINT j=0;j<3;j++ )
@@ -1687,10 +2121,27 @@ unsigned int CPlayer::GetCurrentWeight( )
 unsigned int CPlayer::GetMPReduction( )
 {
     UINT mpreduction = 0;
-    for(UINT i=0;i<MAX_SKILL;i++)
+    for(UINT i=0;i<MAX_ALL_SKILL;i++)
     {
-        if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+        /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+            continue;*/
+
+        //Some skills are not worthy to search in
+        if(cskills[i].id==0&&i<60)
+        {
+            i=89;
             continue;
+        }
+
+        if(cskills[i].id==0&&(i>60&&i<120))
+        {
+            i=119;
+            continue;
+        }
+
+        if(cskills[i].id==0&&i>=120)
+            break;
+
         if( cskills[i].thisskill->type == 15 ) //Pasive
         {
             for(UINT j=0;j<3;j++ )
@@ -1738,10 +2189,26 @@ unsigned int CPlayer::GetMPReduction( )
 unsigned int CPlayer::GetMaxSummonGauge( )
 {
     UINT gauge = 50;
-    for(UINT i=0;i<MAX_SKILL;i++)
+    for(UINT i=0;i<MAX_ALL_SKILL;i++)
     {
-        if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+        /*if( cskills[i].id == 0 || cskills[i].thisskill == 0 )
+            continue;*/
+        //Some skills are not worthy to search in
+        if(cskills[i].id==0&&i<60)
+        {
+            i=89;
             continue;
+        }
+
+        if(cskills[i].id==0&&(i>60&&i<120))
+        {
+            i=119;
+            continue;
+        }
+
+        if(cskills[i].id==0&&i>=120)
+            break;
+
         if( cskills[i].thisskill->type == 15 ) //Pasive
         {
             for(UINT j=0;j<3;j++ )

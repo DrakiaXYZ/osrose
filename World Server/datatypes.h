@@ -190,7 +190,7 @@
 #define MONSTER_SKILL_BUFF 19
 
 // other constants
-#define MAX_SKILL 60
+#define MAX_CLASS_SKILL 60
 //LMA: driving, unique, mileage...
 #define MAX_ALL_SKILL 362
 #define MAX_DRIVING_SKILL 30

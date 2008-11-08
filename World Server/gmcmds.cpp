@@ -2640,7 +2640,7 @@ else if (strcmp(command, "give2")==0)
              SendPM(thisclient, buffer);
          }
     }
-    // mystat2 - by PurpleYouko - from osprose to test  
+    // mystat2 - by PurpleYouko - from osprose to test
 	else if(strcmp(command, "mystat2")==0)
     {
          if ((tmp = strtok(NULL, " "))==NULL)return true;
@@ -2654,79 +2654,79 @@ else if (strcmp(command, "give2")==0)
          {
              char buffer2[200];
              sprintf ( buffer2, "My Accuracy is %i", thisclient->Stats->Accury );
-             SendPM(thisclient, buffer2); 
+             SendPM(thisclient, buffer2);
          }
          else if(strcmp(tmp, "hp")==0)
          {
              char buffer2[200];
              sprintf ( buffer2, "My current HP is %i", thisclient->Stats->HP );
-             SendPM(thisclient, buffer2); 
+             SendPM(thisclient, buffer2);
          }
          else if(strcmp(tmp, "mp")==0)
          {
              char buffer2[200];
              sprintf ( buffer2, "My current MP is %i", thisclient->Stats->MP );
-             SendPM(thisclient, buffer2); 
+             SendPM(thisclient, buffer2);
          }
          else if(strcmp(tmp, "maxhp")==0)
          {
              char buffer2[200];
              sprintf ( buffer2, "My Maximum HP is %i", thisclient->GetMaxHP());
-             SendPM(thisclient, buffer2); 
+             SendPM(thisclient, buffer2);
          }
          else if(strcmp(tmp, "maxmp")==0)
          {
              char buffer2[200];
              sprintf ( buffer2, "My maximum MP is %i", thisclient->GetMaxMP());
-             SendPM(thisclient, buffer2); 
+             SendPM(thisclient, buffer2);
          }
-         else if(strcmp(tmp, "dodge")==0) 
+         else if(strcmp(tmp, "dodge")==0)
          {
              char buffer2[200];
              sprintf ( buffer2, "My dodge is %i", thisclient->Stats->Dodge);
-             SendPM(thisclient, buffer2);  
+             SendPM(thisclient, buffer2);
          }
-         else if(strcmp(tmp, "def")==0) 
+         else if(strcmp(tmp, "def")==0)
          {
              char buffer2[200];
              sprintf ( buffer2, "My defense is %i", thisclient->Stats->Defense);
-             SendPM(thisclient, buffer2);  
+             SendPM(thisclient, buffer2);
          }
-         else if(strcmp(tmp, "mdef")==0) 
+         else if(strcmp(tmp, "mdef")==0)
          {
              char buffer2[200];
              sprintf ( buffer2, "My Magic defense is %i", thisclient->Stats->Magic_Defense);
-             SendPM(thisclient, buffer2);  
+             SendPM(thisclient, buffer2);
          }
-         else if(strcmp(tmp, "crit")==0) 
+         else if(strcmp(tmp, "crit")==0)
          {
              char buffer2[200];
              sprintf ( buffer2, "My critical is %i", thisclient->Stats->Critical);
-             SendPM(thisclient, buffer2);  
+             SendPM(thisclient, buffer2);
          }
-         else if(strcmp(tmp, "mspd")==0) 
+         else if(strcmp(tmp, "mspd")==0)
          {
              char buffer2[200];
              sprintf ( buffer2, "My move speed is %i", thisclient->Stats->Move_Speed);
-             SendPM(thisclient, buffer2);  
+             SendPM(thisclient, buffer2);
          }
-         else if(strcmp(tmp, "aspd")==0) 
+         else if(strcmp(tmp, "aspd")==0)
          {
              char buffer2[200];
              sprintf ( buffer2, "My attack speed is %i", thisclient->Stats->Attack_Speed);
-             SendPM(thisclient, buffer2);  
+             SendPM(thisclient, buffer2);
          }
 //         else if(strcmp(tmp, "xprate")==0)
 //         {
 //             char buffer2[200];
 //             sprintf ( buffer2, "My xp rate is %i", thisclient->Stats->xprate);
-//             SendPM(thisclient, buffer2);     
+//             SendPM(thisclient, buffer2);
 //         }
          else if(strcmp(tmp, "stamina")==0)
          {
              char buffer2[200];
              sprintf ( buffer2, "My Stamina is %i", thisclient->CharInfo->stamina);
-             SendPM(thisclient, buffer2); 
+             SendPM(thisclient, buffer2);
          }
 //         else if(strcmp(tmp, "weight")==0)
 //         {
@@ -2734,17 +2734,17 @@ else if (strcmp(command, "give2")==0)
 //             int maxweight = thisclient->GetMaxWeight();
 //             char buffer2[200];
 //             sprintf ( buffer2, "My current weight is %i. max weight = %i", weight,maxweight);
-//             SendPM(thisclient, buffer2); 
+//             SendPM(thisclient, buffer2);
 //         }
          else if(strcmp(tmp, "clan")==0)
          {
-             SendPM(thisclient, "My clan id is: %i My clan rank is: %i", thisclient->Clan->clanid, thisclient->Clan->clanrank);    
+             SendPM(thisclient, "My clan id is: %i My clan rank is: %i", thisclient->Clan->clanid, thisclient->Clan->clanrank);
          }
          else if(strcmp(tmp, "map")==0)
          {
-             SendPM(thisclient, "My current map is: %i ", thisclient->Position->Map);  
+             SendPM(thisclient, "My current map is: %i ", thisclient->Position->Map);
          }
-    }    
+    }
 
     // configreset - by PurpleYouko
     else if (strcmp(command, "configreset")==0) // *** RELOAD DATA FILES ******
@@ -3726,10 +3726,13 @@ bool CWorldServer::pakGMReborn(CPlayer* thisclient)
 
      else
      {
-        for(int i=0;i<MAX_SKILL;i++)  //For keeping the skills, remove this line
+
+        //LMA: We remove all but basic skills.
+        for(int i=0;i<320;i++)  //For keeping the skills, remove this line
         {  //For keeping the skills, remove this line
             thisclient->cskills[i].id = 0;  //For keeping the skills, remove this line
             thisclient->cskills[i].level = 1;  //For keeping the skills, remove this line
+            thisclient->cskills[i].thisskill=NULL;
         }  //For keeping the skills, remove this line
 
         for(int i=0;i<MAX_QUICKBAR;i++)
@@ -5444,808 +5447,809 @@ bool CWorldServer::pakGMAllSkill(CPlayer* thisclient, char* name)
     if(otherclient==NULL)
     return true;
 
-if ( classid == 121 ) //Knight
-{
-otherclient->cskills[0].id = 201;//Physical Training
-otherclient->cskills[0].level = 9;
-otherclient->cskills[1].id = 211;//Repose
-otherclient->cskills[1].level = 9;
-otherclient->cskills[2].id = 221;//Defense Training
-otherclient->cskills[2].level = 9;
-otherclient->cskills[3].id = 231;//Power Owerflow
-otherclient->cskills[3].level = 5;
-otherclient->cskills[4].id = 236;//howl
-otherclient->cskills[4].level = 5;
-otherclient->cskills[5].id = 241;//staminal assist
-otherclient->cskills[5].level = 9;
-otherclient->cskills[6].id = 251;//Melee Weapon Mastery
-otherclient->cskills[6].level = 9;
-otherclient->cskills[7].id = 261;//Melee Double Attack
-otherclient->cskills[7].level = 9;
-otherclient->cskills[8].id = 271;//One Handed Weapon Mastery
-otherclient->cskills[8].level = 9;
-otherclient->cskills[9].id = 281;//Shield Mastery
-otherclient->cskills[9].level = 9;
-otherclient->cskills[10].id = 291;//Fatal Thrust
-otherclient->cskills[10].level = 9;
-otherclient->cskills[11].id = 301;//durability assist
-otherclient->cskills[11].level = 5;
-otherclient->cskills[12].id = 306;//Shield Stun
-otherclient->cskills[12].level = 5;
-otherclient->cskills[13].id = 311;//soul wreck
-otherclient->cskills[13].level = 4;
-otherclient->cskills[14].id = 416;//taunt
-otherclient->cskills[14].level = 5;
-otherclient->cskills[15].id = 421;//soundles vacuum
-otherclient->cskills[15].level = 4;
-otherclient->cskills[16].id = 431;//Advanced Defense Training
-otherclient->cskills[16].level = 9;
-otherclient->cskills[17].id = 441;//One-Handed Combat Mastery
-otherclient->cskills[17].level = 9;
-otherclient->cskills[18].id = 451;//Actual Battle Training
-otherclient->cskills[18].level = 9;
-otherclient->cskills[19].id = 461;//Advanced Shield Mastery
-otherclient->cskills[19].level = 18;
-otherclient->cskills[20].id = 481;//Triple Strike
-otherclient->cskills[20].level = 9;
-otherclient->cskills[21].id = 491;//safe guard
-otherclient->cskills[21].level = 5;
-otherclient->cskills[22].id = 496;//Shield Reflect
-otherclient->cskills[22].level = 5;
-otherclient->cskills[23].id = 501;//battle alertniss
-otherclient->cskills[23].level = 4;
-otherclient->cskills[24].id = 506;//Staminal Training
-otherclient->cskills[24].level = 9;
-otherclient->cskills[25].id = 516;//Refreshment
-otherclient->cskills[25].level = 9;
-otherclient->cskills[26].id = 721;//Quick Step
-otherclient->cskills[26].level = 5;
-otherclient->cskills[27].id = 726;//Battle March
-otherclient->cskills[27].level = 5;
-otherclient->cskills[28].id = 731;//Sword Force
-otherclient->cskills[28].level = 9;
-// Mileage Items - knight - 1 handed
-otherclient->cskills[29].id = 5601; // 847
-otherclient->cskills[29].level = 1;
-otherclient->cskills[30].id = 5602; // 848
-otherclient->cskills[30].level = 1;
-// Unique Items - knight - 1 handed
-otherclient->cskills[31].id = 4211; // 569
-otherclient->cskills[31].level = 4;
-//Immortal Form
-//otherclient->cskills[32].id = 426;
-//otherclient->cskills[32].level = 1;
+    //LMA: We delete previous skills to avoir errors...
+    //They will be sorted correctly (if needed) at next startup...
+    for (int k=0;k<320;k++)
+    {
+        otherclient->cskills[k].id = 0;
+        otherclient->cskills[k].level = 0;
+        otherclient->cskills[k].thisskill=NULL;
+    }
 
+    if ( classid == 121 ) //Knight
+    {
+        otherclient->cskills[0].id = 201;//Physical Training
+        otherclient->cskills[0].level = 9;
+        otherclient->cskills[1].id = 211;//Repose
+        otherclient->cskills[1].level = 9;
+        otherclient->cskills[2].id = 221;//Defense Training
+        otherclient->cskills[2].level = 9;
+        otherclient->cskills[3].id = 231;//Power Owerflow
+        otherclient->cskills[3].level = 5;
+        otherclient->cskills[4].id = 236;//howl
+        otherclient->cskills[4].level = 5;
+        otherclient->cskills[5].id = 241;//staminal assist
+        otherclient->cskills[5].level = 9;
+        otherclient->cskills[6].id = 251;//Melee Weapon Mastery
+        otherclient->cskills[6].level = 9;
+        otherclient->cskills[7].id = 261;//Melee Double Attack
+        otherclient->cskills[7].level = 9;
+        otherclient->cskills[8].id = 271;//One Handed Weapon Mastery
+        otherclient->cskills[8].level = 9;
+        otherclient->cskills[9].id = 281;//Shield Mastery
+        otherclient->cskills[9].level = 9;
+        otherclient->cskills[10].id = 291;//Fatal Thrust
+        otherclient->cskills[10].level = 9;
+        otherclient->cskills[11].id = 301;//durability assist
+        otherclient->cskills[11].level = 5;
+        otherclient->cskills[12].id = 306;//Shield Stun
+        otherclient->cskills[12].level = 5;
+        otherclient->cskills[13].id = 311;//soul wreck
+        otherclient->cskills[13].level = 4;
+        otherclient->cskills[14].id = 416;//taunt
+        otherclient->cskills[14].level = 5;
+        otherclient->cskills[15].id = 421;//soundles vacuum
+        otherclient->cskills[15].level = 4;
+        otherclient->cskills[16].id = 431;//Advanced Defense Training
+        otherclient->cskills[16].level = 9;
+        otherclient->cskills[17].id = 441;//One-Handed Combat Mastery
+        otherclient->cskills[17].level = 9;
+        otherclient->cskills[18].id = 451;//Actual Battle Training
+        otherclient->cskills[18].level = 9;
+        otherclient->cskills[19].id = 461;//Advanced Shield Mastery
+        otherclient->cskills[19].level = 18;
+        otherclient->cskills[20].id = 481;//Triple Strike
+        otherclient->cskills[20].level = 9;
+        otherclient->cskills[21].id = 491;//safe guard
+        otherclient->cskills[21].level = 5;
+        otherclient->cskills[22].id = 496;//Shield Reflect
+        otherclient->cskills[22].level = 5;
+        otherclient->cskills[23].id = 501;//battle alertniss
+        otherclient->cskills[23].level = 4;
+        otherclient->cskills[24].id = 506;//Staminal Training
+        otherclient->cskills[24].level = 9;
+        otherclient->cskills[25].id = 516;//Refreshment
+        otherclient->cskills[25].level = 9;
+        otherclient->cskills[26].id = 721;//Quick Step
+        otherclient->cskills[26].level = 5;
+        otherclient->cskills[27].id = 726;//Battle March
+        otherclient->cskills[27].level = 5;
+        otherclient->cskills[28].id = 731;//Sword Force
+        otherclient->cskills[28].level = 9;
+        // Mileage Items - knight - 1 handed
+        otherclient->cskills[29].id = 5601; // 847
+        otherclient->cskills[29].level = 1;
+        otherclient->cskills[30].id = 5602; // 848
+        otherclient->cskills[30].level = 1;
+        // Unique Items - knight - 1 handed
+        otherclient->cskills[31].id = 4211; // 569
+        otherclient->cskills[31].level = 4;
+        //Immortal Form
+        //otherclient->cskills[32].id = 426;
+        //otherclient->cskills[32].level = 1;
+        SendPM (thisclient, "Relogin For Get All Skills");
+    }
+    else if ( classid == 122 ) //Champion
+    {
+        otherclient->cskills[0].id = 201;//Physical Training
+        otherclient->cskills[0].level = 9;
+        otherclient->cskills[1].id = 211;//Repose
+        otherclient->cskills[1].level = 9;
+        otherclient->cskills[2].id = 221;//Defense Training
+        otherclient->cskills[2].level = 9;
+        otherclient->cskills[3].id = 231;//Power Owerflow
+        otherclient->cskills[3].level = 5;
+        otherclient->cskills[4].id = 236;//howl
+        otherclient->cskills[4].level = 5;
+        otherclient->cskills[5].id = 241;//staminal assist
+        otherclient->cskills[5].level = 9;
+        otherclient->cskills[6].id = 251;//Melee Weapon Mastery
+        otherclient->cskills[6].level = 9;
+        otherclient->cskills[7].id = 261;//Melee Double Attack
+        otherclient->cskills[7].level = 9;
+        otherclient->cskills[8].id = 311;//soul wreck
+        otherclient->cskills[8].level = 4;
+        otherclient->cskills[9].id = 316;//Two-Handed Weapon Mastery
+        otherclient->cskills[9].level = 9;
+        otherclient->cskills[10].id = 326;//Two-Handed Sword Mastery
+        otherclient->cskills[10].level = 9;
+        otherclient->cskills[11].id = 336;//Piercing Lunge
+        otherclient->cskills[11].level = 9;
+        otherclient->cskills[12].id = 346;//Battle howl
+        otherclient->cskills[12].level = 4;
+        otherclient->cskills[13].id = 351;//Voltage Crash
+        otherclient->cskills[13].level = 4;
+        otherclient->cskills[14].id = 356;//Spear Mastery
+        otherclient->cskills[14].level = 9;
+        otherclient->cskills[15].id = 366;//Raging Spear Strike
+        otherclient->cskills[15].level = 9;
+        otherclient->cskills[16].id = 376;//battle scream
+        otherclient->cskills[16].level = 4;
+        otherclient->cskills[17].id = 381;//spear screw
+        otherclient->cskills[17].level = 4;
+        otherclient->cskills[18].id = 386;//Axe Mastery
+        otherclient->cskills[18].level = 9;
+        otherclient->cskills[19].id = 396;//Leaping Axe Strike
+        otherclient->cskills[19].level = 9;
+        otherclient->cskills[20].id = 406;//Battle cry
+        otherclient->cskills[20].level = 4;
+        otherclient->cskills[21].id = 411;//Axe Launcher
+        otherclient->cskills[21].level = 4;
+        otherclient->cskills[22].id = 416;//taunt
+        otherclient->cskills[22].level = 5;
+        otherclient->cskills[23].id = 421;//soundles vacuum
+        otherclient->cskills[23].level = 4;
+        otherclient->cskills[24].id = 501;//battle alertniss
+        otherclient->cskills[24].level = 4;
+        otherclient->cskills[25].id = 506;//Staminal Training
+        otherclient->cskills[25].level = 9;
+        otherclient->cskills[26].id = 516;//Refreshment
+        otherclient->cskills[26].level = 9;
+        otherclient->cskills[27].id = 531;//Melee Combat Mastery
+        otherclient->cskills[27].level = 9;
+        otherclient->cskills[28].id = 541;//Two-Handed Battle Mastery
+        otherclient->cskills[28].level = 9;
+        otherclient->cskills[29].id = 551;//Battle Sense Mastery
+        otherclient->cskills[29].level = 9;
+        otherclient->cskills[30].id = 561;//Advanced Two-Handed Sword Mastery
+        otherclient->cskills[30].level = 18;
+        otherclient->cskills[31].id = 581;//Geon Archangel Crumpler
+        otherclient->cskills[31].level = 9;
+        otherclient->cskills[32].id = 591;//combat howl
+        otherclient->cskills[32].level = 4;
+        otherclient->cskills[33].id = 596;//War howl
+        otherclient->cskills[33].level = 4;
+        otherclient->cskills[34].id = 601;//Seismic Impact
+        otherclient->cskills[34].level = 9;
+        otherclient->cskills[35].id = 611;//Advanced Spear Mastery
+        otherclient->cskills[35].level = 18;
+        otherclient->cskills[36].id = 631;//Longinus's Spear
+        otherclient->cskills[36].level = 9;
+        otherclient->cskills[37].id = 641;//combat scream
+        otherclient->cskills[37].level = 4;
+        otherclient->cskills[38].id = 646;//war scream
+        otherclient->cskills[38].level = 4;
+        otherclient->cskills[39].id = 651;//Achilles's Heel Strike
+        otherclient->cskills[39].level = 9;
+        otherclient->cskills[40].id = 661;//Advanced Axe Mastery
+        otherclient->cskills[40].level = 18;
+        otherclient->cskills[41].id = 681;//Vaulting Axe Smash
+        otherclient->cskills[41].level = 9;
+        otherclient->cskills[42].id = 691;//combat cry
+        otherclient->cskills[42].level = 4;
+        otherclient->cskills[43].id = 696;//war cry
+        otherclient->cskills[43].level = 4;
+        otherclient->cskills[44].id = 701;//Axe Slugger
+        otherclient->cskills[44].level = 9;
+        otherclient->cskills[45].id = 711;//motion sensing
+        otherclient->cskills[45].level = 5;
+        otherclient->cskills[46].id = 716;//beserk
+        otherclient->cskills[46].level = 5;
+        // Mileage Items - 2 hand swor6
+        otherclient->cskills[47].id = 5603; // 849
+        otherclient->cskills[47].level = 1;
+        otherclient->cskills[48].id = 5604; // 850
+        otherclient->cskills[48].level = 1;
+        // Mileage Items - spear
+        otherclient->cskills[49].id = 5605; // 851
+        otherclient->cskills[49].level = 1;
+        otherclient->cskills[50].id = 5606; // 852
+        otherclient->cskills[50].level = 1;
+        // Mileage Items - axe
+        otherclient->cskills[51].id = 5607; // 853
+        otherclient->cskills[51].level = 1;
+        otherclient->cskills[52].id = 5608; // 854
+        otherclient->cskills[52].level = 1;
+        // Unique Items -
+        otherclient->cskills[53].id = 4211; // 569
+        otherclient->cskills[53].level = 4;
+        //Sword Master Form
+        //otherclient->cskills[54].id = 526;
+        //otherclient->cskills[54].level = 1;
 
-SendPM (thisclient, "Relogin For Get All Skills");
-}
+        SendPM (thisclient, "Relogin For Get All Skills");
+    }
 
-else if ( classid == 122 ) //Champion
-{
-otherclient->cskills[0].id = 201;//Physical Training
-otherclient->cskills[0].level = 9;
-otherclient->cskills[1].id = 211;//Repose
-otherclient->cskills[1].level = 9;
-otherclient->cskills[2].id = 221;//Defense Training
-otherclient->cskills[2].level = 9;
-otherclient->cskills[3].id = 231;//Power Owerflow
-otherclient->cskills[3].level = 5;
-otherclient->cskills[4].id = 236;//howl
-otherclient->cskills[4].level = 5;
-otherclient->cskills[5].id = 241;//staminal assist
-otherclient->cskills[5].level = 9;
-otherclient->cskills[6].id = 251;//Melee Weapon Mastery
-otherclient->cskills[6].level = 9;
-otherclient->cskills[7].id = 261;//Melee Double Attack
-otherclient->cskills[7].level = 9;
-otherclient->cskills[8].id = 311;//soul wreck
-otherclient->cskills[8].level = 4;
-otherclient->cskills[9].id = 316;//Two-Handed Weapon Mastery
-otherclient->cskills[9].level = 9;
-otherclient->cskills[10].id = 326;//Two-Handed Sword Mastery
-otherclient->cskills[10].level = 9;
-otherclient->cskills[11].id = 336;//Piercing Lunge
-otherclient->cskills[11].level = 9;
-otherclient->cskills[12].id = 346;//Battle howl
-otherclient->cskills[12].level = 4;
-otherclient->cskills[13].id = 351;//Voltage Crash
-otherclient->cskills[13].level = 4;
-otherclient->cskills[14].id = 356;//Spear Mastery
-otherclient->cskills[14].level = 9;
-otherclient->cskills[15].id = 366;//Raging Spear Strike
-otherclient->cskills[15].level = 9;
-otherclient->cskills[16].id = 376;//battle scream
-otherclient->cskills[16].level = 4;
-otherclient->cskills[17].id = 381;//spear screw
-otherclient->cskills[17].level = 4;
-otherclient->cskills[18].id = 386;//Axe Mastery
-otherclient->cskills[18].level = 9;
-otherclient->cskills[19].id = 396;//Leaping Axe Strike
-otherclient->cskills[19].level = 9;
-otherclient->cskills[20].id = 406;//Battle cry
-otherclient->cskills[20].level = 4;
-otherclient->cskills[21].id = 411;//Axe Launcher
-otherclient->cskills[21].level = 4;
-otherclient->cskills[22].id = 416;//taunt
-otherclient->cskills[22].level = 5;
-otherclient->cskills[23].id = 421;//soundles vacuum
-otherclient->cskills[23].level = 4;
-otherclient->cskills[24].id = 501;//battle alertniss
-otherclient->cskills[24].level = 4;
-otherclient->cskills[25].id = 506;//Staminal Training
-otherclient->cskills[25].level = 9;
-otherclient->cskills[26].id = 516;//Refreshment
-otherclient->cskills[26].level = 9;
-otherclient->cskills[27].id = 531;//Melee Combat Mastery
-otherclient->cskills[27].level = 9;
-otherclient->cskills[28].id = 541;//Two-Handed Battle Mastery
-otherclient->cskills[28].level = 9;
-otherclient->cskills[29].id = 551;//Battle Sense Mastery
-otherclient->cskills[29].level = 9;
-otherclient->cskills[30].id = 561;//Advanced Two-Handed Sword Mastery
-otherclient->cskills[30].level = 18;
-otherclient->cskills[31].id = 581;//Geon Archangel Crumpler
-otherclient->cskills[31].level = 9;
-otherclient->cskills[32].id = 591;//combat howl
-otherclient->cskills[32].level = 4;
-otherclient->cskills[33].id = 596;//War howl
-otherclient->cskills[33].level = 4;
-otherclient->cskills[34].id = 601;//Seismic Impact
-otherclient->cskills[34].level = 9;
-otherclient->cskills[35].id = 611;//Advanced Spear Mastery
-otherclient->cskills[35].level = 18;
-otherclient->cskills[36].id = 631;//Longinus's Spear
-otherclient->cskills[36].level = 9;
-otherclient->cskills[37].id = 641;//combat scream
-otherclient->cskills[37].level = 4;
-otherclient->cskills[38].id = 646;//war scream
-otherclient->cskills[38].level = 4;
-otherclient->cskills[39].id = 651;//Achilles's Heel Strike
-otherclient->cskills[39].level = 9;
-otherclient->cskills[40].id = 661;//Advanced Axe Mastery
-otherclient->cskills[40].level = 18;
-otherclient->cskills[41].id = 681;//Vaulting Axe Smash
-otherclient->cskills[41].level = 9;
-otherclient->cskills[42].id = 691;//combat cry
-otherclient->cskills[42].level = 4;
-otherclient->cskills[43].id = 696;//war cry
-otherclient->cskills[43].level = 4;
-otherclient->cskills[44].id = 701;//Axe Slugger
-otherclient->cskills[44].level = 9;
-otherclient->cskills[45].id = 711;//motion sensing
-otherclient->cskills[45].level = 5;
-otherclient->cskills[46].id = 716;//beserk
-otherclient->cskills[46].level = 5;
-// Mileage Items - 2 hand swor6
-otherclient->cskills[47].id = 5603; // 849
-otherclient->cskills[47].level = 1;
-otherclient->cskills[48].id = 5604; // 850
-otherclient->cskills[48].level = 1;
-// Mileage Items - spear
-otherclient->cskills[49].id = 5605; // 851
-otherclient->cskills[49].level = 1;
-otherclient->cskills[50].id = 5606; // 852
-otherclient->cskills[50].level = 1;
-// Mileage Items - axe
-otherclient->cskills[51].id = 5607; // 853
-otherclient->cskills[51].level = 1;
-otherclient->cskills[52].id = 5608; // 854
-otherclient->cskills[52].level = 1;
-// Unique Items -
-otherclient->cskills[53].id = 4211; // 569
-otherclient->cskills[53].level = 4;
-//Sword Master Form
-//otherclient->cskills[54].id = 526;
-//otherclient->cskills[54].level = 1;
+    else if ( classid == 221 ) //Mage
+    {
+        otherclient->cskills[0].id = 851;//Mana Bolt
+        otherclient->cskills[0].level = 9;
+        otherclient->cskills[1].id = 831;//Frostbiter
+        otherclient->cskills[1].level = 18;
+        otherclient->cskills[2].id = 891;//Spell Mastery
+        otherclient->cskills[2].level = 9;
+        otherclient->cskills[3].id = 861;//Mana Spear
+        otherclient->cskills[3].level = 9;
+        otherclient->cskills[4].id = 881;//Fire Ring
+        otherclient->cskills[4].level = 4;
+        otherclient->cskills[5].id = 871;//Voltage Jolt
+        otherclient->cskills[5].level = 4;
+        otherclient->cskills[6].id = 831;//Frostbiter
+        otherclient->cskills[6].level = 9;
+        otherclient->cskills[7].id = 821;//Ice Bolt
+        otherclient->cskills[7].level = 9;
+        otherclient->cskills[8].id = 841;//Wind Storm
+        otherclient->cskills[8].level = 4;
+        otherclient->cskills[9].id = 846;//Tornado
+        otherclient->cskills[9].level = 4;
+        otherclient->cskills[10].id = 876;//Icy Hailstorm
+        otherclient->cskills[10].level = 4;
+        otherclient->cskills[11].id = 886;//Meteorite Strike
+        otherclient->cskills[11].level = 4;
+        otherclient->cskills[12].id = 901;//Spirit Boost
+        otherclient->cskills[12].level = 9;
+        otherclient->cskills[13].id = 1046;//Sorceror Form
+        otherclient->cskills[13].level = 1;
+        otherclient->cskills[14].id = 1051;//Staff Combat Mastery
+        otherclient->cskills[14].level = 18;
+        otherclient->cskills[15].id = 1316;//Lucid Soul
+        otherclient->cskills[15].level = 9;
+        otherclient->cskills[16].id = 1136;//Mystic Eye
+        otherclient->cskills[16].level = 4;
+        otherclient->cskills[17].id = 1071;//Freezing Chill
+        otherclient->cskills[17].level = 9;
+        otherclient->cskills[18].id = 1101;//Soul Shock
+        otherclient->cskills[18].level = 5;
+        otherclient->cskills[19].id = 1121;//Hellfire
+        otherclient->cskills[19].level = 5;
+        otherclient->cskills[20].id = 1141;//Elemental Bolt
+        otherclient->cskills[20].level = 9;
+        otherclient->cskills[21].id = 1106;//Fierce Cudgeling
+        otherclient->cskills[21].level = 5;
+        otherclient->cskills[22].id = 1126;//Staff Stun
+        otherclient->cskills[22].level = 5;
+        otherclient->cskills[23].id = 1081;//Tempest
+        otherclient->cskills[23].level = 4;
+        otherclient->cskills[24].id = 1096;//Hurricane
+        otherclient->cskills[24].level = 5;
+        otherclient->cskills[25].id = 1151;//Aural Pierce
+        otherclient->cskills[25].level = 9;
+        otherclient->cskills[26].id = 1086;//Glaciating Chill
+        otherclient->cskills[26].level = 9;
+        otherclient->cskills[27].id = 1111;//Soul Electric
+        otherclient->cskills[27].level = 5;
+        otherclient->cskills[28].id = 1131;//Mana Burn
+        otherclient->cskills[28].level = 5;
+        otherclient->cskills[29].id = 1116;//Permafrost Chill
+        otherclient->cskills[29].level = 5;
+        otherclient->cskills[30].id = 1171;//Meteorite Flow
+        otherclient->cskills[30].level = 5;
+        otherclient->cskills[31].id = 1176;//Soul Doubt
+        otherclient->cskills[31].level = 5;
+        otherclient->cskills[32].id = 1161;//Elemental Spike
+        otherclient->cskills[32].level = 9;
+        otherclient->cskills[33].id = 801;//Staff Mastery
+        otherclient->cskills[33].level = 18;
+        otherclient->cskills[34].id = 911;//Meditation
+        otherclient->cskills[34].level = 9;
+        otherclient->cskills[35].id = 921;//Cure
+        otherclient->cskills[35].level = 5;
+        // Mileage Items - mage
+        otherclient->cskills[36].id = 5702; // 855
+        otherclient->cskills[36].level = 1;
+        otherclient->cskills[37].id = 5703; // 856
+        otherclient->cskills[37].level = 1;
+        // Mileage Item - Soul Recall
+        otherclient->cskills[38].id = 5701; // 592
+        otherclient->cskills[38].level = 1;
+        // Unique Item - Soul Recall
+        //otherclient->cskills[39].id = 4401; // 560
+        //otherclient->cskills[39].level = 3;
 
-SendPM (thisclient, "Relogin For Get All Skills");
-}
+        SendPM (thisclient, "Relogin For Get All Skills");
+    }
+    else if ( classid == 222 ) //Cleric
+    {
+        otherclient->cskills[0].id = 931;//Wand Mastery
+        otherclient->cskills[0].level = 18;
+        otherclient->cskills[1].id = 911;//Meditation
+        otherclient->cskills[1].level = 9;
+        otherclient->cskills[2].id = 921;//Cure
+        otherclient->cskills[2].level = 5;
+        otherclient->cskills[3].id = 926;//Hustle Charm
+        otherclient->cskills[3].level = 5;
+        otherclient->cskills[4].id = 951;//Mana Drop
+        otherclient->cskills[4].level = 9;
+        otherclient->cskills[5].id = 986;//Wallop Charm
+        otherclient->cskills[5].level = 9;
+        otherclient->cskills[6].id = 1021;//Bonfire
+        otherclient->cskills[6].level = 9;
+        otherclient->cskills[7].id = 1031;//Party Heal
+        otherclient->cskills[7].level = 5;
+        otherclient->cskills[8].id = 976;//Soul Revive
+        otherclient->cskills[8].level = 5;
+        otherclient->cskills[9].id = 996;//Resilience Charm
+        otherclient->cskills[9].level = 9;
+        otherclient->cskills[10].id = 1006;//Purify
+        otherclient->cskills[10].level = 4;
+        otherclient->cskills[11].id = 1036;//Blessed Mind
+        otherclient->cskills[11].level = 4;
+        otherclient->cskills[12].id = 1041;//Integrity
+        otherclient->cskills[12].level = 5;
+        otherclient->cskills[13].id = 961;//Voltage Shock
+        otherclient->cskills[13].level = 9;
+        otherclient->cskills[14].id = 971;//Summon Phantom Sword
+        otherclient->cskills[14].level = 5;
+        otherclient->cskills[15].id = 981;//Recovery
+        otherclient->cskills[15].level = 5;
+        otherclient->cskills[16].id = 1011;//Precision Charm
+        otherclient->cskills[16].level = 9;
+        otherclient->cskills[17].id = 1181;//Untouchable Aura
+        otherclient->cskills[17].level = 1;
+        otherclient->cskills[18].id = 1186;//Magic Battle Mastery
+        otherclient->cskills[18].level = 18;
+        otherclient->cskills[19].id = 1296;//Dragon Skin
+        otherclient->cskills[19].level = 9;
+        otherclient->cskills[20].id = 1306;//Chant Focusing
+        otherclient->cskills[20].level = 9;
+        otherclient->cskills[21].id = 1241;//Heavenly Grace
+        otherclient->cskills[21].level = 5;
+        otherclient->cskills[22].id = 1211;//Mana Wave
+        otherclient->cskills[22].level = 9;
+        otherclient->cskills[23].id = 1206;//Summon Mastery
+        otherclient->cskills[23].level = 4;
+        otherclient->cskills[24].id = 1246;//Battle Charm
+        otherclient->cskills[24].level = 9;
+        otherclient->cskills[26].id = 1256;//Salamander Flame
+        otherclient->cskills[26].level = 3;
+        otherclient->cskills[27].id = 1266;//Clobber Charm
+        otherclient->cskills[27].level = 5;
+        otherclient->cskills[28].id = 1276;//Critical Charm
+        otherclient->cskills[28].level = 9;
+        otherclient->cskills[29].id = 1271;//Evasive Charm
+        otherclient->cskills[29].level = 5;
+        otherclient->cskills[30].id = 1226;//Voltage Storm
+        otherclient->cskills[30].level = 9;
+        otherclient->cskills[31].id = 1236;//Summon Firegon
+        otherclient->cskills[31].level = 5;
+        otherclient->cskills[32].id = 1261;//Mana Flame
+        otherclient->cskills[32].level = 3;
+        otherclient->cskills[33].id = 1176;//Soul Doubt
+        otherclient->cskills[33].level = 5;
+        otherclient->cskills[34].id = 1286;//Valkyrie Charm
+        otherclient->cskills[34].level = 9;
+        otherclient->cskills[35].id = 1221;//Summon Elemental
+        otherclient->cskills[35].level = 5;
+        // Mileage Items - cleric
+        otherclient->cskills[36].id = 5704; // 857
+        otherclient->cskills[36].level = 1;
+        otherclient->cskills[37].id = 5705; // 858
+        otherclient->cskills[37].level = 1;
+        // Mileage Item - Soul Recall
+        otherclient->cskills[38].id = 5701; // 592
+        otherclient->cskills[38].level = 1;
+        // Unique Item - Soul Recall
+        otherclient->cskills[39].id = 4401; // 560
+        otherclient->cskills[39].level = 3;
 
-else if ( classid == 221 ) //Mage
-{
-otherclient->cskills[0].id = 851;//Mana Bolt
-otherclient->cskills[0].level = 9;
-otherclient->cskills[1].id = 831;//Frostbiter
-otherclient->cskills[1].level = 18;
-otherclient->cskills[2].id = 891;//Spell Mastery
-otherclient->cskills[2].level = 9;
-otherclient->cskills[3].id = 861;//Mana Spear
-otherclient->cskills[3].level = 9;
-otherclient->cskills[4].id = 881;//Fire Ring
-otherclient->cskills[4].level = 4;
-otherclient->cskills[5].id = 871;//Voltage Jolt
-otherclient->cskills[5].level = 4;
-otherclient->cskills[6].id = 831;//Frostbiter
-otherclient->cskills[6].level = 9;
-otherclient->cskills[7].id = 821;//Ice Bolt
-otherclient->cskills[7].level = 9;
-otherclient->cskills[8].id = 841;//Wind Storm
-otherclient->cskills[8].level = 4;
-otherclient->cskills[9].id = 846;//Tornado
-otherclient->cskills[9].level = 4;
-otherclient->cskills[10].id = 876;//Icy Hailstorm
-otherclient->cskills[10].level = 4;
-otherclient->cskills[11].id = 886;//Meteorite Strike
-otherclient->cskills[11].level = 4;
-otherclient->cskills[12].id = 901;//Spirit Boost
-otherclient->cskills[12].level = 9;
-otherclient->cskills[13].id = 1046;//Sorceror Form
-otherclient->cskills[13].level = 1;
-otherclient->cskills[14].id = 1051;//Staff Combat Mastery
-otherclient->cskills[14].level = 18;
-otherclient->cskills[15].id = 1316;//Lucid Soul
-otherclient->cskills[15].level = 9;
-otherclient->cskills[16].id = 1136;//Mystic Eye
-otherclient->cskills[16].level = 4;
-otherclient->cskills[17].id = 1071;//Freezing Chill
-otherclient->cskills[17].level = 9;
-otherclient->cskills[18].id = 1101;//Soul Shock
-otherclient->cskills[18].level = 5;
-otherclient->cskills[19].id = 1121;//Hellfire
-otherclient->cskills[19].level = 5;
-otherclient->cskills[20].id = 1141;//Elemental Bolt
-otherclient->cskills[20].level = 9;
-otherclient->cskills[21].id = 1106;//Fierce Cudgeling
-otherclient->cskills[21].level = 5;
-otherclient->cskills[22].id = 1126;//Staff Stun
-otherclient->cskills[22].level = 5;
-otherclient->cskills[23].id = 1081;//Tempest
-otherclient->cskills[23].level = 4;
-otherclient->cskills[24].id = 1096;//Hurricane
-otherclient->cskills[24].level = 5;
-otherclient->cskills[25].id = 1151;//Aural Pierce
-otherclient->cskills[25].level = 9;
-otherclient->cskills[26].id = 1086;//Glaciating Chill
-otherclient->cskills[26].level = 9;
-otherclient->cskills[27].id = 1111;//Soul Electric
-otherclient->cskills[27].level = 5;
-otherclient->cskills[28].id = 1131;//Mana Burn
-otherclient->cskills[28].level = 5;
-otherclient->cskills[29].id = 1116;//Permafrost Chill
-otherclient->cskills[29].level = 5;
-otherclient->cskills[30].id = 1171;//Meteorite Flow
-otherclient->cskills[30].level = 5;
-otherclient->cskills[31].id = 1176;//Soul Doubt
-otherclient->cskills[31].level = 5;
-otherclient->cskills[32].id = 1161;//Elemental Spike
-otherclient->cskills[32].level = 9;
-otherclient->cskills[33].id = 801;//Staff Mastery
-otherclient->cskills[33].level = 18;
-otherclient->cskills[34].id = 911;//Meditation
-otherclient->cskills[34].level = 9;
-otherclient->cskills[35].id = 921;//Cure
-otherclient->cskills[35].level = 5;
-// Mileage Items - mage
-otherclient->cskills[36].id = 5702; // 855
-otherclient->cskills[36].level = 1;
-otherclient->cskills[37].id = 5703; // 856
-otherclient->cskills[37].level = 1;
-// Mileage Item - Soul Recall
-otherclient->cskills[38].id = 5701; // 592
-otherclient->cskills[38].level = 1;
-// Unique Item - Soul Recall
-//otherclient->cskills[39].id = 4401; // 560
-//otherclient->cskills[39].level = 3;
+        SendPM (thisclient, "Relogin For Get All Skills");
+    }
+    else if ( classid == 321 ) //Raider
+    {
+        otherclient->cskills[0].id = 1401;//Combat Mastery
+        otherclient->cskills[0].level = 9;
+        otherclient->cskills[1].id = 1521;//Knuckle Mastery
+        otherclient->cskills[1].level = 18;
+        otherclient->cskills[2].id = 1541;//Double Slash
+        otherclient->cskills[2].level = 9;
+        otherclient->cskills[3].id = 1551;//Focused Impact
+        otherclient->cskills[3].level = 9;
+        otherclient->cskills[4].id = 1561;//pison knife
+        otherclient->cskills[4].level = 9;
+        otherclient->cskills[5].id = 1571;//triple slash
+        otherclient->cskills[5].level = 9;
+        otherclient->cskills[6].id = 1581;//katar upper
+        otherclient->cskills[6].level = 9;
+        otherclient->cskills[7].id = 1591;//dividing cleave
+        otherclient->cskills[7].level = 9;
+        otherclient->cskills[8].id = 1601;//venom knife
+        otherclient->cskills[8].level = 5;
+        otherclient->cskills[9].id = 1606;//Katar Mastery
+        otherclient->cskills[9].level = 9;
+        otherclient->cskills[10].id = 1616;//Dual Weapon Mastery
+        otherclient->cskills[10].level = 9;
+        otherclient->cskills[11].id = 1626;//stealth
+        otherclient->cskills[11].level = 4;
+        otherclient->cskills[12].id = 1631;//ferocity accordance
+        otherclient->cskills[12].level = 4;
+        otherclient->cskills[13].id = 1636;//weaken
+        otherclient->cskills[13].level = 4;
+        otherclient->cskills[14].id = 1641;//morror phantasim
+        otherclient->cskills[14].level = 4;
+        otherclient->cskills[15].id = 1646;//flame hawk
+        otherclient->cskills[15].level = 4;
+        otherclient->cskills[16].id = 1651;//spiral kick
+        otherclient->cskills[16].level = 4;
+        otherclient->cskills[17].id = 1776;//Assassin Form
+        otherclient->cskills[17].level = 1;
+        otherclient->cskills[18].id = 1781;//Combat Weapon Mastery
+        otherclient->cskills[18].level = 18;
+        otherclient->cskills[19].id = 1801;//Combo Slash
+        otherclient->cskills[19].level = 9;
+        otherclient->cskills[20].id = 1811;//mystic knife
+        otherclient->cskills[20].level = 4;
+        otherclient->cskills[21].id = 1946;//plasma falcon
+        otherclient->cskills[21].level = 4;
+        otherclient->cskills[22].id = 1816;//Crazy-Style Slash
+        otherclient->cskills[22].level = 9;
+        otherclient->cskills[23].id = 1826;//Quick-Style Assualt
+        otherclient->cskills[23].level = 9;
+        otherclient->cskills[24].id = 1951;//circle break
+        otherclient->cskills[24].level = 4;
+        otherclient->cskills[25].id = 1836;//screw slash
+        otherclient->cskills[25].level = 4;
+        otherclient->cskills[26].id = 1841;//
+        otherclient->cskills[26].level = 9;
+        otherclient->cskills[27].id = 1851;//cloaking
+        otherclient->cskills[27].level = 4;
+        otherclient->cskills[28].id = 1856;//evasion guard
+        otherclient->cskills[28].level = 4;
+        otherclient->cskills[29].id = 1861;//Advanced Katar Mastery
+        otherclient->cskills[29].level = 9;
+        otherclient->cskills[30].id = 1871;//bloody assault
+        otherclient->cskills[30].level = 4;
+        otherclient->cskills[31].id = 1881;//critical accordance
+        otherclient->cskills[31].level = 4;
+        otherclient->cskills[32].id = 1886;//mental storm
+        otherclient->cskills[32].level = 4;
+        otherclient->cskills[33].id = 1891;//enfeeblement
+        otherclient->cskills[33].level = 4;
+        otherclient->cskills[34].id = 1896;//Phoenix Slash
+        otherclient->cskills[34].level = 9;
+        otherclient->cskills[35].id = 1906;//Flame Slash
+        otherclient->cskills[35].level = 9;
+        otherclient->cskills[36].id = 1916;//Freezing Assualt
+        otherclient->cskills[36].level = 9;
+        otherclient->cskills[37].id = 1926;//Precision Slash
+        otherclient->cskills[37].level = 9;
+        otherclient->cskills[38].id = 1936;//Precision Assualt
+        otherclient->cskills[38].level = 9;
+        otherclient->cskills[39].id = 1876;//vicious accordance
+        otherclient->cskills[39].level = 4;
+        otherclient->cskills[40].id = 1811;//Mystic Knife
+        otherclient->cskills[40].level = 4;
+        otherclient->cskills[41].id = 1506;//sprint
+        otherclient->cskills[41].level = 5;
+        otherclient->cskills[42].id = 1511;//velocity accordance
+        otherclient->cskills[42].level = 5;
+        otherclient->cskills[43].id = 1766;//rapid twitch
+        otherclient->cskills[43].level = 5;
+        otherclient->cskills[44].id = 1761;//hawker accordance
+        otherclient->cskills[44].level = 5;
+        otherclient->cskills[45].id = 1516;//secound sight
+        otherclient->cskills[45].level = 4;
+        otherclient->cskills[46].id = 1771;//requiem
+        otherclient->cskills[46].level = 4;
+        // Mileage Items - raider - katar
+        otherclient->cskills[47].id = 5803; // 861
+        otherclient->cskills[47].level = 1;
+        otherclient->cskills[48].id = 5804; // 862
+        otherclient->cskills[48].level = 1;
+        // Mileage Items - raider - dual
+        otherclient->cskills[49].id = 5805; // 863
+        otherclient->cskills[49].level = 1;
+        otherclient->cskills[50].id = 5806; // 864
+        otherclient->cskills[50].level = 1;
 
-SendPM (thisclient, "Relogin For Get All Skills");
-}
+        SendPM (thisclient, "Relogin For Get All Skills");
+    }
+    else if ( classid == 322 ) //Scout
+    {
+        otherclient->cskills[0].id = 1401;//Combat Mastery
+        otherclient->cskills[0].level = 9;
+        otherclient->cskills[1].id = 1411;//Bow Mastery
+        otherclient->cskills[1].level = 18;
+        otherclient->cskills[2].id = 1431;//Clamp Arrow
+        otherclient->cskills[2].level = 9;
+        otherclient->cskills[3].id = 1441;//Double Arrow
+        otherclient->cskills[3].level = 9;
+        otherclient->cskills[4].id = 1451;//Backpack Proficiency
+        otherclient->cskills[4].level = 9;
+        otherclient->cskills[5].id = 1461;//Mana Profut
+        otherclient->cskills[5].level = 9;
+        otherclient->cskills[6].id = 1471;//offensive focus
+        otherclient->cskills[6].level = 5;
+        otherclient->cskills[7].id = 1496;//soul disciplin
+        otherclient->cskills[7].level = 5;
+        otherclient->cskills[8].id = 1476;//Shackle Arrow
+        otherclient->cskills[8].level = 9;
+        otherclient->cskills[9].id = 1486;//Triple Arrow
+        otherclient->cskills[9].level = 9;
+        otherclient->cskills[10].id = 1501;//stun arrow
+        otherclient->cskills[10].level = 4;
+        otherclient->cskills[11].id = 1656;//Flame Hawk
+        otherclient->cskills[11].level = 1;
+        otherclient->cskills[12].id = 1661;//Advanced Bow Mastery
+        otherclient->cskills[12].level = 18;
+        otherclient->cskills[13].id = 1681;//Call Hawk
+        otherclient->cskills[13].level = 9;
+        otherclient->cskills[14].id = 1691;//Trap Arrow
+        otherclient->cskills[14].level = 9;
+        otherclient->cskills[15].id = 1701;//Aimed Triple Arrow
+        otherclient->cskills[15].level = 9;
+        otherclient->cskills[16].id = 1711;//camoflage
+        otherclient->cskills[16].level = 5;
+        otherclient->cskills[17].id = 1716;//longinus`s Incoration
+        otherclient->cskills[17].level = 5;
+        otherclient->cskills[18].id = 1721;//mana flow
+        otherclient->cskills[18].level = 9;
+        otherclient->cskills[19].id = 1731;//point black arrow
+        otherclient->cskills[19].level = 5;
+        otherclient->cskills[20].id = 1736;//Entangling Arrow
+        otherclient->cskills[20].level = 9;
+        otherclient->cskills[21].id = 1746;//Phoenix Arrow
+        otherclient->cskills[21].level = 9;
+        otherclient->cskills[22].id = 1756;//soul gurrent
+        otherclient->cskills[22].level = 5;
+        otherclient->cskills[23].id = 1506;//sprint
+        otherclient->cskills[23].level = 5;
+        otherclient->cskills[24].id = 1766;//rapid twitch
+        otherclient->cskills[24].level = 5;
+        otherclient->cskills[25].id = 1511;//Velocity accourdance
+        otherclient->cskills[25].level = 5;
+        otherclient->cskills[26].id = 1761;//Hawker accordance
+        otherclient->cskills[26].level = 5;
+        otherclient->cskills[27].id = 1516;//secound sight
+        otherclient->cskills[27].level = 4;
+        otherclient->cskills[28].id = 1771;//requiem
+        otherclient->cskills[28].level = 4;
+        otherclient->cskills[29].id = 1956;//impact arrow
+        otherclient->cskills[29].level = 6;
+        // Mileage Items - scout
+        otherclient->cskills[30].id = 5801; // 859
+        otherclient->cskills[30].level = 1;
+        otherclient->cskills[31].id = 5802; // 860
+        otherclient->cskills[31].level = 1;
+        // Unique Items - hawker
+        otherclient->cskills[32].id = 4601; // call beast // 565
+        otherclient->cskills[32].level = 9;
 
-else if ( classid == 222 ) //Cleric
-{
-otherclient->cskills[0].id = 931;//Wand Mastery
-otherclient->cskills[0].level = 18;
-otherclient->cskills[1].id = 911;//Meditation
-otherclient->cskills[1].level = 9;
-otherclient->cskills[2].id = 921;//Cure
-otherclient->cskills[2].level = 5;
-otherclient->cskills[3].id = 926;//Hustle Charm
-otherclient->cskills[3].level = 5;
-otherclient->cskills[4].id = 951;//Mana Drop
-otherclient->cskills[4].level = 9;
-otherclient->cskills[5].id = 986;//Wallop Charm
-otherclient->cskills[5].level = 9;
-otherclient->cskills[6].id = 1021;//Bonfire
-otherclient->cskills[6].level = 9;
-otherclient->cskills[7].id = 1031;//Party Heal
-otherclient->cskills[7].level = 5;
-otherclient->cskills[8].id = 976;//Soul Revive
-otherclient->cskills[8].level = 5;
-otherclient->cskills[9].id = 996;//Resilience Charm
-otherclient->cskills[9].level = 9;
-otherclient->cskills[10].id = 1006;//Purify
-otherclient->cskills[10].level = 4;
-otherclient->cskills[11].id = 1036;//Blessed Mind
-otherclient->cskills[11].level = 4;
-otherclient->cskills[12].id = 1041;//Integrity
-otherclient->cskills[12].level = 5;
-otherclient->cskills[13].id = 961;//Voltage Shock
-otherclient->cskills[13].level = 9;
-otherclient->cskills[14].id = 971;//Summon Phantom Sword
-otherclient->cskills[14].level = 5;
-otherclient->cskills[15].id = 981;//Recovery
-otherclient->cskills[15].level = 5;
-otherclient->cskills[16].id = 1011;//Precision Charm
-otherclient->cskills[16].level = 9;
-otherclient->cskills[17].id = 1181;//Untouchable Aura
-otherclient->cskills[17].level = 1;
-otherclient->cskills[18].id = 1186;//Magic Battle Mastery
-otherclient->cskills[18].level = 18;
-otherclient->cskills[19].id = 1296;//Dragon Skin
-otherclient->cskills[19].level = 9;
-otherclient->cskills[20].id = 1306;//Chant Focusing
-otherclient->cskills[20].level = 9;
-otherclient->cskills[21].id = 1241;//Heavenly Grace
-otherclient->cskills[21].level = 5;
-otherclient->cskills[22].id = 1211;//Mana Wave
-otherclient->cskills[22].level = 9;
-otherclient->cskills[23].id = 1206;//Summon Mastery
-otherclient->cskills[23].level = 4;
-otherclient->cskills[24].id = 1246;//Battle Charm
-otherclient->cskills[24].level = 9;
-otherclient->cskills[26].id = 1256;//Salamander Flame
-otherclient->cskills[26].level = 3;
-otherclient->cskills[27].id = 1266;//Clobber Charm
-otherclient->cskills[27].level = 5;
-otherclient->cskills[28].id = 1276;//Critical Charm
-otherclient->cskills[28].level = 9;
-otherclient->cskills[29].id = 1271;//Evasive Charm
-otherclient->cskills[29].level = 5;
-otherclient->cskills[30].id = 1226;//Voltage Storm
-otherclient->cskills[30].level = 9;
-otherclient->cskills[31].id = 1236;//Summon Firegon
-otherclient->cskills[31].level = 5;
-otherclient->cskills[32].id = 1261;//Mana Flame
-otherclient->cskills[32].level = 3;
-otherclient->cskills[33].id = 1176;//Soul Doubt
-otherclient->cskills[33].level = 5;
-otherclient->cskills[34].id = 1286;//Valkyrie Charm
-otherclient->cskills[34].level = 9;
-otherclient->cskills[35].id = 1221;//Summon Elemental
-otherclient->cskills[35].level = 5;
-// Mileage Items - cleric
-otherclient->cskills[36].id = 5704; // 857
-otherclient->cskills[36].level = 1;
-otherclient->cskills[37].id = 5705; // 858
-otherclient->cskills[37].level = 1;
-// Mileage Item - Soul Recall
-otherclient->cskills[38].id = 5701; // 592
-otherclient->cskills[38].level = 1;
-// Unique Item - Soul Recall
-otherclient->cskills[39].id = 4401; // 560
-otherclient->cskills[39].level = 3;
+        SendPM (thisclient, "Relogin For Get All Skills");
+    }
 
-SendPM (thisclient, "Relogin For Get All Skills");
-}
+    else if ( classid == 421 ) //Bourgeois
+    {
+        otherclient->cskills[0].id = 2001;//Trigger Finger
+        otherclient->cskills[0].level = 9;
+        otherclient->cskills[1].id = 2011;//Tough Gunner
+        otherclient->cskills[1].level = 18;
+        otherclient->cskills[2].id = 2036;//Twin Shot
+        otherclient->cskills[2].level = 9;
+        otherclient->cskills[3].id = 2031;//Intesify
+        otherclient->cskills[3].level = 5;
+        otherclient->cskills[4].id = 2056;//selsam gaint
+        otherclient->cskills[4].level = 5;
+        otherclient->cskills[5].id = 2046;//craftsman talent
+        otherclient->cskills[5].level = 5;
+        otherclient->cskills[6].id = 2051;//Discount
+        otherclient->cskills[6].level = 5;
+        otherclient->cskills[7].id = 2061;//Sniping
+        otherclient->cskills[7].level = 9;
+        otherclient->cskills[8].id = 2071;//master twin shot
+        otherclient->cskills[8].level = 5;
+        otherclient->cskills[9].id = 2076;//Demolition Expertise
+        otherclient->cskills[9].level = 9;
+        otherclient->cskills[10].id = 2086;//backpack mastery
+        otherclient->cskills[10].level = 5;
+        otherclient->cskills[11].id = 2091;//illusion
+        otherclient->cskills[11].level = 5;
+        otherclient->cskills[12].id = 2096;//mercenery employment
+        otherclient->cskills[12].level = 4;
+        otherclient->cskills[13].id = 2111;//weapon expertise
+        otherclient->cskills[13].level = 5;
+        otherclient->cskills[14].id = 2101;//employ warrior
+        otherclient->cskills[14].level = 5;
+        otherclient->cskills[15].id = 2106;//employ hunter
+        otherclient->cskills[15].level = 5;
+        otherclient->cskills[16].id = 2256;//Veteran Sniper
+        otherclient->cskills[16].level = 9;
+        otherclient->cskills[17].id = 2266;//Ace Gunner
+        otherclient->cskills[17].level = 18;
+        otherclient->cskills[18].id = 2286;//Merchandising
+        otherclient->cskills[18].level = 9;
+        otherclient->cskills[19].id = 2296;//Third Eye
+        otherclient->cskills[19].level = 1;
+        otherclient->cskills[20].id = 2301;//triple shot
+        otherclient->cskills[20].level = 5;
+        otherclient->cskills[21].id = 2316;//Zulie Bolt
+        otherclient->cskills[21].level = 9;
+        otherclient->cskills[22].id = 2306;//Venemous Shot
+        otherclient->cskills[22].level = 9;
+        otherclient->cskills[23].id = 2401;//master triple shot
+        otherclient->cskills[23].level = 5;
+        otherclient->cskills[24].id = 2326;//Shrapnel Burst
+        otherclient->cskills[24].level = 9;
+        otherclient->cskills[25].id = 2336;//Chaotic Burst
+        otherclient->cskills[25].level = 9;
+        otherclient->cskills[26].id = 2346;//windstep
+        otherclient->cskills[26].level = 5;
+        otherclient->cskills[27].id = 2356;//stockpile
+        otherclient->cskills[27].level = 9;
+        otherclient->cskills[28].id = 2366;//weapon agument
+        otherclient->cskills[28].level = 5;
+        otherclient->cskills[29].id = 2351;//light step
+        otherclient->cskills[29].level = 5;
+        otherclient->cskills[30].id = 2376;//summon dreag knight
+        otherclient->cskills[30].level = 5;
+        otherclient->cskills[31].id = 2371;//jury rigging
+        otherclient->cskills[31].level = 5;
+        otherclient->cskills[32].id = 2381;//Toxic Shot
+        otherclient->cskills[32].level = 9;
+        otherclient->cskills[33].id = 2391;//Zulie Stun
+        otherclient->cskills[33].level = 9;
+        otherclient->cskills[34].id = 2406;//Cannon Splash Burst
+        otherclient->cskills[34].level = 9;
+        otherclient->cskills[35].id = 2416;//Flame Stun Burst
+        otherclient->cskills[35].level = 9;
+        otherclient->cskills[36].id = 2426;//reflect aura
+        otherclient->cskills[36].level = 5;
+        otherclient->cskills[37].id = 2431;//dual layer
+        otherclient->cskills[37].level = 5;
+        // Mileage Items - Borg - Launcher
+        otherclient->cskills[38].id = 5904; // 867
+        otherclient->cskills[38].level = 1;
+        otherclient->cskills[39].id = 5905; // 868
+        otherclient->cskills[39].level = 1;
+        //added for ver 144
+        otherclient->cskills[40].id = 2461;//aimed triple shot
+        otherclient->cskills[40].level = 5;
+        SendPM (thisclient, "Relogin For Get All Skills");
+    }
 
-else if ( classid == 321 ) //Raider
-{
-otherclient->cskills[0].id = 1401;//Combat Mastery
-otherclient->cskills[0].level = 9;
-otherclient->cskills[1].id = 1521;//Knuckle Mastery
-otherclient->cskills[1].level = 18;
-otherclient->cskills[2].id = 1541;//Double Slash
-otherclient->cskills[2].level = 9;
-otherclient->cskills[3].id = 1551;//Focused Impact
-otherclient->cskills[3].level = 9;
-otherclient->cskills[4].id = 1561;//pison knife
-otherclient->cskills[4].level = 9;
-otherclient->cskills[5].id = 1571;//triple slash
-otherclient->cskills[5].level = 9;
-otherclient->cskills[6].id = 1581;//katar upper
-otherclient->cskills[6].level = 9;
-otherclient->cskills[7].id = 1591;//dividing cleave
-otherclient->cskills[7].level = 9;
-otherclient->cskills[8].id = 1601;//venom knife
-otherclient->cskills[8].level = 5;
-otherclient->cskills[9].id = 1606;//Katar Mastery
-otherclient->cskills[9].level = 9;
-otherclient->cskills[10].id = 1616;//Dual Weapon Mastery
-otherclient->cskills[10].level = 9;
-otherclient->cskills[11].id = 1626;//stealth
-otherclient->cskills[11].level = 4;
-otherclient->cskills[12].id = 1631;//ferocity accordance
-otherclient->cskills[12].level = 4;
-otherclient->cskills[13].id = 1636;//weaken
-otherclient->cskills[13].level = 4;
-otherclient->cskills[14].id = 1641;//morror phantasim
-otherclient->cskills[14].level = 4;
-otherclient->cskills[15].id = 1646;//flame hawk
-otherclient->cskills[15].level = 4;
-otherclient->cskills[16].id = 1651;//spiral kick
-otherclient->cskills[16].level = 4;
-otherclient->cskills[17].id = 1776;//Assassin Form
-otherclient->cskills[17].level = 1;
-otherclient->cskills[18].id = 1781;//Combat Weapon Mastery
-otherclient->cskills[18].level = 18;
-otherclient->cskills[19].id = 1801;//Combo Slash
-otherclient->cskills[19].level = 9;
-otherclient->cskills[20].id = 1811;//mystic knife
-otherclient->cskills[20].level = 4;
-otherclient->cskills[21].id = 1946;//plasma falcon
-otherclient->cskills[21].level = 4;
-otherclient->cskills[22].id = 1816;//Crazy-Style Slash
-otherclient->cskills[22].level = 9;
-otherclient->cskills[23].id = 1826;//Quick-Style Assualt
-otherclient->cskills[23].level = 9;
-otherclient->cskills[24].id = 1951;//circle break
-otherclient->cskills[24].level = 4;
-otherclient->cskills[25].id = 1836;//screw slash
-otherclient->cskills[25].level = 4;
-otherclient->cskills[26].id = 1841;//
-otherclient->cskills[26].level = 9;
-otherclient->cskills[27].id = 1851;//cloaking
-otherclient->cskills[27].level = 4;
-otherclient->cskills[28].id = 1856;//evasion guard
-otherclient->cskills[28].level = 4;
-otherclient->cskills[29].id = 1861;//Advanced Katar Mastery
-otherclient->cskills[29].level = 9;
-otherclient->cskills[30].id = 1871;//bloody assault
-otherclient->cskills[30].level = 4;
-otherclient->cskills[31].id = 1881;//critical accordance
-otherclient->cskills[31].level = 4;
-otherclient->cskills[32].id = 1886;//mental storm
-otherclient->cskills[32].level = 4;
-otherclient->cskills[33].id = 1891;//enfeeblement
-otherclient->cskills[33].level = 4;
-otherclient->cskills[34].id = 1896;//Phoenix Slash
-otherclient->cskills[34].level = 9;
-otherclient->cskills[35].id = 1906;//Flame Slash
-otherclient->cskills[35].level = 9;
-otherclient->cskills[36].id = 1916;//Freezing Assualt
-otherclient->cskills[36].level = 9;
-otherclient->cskills[37].id = 1926;//Precision Slash
-otherclient->cskills[37].level = 9;
-otherclient->cskills[38].id = 1936;//Precision Assualt
-otherclient->cskills[38].level = 9;
-otherclient->cskills[39].id = 1876;//vicious accordance
-otherclient->cskills[39].level = 4;
-otherclient->cskills[40].id = 1811;//Mystic Knife
-otherclient->cskills[40].level = 4;
-otherclient->cskills[41].id = 1506;//sprint
-otherclient->cskills[41].level = 5;
-otherclient->cskills[42].id = 1511;//velocity accordance
-otherclient->cskills[42].level = 5;
-otherclient->cskills[43].id = 1766;//rapid twitch
-otherclient->cskills[43].level = 5;
-otherclient->cskills[44].id = 1761;//hawker accordance
-otherclient->cskills[44].level = 5;
-otherclient->cskills[45].id = 1516;//secound sight
-otherclient->cskills[45].level = 4;
-otherclient->cskills[46].id = 1771;//requiem
-otherclient->cskills[46].level = 4;
-// Mileage Items - raider - katar
-otherclient->cskills[47].id = 5803; // 861
-otherclient->cskills[47].level = 1;
-otherclient->cskills[48].id = 5804; // 862
-otherclient->cskills[48].level = 1;
-// Mileage Items - raider - dual
-otherclient->cskills[49].id = 5805; // 863
-otherclient->cskills[49].level = 1;
-otherclient->cskills[50].id = 5806; // 864
-otherclient->cskills[50].level = 1;
+    else if ( classid == 422 ) //Artisan
+    {
+        //Common Tab
+        otherclient->cskills[0].id = 2031;//Intensify Weapon
+        otherclient->cskills[0].level = 5;
+        otherclient->cskills[1].id = 2036;//Twin Shot
+        otherclient->cskills[1].level = 9;
+        otherclient->cskills[2].id = 2046;//Craftsman's Talent
+        otherclient->cskills[2].level = 5;
+        otherclient->cskills[3].id = 2051;//Discount
+        otherclient->cskills[3].level = 5;
+        otherclient->cskills[4].id = 2056;//Salesman Gait
+        otherclient->cskills[4].level = 5;
+        otherclient->cskills[5].id = 2086;//Backpack Mastery
+        otherclient->cskills[5].level = 5;
+        otherclient->cskills[6].id = 2301;//Triple Shot
+        otherclient->cskills[6].level = 5;
+        otherclient->cskills[7].id = 2461;//Aimed Triple Shot
+        otherclient->cskills[7].level = 5;
+        //Crafting Tab
+        otherclient->cskills[8].id = 2116;//Weapon Research
+        otherclient->cskills[8].level = 9;
+        otherclient->cskills[9].id = 2126;//Armor Research
+        otherclient->cskills[9].level = 9;
+        otherclient->cskills[10].id = 2136;//SubItem Research
+        otherclient->cskills[10].level = 9;
+        otherclient->cskills[11].id = 2146;//Alchemy Research
+        otherclient->cskills[11].level = 9;
+        otherclient->cskills[12].id = 2156;//Weapon Craft
+        otherclient->cskills[12].level = 9;
+        otherclient->cskills[13].id = 2166;//Dark Blade Research
+        otherclient->cskills[13].level = 9;
+        otherclient->cskills[14].id = 2176;//Beam Blade Research
+        otherclient->cskills[14].level = 9;
+        otherclient->cskills[15].id = 2186;//Metal Blade Research
+        otherclient->cskills[15].level = 9;
+        otherclient->cskills[16].id = 2196;//Timber Blade Research
+        otherclient->cskills[16].level = 9;
+        otherclient->cskills[17].id = 2206;//Armor Craft
+        otherclient->cskills[17].level = 9;
+        otherclient->cskills[18].id = 2216;//Earth Blade Research
+        otherclient->cskills[18].level = 9;
+        otherclient->cskills[19].id = 2226;//Ocean Blade Research
+        otherclient->cskills[19].level = 9;
+        otherclient->cskills[20].id = 2236;//SubItem Craft
+        otherclient->cskills[20].level = 9;
+        otherclient->cskills[21].id = 2246;//Alchemy Craft
+        otherclient->cskills[21].level = 9;
+        otherclient->cskills[22].id = 2666;//Weapon Darkening
+        otherclient->cskills[22].level = 9;
+        otherclient->cskills[23].id = 2676;//Weapon Hardening
+        otherclient->cskills[23].level = 9;
+        otherclient->cskills[24].id = 2686;//Weapon Balancing
+        otherclient->cskills[24].level = 9;
+        otherclient->cskills[25].id = 2696;//Weapon Enchanting
+        otherclient->cskills[25].level = 9;
+        otherclient->cskills[26].id = 2706;//Armor Reinforcement
+        otherclient->cskills[26].level = 9;
+        otherclient->cskills[27].id = 2716;//Armor Endowment
+        otherclient->cskills[27].level = 9;
+        //Artizan Tab
+        otherclient->cskills[28].id = 2441;//Top Gunner
+        otherclient->cskills[28].level = 18;
+        otherclient->cskills[29].id = 2466;//Poison Shot
+        otherclient->cskills[29].level = 9;
+        otherclient->cskills[30].id = 2476;//Hypno Shot
+        otherclient->cskills[30].level = 5;
+        otherclient->cskills[31].id = 2481;//Summon Terror Knight
+        otherclient->cskills[31].level = 5;
+        otherclient->cskills[32].id = 2486;//Advanced Weapon Research
+        otherclient->cskills[32].level = 9;
+        otherclient->cskills[33].id = 2496;//Advanced Armor Research
+        otherclient->cskills[33].level = 9;
+        otherclient->cskills[34].id = 2506;//Advanced Subitem Research
+        otherclient->cskills[34].level = 9;
+        otherclient->cskills[35].id = 2516;//Advanced Alchemy Research
+        otherclient->cskills[35].level = 9;
+        otherclient->cskills[36].id = 2526;//Advanced Weapon Craft
+        otherclient->cskills[36].level = 9;
+        otherclient->cskills[37].id = 2536;//Advanced Dark Blade Research
+        otherclient->cskills[37].level = 9;
+        otherclient->cskills[38].id = 2546;//Advanced Beam Blade Research
+        otherclient->cskills[38].level = 9;
+        otherclient->cskills[39].id = 2556;//Advanced Metal Blade Research
+        otherclient->cskills[39].level = 9;
+        otherclient->cskills[40].id = 2566;//Advanced Timber Blade Research
+        otherclient->cskills[40].level = 9;
+        otherclient->cskills[41].id = 2576;//Advanced Armor Craft
+        otherclient->cskills[41].level = 9;
+        otherclient->cskills[42].id = 2586;//Advanced Earth Blade Research
+        otherclient->cskills[42].level = 9;
+        otherclient->cskills[43].id = 2596;//Advanced Ocean Blade Research
+        otherclient->cskills[43].level = 9;
+        otherclient->cskills[44].id = 2606;//Advanced SubItem Craft
+        otherclient->cskills[44].level = 9;
+        otherclient->cskills[45].id = 2616;//Advanced Alchemy Craft
+        otherclient->cskills[45].level = 9;
+        otherclient->cskills[46].id = 2626;//PAT Research
+        otherclient->cskills[46].level = 9;
+        otherclient->cskills[47].id = 2636;//PAT Craft
+        otherclient->cskills[47].level = 9;
+        otherclient->cskills[48].id = 2646;//Gem Cutting Research
+        otherclient->cskills[48].level = 9;
+        otherclient->cskills[49].id = 2656;//Gem Cutting
+        otherclient->cskills[49].level = 9;
+        otherclient->cskills[50].id = 2726;//Advanced Weapon Darkening
+        otherclient->cskills[50].level = 9;
+        otherclient->cskills[51].id = 2736;//Advanced Weapon Hardening
+        otherclient->cskills[51].level = 9;
+        otherclient->cskills[52].id = 2746;//Advanced Weapon Balancing
+        otherclient->cskills[52].level = 9;
+        otherclient->cskills[53].id = 2756;//Advanced Weapon Enchanting
+        otherclient->cskills[53].level = 9;
+        otherclient->cskills[54].id = 2766;//Advanced Armor Reinforcement
+        otherclient->cskills[54].level = 9;
+        otherclient->cskills[55].id = 2776;//Advanced Armor Endowment
+        otherclient->cskills[55].level = 9;
+        // Mileage Items - artisan
+        otherclient->cskills[56].id = 5902; // 865
+        otherclient->cskills[56].level = 1;
+        otherclient->cskills[57].id = 5903; // 866
+        otherclient->cskills[57].level = 1;
+        // Unique Items - artisan
+        otherclient->cskills[58].id = 4801; // 561
+        otherclient->cskills[58].level = 9;
+        otherclient->cskills[59].id = 4811; // 562
+        otherclient->cskills[59].level = 9;
 
-SendPM (thisclient, "Relogin For Get All Skills");
-}
-
-else if ( classid == 322 ) //Scout
-{
-otherclient->cskills[0].id = 1401;//Combat Mastery
-otherclient->cskills[0].level = 9;
-otherclient->cskills[1].id = 1411;//Bow Mastery
-otherclient->cskills[1].level = 18;
-otherclient->cskills[2].id = 1431;//Clamp Arrow
-otherclient->cskills[2].level = 9;
-otherclient->cskills[3].id = 1441;//Double Arrow
-otherclient->cskills[3].level = 9;
-otherclient->cskills[4].id = 1451;//Backpack Proficiency
-otherclient->cskills[4].level = 9;
-otherclient->cskills[5].id = 1461;//Mana Profut
-otherclient->cskills[5].level = 9;
-otherclient->cskills[6].id = 1471;//offensive focus
-otherclient->cskills[6].level = 5;
-otherclient->cskills[7].id = 1496;//soul disciplin
-otherclient->cskills[7].level = 5;
-otherclient->cskills[8].id = 1476;//Shackle Arrow
-otherclient->cskills[8].level = 9;
-otherclient->cskills[9].id = 1486;//Triple Arrow
-otherclient->cskills[9].level = 9;
-otherclient->cskills[10].id = 1501;//stun arrow
-otherclient->cskills[10].level = 4;
-otherclient->cskills[11].id = 1656;//Flame Hawk
-otherclient->cskills[11].level = 1;
-otherclient->cskills[12].id = 1661;//Advanced Bow Mastery
-otherclient->cskills[12].level = 18;
-otherclient->cskills[13].id = 1681;//Call Hawk
-otherclient->cskills[13].level = 9;
-otherclient->cskills[14].id = 1691;//Trap Arrow
-otherclient->cskills[14].level = 9;
-otherclient->cskills[15].id = 1701;//Aimed Triple Arrow
-otherclient->cskills[15].level = 9;
-otherclient->cskills[16].id = 1711;//camoflage
-otherclient->cskills[16].level = 5;
-otherclient->cskills[17].id = 1716;//longinus`s Incoration
-otherclient->cskills[17].level = 5;
-otherclient->cskills[18].id = 1721;//mana flow
-otherclient->cskills[18].level = 9;
-otherclient->cskills[19].id = 1731;//point black arrow
-otherclient->cskills[19].level = 5;
-otherclient->cskills[20].id = 1736;//Entangling Arrow
-otherclient->cskills[20].level = 9;
-otherclient->cskills[21].id = 1746;//Phoenix Arrow
-otherclient->cskills[21].level = 9;
-otherclient->cskills[22].id = 1756;//soul gurrent
-otherclient->cskills[22].level = 5;
-otherclient->cskills[23].id = 1506;//sprint
-otherclient->cskills[23].level = 5;
-otherclient->cskills[24].id = 1766;//rapid twitch
-otherclient->cskills[24].level = 5;
-otherclient->cskills[25].id = 1511;//Velocity accourdance
-otherclient->cskills[25].level = 5;
-otherclient->cskills[26].id = 1761;//Hawker accordance
-otherclient->cskills[26].level = 5;
-otherclient->cskills[27].id = 1516;//secound sight
-otherclient->cskills[27].level = 4;
-otherclient->cskills[28].id = 1771;//requiem
-otherclient->cskills[28].level = 4;
-otherclient->cskills[29].id = 1956;//impact arrow
-otherclient->cskills[29].level = 6;
-// Mileage Items - scout
-otherclient->cskills[30].id = 5801; // 859
-otherclient->cskills[30].level = 1;
-otherclient->cskills[31].id = 5802; // 860
-otherclient->cskills[31].level = 1;
-// Unique Items - hawker
-otherclient->cskills[32].id = 4601; // call beast // 565
-otherclient->cskills[32].level = 9;
-
-SendPM (thisclient, "Relogin For Get All Skills");
-}
-
-else if ( classid == 421 ) //Bourgeois
-{
-otherclient->cskills[0].id = 2001;//Trigger Finger
-otherclient->cskills[0].level = 9;
-otherclient->cskills[1].id = 2011;//Tough Gunner
-otherclient->cskills[1].level = 18;
-otherclient->cskills[2].id = 2036;//Twin Shot
-otherclient->cskills[2].level = 9;
-otherclient->cskills[3].id = 2031;//Intesify
-otherclient->cskills[3].level = 5;
-otherclient->cskills[4].id = 2056;//selsam gaint
-otherclient->cskills[4].level = 5;
-otherclient->cskills[5].id = 2046;//craftsman talent
-otherclient->cskills[5].level = 5;
-otherclient->cskills[6].id = 2051;//Discount
-otherclient->cskills[6].level = 5;
-otherclient->cskills[7].id = 2061;//Sniping
-otherclient->cskills[7].level = 9;
-otherclient->cskills[8].id = 2071;//master twin shot
-otherclient->cskills[8].level = 5;
-otherclient->cskills[9].id = 2076;//Demolition Expertise
-otherclient->cskills[9].level = 9;
-otherclient->cskills[10].id = 2086;//backpack mastery
-otherclient->cskills[10].level = 5;
-otherclient->cskills[11].id = 2091;//illusion
-otherclient->cskills[11].level = 5;
-otherclient->cskills[12].id = 2096;//mercenery employment
-otherclient->cskills[12].level = 4;
-otherclient->cskills[13].id = 2111;//weapon expertise
-otherclient->cskills[13].level = 5;
-otherclient->cskills[14].id = 2101;//employ warrior
-otherclient->cskills[14].level = 5;
-otherclient->cskills[15].id = 2106;//employ hunter
-otherclient->cskills[15].level = 5;
-otherclient->cskills[16].id = 2256;//Veteran Sniper
-otherclient->cskills[16].level = 9;
-otherclient->cskills[17].id = 2266;//Ace Gunner
-otherclient->cskills[17].level = 18;
-otherclient->cskills[18].id = 2286;//Merchandising
-otherclient->cskills[18].level = 9;
-otherclient->cskills[19].id = 2296;//Third Eye
-otherclient->cskills[19].level = 1;
-otherclient->cskills[20].id = 2301;//triple shot
-otherclient->cskills[20].level = 5;
-otherclient->cskills[21].id = 2316;//Zulie Bolt
-otherclient->cskills[21].level = 9;
-otherclient->cskills[22].id = 2306;//Venemous Shot
-otherclient->cskills[22].level = 9;
-otherclient->cskills[23].id = 2401;//master triple shot
-otherclient->cskills[23].level = 5;
-otherclient->cskills[24].id = 2326;//Shrapnel Burst
-otherclient->cskills[24].level = 9;
-otherclient->cskills[25].id = 2336;//Chaotic Burst
-otherclient->cskills[25].level = 9;
-otherclient->cskills[26].id = 2346;//windstep
-otherclient->cskills[26].level = 5;
-otherclient->cskills[27].id = 2356;//stockpile
-otherclient->cskills[27].level = 9;
-otherclient->cskills[28].id = 2366;//weapon agument
-otherclient->cskills[28].level = 5;
-otherclient->cskills[29].id = 2351;//light step
-otherclient->cskills[29].level = 5;
-otherclient->cskills[30].id = 2376;//summon dreag knight
-otherclient->cskills[30].level = 5;
-otherclient->cskills[31].id = 2371;//jury rigging
-otherclient->cskills[31].level = 5;
-otherclient->cskills[32].id = 2381;//Toxic Shot
-otherclient->cskills[32].level = 9;
-otherclient->cskills[33].id = 2391;//Zulie Stun
-otherclient->cskills[33].level = 9;
-otherclient->cskills[34].id = 2406;//Cannon Splash Burst
-otherclient->cskills[34].level = 9;
-otherclient->cskills[35].id = 2416;//Flame Stun Burst
-otherclient->cskills[35].level = 9;
-otherclient->cskills[36].id = 2426;//reflect aura
-otherclient->cskills[36].level = 5;
-otherclient->cskills[37].id = 2431;//dual layer
-otherclient->cskills[37].level = 5;
-// Mileage Items - Borg - Launcher
-otherclient->cskills[38].id = 5904; // 867
-otherclient->cskills[38].level = 1;
-otherclient->cskills[39].id = 5905; // 868
-otherclient->cskills[39].level = 1;
-//added for ver 144
-otherclient->cskills[40].id = 2461;//aimed triple shot
-otherclient->cskills[40].level = 5;
-SendPM (thisclient, "Relogin For Get All Skills");
-}
-
-else if ( classid == 422 ) //Artisan
-{
-//Common Tab
-otherclient->cskills[0].id = 2031;//Intensify Weapon
-otherclient->cskills[0].level = 5;
-otherclient->cskills[1].id = 2036;//Twin Shot
-otherclient->cskills[1].level = 9;
-otherclient->cskills[2].id = 2046;//Craftsman's Talent
-otherclient->cskills[2].level = 5;
-otherclient->cskills[3].id = 2051;//Discount
-otherclient->cskills[3].level = 5;
-otherclient->cskills[4].id = 2056;//Salesman Gait
-otherclient->cskills[4].level = 5;
-otherclient->cskills[5].id = 2086;//Backpack Mastery
-otherclient->cskills[5].level = 5;
-otherclient->cskills[6].id = 2301;//Triple Shot
-otherclient->cskills[6].level = 5;
-otherclient->cskills[7].id = 2461;//Aimed Triple Shot
-otherclient->cskills[7].level = 5;
-//Crafting Tab
-otherclient->cskills[8].id = 2116;//Weapon Research
-otherclient->cskills[8].level = 9;
-otherclient->cskills[9].id = 2126;//Armor Research
-otherclient->cskills[9].level = 9;
-otherclient->cskills[10].id = 2136;//SubItem Research
-otherclient->cskills[10].level = 9;
-otherclient->cskills[11].id = 2146;//Alchemy Research
-otherclient->cskills[11].level = 9;
-otherclient->cskills[12].id = 2156;//Weapon Craft
-otherclient->cskills[12].level = 9;
-otherclient->cskills[13].id = 2166;//Dark Blade Research
-otherclient->cskills[13].level = 9;
-otherclient->cskills[14].id = 2176;//Beam Blade Research
-otherclient->cskills[14].level = 9;
-otherclient->cskills[15].id = 2186;//Metal Blade Research
-otherclient->cskills[15].level = 9;
-otherclient->cskills[16].id = 2196;//Timber Blade Research
-otherclient->cskills[16].level = 9;
-otherclient->cskills[17].id = 2206;//Armor Craft
-otherclient->cskills[17].level = 9;
-otherclient->cskills[18].id = 2216;//Earth Blade Research
-otherclient->cskills[18].level = 9;
-otherclient->cskills[19].id = 2226;//Ocean Blade Research
-otherclient->cskills[19].level = 9;
-otherclient->cskills[20].id = 2236;//SubItem Craft
-otherclient->cskills[20].level = 9;
-otherclient->cskills[21].id = 2246;//Alchemy Craft
-otherclient->cskills[21].level = 9;
-otherclient->cskills[22].id = 2666;//Weapon Darkening
-otherclient->cskills[22].level = 9;
-otherclient->cskills[23].id = 2676;//Weapon Hardening
-otherclient->cskills[23].level = 9;
-otherclient->cskills[24].id = 2686;//Weapon Balancing
-otherclient->cskills[24].level = 9;
-otherclient->cskills[25].id = 2696;//Weapon Enchanting
-otherclient->cskills[25].level = 9;
-otherclient->cskills[26].id = 2706;//Armor Reinforcement
-otherclient->cskills[26].level = 9;
-otherclient->cskills[27].id = 2716;//Armor Endowment
-otherclient->cskills[27].level = 9;
-//Artizan Tab
-otherclient->cskills[28].id = 2441;//Top Gunner
-otherclient->cskills[28].level = 18;
-otherclient->cskills[29].id = 2466;//Poison Shot
-otherclient->cskills[29].level = 9;
-otherclient->cskills[30].id = 2476;//Hypno Shot
-otherclient->cskills[30].level = 5;
-otherclient->cskills[31].id = 2481;//Summon Terror Knight
-otherclient->cskills[31].level = 5;
-otherclient->cskills[32].id = 2486;//Advanced Weapon Research
-otherclient->cskills[32].level = 9;
-otherclient->cskills[33].id = 2496;//Advanced Armor Research
-otherclient->cskills[33].level = 9;
-otherclient->cskills[34].id = 2506;//Advanced Subitem Research
-otherclient->cskills[34].level = 9;
-otherclient->cskills[35].id = 2516;//Advanced Alchemy Research
-otherclient->cskills[35].level = 9;
-otherclient->cskills[36].id = 2526;//Advanced Weapon Craft
-otherclient->cskills[36].level = 9;
-otherclient->cskills[37].id = 2536;//Advanced Dark Blade Research
-otherclient->cskills[37].level = 9;
-otherclient->cskills[38].id = 2546;//Advanced Beam Blade Research
-otherclient->cskills[38].level = 9;
-otherclient->cskills[39].id = 2556;//Advanced Metal Blade Research
-otherclient->cskills[39].level = 9;
-otherclient->cskills[40].id = 2566;//Advanced Timber Blade Research
-otherclient->cskills[40].level = 9;
-otherclient->cskills[41].id = 2576;//Advanced Armor Craft
-otherclient->cskills[41].level = 9;
-otherclient->cskills[42].id = 2586;//Advanced Earth Blade Research
-otherclient->cskills[42].level = 9;
-otherclient->cskills[43].id = 2596;//Advanced Ocean Blade Research
-otherclient->cskills[43].level = 9;
-otherclient->cskills[44].id = 2606;//Advanced SubItem Craft
-otherclient->cskills[44].level = 9;
-otherclient->cskills[45].id = 2616;//Advanced Alchemy Craft
-otherclient->cskills[45].level = 9;
-otherclient->cskills[46].id = 2626;//PAT Research
-otherclient->cskills[46].level = 9;
-otherclient->cskills[47].id = 2636;//PAT Craft
-otherclient->cskills[47].level = 9;
-otherclient->cskills[48].id = 2646;//Gem Cutting Research
-otherclient->cskills[48].level = 9;
-otherclient->cskills[49].id = 2656;//Gem Cutting
-otherclient->cskills[49].level = 9;
-otherclient->cskills[50].id = 2726;//Advanced Weapon Darkening
-otherclient->cskills[50].level = 9;
-otherclient->cskills[51].id = 2736;//Advanced Weapon Hardening
-otherclient->cskills[51].level = 9;
-otherclient->cskills[52].id = 2746;//Advanced Weapon Balancing
-otherclient->cskills[52].level = 9;
-otherclient->cskills[53].id = 2756;//Advanced Weapon Enchanting
-otherclient->cskills[53].level = 9;
-otherclient->cskills[54].id = 2766;//Advanced Armor Reinforcement
-otherclient->cskills[54].level = 9;
-otherclient->cskills[55].id = 2776;//Advanced Armor Endowment
-otherclient->cskills[55].level = 9;
-// Mileage Items - artisan
-otherclient->cskills[56].id = 5902; // 865
-otherclient->cskills[56].level = 1;
-otherclient->cskills[57].id = 5903; // 866
-otherclient->cskills[57].level = 1;
-// Unique Items - artisan
-otherclient->cskills[58].id = 4801; // 561
-otherclient->cskills[58].level = 9;
-otherclient->cskills[59].id = 4811; // 562
-otherclient->cskills[59].level = 9;
-
-SendPM (thisclient, "Relogin For Get All Skills");
-}
-
-/*
-// Mileage Items - For which jobs?
-otherclient->cskills[xx].id = 5501; // 590 - all
-otherclient->cskills[xx].level = 1;
-otherclient->cskills[xx].id = 5502; // 591 - all
-otherclient->cskills[xx].level = 1;
-otherclient->cskills[xx].id = 5901; // 593  (can learn, but not showing)
-otherclient->cskills[xx].level = 1;
-// Unique Items - For which jobs?
-otherclient->cskills[xx].id = 4401; // 567 - all
-otherclient->cskills[xx].level = 1;
-otherclient->cskills[xx].id = 4402; // 568 - all
-otherclient->cskills[xx].level = 1;
-otherclient->cskills[xx].id = xxxx; // 563 - all
-otherclient->cskills[xx].level = x;
-otherclient->cskills[xx].id = xxxx; // 564 - all
-otherclient->cskills[xx].level = x;
-otherclient->cskills[xx].id = xxxx; // 566 - dealer
-otherclient->cskills[xx].level = x;
-*/
-
-else
-{
-    SendPM(thisclient, "Can't add skills for this class");
-}
+        SendPM (thisclient, "Relogin For Get All Skills");
+    }
+    else
+    {
+        /*
+        // Mileage Items - For which jobs?
+        otherclient->cskills[xx].id = 5501; // 590 - all
+        otherclient->cskills[xx].level = 1;
+        otherclient->cskills[xx].id = 5502; // 591 - all
+        otherclient->cskills[xx].level = 1;
+        otherclient->cskills[xx].id = 5901; // 593  (can learn, but not showing)
+        otherclient->cskills[xx].level = 1;
+        // Unique Items - For which jobs?
+        otherclient->cskills[xx].id = 4401; // 567 - all
+        otherclient->cskills[xx].level = 1;
+        otherclient->cskills[xx].id = 4402; // 568 - all
+        otherclient->cskills[xx].level = 1;
+        otherclient->cskills[xx].id = xxxx; // 563 - all
+        otherclient->cskills[xx].level = x;
+        otherclient->cskills[xx].id = xxxx; // 564 - all
+        otherclient->cskills[xx].level = x;
+        otherclient->cskills[xx].id = xxxx; // 566 - dealer
+        otherclient->cskills[xx].level = x;
+        */
+        SendPM(thisclient, "Can't add skills for this class");
+    }
 
     return true;
 }

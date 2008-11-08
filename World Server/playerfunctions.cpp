@@ -497,11 +497,13 @@ UINT CPlayer::GetNewStorageItemSlot( CItem thisitem )
 // Required skill check by insider
 UINT CPlayer::GetPlayerSkill( unsigned int id )
 {
-    for(UINT i=0;i<MAX_SKILL;i++)
+    //for(UINT i=0;i<MAX_SKILL;i++)
+    for(UINT i=0;i<MAX_ALL_SKILL;i++)
     {
         if (cskills[i].id == id)
             return i;
     }
+
     return 0xffff;
 }
 

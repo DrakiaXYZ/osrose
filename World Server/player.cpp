@@ -156,13 +156,14 @@ CPlayer::CPlayer( CClientSocket* CLIENT )
     nsitemmallitems = 0;
     p_skills = 0;
     //LMA: New way
-    //for(int i=0;i<MAX_SKILL;i++)
     for(int i=0;i<MAX_ALL_SKILL;i++)
     {
         cskills[i].id = 0;
         cskills[i].level = 0;
+        cskills[i].thisskill=NULL;
     }
 
+    /*
     for(int i=0;i<MAX_DRIVING_SKILL;i++)
     {
         dskills[i] = 0;
@@ -182,6 +183,8 @@ CPlayer::CPlayer( CClientSocket* CLIENT )
 
     for(int i=0;i<MAX_BASICSKILL;i++)
         bskills[i] = 0;
+    */
+
     for(int i=0;i<MAX_QUICKBAR;i++)
         quickbar[i] = 0;
 
