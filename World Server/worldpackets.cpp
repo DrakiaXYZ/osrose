@@ -192,7 +192,7 @@ void CWorldServer::pakPlayer( CPlayer *thisclient )
 	        continue;
 		ADDWORD( pak, thisclient->bskills[i] );
 
-		if (is_dual_scratch&&thisclient->bskills[i]>0)
+		if (is_dual_scratch&&thisclient->bskills[i]>0&&thisclient->bskills[i]<=101)
             nb_skills++;
 	}
 

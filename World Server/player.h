@@ -86,6 +86,7 @@ class CPlayer: public CCharacter
 
     // skills/quickbar
     SKILLS cskills[MAX_SKILL];
+    SKILLS oskills[MAX_OTHER_SKILL];  //LMA: Other skills.
     UINT bskills[MAX_BASICSKILL];
     UINT quickbar[MAX_QUICKBAR];
     int p_skills;

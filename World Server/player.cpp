@@ -160,6 +160,11 @@ CPlayer::CPlayer( CClientSocket* CLIENT )
         cskills[i].id = 0;
         cskills[i].level = 0;
     }
+    for(int i=0;i<MAX_OTHER_SKILL;i++)
+    {
+        oskills[i].id = 0;
+        oskills[i].level = 0;
+    }
     for(int i=0;i<MAX_BASICSKILL;i++)
         bskills[i] = 0;
     for(int i=0;i<MAX_QUICKBAR;i++)
