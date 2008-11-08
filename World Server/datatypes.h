@@ -191,7 +191,11 @@
 
 // other constants
 #define MAX_SKILL 60
-#define MAX_OTHER_SKILL 60  //LMA: driving, unique, mileage...
+//LMA: driving, unique, mileage...
+#define MAX_ALL_SKILL 362
+#define MAX_DRIVING_SKILL 30
+#define MAX_UNIQUE_SKILL 30
+#define MAX_MILEAGE_SKILL 200
 #define SKILL_DELAY 500 //ms
 
 // weapon type

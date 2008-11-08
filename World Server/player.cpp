@@ -155,16 +155,31 @@ CPlayer::CPlayer( CClientSocket* CLIENT )
     nstorageitems = 0;
     nsitemmallitems = 0;
     p_skills = 0;
-    for(int i=0;i<MAX_SKILL;i++)
+    //LMA: New way
+    //for(int i=0;i<MAX_SKILL;i++)
+    for(int i=0;i<MAX_ALL_SKILL;i++)
     {
         cskills[i].id = 0;
         cskills[i].level = 0;
     }
-    for(int i=0;i<MAX_OTHER_SKILL;i++)
+
+    for(int i=0;i<MAX_DRIVING_SKILL;i++)
     {
-        oskills[i].id = 0;
-        oskills[i].level = 0;
+        dskills[i] = 0;
     }
+
+    for(int i=0;i<MAX_MILEAGE_SKILL;i++)
+    {
+        mskills[i].id = 0;
+        mskills[i].level = 0;
+    }
+
+    for(int i=0;i<MAX_UNIQUE_SKILL;i++)
+    {
+        uskills[i].id = 0;
+        uskills[i].level = 0;
+    }
+
     for(int i=0;i<MAX_BASICSKILL;i++)
         bskills[i] = 0;
     for(int i=0;i<MAX_QUICKBAR;i++)

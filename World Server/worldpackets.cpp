@@ -55,6 +55,7 @@ void CWorldServer::pakPlayer( CPlayer *thisclient )
 
     //LMA: Checking if a player has a CG or cart license ^_^
     //checking too if dual scratch is in the basic skill list...
+    /*
 	for(int i=0; i<42; i++)
 	{
 	    if(thisclient->bskills[i]==5000)
@@ -63,8 +64,18 @@ void CWorldServer::pakPlayer( CPlayer *thisclient )
             has_cg=true;
         if(thisclient->bskills[i]==101)
             is_dual_scratch=true;
-        if(is_dual_scratch&&has_cg&&has_cart)
+        if(is_dual_scratch)
             break;
+	}
+	*/
+
+	//driving skills :)
+	for (int i=0;i<MAX_DRIVING_SKILL;i++)
+	{
+	    if (thisclient->dskills[i]==5000)
+            has_cart=true;
+	    if (thisclient->dskills[i]==5001)
+            has_cg=true;
 	}
 
     BEGINPACKET( pak, 0x715 );
@@ -134,7 +145,7 @@ void CWorldServer::pakPlayer( CPlayer *thisclient )
     for(int i=0; i<320; i++) ADDBYTE( pak, 0 );
 
     //LMA: Value for driving skill so it doesn't say missing conditions ?
-    if (has_cart)
+    if (has_cart||has_cg)
     {
         ADDWORD( pak, 3500 );
     }
@@ -175,18 +186,26 @@ void CWorldServer::pakPlayer( CPlayer *thisclient )
         ADDWORD( pak, 5001 );
     }
 
-    for(int i=0; i<nb_30; i++)  ADDWORD( pak, 0 );
+    for(int i=0; i<nb_30; i++)
+        ADDWORD( pak, 0 );
 
     //Unique
-    for(int i=0; i<30; i++)  ADDWORD( pak, 0 );
+    for(int i=0; i<MAX_UNIQUE_SKILL; i++)
+    {
+        ADDWORD( pak, thisclient->uskills[i].id+thisclient->uskills[i].level-1 );
+    }
 
     //Mileage
-    for(int i=0; i<200; i++)  ADDWORD( pak, 0 );
+    for(int i=0; i<MAX_MILEAGE_SKILL; i++)
+    {
+        ADDWORD( pak, thisclient->mskills[i].id+thisclient->mskills[i].level-1 );
+    }
     //LMA: End test.
 
     //Basic Skills
-	for(int i=0; i<42; i++)
+	for(int i=0; i<MAX_BASICSKILL; i++)
 	{
+	    /*
 	    //already handled before (cart and CG) :)
 	    if(thisclient->bskills[i]==5000||thisclient->bskills[i]==5001)
 	        continue;
@@ -194,9 +213,13 @@ void CWorldServer::pakPlayer( CPlayer *thisclient )
 
 		if (is_dual_scratch&&nb_skills==0&&thisclient->bskills[i]==101)
             nb_skills=i;
+        */
+
+        ADDWORD( pak, thisclient->bskills[i] );
 	}
 
 	//remaining of basic skills (sort of...)
+	/*
 	if (has_cart)
         ADDWORD( pak,0);
 	if (has_cg)
@@ -208,6 +231,7 @@ void CWorldServer::pakPlayer( CPlayer *thisclient )
         thisclient->dual_scratch_index=64+nb_skills;
 
     Log(MSG_INFO,"Dual scratch at index: %i",thisclient->dual_scratch_index);
+    */
 
 	for(int i=0; i<48; i++)       // QuickBar
         ADDWORD( pak, thisclient->quickbar[i] );
@@ -2053,19 +2077,29 @@ bool CWorldServer::pakStartSkill ( CPlayer* thisclient, CPacket* P )
         return true;
     fPoint thispoint;
     UINT targetid = GETWORD( (*P), 0 );
-    BYTE skillnum = GETBYTE( (*P), 2 );
+    UINT skillnum = GETWORD( (*P), 2 );
 
     //    if(skillnum>=MAX_SKILL)
     //if(skillnum>=MAX_SKILL&&skillnum!=83)  //double scratch temp fix
+    /*
     if(skillnum>=MAX_SKILL&&skillnum!=thisclient->dual_scratch_index)  //double scratch fix
     {
         Log( MSG_HACK, "Invalid Skill id %i for %s ", skillnum, thisclient->CharInfo->charname );
         return true;
     }
+    */
+
+    if(skillnum>=MAX_ALL_SKILL)  //double scratch fix
+    {
+        Log( MSG_HACK, "Invalid Skill id %i for %s ", skillnum, thisclient->CharInfo->charname );
+        return true;
+    }
+
 
     Log( MSG_INFO, "pakStartSkill for %s (%i)", thisclient->CharInfo->charname,skillnum);
 
     //   unsigned int skillid = thisclient->cskills[skillnum].id+thisclient->cskills[skillnum].level-1;
+    /*
     unsigned int skillid=101;
 
     //if(skillnum!=83) //dual scratch temp fix
@@ -2073,6 +2107,10 @@ bool CWorldServer::pakStartSkill ( CPlayer* thisclient, CPacket* P )
     {
         skillid = thisclient->cskills[skillnum].id+thisclient->cskills[skillnum].level-1;
     }
+    */
+
+    unsigned int skillid = thisclient->cskills[skillnum].id+thisclient->cskills[skillnum].level-1;
+
     CMap* map = MapList.Index[thisclient->Position->Map];
     CCharacter* character = map->GetCharInMap( targetid );
     if(character==NULL) return true;
@@ -2815,7 +2853,7 @@ bool CWorldServer::pakSkillSelf( CPlayer* thisclient, CPacket* P )
         thisclient->Status->Mute!=0xff || !thisclient->Status->CanCastSkill)
         return true;
     WORD num = GETWORD((*P),0);
-    if(num>=MAX_SKILL)
+    if(num>=MAX_ALL_SKILL)
     {
         Log( MSG_HACK, "Invalid Skill id %i for %s ", num, thisclient->CharInfo->charname );
         return true;
@@ -3136,6 +3174,7 @@ bool CWorldServer::pakUseItem ( CPlayer* thisclient, CPacket* P )
 
 
 // Level UP Skill
+/*
 bool  CWorldServer::pakLevelUpSkill( CPlayer *thisclient, CPacket* P )
 {
     WORD pos = GETWORD ((*P),0);   // number of skill. appears to be an array index
@@ -3216,9 +3255,98 @@ bool  CWorldServer::pakLevelUpSkill( CPlayer *thisclient, CPacket* P )
     }
     return true;
 }
+*/
+
+//LMA: Level UP Skill (new way)
+bool  CWorldServer::pakLevelUpSkill( CPlayer *thisclient, CPacket* P )
+{
+    WORD pos = GETWORD ((*P),0);   // number of skill. appears to be an array index
+    WORD skill = GETWORD ((*P),2); // skill id
+    if(pos >= MAX_ALL_SKILL)
+    {
+        Log( MSG_HACK, "Invalid Skill id %i for %s ", pos, thisclient->CharInfo->charname );
+        return false;
+    }
+    CSkills* thisskill = GetSkillByID( skill );
+    if(thisskill==NULL)
+        return true;
+    if(thisclient->cskills[pos].id != skill - thisclient->cskills[pos].level)
+    {
+        Log(MSG_WARNING,"Skill Upgrade, wrong org skill %i != %i",thisclient->cskills[pos].id,skill - thisclient->cskills[pos].level);
+        return true;
+    }
+
+    // checks made for prerequisite skills here.
+    UINT hasPreskill = 0;
+    for(int i=0;i<3;i++)
+    {
+        int preskill = thisskill->rskill[i];
+        if(thisskill->lskill[i] > 0)
+            preskill += thisskill->lskill[i] - 1;
+        if(preskill == 0)
+        {
+            hasPreskill ++; // no preskill defined in this element so give a credit then skip to the next preskill.
+            continue;
+        }
+    //Log( MSG_INFO, "[DEBUG] Checking %i / 3, preskill %i",i,preskill);
+
+   for(int skillid=0;skillid<MAX_SKILL;skillid++)
+        {
+            //Log( MSG_INFO, "[DEBUG] Skillid %i < %u",skillid,MAX_SKILL);
+            if(thisclient->cskills[skillid].id == thisskill->rskill[i] && thisclient->cskills[skillid].level >= thisskill->lskill[i])
+            //int checkskill = thisclient->cskills[skillid].id + thisclient->cskills[skillid].level -1;
+            //if(preskill == checkskill)
+            {
+                hasPreskill ++;
+                //Log( MSG_INFO, "[DEBUG] Skill matched to requirements");
+                break; // no need to carry on. Skill found
+            }
+        }
+   }
+
+    //Log( MSG_INFO, "[DEBUG] hasPreskill state = %i",hasPreskill);
+    if(hasPreskill != 3)
+    {
+        Log( MSG_INFO, "Prerequisite skills not all found" );
+        return true; //doesn't have the necessary prerequisite skill
+    }
+
+    // is character a high enough level?
+    if(thisskill->clevel > thisclient->Stats->Level)
+    {
+        Log( MSG_INFO, "Character level too low" );
+        return true; //not high enough level
+    }
+
+    //check that it is the next skill in the series
+    if(thisclient->cskills[pos].id != skill - thisclient->cskills[pos].level) //check that it is the next skill in the series
+    {
+        Log( MSG_INFO, "Skill Id doesn't match next in the CSkills series" );
+        return true;
+    }
+
+    if(thisclient->CharInfo->SkillPoints >= thisskill->sp)
+    {
+       thisclient->CharInfo->SkillPoints -= 1;
+
+       BEGINPACKET( pak, 0x7b1 );
+       ADDBYTE    ( pak, 0x00);
+       ADDWORD    ( pak, pos);
+       ADDWORD    ( pak, skill);
+       ADDWORD    ( pak, thisclient->CharInfo->SkillPoints);
+       thisclient->client->SendPacket( &pak );
+       thisclient->SetStats( );
+
+       thisclient->cskills[pos].level+=1;
+       thisclient->cskills[pos].thisskill = thisskill;
+
+       thisclient->UpgradeSkillInfo(pos,thisclient->cskills[pos].id,1);
+       thisclient->saveskills();
+    }
 
 
-
+    return true;
+}
 
 
 // Equip bullets arrows and cannons
@@ -3412,7 +3540,7 @@ bool CWorldServer::pakSkillAOE( CPlayer* thisclient, CPacket* P)
 
     if( thisclient->Shop->open || thisclient->Status->Stance==DRIVING ||
         thisclient->Status->Mute!=0xff || !thisclient->Status->CanCastSkill) return true;
-    BYTE num = GETBYTE( (*P), 0 );
+    UINT num = GETWORD( (*P), 0 );
 
     //LMA: position of monster targeted (in fact it's a zone, monster is just a mean to an end).
     thisclient->Position->aoedestiny.x=GETFLOAT((*P), 0x02 )/100;
@@ -3421,7 +3549,7 @@ bool CWorldServer::pakSkillAOE( CPlayer* thisclient, CPacket* P)
 
     //Log(MSG_INFO,"AOE Current %.2f,%.2f",thisclient->Position->current.x,thisclient->Position->current.y);
     //Log(MSG_INFO,"[pakSkillAOE] num=%i,x=%.2f, y=%.2f",num,thisclient->Position->aoedestiny.x,thisclient->Position->aoedestiny.y);
-    if(num>=MAX_SKILL)
+    if(num>=MAX_ALL_SKILL)
     {
         Log( MSG_HACK, "Invalid Skill id %i for %s ", num, thisclient->CharInfo->charname );
         return false;

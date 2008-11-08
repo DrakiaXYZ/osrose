@@ -779,139 +779,187 @@ bool CWorldServer::LearnSkill( CPlayer* thisclient, UINT skill, bool takeSP)
 6 - incorrect number of skill
 7 - you do not have sufficient sp
 */
-        int b=1;
-        CSkills* thisskill = GetSkillByID( skill );
-        if( thisskill==NULL )
-            return false;
-        if( thisclient->CharInfo->SkillPoints<thisskill->sp )
+    int b=1;
+    CSkills* thisskill = GetSkillByID( skill );
+    if( thisskill==NULL )
+        return false;
+    if( thisclient->CharInfo->SkillPoints<thisskill->sp )
+    {
+        b=7;
+    }
+    else if( thisskill->clevel>thisclient->Stats->Level )
+    {
+        b=4;
+    }
+    if(b==1)
+    {
+        UINT rclass = 0;
+        for(UINT i=0;i<4; i++)
         {
-            b=7;
-        }
-        else if( thisskill->clevel>thisclient->Stats->Level )
-        {
-            b=4;
-        }
-        if(b==1)
-        {
-            UINT rclass = 0;
-            for(UINT i=0;i<4; i++)
+    if (thisskill->c_class[i] == 0) {
+        continue;
+    }
+            if (thisskill->c_class[i] == 41)
             {
-        if (thisskill->c_class[i] == 0) {
-            continue;
+                rclass = 111;
+            }
+             else if (thisskill->c_class[i] == 42)
+            {
+                rclass = 211;
+            }
+            else if (thisskill->c_class[i] == 43)
+            {
+                rclass = 311;
+            }
+            else if (thisskill->c_class[i] == 44)
+            {
+                rclass = 411;
+            }
+            else if (thisskill->c_class[i] == 61)
+            {
+                rclass = 121;
+            }
+            else if (thisskill->c_class[i] == 62)
+            {
+                rclass = 122;
+            }
+            else if (thisskill->c_class[i] == 63)
+            {
+                rclass = 221;
+            }
+            else if (thisskill->c_class[i] == 64)
+            {
+                rclass = 222;
+            }
+            else if (thisskill->c_class[i] == 65)
+            {
+                rclass = 321;
+            }
+            else if (thisskill->c_class[i] == 66)
+            {
+                rclass = 322;
+            }
+            else if (thisskill->c_class[i] == 67)
+            {
+                rclass = 421;
+            }
+            else if (thisskill->c_class[i] == 68)
+            {
+                rclass = 422;
+            }
+            if(rclass == thisclient->CharInfo->Job)
+            {
+                b=1;
+                break;
+            }
+            else
+            {
+                b=2;
+            }
         }
-                if (thisskill->c_class[i] == 41)
+    }
+    if(b==1)
+    {
+        for(UINT i=0;i<3; i++)
+        {
+            if(thisskill->rskill[i] != 0)
+            {
+                UINT rskill = thisclient->GetPlayerSkill(thisskill->rskill[i]);
+                if(rskill == 0xffff)
                 {
-                    rclass = 111;
+                    b=3;
                 }
-                 else if (thisskill->c_class[i] == 42)
+                if(thisskill->lskill[i] > thisclient->cskills[rskill].level)
                 {
-                    rclass = 211;
-                }
-                else if (thisskill->c_class[i] == 43)
-                {
-                    rclass = 311;
-                }
-                else if (thisskill->c_class[i] == 44)
-                {
-                    rclass = 411;
-                }
-                else if (thisskill->c_class[i] == 61)
-                {
-                    rclass = 121;
-                }
-                else if (thisskill->c_class[i] == 62)
-                {
-                    rclass = 122;
-                }
-                else if (thisskill->c_class[i] == 63)
-                {
-                    rclass = 221;
-                }
-                else if (thisskill->c_class[i] == 64)
-                {
-                    rclass = 222;
-                }
-                else if (thisskill->c_class[i] == 65)
-                {
-                    rclass = 321;
-                }
-                else if (thisskill->c_class[i] == 66)
-                {
-                    rclass = 322;
-                }
-                else if (thisskill->c_class[i] == 67)
-                {
-                    rclass = 421;
-                }
-                else if (thisskill->c_class[i] == 68)
-                {
-                    rclass = 422;
-                }
-                if(rclass == thisclient->CharInfo->Job)
-                {
-                    b=1;
-                    break;
-                }
-                else
-                {
-                    b=2;
+                    b=5;
                 }
             }
         }
-        if(b==1)
-        {
-            for(UINT i=0;i<3; i++)
-            {
-                if(thisskill->rskill[i] != 0)
-                {
-                    UINT rskill = thisclient->GetPlayerSkill(thisskill->rskill[i]);
-                    if(rskill == 0xffff)
-                    {
-                        b=3;
-                    }
-                    if(thisskill->lskill[i] > thisclient->cskills[rskill].level)
-                    {
-                        b=5;
-                    }
-                }
-            }
-        }
+    }
 /*        if(b==1)
+    {
+        thisclient->cskills[thisclient->p_skills].id = skill;
+        thisclient->cskills[thisclient->p_skills].level=1;
+        thisclient->cskills[thisclient->p_skills].thisskill = thisskill;
+        thisclient->CharInfo->SkillPoints -= 1;
+        thisclient->p_skills++;
+    }
+    */
+
+    if(b==1)
+    {
+        //LMA: Looking for good place to save it now...
+        /*
+        thisclient->cskills[thisclient->p_skills].id = skill;
+        thisclient->cskills[thisclient->p_skills].level=1;
+        thisclient->cskills[thisclient->p_skills].thisskill = thisskill;
+        if (takeSP)
         {
-            thisclient->cskills[thisclient->p_skills].id = skill;
-            thisclient->cskills[thisclient->p_skills].level=1;
-            thisclient->cskills[thisclient->p_skills].thisskill = thisskill;
-            thisclient->CharInfo->SkillPoints -= 1;
-            thisclient->p_skills++;
+            thisclient->CharInfo->SkillPoints -= thisskill->sp;
         }
+
+        thisclient->p_skills++;
         */
 
-        if(b==1)
+        int family=thisclient->GoodSkill(skill);
+        if(family==-1)
         {
-            thisclient->cskills[thisclient->p_skills].id = skill;
-            thisclient->cskills[thisclient->p_skills].level=1;
-            thisclient->cskills[thisclient->p_skills].thisskill = thisskill;
-            if (takeSP) {
-                thisclient->CharInfo->SkillPoints -= thisskill->sp;
-            }
-            thisclient->p_skills++;
-        }
-
-        BEGINPACKET( pak, 0x7b0 );
-        ADDBYTE    ( pak, b);
-        ADDWORD    ( pak, thisclient->p_skills-1);
-        ADDWORD    ( pak, skill);
-        ADDWORD    ( pak, thisclient->CharInfo->SkillPoints);
-        thisclient->client->SendPacket( &pak);
-        if(b==1)
-        {
-            thisclient->SetStats( );
-            return true;
+            Log(MSG_WARNING,"Can't find family for skill %i",skill);
         }
         else
         {
-            return false;
+            int index=thisclient->FindSkillOffset(family);
+            if(index==-1)
+            {
+                Log(MSG_WARNING,"Can't find index in family for skill %i",family,skill);
+            }
+            else
+            {
+                thisclient->cskills[index].id=skill;
+                thisclient->cskills[index].level=1;
+                thisclient->cskills[index].thisskill = thisskill;
+
+                //in the good family now.
+                thisclient->SaveSkillInfo(family,thisclient->cur_max_skills[family],skill,1);
+                thisclient->saveskills();
+
+                BEGINPACKET( pak, 0x7b0 );
+                ADDBYTE    ( pak, b);
+                ADDWORD    ( pak, index);
+                ADDWORD    ( pak, skill);
+                ADDWORD    ( pak, thisclient->CharInfo->SkillPoints);
+                thisclient->client->SendPacket( &pak);
+                thisclient->SetStats( );
+
+
+                return true;
+                //LMA: new way end.
+            }
+
         }
+
+    }
+
+    BEGINPACKET( pak, 0x7b0 );
+    ADDBYTE    ( pak, b);
+    ADDWORD    ( pak, thisclient->p_skills-1);
+    ADDWORD    ( pak, skill);
+    ADDWORD    ( pak, thisclient->CharInfo->SkillPoints);
+    thisclient->client->SendPacket( &pak);
+
+    /*
+    if(b==1)
+    {
+        thisclient->SetStats( );
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+    */
+
+    return false;
 }
 
 //add / remove a Fairy

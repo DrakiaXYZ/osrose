@@ -233,7 +233,9 @@ QUESTCOND(009){
         if(client->pskill[i] == data->iSkillSN1)
         	return (data->btOp)?QUEST_SUCCESS:QUEST_FAILURE; */
     }
-	for (dword i = 0; i < MAX_SKILL; i++) {
+
+	//for (dword i = 0; i < MAX_SKILL; i++) {
+	for (dword i = 0; i < MAX_ALL_SKILL; i++) {
         if(client->cskills[i].id == data->iSkillSN1)
         	return (data->btOp)?QUEST_SUCCESS:QUEST_FAILURE;
 	}
@@ -269,13 +271,13 @@ QUESTCOND(012){
 	return QUEST_SUCCESS;
 }
 
- 
+
 //Select NPC
 QUESTCOND(013){
     GETCONDDATA(013);
- 
+
     /*if(entity->_EntityType != ENTITY_NPC) return QUEST_FAILURE;
- 
+
     CNpc* thisNpc = reinterpret_cast<CNpc*>(entity);
     std::map<dword, CNpc*>::iterator triggerITR = server->NpcList.find(data->iNpcNo);
     if(triggerITR == server->NpcList.end()){
@@ -283,22 +285,22 @@ QUESTCOND(013){
         return QUEST_FAILURE;
     }
     thisNpc->SelectedNpc = triggerITR->second;
- 
+
     return QUEST_SUCCESS;*/
     // More NPC specific stuff
     CMap* thisMap = GServer->MapList.Index[client->Position->Map];
     CNPC* thisNpc = thisMap->GetNPCInMapQSD(data->iNpcNo);
- 
+
     if (thisNpc == NULL) {
         Log (MSG_WARNING, "Questcondition 13: NPC not found");
         return QUEST_FAILURE;
     }
- 
+
     client->quest.selectedNpc = thisNpc;
- 
+
     return QUEST_SUCCESS;
 }
- 
+
 
 
 //Check Quest Flag
@@ -388,7 +390,7 @@ QUESTCOND(027){
              //GServer->SendISCPacket( &pak );
              Log(MSG_NOTICE, "implement CharServer Communication at __FILE__ _LINE__");
              */
-             
+
              //LMA: temp version...
             BEGINPACKET( pak, 0x7e0 );
             ADDBYTE    ( pak, 0xfe );

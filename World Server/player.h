@@ -85,9 +85,16 @@ class CPlayer: public CCharacter
     CItem items[MAX_INVENTORY];
 
     // skills/quickbar
-    SKILLS cskills[MAX_SKILL];
-    SKILLS oskills[MAX_OTHER_SKILL];  //LMA: Other skills.
+    //SKILLS cskills[MAX_SKILL];
+    SKILLS cskills[MAX_ALL_SKILL];
     UINT bskills[MAX_BASICSKILL];
+
+    //LMA: Other skills.
+    UINT dskills[MAX_DRIVING_SKILL];
+    SKILLS uskills[MAX_UNIQUE_SKILL];
+    SKILLS mskills[MAX_MILEAGE_SKILL];
+    int cur_max_skills[5];
+
     UINT quickbar[MAX_QUICKBAR];
     int p_skills;
     int dual_scratch_index; //LMA: trying to guess dual scratch skill index...
@@ -140,7 +147,12 @@ class CPlayer: public CCharacter
         bool IsMonster( );
         bool CleanPlayerVector( );
        	bool loaddata( );
+       	void saveskills();  //LMA: Only saving skills there.
         void savedata( );
+        int GoodSkill(int skill_id);    //LMA: which skill family?
+        int FindSkillOffset(int family);    //LMA: Find a skill offset...
+        void SaveSkillInfo(int family,int offset,int id,int level);    //LMA: Save some skills informations for later...
+        void UpgradeSkillInfo(int offset,int skillid,int nb_upgrade);  //LMA: Upgrade a skill level...
         void CalculateSignature( int slot );    //LMA: get item signature
         int CheckSignature( int slot );         //LMA: check signature
         UINT GetNewStorageItemSlot( CItem thisitem );
