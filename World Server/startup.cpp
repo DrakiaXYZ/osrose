@@ -755,6 +755,7 @@ bool CWorldServer::LoadSkillData( )
         newskill->target = STB_SKILL.rows[i][7];    // Skill Target
         newskill->aoerange = STB_SKILL.rows[i][8]/100; // AOE Range
         newskill->atkpower = STB_SKILL.rows[i][9];     // Attack Power
+        newskill->gm_aoe=0; //LMA: GM AOE buff
 
         //LMA: Patch for osRose.
         //For us type is skilltype...

@@ -63,7 +63,6 @@ CDrop* CCharacter::GetDrop( )
 void CCharacter::StartAction( CCharacter* Target, BYTE action, UINT skillid, bool restart, CCharacter* receiver )
 {
     //Log(MSG_INFO,"Someone does an action %i, skill %i",action,skillid);
-
     BEGINPACKET( pak, 0 );
     if (restart)
     {

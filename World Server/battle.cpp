@@ -695,51 +695,50 @@ bool CCharacter::AoeBuff( CSkills* skill )
         if(etime<SKILL_DELAY)
             return true;
     }
+
     Battle->castTime = 0;
     CMap* map = GServer->MapList.Index[Position->Map];
 
-    //LMA: GM AOE Buff (Devilking).
-    if (skill->gm_aoe!=0)
+    if(skill->target==1 && GetParty( )==NULL)
     {
-         Log(MSG_INFO,"GM AOE buff");
-        for(UINT i=0;i<map->PlayerList.size();i++)
-        {
-            CPlayer* player = map->PlayerList.at(i);
-            if(GServer->IsMonInCircle( Position->current,player->Position->current,(float)skill->aoeradius+1))
-            {
-                 UseBuffSkill( (CCharacter*)player, skill );
-                  Log(MSG_INFO,"Buffing %s ",player->CharInfo->charname);
-            }
-
-        }
-
+        UseBuffSkill( this, skill );
+        ClearBattle( Battle );
+        Battle->lastAtkTime = clock( );
+        return true;
     }
-    else
-    {
-        if(skill->target==1 && GetParty( )==NULL)
-        {
-            UseBuffSkill( this, skill );
-            ClearBattle( Battle );
-            Battle->lastAtkTime = clock( );
-            return true;
-        }
 
-        for(UINT i=0;i<map->PlayerList.size();i++)
+    for(UINT i=0;i<map->PlayerList.size();i++)
+    {
+        CPlayer* player = map->PlayerList.at(i);
+        switch(skill->target)
         {
-            CPlayer* player = map->PlayerList.at(i);
-            switch(skill->target)
+            case 1: // party
             {
-                case 1: // party
+                if(player->Party->party==GetParty( ))
                 {
-                    if(player->Party->party==GetParty( ))
-                    {
-                        if(GServer->IsMonInCircle( Position->current,player->Position->current,(float)skill->aoeradius+1))
-                            UseBuffSkill( (CCharacter*)player, skill );
-                    }
+                    if(GServer->IsMonInCircle( Position->current,player->Position->current,(float)skill->aoeradius+1))
+                        UseBuffSkill( (CCharacter*)player, skill );
                 }
             }
-        }
+            break;
+            case 3: //LMA: GM AOE ? more like friendlies :)
+            {
+                 Log(MSG_INFO,"GM AOE buff");
+                for(UINT i=0;i<map->PlayerList.size();i++)
+                {
+                    CPlayer* player = map->PlayerList.at(i);
+                    if(GServer->IsMonInCircle( Position->current,player->Position->current,(float)skill->aoeradius+1))
+                    {
+                         UseBuffSkill( (CCharacter*)player, skill );
+                          Log(MSG_INFO,"GM AOE Buffing %s ",player->CharInfo->charname);
+                    }
 
+                }
+
+            }
+            break;
+
+        }
     }
 
     Stats->MP -= (skill->mp - (skill->mp * Stats->MPReduction / 100));
