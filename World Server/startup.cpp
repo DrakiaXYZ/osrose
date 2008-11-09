@@ -749,6 +749,7 @@ bool CWorldServer::LoadSkillData( )
         newskill->level = STB_SKILL.rows[i][2];  // Skills Level
         newskill->sp = STB_SKILL.rows[i][3];     // Cost to get skill
         newskill->type = STB_SKILL.rows[i][4];   //tab type.
+        newskill->skill_tab=STB_SKILL.rows[i][4];   //tab type.
         newskill->skilltype = STB_SKILL.rows[i][5]; // Type of skill
         newskill->range = STB_SKILL.rows[i][6]/100; // Range of skill
         newskill->target = STB_SKILL.rows[i][7];    // Skill Target

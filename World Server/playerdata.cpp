@@ -211,7 +211,7 @@ bool CPlayer::loaddata( )
 
         if (indexfamily!=good_family)
         {
-            Log(MSG_WARNING,"Skill %i in family %s instead of family %s",tab_names[indexfamily],tab_names[good_family]);
+            Log(MSG_WARNING,"Skill %i should be in family %s instead of family %s",temp,tab_names[indexfamily],tab_names[good_family]);
             do_save=true;
         }
 
@@ -223,6 +223,7 @@ bool CPlayer::loaddata( )
         }
 
         cskills[cur_cskills[indexfamily]].id=temp;
+        cskills[cur_cskills[indexfamily]].level=1;
         cur_cskills[indexfamily]++;
     }
 
@@ -247,7 +248,7 @@ bool CPlayer::loaddata( )
 
         if (indexfamily!=good_family)
         {
-            Log(MSG_WARNING,"Skill %i in family %s instead of family %s",tab_names[indexfamily],tab_names[good_family]);
+            Log(MSG_WARNING,"Skill %i should be in family %s instead of family %s",temp,tab_names[indexfamily],tab_names[good_family]);
             do_save=true;
         }
 
@@ -259,6 +260,7 @@ bool CPlayer::loaddata( )
         }
 
         cskills[cur_cskills[indexfamily]].id=temp;
+        cskills[cur_cskills[indexfamily]].level=1;
         cur_cskills[indexfamily]++;
     }
 
@@ -284,7 +286,7 @@ bool CPlayer::loaddata( )
 
         if (indexfamily!=good_family)
         {
-            Log(MSG_WARNING,"Skill %i in family %s instead of family %s",tab_names[indexfamily],tab_names[good_family]);
+            Log(MSG_WARNING,"Skill %i should be in family %s instead of family %s",temp,tab_names[indexfamily],tab_names[good_family]);
             do_save=true;
         }
 
@@ -296,6 +298,7 @@ bool CPlayer::loaddata( )
         }
 
         cskills[cur_cskills[indexfamily]].id=temp;
+        cskills[cur_cskills[indexfamily]].level=1;
         uoff[i]=cur_cskills[indexfamily];
         cur_cskills[indexfamily]++;
     }
@@ -322,7 +325,7 @@ bool CPlayer::loaddata( )
 
         if (indexfamily!=good_family)
         {
-            Log(MSG_WARNING,"Skill %i in family %s instead of family %s",tab_names[indexfamily],tab_names[good_family]);
+            Log(MSG_WARNING,"Skill %i should be in family %s instead of family %s",temp,tab_names[indexfamily],tab_names[good_family]);
             do_save=true;
         }
 
@@ -334,6 +337,7 @@ bool CPlayer::loaddata( )
         }
 
         cskills[cur_cskills[indexfamily]].id=temp;
+        cskills[cur_cskills[indexfamily]].level=1;
         moff[i]=cur_cskills[indexfamily];
         cur_cskills[indexfamily]++;
     }
@@ -360,7 +364,7 @@ bool CPlayer::loaddata( )
 
         if (indexfamily!=good_family)
         {
-            Log(MSG_WARNING,"Skill %i in family %s instead of family %s",tab_names[indexfamily],tab_names[good_family]);
+            Log(MSG_WARNING,"Skill %i should be in family %s instead of family %s",temp,tab_names[indexfamily],tab_names[good_family]);
             do_save=true;
         }
 
@@ -372,6 +376,7 @@ bool CPlayer::loaddata( )
         }
 
         cskills[cur_cskills[indexfamily]].id=temp;
+        cskills[cur_cskills[indexfamily]].level=1;
         coff[i]=cur_cskills[indexfamily];
         cur_cskills[indexfamily]++;
     }
@@ -386,7 +391,12 @@ bool CPlayer::loaddata( )
 
         if (coff[i]==-1)
             continue;
+        if (temp==0)
+            temp=1;
         cskills[coff[i]].level=temp;
+
+        if(cskills[coff[i]].id!=0)
+            cskills[coff[i]].thisskill = GServer->GetSkillByID( cskills[coff[i]].id+cskills[coff[i]].level-1 );
     }
 
     //unique skills levels.
@@ -399,7 +409,12 @@ bool CPlayer::loaddata( )
 
         if (uoff[i]==-1)
             continue;
+        if (temp==0)
+            temp=1;
         cskills[uoff[i]].level=temp;
+
+        if(cskills[uoff[i]].id!=0)
+            cskills[uoff[i]].thisskill = GServer->GetSkillByID( cskills[uoff[i]].id+cskills[uoff[i]].level-1 );
     }
 
     //mileage skills levels.
@@ -412,7 +427,12 @@ bool CPlayer::loaddata( )
 
         if (moff[i]==-1)
             continue;
+        if (temp==0)
+            temp=1;
         cskills[moff[i]].level=temp;
+
+        if(cskills[moff[i]].id!=0)
+            cskills[moff[i]].thisskill = GServer->GetSkillByID( cskills[moff[i]].id+cskills[moff[i]].level-1 );
     }
 
     //First free offset.
@@ -487,9 +507,6 @@ bool CPlayer::loaddata( )
 
     }
     */
-
-    if (do_save)
-        saveskills();
     //LMA: new way END
 
 
@@ -504,6 +521,11 @@ bool CPlayer::loaddata( )
     }
 
 	GServer->DB->QFree( );
+
+	//LMA: Saving Skills if needed.
+    if (do_save)
+        saveskills();
+
 	result = GServer->DB->QStore("SELECT itemnum,itemtype,refine,durability,lifespan,slotnum,count,stats,socketed,appraised,gem,sp_value FROM items WHERE owner=%i", CharInfo->charid);
     if(result==NULL) return false;
 	while(row = mysql_fetch_row(result))
@@ -1229,6 +1251,8 @@ bool CPlayer::loaddata( )
         thisfairy->WaitTime = GServer->Config.FairyWait;
         GServer->FairyList.push_back( thisfairy );
     }
+
+
 	return true;
 }
 
@@ -1710,7 +1734,7 @@ void CPlayer::savequests( CPlayer* thisclient )
 //LMA: getting the family skill.
 int CPlayer::GoodSkill(int skill_id)
 {
-    int type=GServer->SkillList[skill_id]->type;
+    int type=GServer->SkillList[skill_id]->skill_tab;
 
     if (type==11)
         return 2;   //basic

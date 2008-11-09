@@ -1,10 +1,10 @@
 /*
 MySQL Data Transfer
 Source Host: localhost
-Source Database: osrose
+Source Database: roseon
 Target Host: localhost
-Target Database: osrose
-Date: 7/21/2008 8:55:44 PM
+Target Database: roseon
+Date: 09/11/2008 14:12:34
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -40,11 +40,6 @@ CREATE TABLE `characters` (
   `basic_skills` varchar(255) NOT NULL default '11,12,13,14,15,16,17,18,19,20,25,26,27,28,29,30,31,32,33,101,5001',
   `class_skills` varchar(500) NOT NULL default '0',
   `class_skills_level` varchar(500) NOT NULL default '1',
-  `unique_skills` varchar(255) NOT NULL default '0',
-  `unique_skills_level` varchar(255) NOT NULL default '1',
-  `mileage_skills` varchar(1024) NOT NULL default '0',
-  `mileage_skills_level` varchar(1024) NOT NULL default '1',
-  `driving_skills` varchar(500) NOT NULL default '0',
   `respawnid` int(11) NOT NULL default '56',
   `townid` int(11) NOT NULL default '56',
   `rewardpoints` int(11) NOT NULL default '0',
@@ -60,9 +55,11 @@ CREATE TABLE `characters` (
   `shoptype` int(11) NOT NULL default '0',
   `timershop` int(11) NOT NULL default '0',
   `isgm` tinyint(1) NOT NULL default '0',
+  `unique_skills` varchar(255) NOT NULL default '0',
+  `unique_skills_level` varchar(500) NOT NULL default '1',
+  `mileage_skills` varchar(1024) NOT NULL default '0',
+  `mileage_skills_level` varchar(1024) NOT NULL default '1',
+  `driving_skills` varchar(255) NOT NULL default '0',
   PRIMARY KEY  (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=463 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 
--- ----------------------------
--- Records 
--- ----------------------------

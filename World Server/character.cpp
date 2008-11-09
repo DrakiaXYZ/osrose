@@ -116,6 +116,7 @@ CCharacter::CCharacter( )
         MagicStatus[i].Value =0;
         MagicStatus[i].Duration = 0;
         MagicStatus[i].BuffTime = 0;
+        MagicStatus[i].Status=0;
     }
     CharType = 0;
     clientid = 0xffff;

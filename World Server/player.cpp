@@ -93,6 +93,7 @@ CPlayer::CPlayer( CClientSocket* CLIENT )
         Shop->SellingList[i].count = 0;
         Shop->SellingList[i].price = 0;
     }
+
     Shop->Buying = 0;
     Shop->Selling = 0;
     Shop->ShopType = 0;
@@ -116,8 +117,10 @@ CPlayer::CPlayer( CClientSocket* CLIENT )
 	// Inventory / storage
     for(unsigned int i=0;i<MAX_INVENTORY;i++)
         ClearItem( items[i] );
+
     for(unsigned int i=0;i<MAX_STORAGE;i++)
         ClearItem( storageitems[i] );
+
     // Clan
     Clan = new CLAN;
     assert(Clan);

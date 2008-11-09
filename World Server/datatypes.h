@@ -763,6 +763,7 @@ struct CSkills {
     UINT id;
     UINT level;
     UINT type;
+    UINT skill_tab;
     UINT skilltype; // New
     UINT range;
     UINT target;

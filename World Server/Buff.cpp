@@ -26,7 +26,7 @@ bool CWorldServer::AddBuffs( CSkills* thisskill, CCharacter* character, int Eval
 {
     //Log(MSG_INFO, "called addbuffs." );
     bool bflag = false;
-    for(unsigned int i=0;i<2;i++)
+    for(unsigned int i=0;i<3;i++)
     {
         if(thisskill->status[i] != 0) // sets status flags in magicstatus array
         {
@@ -382,7 +382,7 @@ bool CWorldServer::CheckABuffs( CSkills* thisskill, CCharacter* character, int E
             case 15: //slow
             case 46: //movement speed increased
             {
-                //Log( MSG_INFO, "checkabuffs: move speed buff detected %i", thisskill->buff[i] );
+                Log( MSG_INFO, "checkabuffs: move speed buff detected %i", thisskill->buff[i] );
                 CBValue BuffValue = GetBuffValue( thisskill, character, Evalue, i,
                                                 character->Status->Dash_up,
                                                 character->Status->Dash_down,
@@ -909,6 +909,7 @@ bool CWorldServer::AddDeBuffs( CSkills* thisskill, CCharacter* character, int Ev
 }
 
 // Add Player Dbuffs
+//2d: Add the [2] because in osRose we got 3 cases...
 bool CWorldServer::AddBuffs( CSkills* thisskill, CCharacter* character, int Evalue, bool bflag )
 {
     if(thisskill->buff[0]!=0)

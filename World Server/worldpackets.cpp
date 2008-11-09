@@ -159,20 +159,17 @@ void CWorldServer::pakPlayer( CPlayer *thisclient )
     ADDWORD( pak, 0 );
     ADDWORD( pak, 0 );
 
-    /*
-	for(int i=0; i<MAX_SKILL; i++) // Class Skills
-        ADDWORD( pak, thisclient->cskills[i].id+thisclient->cskills[i].level-1 );
-
-
-    //TEST !!
-    for(int i=0; i<260; i++)  ADDWORD( pak, 0 );
-    //ADDWORD( pak, 5000 ); //Driving skill
-    //for(int i=0; i<259; i++)  ADDWORD( pak, 0 );
-    */
-
     //LMA: test 2008/11/07 (reorganisation)
  	for(int i=0; i<MAX_CLASS_SKILL; i++) // Class Skills
+ 	{
+ 	    if(thisclient->cskills[i].id==0)
+ 	    {
+ 	        ADDWORD( pak,0);
+ 	        continue;
+ 	    }
+
         ADDWORD( pak, thisclient->cskills[i].id+thisclient->cskills[i].level-1 );
+ 	}
 
     //Driving skill.
 	//driving skills :)
@@ -184,46 +181,32 @@ void CWorldServer::pakPlayer( CPlayer *thisclient )
     //Unique
     for(int i=90; i<90+MAX_UNIQUE_SKILL; i++)
     {
+ 	    if(thisclient->cskills[i].id==0)
+ 	    {
+ 	        ADDWORD( pak,0);
+ 	        continue;
+ 	    }
+
         ADDWORD( pak, thisclient->cskills[i].id+thisclient->cskills[i].level-1 );
     }
 
     //Mileage
     for(int i=120; i<120+MAX_MILEAGE_SKILL; i++)
     {
+ 	    if(thisclient->cskills[i].id==0)
+ 	    {
+ 	        ADDWORD( pak,0);
+ 	        continue;
+ 	    }
+
         ADDWORD( pak, thisclient->cskills[i].id+thisclient->cskills[i].level-1 );
     }
-    //LMA: End test.
 
     //Basic Skills
 	for(int i=320; i<320+MAX_BASIC_SKILL; i++)
 	{
-	    /*
-	    //already handled before (cart and CG) :)
-	    if(thisclient->bskills[i]==5000||thisclient->bskills[i]==5001)
-	        continue;
-		ADDWORD( pak, thisclient->bskills[i] );
-
-		if (is_dual_scratch&&nb_skills==0&&thisclient->bskills[i]==101)
-            nb_skills=i;
-        */
-
         ADDWORD( pak, thisclient->cskills[i].id);
 	}
-
-	//remaining of basic skills (sort of...)
-	/*
-	if (has_cart)
-        ADDWORD( pak,0);
-	if (has_cg)
-        ADDWORD( pak,0);
-
-    //Ok let's guess Dual Scratch index (64=first offset of basic skills)...
-    thisclient->dual_scratch_index=0;
-    if (nb_skills>0)
-        thisclient->dual_scratch_index=64+nb_skills;
-
-    Log(MSG_INFO,"Dual scratch at index: %i",thisclient->dual_scratch_index);
-    */
 
 	for(int i=0; i<48; i++)       // QuickBar
         ADDWORD( pak, thisclient->quickbar[i] );
@@ -2071,37 +2054,26 @@ bool CWorldServer::pakStartSkill ( CPlayer* thisclient, CPacket* P )
     UINT targetid = GETWORD( (*P), 0 );
     UINT skillnum = GETWORD( (*P), 2 );
 
-    //    if(skillnum>=MAX_SKILL)
-    //if(skillnum>=MAX_SKILL&&skillnum!=83)  //double scratch temp fix
-    /*
-    if(skillnum>=MAX_SKILL&&skillnum!=thisclient->dual_scratch_index)  //double scratch fix
+    if(skillnum>=MAX_ALL_SKILL)
     {
         Log( MSG_HACK, "Invalid Skill id %i for %s ", skillnum, thisclient->CharInfo->charname );
         return true;
     }
-    */
-
-    if(skillnum>=MAX_ALL_SKILL)  //double scratch fix
-    {
-        Log( MSG_HACK, "Invalid Skill id %i for %s ", skillnum, thisclient->CharInfo->charname );
-        return true;
-    }
-
 
     Log( MSG_INFO, "pakStartSkill for %s (%i)", thisclient->CharInfo->charname,skillnum);
 
-    //   unsigned int skillid = thisclient->cskills[skillnum].id+thisclient->cskills[skillnum].level-1;
-    /*
-    unsigned int skillid=101;
-
-    //if(skillnum!=83) //dual scratch temp fix
-    if(skillnum!=thisclient->dual_scratch_index) //dual scratch fix
-    {
-        skillid = thisclient->cskills[skillnum].id+thisclient->cskills[skillnum].level-1;
-    }
-    */
-
+    //LMA: Some Basic skills (double scratch) has no level...
     unsigned int skillid = thisclient->cskills[skillnum].id+thisclient->cskills[skillnum].level-1;
+    if(thisclient->cskills[skillnum].id!=0&&thisclient->cskills[skillnum].level==0)
+    {
+        if (thisclient->GoodSkill(thisclient->cskills[skillnum].id)!=2)
+        {
+            Log( MSG_HACK, "Invalid Skill id %i has no level and is not basic for %s ", skillnum, thisclient->CharInfo->charname );
+            return true;
+        }
+
+        skillid = thisclient->cskills[skillnum].id;
+    }
 
     CMap* map = MapList.Index[thisclient->Position->Map];
     CCharacter* character = map->GetCharInMap( targetid );
@@ -2851,10 +2823,10 @@ bool CWorldServer::pakSkillSelf( CPlayer* thisclient, CPacket* P )
         return true;
     }
 
-    Log( MSG_INFO, "pakSkillSelf for %s (%i)", thisclient->CharInfo->charname,num);
-
 	unsigned int skillid = thisclient->cskills[num].id+thisclient->cskills[num].level-1;
 	CSkills* thisskill = GetSkillByID( skillid );
+	Log( MSG_INFO, "pakSkillSelf for %s (slot %i, skill %i)", thisclient->CharInfo->charname,num,skillid);
+
 	if(thisskill == NULL)
 	   return true;
 	unsigned int skilltarget = thisskill->target;

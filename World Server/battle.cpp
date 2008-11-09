@@ -948,6 +948,7 @@ void CCharacter::UseBuffSkill( CCharacter* Target, CSkills* skill )
 {
     bool bflag = false;
     bflag = GServer->AddBuffs( skill, Target, GetInt( ) );
+    Log(MSG_INFO,"In UseBuffSkills, skill %i, nbuffs %i, bflag %i",skill->id,skill->nbuffs,bflag);
     if(skill->nbuffs>0 && bflag == true)
     {
         BEGINPACKET( pak, 0x7b5 );
