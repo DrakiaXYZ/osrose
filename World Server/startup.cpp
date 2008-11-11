@@ -1684,6 +1684,78 @@ bool CWorldServer::LoadNPCs( )
 	return true;
 }
 
+
+//LMA: Special NPCs (Events or whatever...)
+bool CWorldServer::LoadNPCsSpecial( )
+{
+    Log( MSG_LOAD, "NPC Special spawn           " );
+    MYSQL_ROW row;
+    MYSQL_RES *result = DB->QStore("SELECT type,map,dir,x,y,dialogid,eventid,tempdialogid,name,isactive FROM list_npcs_special");
+    if(result==NULL) return false;
+    while(row = mysql_fetch_row(result))
+    {
+        //LMA: Active NPC?
+        int is_active=atoi(row[9]);
+        if(is_active==0)
+            continue;
+
+        CNPC* thisnpc = new (nothrow) CNPC;
+        if(thisnpc==NULL)
+        {
+            Log(MSG_ERROR, "Error allocing memory" );
+            DB->QFree( );
+            return false;
+        }
+
+        thisnpc->clientid = GetNewClientID();
+        thisnpc->npctype = atoi(row[0]);
+        thisnpc->posMap = atoi(row[1]);
+        thisnpc->dir = (float)atof(row[2]);
+        thisnpc->pos.x = (float)atof(row[3]);
+        thisnpc->pos.y = (float)atof(row[4]);
+        thisnpc->thisnpc = GetNPCDataByID( thisnpc->npctype );
+        if( thisnpc->thisnpc == NULL)
+        {
+           Log(MSG_LOAD,"The NPC %i has not been found!, it won't be displayed",thisnpc->npctype);
+            delete thisnpc;
+            continue;
+        }
+
+        NpcNameList[thisnpc->npctype]=strdup(row[8]);    //LMA: NPC Name list.
+
+        thisnpc->thisnpc->dialogid = atoi(row[5]); //This is global to NPC type (original dialog)
+        //thisnpc->dialog=thisnpc->thisnpc->dialogid;
+        //thisnpc->event=thisnpc->thisnpc->eventid; //LMA Event.
+        thisnpc->event=atoi(row[6]);                //LMA Event.
+        thisnpc->thisnpc->eventid=thisnpc->event;            //LMA Event (left for compatibility).
+        thisnpc->dialog=atoi(row[7]);               //LMA tempdialog ID, used for events for example
+
+        //LMA: check if out of memory.
+        #ifdef AUTOINDEX
+        if (thisnpc->posMap>=MapList.max)
+        #else
+        if (thisnpc->posMap>=MAX_MAP_DATA)
+        #endif
+        {
+           #ifdef AUTOINDEX
+           Log(MSG_WARNING,"NPC, index overflow trapped %i>%i (increase MAX_MAP_DATA)",thisnpc->posMap,MapList.max);
+           #else
+           Log(MSG_WARNING,"NPC, index overflow trapped %i>%i (increase MAX_MAP_DATA)",thisnpc->posMap,MAX_MAP_DATA);
+           #endif
+           delete thisnpc;
+           continue;
+        }
+
+        thisnpc->lastAiUpdate=clock();
+        MapList.Index[thisnpc->posMap]->AddNPC( thisnpc );
+    }
+
+    DB->QFree( );
+    Log( MSG_LOAD, "NPC spawn Data loaded" );
+    return true;
+}
+
+
 bool CWorldServer::LoadDropsData( )
 {
 	Log( MSG_LOAD, "Drops Data                  " );

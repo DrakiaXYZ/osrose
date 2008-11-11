@@ -461,6 +461,7 @@ class CWorldServer : public CServerSocket
         bool LoadNPCData( );
         bool LoadUpgrade( );
         bool LoadNPCs( );
+        bool LoadNPCsSpecial( );
         bool CleanConnectedList( );
 
         CQuest* GetQuestByID( unsigned long int id );

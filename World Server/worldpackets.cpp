@@ -512,7 +512,7 @@ bool CWorldServer::pakSpawnNPC( CPlayer* thisclient, CNPC* thisnpc )
 	//LMA: Dialog time, or we send the dialogID (default one), or the tempdialogID (event for example).
 	if (thisnpc->dialog!=0)
 	{
-        ADDWORD( pak, thisnpc->thisnpc->dialogid );
+        ADDWORD( pak, thisnpc->dialog );
         Log(MSG_INFO,"Special dialog %i for NPC %i",thisnpc->dialog, thisnpc->npctype);
     }
     else if(thisnpc->thisnpc->dialogid!=0)

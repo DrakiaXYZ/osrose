@@ -597,6 +597,7 @@ bool CWorldServer::OnServerReady( )
     LoadMobGroupsSpecial( );    //LMA: Special spawns (Halloween for example).
 #endif
     LoadNPCs( );
+    LoadNPCsSpecial( );  //Special NPC load
     LoadMonsters( );
     LoadUpgrade( );
     LoadLTB();  //LMA: Loading LTB for AIP.
