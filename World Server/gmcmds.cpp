@@ -5443,13 +5443,14 @@ bool CWorldServer::pakGMMaxStats( CPlayer* thisclient )
 bool CWorldServer::pakGMAllSkill(CPlayer* thisclient, char* name)
 {
     int classid = thisclient->CharInfo->Job;
+    bool is_ok=true;
     CPlayer* otherclient = GetClientByCharName( name );
     if(otherclient==NULL)
     return true;
 
     //LMA: We delete previous skills to avoir errors...
     //They will be sorted correctly (if needed) at next startup...
-    for (int k=0;k<320;k++)
+    for (int k=0;k<MAX_ALL_SKILL;k++)
     {
         otherclient->cskills[k].id = 0;
         otherclient->cskills[k].level = 0;
@@ -6248,8 +6249,15 @@ bool CWorldServer::pakGMAllSkill(CPlayer* thisclient, char* name)
         otherclient->cskills[xx].id = xxxx; // 566 - dealer
         otherclient->cskills[xx].level = x;
         */
+        is_ok=false;
         SendPM(thisclient, "Can't add skills for this class");
     }
+
+    if(is_ok)
+    {
+        thisclient->saveskills();
+    }
+
 
     return true;
 }
