@@ -5450,7 +5450,7 @@ bool CWorldServer::pakGMAllSkill(CPlayer* thisclient, char* name)
 
     //LMA: We delete previous skills to avoir errors...
     //They will be sorted correctly (if needed) at next startup...
-    for (int k=0;k<MAX_ALL_SKILL;k++)
+    for (int k=0;k<60;k++)
     {
         otherclient->cskills[k].id = 0;
         otherclient->cskills[k].level = 0;
