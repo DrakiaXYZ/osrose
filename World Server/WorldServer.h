@@ -275,7 +275,7 @@ class CWorldServer : public CServerSocket
     	bool pakCharSelect( CPlayer* thisclient, CPacket* P );
     	bool pakStartSkill( CPlayer* thisclient, CPacket* P );
         bool pakPvp796( CPlayer* thisclient, CPacket* P );   //LMA: test for packet 0x796
-        bool pakRepairItem( CPlayer* thisclient, CPacket* P );
+        bool pakRepairItem( CPlayer* thisclient, CPacket* P,int packet_type);
     	bool pakMoveSkill( CPlayer* thisclient, CPacket* P );
         bool pakCloseShop( CPlayer* thisclient, CPacket* P );
         bool pakStoreZuly( CPlayer* thisclient, CPacket* P );

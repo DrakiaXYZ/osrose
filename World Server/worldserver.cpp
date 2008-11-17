@@ -984,7 +984,8 @@ bool CWorldServer::OnReceivePacket( CClientSocket* thisclient, CPacket *P )
         case 0x07c6: return pakSellShop         ( (CPlayer*)thisclient->player, P );
     	case 0x07ca: return pakChangeCart       ( (CPlayer*)thisclient->player, P );
     	//case 0x07cb: return pakRepairItem       ( (CPlayer*)thisclient->player, P );
-    	case 0x07cb: case 0x07cd: Log( MSG_WARNING, "(SID:%i) Received packet. Command:%04x Size:%04x", thisclient->sock, P->Command, P->Size ); return pakRepairItem       ( (CPlayer*)thisclient->player, P );
+    	case 0x07cb: return pakRepairItem       ( (CPlayer*)thisclient->player, P,2);   //LMA: tool repair.
+    	case 0x07cd: return pakRepairItem       ( (CPlayer*)thisclient->player, P,1);   //LMA: NPC repair.
     	case 0x07d0: return pakPartyActions     ( (CPlayer*)thisclient->player, P );
     	case 0x07d1: return pakPartyManager     ( (CPlayer*)thisclient->player, P );
     	case 0x07d7: return pakPartyOption      ( (CPlayer*)thisclient->player, P );

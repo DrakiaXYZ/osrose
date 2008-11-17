@@ -4871,26 +4871,142 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
     return true;
 }
 
-// Repair
-bool CWorldServer::pakRepairItem( CPlayer* thisclient, CPacket* P )
+// Repair (NPC and tool)
+bool CWorldServer::pakRepairItem( CPlayer* thisclient, CPacket* P,int packet_type)
 {
-            BYTE slot = GETBYTE((*P),2);
-            if(!CheckInventorySlot( thisclient, slot)) return false;
-            if(thisclient->items[slot].count<1) return true;
-            thisclient->items[slot].lifespan = 100;
-            //Still TODO: find where prices of storage and repair are and add it to the code.
-            BEGINPACKET( pak, 0x7cd );
-            ADDQWORD   ( pak, thisclient->CharInfo->Zulies );
-            ADDBYTE    ( pak, 0x01 );
-            ADDBYTE    ( pak, slot );
-            ADDDWORD   ( pak, BuildItemHead( thisclient->items[slot] ));
-            ADDDWORD   ( pak, BuildItemData( thisclient->items[slot] ));
+    BYTE slot_tool=0;
+    BYTE slot = GETBYTE((*P),2);
+    if(!CheckInventorySlot( thisclient, slot)) return false;
+    if(thisclient->items[slot].count<1) return true;
+
+    //LMA: We have NPC or tool repair, comes from different packet.
+    switch( packet_type)
+    {
+        case 1:
+        {
+            //NPC repair (NPC client ID).
+            BYTE npc_id=GETWORD((*P),0);
+            //let's check the NPC is amongst the good ones...
+            CNPC* testnpc=GServer->GetNPCByID(npc_id, thisclient->Position->Map);
+            if (testnpc==NULL)
+            {
+                Log(MSG_HACK,"%s tried to repair with an unknown NPC!",thisclient->CharInfo->charname);
+                return true;
+            }
+
+            //checking the NPC to a list of "correct" NPC.
+            int liste_npc[6];
+            liste_npc[0]=1008;  //Raffle
+            liste_npc[1]=1093;   //Crune
+            liste_npc[2]=1034;   //Ronk
+            liste_npc[3]=1062; //Punwell
+            liste_npc[4]=1181;   //pavrick
+            liste_npc[5]=1223;   //nel eldora
+
+            bool is_found=false;
+            int k=0;
+            for (k=0;k<6;k++)
+            {
+                if(testnpc->npctype==liste_npc[k])
+                {
+                    is_found=true;
+                    break;
+                }
+
+            }
+
+            if (!is_found)
+            {
+                Log(MSG_HACK,"%s tried to repair with an wrong NPC (%i)!",thisclient->CharInfo->charname,testnpc->npctype);
+                return true;
+            }
+
+            //checking distance now.
+            if(GServer->distance(thisclient->Position->current,testnpc->pos)>20)
+            {
+                Log(MSG_HACK,"%s tried to repair but too far from NPC %i!",thisclient->CharInfo->charname,testnpc->npctype);
+                return true;
+            }
+
+            Log(MSG_INFO,"Npc index %i (%i) is repairing for %s",npc_id,liste_npc[k],thisclient->CharInfo->charname);
+        }
+        break;
+        case 2:
+        {
+            //Tool repair.
+            slot_tool=GETBYTE((*P),0);
+            //let's check if we have a tool in stock :)
+            if(!CheckInventorySlot( thisclient, slot_tool)) return false;
+            if(thisclient->items[slot_tool].count<1)
+            {
+                Log(MSG_HACK,"Player %s tryed to repair without tool",thisclient->CharInfo->charname);
+                return true;
+            }
+
+            //Is it a repair tool?
+            if(thisclient->items[slot_tool].itemnum>=UseList.max||UseList.Index[thisclient->items[slot_tool].itemnum]->type!=315)
+            {
+                Log(MSG_HACK,"Player %s tryed to repair without a good tool",thisclient->CharInfo->charname);
+                return true;
+            }
+
+            //it's a good tool, let's take one of them.
+            thisclient->items[slot_tool].count--;
+            if (thisclient->items[slot_tool].count==0)
+                ClearItem( thisclient->items[slot_tool] );
+
+            //Ok now the quality of the tool :)
+            if (UseList.Index[thisclient->items[slot_tool].itemnum]->quality<=50)
+            {
+                //standard quality, so durability goes away...
+                thisclient->items[slot].durability-=1;
+                if(thisclient->items[slot].durability<=0)
+                    thisclient->items[slot].durability=1;
+            }
+
+        }
+        break;
+
+    }
+
+    thisclient->items[slot].lifespan = 100;
+
+    //Still TODO: find where prices of storage and repair are and add it to the code.
+    if(packet_type==1)
+    {
+        BEGINPACKET( pak, 0x7cd );
+        ADDQWORD   ( pak, thisclient->CharInfo->Zulies );
+        ADDBYTE    ( pak, 0x01 );
+        ADDBYTE    ( pak, slot );
+        ADDDWORD   ( pak, BuildItemHead( thisclient->items[slot] ));
+        ADDDWORD   ( pak, BuildItemData( thisclient->items[slot] ));
         ADDDWORD( pak, 0x00000000 );
         ADDWORD ( pak, 0x0000 );
-            ADDBYTE    ( pak, 0x00 );
-            thisclient->client->SendPacket( &pak );
-            thisclient->SetStats( );
-    //Log ( MSG_WARNING, "Repair Item pak data: %i, %i, %i", GETBYTE((*P),0), GETBYTE((*P),2), GETBYTE((*P),4));
+        thisclient->client->SendPacket( &pak );
+        thisclient->SetStats( );
+        thisclient->SaveSlot41(slot);
+        return true;
+    }
+
+    //repair tool.
+    BEGINPACKET( pak, 0x7cb );
+    ADDBYTE    ( pak, 0x02 );
+    ADDBYTE    ( pak, slot_tool );
+    ADDDWORD   ( pak, BuildItemHead( thisclient->items[slot_tool] ));
+    ADDDWORD   ( pak, BuildItemData( thisclient->items[slot_tool] ));
+    ADDDWORD( pak, 0x00000000 );
+    ADDWORD ( pak, 0x0000 );
+    ADDBYTE    ( pak, slot );
+    ADDDWORD   ( pak, BuildItemHead( thisclient->items[slot] ));
+    ADDDWORD   ( pak, BuildItemData( thisclient->items[slot] ));
+    ADDDWORD( pak, 0x00000000 );
+    ADDWORD ( pak, 0x0000 );
+    thisclient->client->SendPacket( &pak );
+    thisclient->SetStats( );
+    thisclient->SaveSlot41(slot_tool);
+    thisclient->SaveSlot41(slot);
+
+
     return true;
 }
 
