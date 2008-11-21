@@ -185,6 +185,7 @@ class CWorldServer : public CServerSocket
         CMDrops* GetDropData( UINT id );
     	CRespawnPoint* GetRespawnByMap( int id );
         CSkills* GetSkillByID( UINT id );
+        CStatus* GetStatusByID( unsigned int id );  //getting status.
     	void ClearClientID( UINT id );
     	CDrop* GetDropByID( UINT id, UINT map=0 );
         CChest* GetChestByID( UINT id );
@@ -454,6 +455,7 @@ class CWorldServer : public CServerSocket
         //bool LoadLTB( );
         bool LoadChestData( );
         bool LoadSkillDataOld( );  //LMA: Old version, for debug
+        bool LoadStatusData( ); //loading status.
         bool LMACheckSkills( );  //LMA: for skill debug
         bool LMACheckStuff();   //LMA: for different tests.
         bool LoadSkillData( );
@@ -495,6 +497,12 @@ class CWorldServer : public CServerSocket
     	char*					cct;					// Encryption table for char server
 
     	vector<CTeleGate*>		TeleGateList;			// Telegates List
+        #ifdef AUTOINDEX
+        CStatus                 **StatusList;
+        int                     maxStatus;
+        #else
+        vector<CStatus*>        StatusList;             // Status List
+        #endif
     	map<int,char*>          NpcNameList;            //LMA: npc name map.
         vector<CCustomGate*>    CustomGateList;         // Custom Telegate list
         vector<CCustomEvent*>   CustomEventList;        //Custom events list

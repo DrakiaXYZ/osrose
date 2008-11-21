@@ -783,6 +783,12 @@ CParty* CPlayer::GetParty( )
     return Party->party;
 }
 
+//returns clan,
+CLAN* CPlayer::GetClan( )
+{
+  return Clan;
+}
+
 // return intelligence
 unsigned int CPlayer::GetInt( )
 {

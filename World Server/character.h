@@ -68,6 +68,7 @@ class CCharacter
         void UseBuffSkill( CCharacter* Target, CSkills* skill );
         void UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff= false );
         void UWKill(CCharacter* Enemy);   //LMA: For Union War.
+        bool UseSkill( CSkills* skill, CCharacter *Target = NULL ); //for gm command
 
         //functions
         bool IsMonster( );
@@ -104,6 +105,7 @@ class CCharacter
             virtual int GetEVBuff( );
             void RefreshBuff( );
             virtual CParty* GetParty( );
+            virtual CLAN* GetClan( );
             virtual void reduceItemsLifeSpan( bool);
 
             // stats

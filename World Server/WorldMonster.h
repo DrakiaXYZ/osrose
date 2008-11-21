@@ -33,6 +33,7 @@ class CMonster : public CCharacter
         // times
         clock_t SpawnTime;
      	clock_t lastSighCheck;
+     	clock_t lastDegenTime;
 		time_t lastLifeUpdate;
 
 		//LMA: daynight
@@ -61,6 +62,7 @@ class CMonster : public CCharacter
 
         // Monster Functions
         void DoAi(int ainumber,char type);  //LMA: AIP.
+        bool SummonUpdate(CMonster* monster, CMap* map, UINT j);
         bool SetStats( );
         bool UnspawnMonster( );
       	bool IsGhost( );

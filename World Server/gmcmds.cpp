@@ -2491,6 +2491,19 @@ else if (strcmp(command, "give2")==0)
 
         return true;
 	}
+    else if(strcmp(command, "skill")==0)
+    {
+      if (Config.Command_KillInRange > thisclient->Session->accesslevel)
+        return true;
+
+      if ((tmp = strtok(NULL, " "))==NULL) return true;
+      unsigned skillid = atoi(tmp);
+      Log(MSG_GMACTION, "%s cast skill %i", thisclient->CharInfo->charname, skillid);
+      SendPM(thisclient, "Casting skill %i", skillid);
+      CCharacter* Target = thisclient->GetCharTarget( );
+      CSkills* thisskill = GetSkillByID(skillid);
+      thisclient->UseSkill(thisskill, Target);
+    }
     else if(strcmp(command, "rules")==0)  // Rules Command by Matt
     {
         if(Config.Command_Rules > thisclient->Session->accesslevel)
@@ -3751,26 +3764,26 @@ bool CWorldServer::pakGMReborn(CPlayer* thisclient)
          thisclient->MyQuest.clear();
 #endif
 
-/*Update Reborn Command {By CrAshInSiDe*/
+        /*Update Reborn Command {By CrAshInSiDe*/
         int x = 5098;
         int y = 5322;
         int map = 22;
-      if( (x != 0) && (y != 0) && (map != 0) )
+        if( (x != 0) && (y != 0) && (map != 0) )
         {
             fPoint coord;
             coord.x = x;
             coord.y = y;
             MapList.Index[map]->TeleportPlayer( thisclient, coord, false );
-            }
+        }
 
 
- // Uncomment below if you want to use the Nobles part
- /*
-         char newcharname[65];
-         strcpy (newcharname,"[Nobles]");
-         strcat (newcharname, thisclient->CharInfo->charname);
-         GServer->DB->QExecute(" UPDATE characters SET char_name = '%s' WHERE id = '%i' ",newcharname, thisclient->CharInfo->charid);
-*/
+         // Uncomment below if you want to use the Nobles part
+         /*
+                 char newcharname[65];
+                 strcpy (newcharname,"[Nobles]");
+                 strcat (newcharname, thisclient->CharInfo->charname);
+                 GServer->DB->QExecute(" UPDATE characters SET char_name = '%s' WHERE id = '%i' ",newcharname, thisclient->CharInfo->charid);
+        */
 
          BEGINPACKET( pak, 0x702 );
          ADDSTRING( pak, "You were disconnected from the server !" );
@@ -3781,8 +3794,11 @@ bool CWorldServer::pakGMReborn(CPlayer* thisclient)
          ADDWORD( pak, 0 );
          thisclient->client->SendPacket( &pak );
 
+         //saving skills.
+         thisclient->saveskills();
          thisclient->client->isActive = false;
       }
+
 
      return true;
 }
@@ -5448,7 +5464,7 @@ bool CWorldServer::pakGMAllSkill(CPlayer* thisclient, char* name)
     if(otherclient==NULL)
     return true;
 
-    //LMA: We delete previous skills to avoir errors...
+    //LMA: We delete previous skills to avoir errors (only the class ones)...
     //They will be sorted correctly (if needed) at next startup...
     for (int k=0;k<60;k++)
     {

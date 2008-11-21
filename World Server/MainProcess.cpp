@@ -546,6 +546,7 @@ PVOID MapProcess( PVOID TS )
                 */
 
                //Let's kill the bonfires after 2 minutes.. by Terr0risT
+               /*
                 if (monster->IsBonfire( ))
                     {
                         UINT etime = (UINT)round((clock( ) - monster->SpawnTime));
@@ -554,6 +555,7 @@ PVOID MapProcess( PVOID TS )
                            map->DeleteMonster( monster, true, j ); continue;
                         }
                     }
+                */
 
 
                 /*LMA: handled by AIP?
@@ -778,6 +780,13 @@ PVOID MapProcess( PVOID TS )
                     Log(MSG_DEBUG,"DoAIP mainprocess monster is dead %i",monster->thisnpc->AI);
                     monster->DoAi(monster->thisnpc->AI, 5);
                     monster->OnDie( );
+                }
+
+                //osprose
+                if (monster->IsSummon())
+                {
+                    monster->SummonUpdate(monster,map, j);
+                    continue;
                 }
 
             }

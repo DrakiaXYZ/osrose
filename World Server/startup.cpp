@@ -125,6 +125,10 @@ bool CWorldServer::InitDefaultValues()
     MapList.Index = new CMap*[300];
     MapList.max=300;
 
+    //stats.
+    StatusList=new CStatus*[STB_STATUS.rowcount];
+    maxStatus=STB_STATUS.rowcount;
+
     //Skills and NPC as static array too, but no init for this one.
     SkillList=new CSkills*[STB_SKILL.rowcount];
     maxSkills=STB_SKILL.rowcount;
@@ -720,6 +724,64 @@ bool CWorldServer::LMACheckSkills()
 
     return true;
 }
+
+//loading status.
+#ifdef AUTOINDEX
+bool CWorldServer::LoadStatusData( )
+{
+  Log( MSG_LOAD, "Stats Data             " );
+  for (unsigned int i = 0; i < STB_STATUS.rowcount; i++)
+  {
+    CStatus* newstatus = new (nothrow) CStatus;
+    if (newstatus == NULL)
+    {
+      Log(MSG_WARNING, "\nError allocing memory: status_data");
+      return false;
+    }
+    newstatus->id = i;
+    newstatus->type = STB_STATUS.rows[i][1];  // Unk
+    newstatus->duplication = STB_STATUS.rows[i][2]; // Unk
+    newstatus->dir = STB_STATUS.rows[i][3]; // 0: Up 1: Down 2: ?
+    newstatus->repeat = STB_STATUS.rows[i][4]; // 1: Repeat (Heal) 2: Once (Buff Stat) 3: Status Effect (Poison, etc)
+    newstatus->ability[0] = STB_STATUS.rows[i][5]; // Status # to call?
+    newstatus->amount[0] = STB_STATUS.rows[i][6]; // Amount
+    newstatus->ability[1] = STB_STATUS.rows[i][7];
+    newstatus->amount[1] = STB_STATUS.rows[i][8];
+    newstatus->decrease = STB_STATUS.rows[i][17]; // 0: Increase 1: Decrease
+    StatusList[i]=newstatus;
+  }
+
+  Log( MSG_LOAD, "Stats Data loaded       " );
+  return true;
+}
+#else
+bool CWorldServer::LoadStatusData( )
+{
+  Log( MSG_LOAD, "Stats Data             " );
+  for (unsigned int i = 0; i < STB_STATUS.rowcount; i++)
+  {
+    CStatus* newstatus = new (nothrow) CStatus;
+    if (newstatus == NULL)
+    {
+      Log(MSG_WARNING, "\nError allocing memory: status_data");
+      return false;
+    }
+    newstatus->id = i;
+    newstatus->type = STB_STATUS.rows[i][1];  // Unk
+    newstatus->duplication = STB_STATUS.rows[i][2]; // Unk
+    newstatus->dir = STB_STATUS.rows[i][3]; // 0: Up 1: Down 2: ?
+    newstatus->repeat = STB_STATUS.rows[i][4]; // 1: Repeat (Heal) 2: Once (Buff Stat) 3: Status Effect (Poison, etc)
+    newstatus->ability[0] = STB_STATUS.rows[i][5]; // Status # to call?
+    newstatus->amount[0] = STB_STATUS.rows[i][6]; // Amount
+    newstatus->ability[1] = STB_STATUS.rows[i][7];
+    newstatus->amount[1] = STB_STATUS.rows[i][8];
+    newstatus->decrease = STB_STATUS.rows[i][17]; // 0: Increase 1: Decrease
+
+    StatusList.push_back(newstatus);
+  }
+  return true;
+}
+#endif
 
 
 //News version (STB)

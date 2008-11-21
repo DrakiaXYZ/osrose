@@ -35,6 +35,7 @@ bool CMonster::OnBeAttacked( CCharacter* Enemy )
         }
         else
         {
+            Log(MSG_INFO,"Stay still attack");
             StartAction( Enemy, STAY_STILL_ATTACK, 0 );
         }
 
@@ -156,8 +157,11 @@ bool CMonster::OnEnemyOnSight( CPlayer* Enemy )
             UINT aggro = GServer->RandNumber(2,15);
             if(thisnpc->aggresive>=aggro && !IsGhostSeed( ))
             {
+                //osprose.
+                /*
                 Enemy->ClearObject( this->clientid );
 				SpawnMonster(Enemy, this );
+				*/
                 StartAction( (CCharacter*) Enemy, NORMAL_ATTACK, 0 );
             }
             else
@@ -187,6 +191,9 @@ bool CMonster::OnFar( )
        UnspawnMonster( );
        return true;
     }
+
+    //osprose.
+    if(!IsSummon())return true;
 
     Position->destiny = Position->source; //ON TARGET LOST
     ClearBattle( Battle );
@@ -669,6 +676,76 @@ bool CMonster::Turak3(CMonster* monster,CMap* map)
 
 */
 
+//osprose's summon update.
+bool CMonster::SummonUpdate(CMonster* monster, CMap* map, UINT j)
+{
+     BEGINPACKET( pak, 0x799 );
+ 	clock_t etime = clock() - lastDegenTime;
+    CPlayer* ownerclient = monster->GetOwner( );
+    if( etime >= 4 * CLOCKS_PER_SEC && Stats->HP > 0 )
+    {
+        Stats->HP -= 2;
+        lastDegenTime = clock();
+        if (Stats->HP < 1||ownerclient == NULL||ownerclient->IsDead())//orphan check
+        {
+            //he's dead.
+            Log(MSG_INFO,"Summon should be dead now");
+            ADDWORD    ( pak, monster->clientid );
+            ADDWORD    ( pak, monster->clientid );
+            ADDDWORD   ( pak, monster->thisnpc->hp*monster->thisnpc->level );
+            ADDDWORD   ( pak, 16 );
+            GServer->SendToVisible( &pak, monster );
+            map->DeleteMonster( monster, true, j );
+            return true;
+        }
+        else
+        if (montype > 800 && montype < 811)
+        {
+			/*CPlayer* ownerclient = monster->GetOwner( );
+            float distance = 0x9;
+            for(UINT i=0;i<GServer->MapList.Index[Position->Map]->PlayerList.size();i++)
+            {
+                CPlayer* thisclient = GServer->MapList.Index[Position->Map]->PlayerList.at(i);
+                float tempdist = GServer->distance( Position->current, thisclient->Position->current );
+                if(tempdist<distance)
+                {
+                    thisclient->Stats->HP += ((((montype-800)*5)+((ownerclient->Stats->Level)/10))+10);
+                    thisclient->Stats->MP += (((montype-800)*5)+((ownerclient->Stats->Level)/25));
+                    BEGINPACKET( pak, 0x7b2);
+                    ADDWORD    ( pak, monster->clientid );
+                    ADDWORD    ( pak, 0x0b9d );
+                    ADDBYTE    ( pak, 0x06 );
+                    thisclient->client->SendPacket(&pak);
+
+                    RESETPACKET( pak, 0x7b5);
+                    ADDWORD    ( pak, thisclient->clientid );
+                    ADDWORD    ( pak, monster->clientid );
+                    ADDWORD    ( pak, 0x0b9d+0x3000+((ownerclient->Stats->Level%4)*0x4000) );
+                    ADDBYTE    ( pak, ownerclient->Stats->Level/4 );
+                    thisclient->client->SendPacket(&pak);
+
+                    RESETPACKET( pak, 0x7b9);
+                    ADDWORD    ( pak, monster->clientid );
+                    ADDWORD    ( pak, 0x0b9d );
+                    thisclient->client->SendPacket(&pak);
+                }
+            }*/
+        }
+    }
+    else
+    if (Stats->HP < 1)
+    {
+        Log(MSG_INFO,"Summon should be dead now 2");
+        ADDWORD    ( pak, monster->clientid );
+        ADDWORD    ( pak, monster->clientid );
+        ADDDWORD   ( pak, monster->thisnpc->hp*monster->thisnpc->level );
+        ADDDWORD   ( pak, 16 );
+        GServer->SendToVisible( &pak, monster );
+        map->DeleteMonster( monster, true, j );
+    }
+
+    return true;
+}
 
 //LMA: AIP
 void CMonster::DoAi(int ainumber,char type)//ainumber is monster->AI type is add=0 idle=1 attacking=2 attacked=3 after killing target=4 hp<1=5

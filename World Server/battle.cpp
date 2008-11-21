@@ -28,6 +28,26 @@ void CCharacter::DoAttack( )
        Log(MSG_INFO,"Someone attacks type=%i,skillid=%i",Battle->atktype,Battle->skillid);
      */
 
+    //osptest begin
+    if(IsSummon())
+    {
+        CCharacter* Enemy = GetCharTarget( );
+        if(Enemy == NULL && Battle->atktype != SKILL_AOE && Battle->atktype != BUFF_AOE)
+        {
+            //Log(MSG_DEBUG,"No Enemy found");
+            ClearBattle( Battle );
+            return;
+        }
+        //Log(MSG_DEBUG,"Client id: %i Enemy client id: %i",clientid, Enemy->clientid);
+        if(this == Enemy) //summoned monster is attacking itself. It has been observed to happen
+        {
+            //Log(MSG_INFO,"Clearing Battle for this summon");
+            ClearBattle( Battle );
+            return;
+        }
+    }
+    //osptest end
+
     CMap* map = GServer->MapList.Index[Position->Map];
     switch(Battle->atktype)
     {
@@ -39,6 +59,13 @@ void CCharacter::DoAttack( )
                 ClearBattle( Battle );
                 return;
             }
+            //osptest
+            if(Enemy == this)
+            {
+                //Log(MSG_INFO,"WTF?? I AM trying to attack myself");
+                ClearBattle( Battle );
+            }
+            //osptest end
             if(IsTargetReached( Enemy ) && CanAttack( ))
             {
                 NormalAttack( Enemy );
@@ -140,7 +167,7 @@ void CCharacter::DoAttack( )
         break;
        case SKILL_BUFF://buffs
         {
-
+            /*
             CSkills* skill = GServer->GetSkillByID( Battle->skillid );
             if(skill==NULL)
             {
@@ -178,7 +205,31 @@ void CCharacter::DoAttack( )
                             }
                     }break;
             }
+            */
+            //osptest
+            CCharacter* Enemy = GetCharTarget( );
 
+            if(Enemy == NULL)
+            {
+                //Log(MSG_DEBUG,"this target is NULL");
+                ClearBattle( Battle );
+                return;
+            }
+            CSkills* skill = GServer->GetSkillByID( Battle->skillid );
+
+            if(skill == NULL)
+            {
+                //Log(MSG_DEBUG,"this skill is NULL");
+                //ClearBattle( Battle );
+                return;
+            }
+            //Log(MSG_DEBUG,"Called skill buff code for skill %i",skill->id);
+            if(IsTargetReached( Enemy, skill ) && CanAttack( ))
+            {
+                //Log(MSG_DEBUG,"Skill successfully cast");
+                BuffSkill( Enemy, skill );
+            }
+            //osptest end
         }
         break;  //LMA: break was missing?
         case SKILL_AOE:
@@ -195,46 +246,10 @@ void CCharacter::DoAttack( )
             if(Battle->atktype==AOE_TARGET)
             {
                 //LMA 2008/09/02: new version, the target is a zone, not a monster... so we stick with aoedestiny ;)
-                /*
-                Enemy = GetCharTarget( );
-                if(Enemy==NULL)
-                {
-                    //LMA: oups, our temp monster has been killed, let's find another one if possible :)
-                    Log(MSG_INFO,"[DoAttack] In AOE_TARGET (Enemy not found)");
-                    CMonster* tempmonster=GServer->LookAOEMonster(this);
-                    if (tempmonster==NULL)
-                    {
-                        Log(MSG_INFO,"[DoAttack] In AOE_TARGET (no new monsters in range)");
-                        ClearBattle( Battle );
-                        return;
-                    }
-
-                    Battle->skilltarget = tempmonster->clientid;
-                    Battle->target = tempmonster->clientid;     //LMA: just for compatibility use...
-                    Enemy = GetCharTarget( );
-                    if(Enemy==NULL)
-                    {
-                        Log(MSG_INFO,"[DoAttack] In AOE_TARGET (Enemy2 not found)");
-                        ClearBattle( Battle );
-                        return;
-                    }
-
-                }
-
-                if(IsTargetReached( Enemy, skill ) && CanAttack( ))
-                {
-                    Log(MSG_INFO,"[DoAttack] In AOE_TARGET time for AoeSkill");
-                    AoeSkill( skill, Enemy );
-                }
-                else
-                {
-                    Log(MSG_INFO,"[DoAttack] In AOE_TARGET not reached or can't attack");
-                }
-                */
-
                 float distance=GServer->distance( Position->current, Position->aoedestiny );
                 //Log(MSG_INFO,"distance %f / range: %i, current: %.2f,%.2f, aoe: %.2f,%.2f",distance,skill->range,Position->current.x,Position->current.y,Position->aoedestiny.x,Position->aoedestiny.y);
-                if(distance<=skill->range)
+                //osprose: canattacl
+                if(distance<=skill->range&&CanAttack( ))
                 {
                     Log(MSG_INFO,"[DoAttack] In AOE_TARGET time for AoeSkill");
                     AoeSkill( skill, NULL );    //LMA: no specific Enemy in Zone.
@@ -266,7 +281,8 @@ void CCharacter::DoAttack( )
             CSkills* skill = GServer->GetSkillByID( Battle->skillid );
             if(skill==NULL)
             {
-                ClearBattle( Battle );
+                //osprose
+                //ClearBattle( Battle );
                 return;
             }
             BuffSkill( this, skill );
@@ -291,6 +307,8 @@ void CCharacter::DoAttack( )
                 ClearBattle( Battle );
                 return;
             }
+
+            /*
             //[netwolf]
             switch (skill->target)
              {
@@ -304,6 +322,15 @@ void CCharacter::DoAttack( )
                             AoeBuff( skill );
                     }   break;
              }
+             */
+             //osprose
+             AoeBuff( skill );
+             //osprose end
+        }
+        break;
+        default:
+        {
+            return;
         }
         break;
     }
@@ -338,7 +365,6 @@ void CCharacter::NormalAttack( CCharacter* Enemy )
     hitpower+=((hitpower*(Stats->ExtraDamage))/100);  //LMA: ED, Devilking / Arnold
     //Log(MSG_INFO,"ED: before %i, after %i (extra *%i + %i)",hitsave,hitpower,Stats->ExtraDamage,Stats->ExtraDamage_add);
 
-
     bool critical = false;
     if(hitpower<=0)
     {
@@ -365,9 +391,9 @@ void CCharacter::NormalAttack( CCharacter* Enemy )
 
     Enemy->Stats->HP -=  (long long) hitpower;
     if (Enemy->IsMonster())
-        Log(MSG_INFO,"Normal Attack, monster HP %I64i, hitpower %li",Enemy->Stats->HP,hitpower);
+        Log(MSG_INFO,"Normal Attack, monster HP %I64i, hitpower %I64i",Enemy->Stats->HP,hitpower);
     else
-        Log(MSG_INFO,"Normal Attack, Player HP %li, hitpower %li",Enemy->Stats->HP,hitpower);
+        Log(MSG_INFO,"Normal Attack, Player HP %I64i, hitpower %I64i",Enemy->Stats->HP,hitpower);
 
     // actually the target was hit, if it was sleeping, set duration of
     // sleep to 0. map process will remove sleep then at next player-update
@@ -472,7 +498,8 @@ bool CCharacter::SkillAttack( CCharacter* Enemy, CSkills* skill )
     }
     else
     {
-        ClearBattle( Battle );
+        //osprose
+        //ClearBattle( Battle );
     }
     GServer->DoSkillScript( this, skill );       //So far only used for summons
     Battle->lastAtkTime = clock( );
@@ -513,8 +540,30 @@ bool CCharacter::BuffSkill( CCharacter* Target, CSkills* skill )
         Stats->MP=0;
     }
 
+    /*
     ClearBattle( Battle );
     GServer->DoSkillScript( this, skill );
+    */
+
+    //osprose
+    GServer->DoSkillScript( this, skill );
+    if(!IsMonster())
+    {
+        //ClearBattle( Battle ); // clear battle for players when they use buff skills
+        Battle->bufftarget = 0;
+        Battle->skilltarget = 0;
+        Battle->skillid = 0;
+        Battle->atktype = NORMAL_ATTACK;
+    }
+    else //Monsters need to be reset to normal attack and clear skill attacks.
+    {
+        Battle->bufftarget = 0;
+        Battle->skilltarget = 0;
+        Battle->skillid = 0;
+        Battle->atktype = NORMAL_ATTACK;
+    }
+    //osprose end
+
     Battle->lastAtkTime = clock( );
     return true;
 }
@@ -615,6 +664,7 @@ bool CCharacter::AoeSkill( CSkills* skill, CCharacter* Enemy )
 
     Battle->castTime = 0;
     CMap* map = GServer->MapList.Index[Position->Map];
+    /*
     for(UINT i=0;i<map->MonsterList.size();i++)
     {
         CMonster* monster = map->MonsterList.at(i);
@@ -649,6 +699,40 @@ bool CCharacter::AoeSkill( CSkills* skill, CCharacter* Enemy )
 
         }
     }
+
+    */
+
+    //osprose
+    if(IsPlayer() || IsSummon())
+    {
+        for(UINT i=0;i<map->MonsterList.size();i++)
+        {
+            CMonster* monster = map->MonsterList.at(i);
+            if(monster->clientid == clientid) continue;
+            if(monster->IsSummon( ) && (map->allowpvp == 0 || monster->owner == clientid)) continue;
+            if(GServer->IsMonInCircle( goodtarget,monster->Position->current,(float)skill->aoeradius+1))
+            {
+                Log(MSG_INFO,"AOE Attack (1) player attacks monster %i radius %.2f",monster->montype,(float)skill->aoeradius+1);
+                UseAtkSkill( (CCharacter*) monster, skill );
+            }
+
+        }
+    }
+    if(IsMonster() && !IsSummon())
+    {
+        for(UINT i=0;i<map->PlayerList.size();i++)
+        {
+            CPlayer* player = map->PlayerList.at(i);
+            if(player->clientid == clientid) continue;
+            if(GServer->IsMonInCircle( goodtarget,player->Position->current,(float)skill->aoeradius+1))
+            {
+                Log(MSG_INFO,"AOE Attack (2) monster attacks player %s radius %.2f",player->CharInfo->charname,(float)skill->aoeradius+1);
+                UseAtkSkill( (CCharacter*) player, skill );
+            }
+
+        }
+    }
+    //osprose end
 
     if(Enemy!=NULL)
     {
@@ -699,51 +783,98 @@ bool CCharacter::AoeBuff( CSkills* skill )
     Battle->castTime = 0;
     CMap* map = GServer->MapList.Index[Position->Map];
 
+    //checking if buffing party and no party so himself :)
     if(skill->target==1 && GetParty( )==NULL)
     {
+        Log(MSG_INFO,"AOEBuffs, buffing only myself");
         UseBuffSkill( this, skill );
         ClearBattle( Battle );
         Battle->lastAtkTime = clock( );
         return true;
     }
 
-    for(UINT i=0;i<map->PlayerList.size();i++)
+    if(IsMonster())
     {
-        CPlayer* player = map->PlayerList.at(i);
-        switch(skill->target)
+        Log(MSG_INFO,"Monster in AOE Buff");
+        for(UINT i=0;i<map->MonsterList.size();i++)
         {
-            case 1: // party
+            CMonster* monster = map->MonsterList.at(i);
+            switch(skill->target)
             {
-                if(player->Party->party==GetParty( ))
+                case tPartyMember: // party
+                break;
+                case 2: //tClanMember
+                break;
+                case 3: //tAlly
+                case 7: //tAllCharacters
+                case 8: //tAllMembers. all characters
                 {
-                    if(GServer->IsMonInCircle( Position->current,player->Position->current,(float)skill->aoeradius+1))
-                        UseBuffSkill( (CCharacter*)player, skill );
+                     //Log(MSG_INFO,"Applying AOE buff as long as I can find a close enough monster");
+                     if(GServer->IsMonInCircle( Position->current,monster->Position->current,(float)skill->aoeradius + 1))
+                            UseBuffSkill( (CCharacter*)monster, skill );
                 }
+                break;
+                case 5: //hostile.
+                break;
             }
-            break;
-            case 3: //LMA: GM AOE ? more like friendlies :)
-            {
-                 Log(MSG_INFO,"GM AOE buff");
-                for(UINT i=0;i<map->PlayerList.size();i++)
-                {
-                    CPlayer* player = map->PlayerList.at(i);
-                    if(GServer->IsMonInCircle( Position->current,player->Position->current,(float)skill->aoeradius+1))
-                    {
-                         UseBuffSkill( (CCharacter*)player, skill );
-                          Log(MSG_INFO,"GM AOE Buffing %s ",player->CharInfo->charname);
-                    }
-
-                }
-
-            }
-            break;
-
         }
+
     }
+    else
+    {
+        //players / summons
+        for(UINT i=0;i<map->PlayerList.size();i++)
+        {
+            CPlayer* player = map->PlayerList.at(i);
+            switch(skill->target)
+            {
+                case 1: // party
+                {
+                    if(player->Party->party==GetParty( ))
+                    {
+                        if(GServer->IsMonInCircle( Position->current,player->Position->current,(float)skill->aoeradius+1))
+                            UseBuffSkill( (CCharacter*)player, skill );
+                    }
+                }
+                break;
+                case 2: //clan member
+                {
+                    if (player->Clan == GetClan( ))
+                    {
+                        //Log(MSG_INFO,"Applying AOE buff as long as I can find a close enough clan member");
+                        if(GServer->IsMonInCircle( Position->current, player->Position->current, (float)skill->aoeradius + 1 ) )
+                            UseBuffSkill( (CCharacter*)player, skill );
+                    }
+                }
+                break;
+                case 3:  //ally
+                case 7: //everyone
+                case 8: //all characters
+                {
+                    if(GServer->IsMonInCircle( Position->current,player->Position->current,(float)skill->aoeradius + 1))
+                         UseBuffSkill( (CCharacter*)player, skill );
+                }
+                break;
+                case 5: //hostile
+                break;
+            }
+        }
+
+    }
+
 
     Stats->MP -= (skill->mp - (skill->mp * Stats->MPReduction / 100));
     if(Stats->MP<0) Stats->MP=0;
-    ClearBattle( Battle );
+
+    //ClearBattle( Battle );
+    //osprose
+    Battle->bufftarget = 0;
+    Battle->skilltarget = 0;
+    Battle->skillid = 0;
+    Battle->atktype = NORMAL_ATTACK;
+    //ClearBattle( Battle );
+    //osprose end
+
     Battle->lastAtkTime = clock( );
     return true;
 }
@@ -915,7 +1046,8 @@ void CCharacter::UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff )
         ADDDWORD   ( pak, 4 );
         GServer->SendToVisible( &pak, Enemy );
 
-        if (deBuff) return;
+        //osprose
+        //if (deBuff) return;
 
         //GOTO debuffing section
         //bflag = GServer->AddDeBuffs( skill, Enemy, GetInt( ) );
@@ -940,6 +1072,15 @@ void CCharacter::UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff )
     ADDWORD    ( pak, Battle->skillid);
     ADDWORD    ( pak, 1);
     GServer->SendToVisible( &pak, this );
+
+    //osprose
+    Battle->bufftarget = 0;
+    Battle->skilltarget = 0;
+    Battle->skillid = 0;
+    Battle->atktype = NORMAL_ATTACK;
+    //osprose end
+
+    return;
 }
 
 // use buff skill
@@ -1202,3 +1343,50 @@ void CCharacter::UWKill(CCharacter* Enemy)
   return;
 }
 
+
+// Use a skill (gm command)
+bool CCharacter::UseSkill( CSkills* skill, CCharacter *Target )
+{
+  if (skill->atkpower > 0)
+  {
+    Log(MSG_INFO, "Need to do %i%s %s in range %i to target %i",
+        ( skill->atkpower ),
+        ( (skill->range > 0) ? " AOE" : "" ),
+        ( (GServer->isSkillTargetFriendly(skill)) ? "healing" : "damage" ),
+        ( skill->range ),
+        ( skill->target ) );
+  }
+  for (int i = 0; i < 2; i++) {
+    Log(MSG_INFO, "Status ID: %i", skill->status[i]);
+    if (skill->status[i] == 0) continue;
+    CStatus* status = GServer->GetStatusByID(skill->status[i]);
+    if (status == NULL) continue;
+    /************************
+    We'll probably need to use status->decrease (Figure out whether buf is up/down
+    status->repeat will tell us whether it's a one-time (Stat Boost [2]), repeat
+    (Recovery, continueing damage [1]) or Special (Status Effect [3]).
+    ************************/
+    if (status->repeat == 1) // Continuous
+    {
+      Log(MSG_INFO, "Need to take stat %i and %s it by %i%s over %i seconds", skill->buff[i],
+          ((status->decrease) ? "decrease" : "increase"),
+          ((skill->value1[i] != 0) ? skill->value1[i] : skill->value2[i]),
+          ((skill->value1[i] != 0) ? "" : "%"), skill->duration);
+
+    } else if (status->repeat == 2) // Once (Stat Boost)
+    {
+      Log(MSG_INFO, "Need to take stat %i and %s it by %i%s for %i seconds", skill->buff[i],
+          ((status->decrease) ? "decrease" : "increase"),
+          ((skill->value1[i] != 0) ? skill->value1[i] : skill->value2[i]),
+          ((skill->value1[i] != 0) ? "" : "%"), skill->duration);
+
+    } else if (status->repeat == 3) // Status Effect (Poison,etc)
+    {
+      Log(MSG_INFO, "Need to give user status effect %i for %i seconds", skill->buff[i],
+          ((skill->value1[i] != 0) ? skill->value1[i] : skill->value2[i]),
+          ( skill->duration ) );
+
+    }
+  }
+  return true;
+}

@@ -693,6 +693,59 @@ CSkills* CWorldServer::GetSkillByID( unsigned int id )
     return thisskill;
 }
 
+// Search Status By ID
+#ifdef AUTOINDEX
+CStatus* CWorldServer::GetStatusByID( unsigned int id )
+{
+    if (id>=maxStatus)
+    {
+           Log( MSG_WARNING,"STATUS NOT FOUND! %i>=%i", id,maxStatus);
+           return NULL;
+    }
+
+    //stupid test, but you never know...
+    CStatus* thisStatus = StatusList[id];
+    if (id!=thisStatus->id)
+    {
+        Log( MSG_WARNING,"STATUS index error! %i!=%i", id,thisStatus->id);
+        return NULL;
+    }
+
+
+    return thisStatus;
+}
+#else
+CStatus* CWorldServer::GetStatusByID( unsigned int id )
+{
+    unsigned int A=0,B=0,C=0;
+    for(A=0,B=StatusList.size()-1;A<=B;)
+    {
+        if(A==B)
+        {
+            CStatus* thisstatus = (CStatus*) StatusList.at( A );
+            if( id = thisstatus->id )
+                return thisstatus;
+            else
+            {
+                Log(MSG_WARNING,"STATUS NOT FOUND! %i", id );
+                return NULL;
+            }
+        }
+        C = (A+B)/2;
+        CStatus* thisstatus = (CStatus*) StatusList.at( C );
+        if(thisstatus->id == id)
+            return thisstatus;
+        if(thisstatus->id > id)
+            B=C-1;
+        else
+            A=C+1;
+    }
+    Log( MSG_WARNING,"STATUS NOT FOUND! %i", id );
+    return NULL;
+}
+#endif
+
+
 // Get Monster Drop By ID
 CMDrops* CWorldServer::GetDropData( unsigned int id )
 {

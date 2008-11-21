@@ -769,16 +769,17 @@ bool CWorldServer::TeleportTo ( CPlayer* thisclient, int map, fPoint position )
 //bool CWorldServer::LearnSkill( CPlayer* thisclient, UINT skill )
 bool CWorldServer::LearnSkill( CPlayer* thisclient, UINT skill, bool takeSP)
 {
-/*
-0 - already learned
-1 - he learned
-2 - not job
-3 - another skill is absent
-4 - not status points the (lvl)
-5 - it is not possible to raise of lvl the skill
-6 - incorrect number of skill
-7 - you do not have sufficient sp
-*/
+    /*
+    0 - already learned
+    1 - he learned
+    2 - not job
+    3 - another skill is absent
+    4 - not status points the (lvl)
+    5 - it is not possible to raise of lvl the skill
+    6 - incorrect number of skill
+    7 - you do not have sufficient sp
+    */
+
     int b=1;
     CSkills* thisskill = GetSkillByID( skill );
     if( thisskill==NULL )
@@ -876,7 +877,7 @@ bool CWorldServer::LearnSkill( CPlayer* thisclient, UINT skill, bool takeSP)
             }
         }
     }
-/*        if(b==1)
+    /*        if(b==1)
     {
         thisclient->cskills[thisclient->p_skills].id = skill;
         thisclient->cskills[thisclient->p_skills].level=1;

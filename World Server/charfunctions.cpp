@@ -869,6 +869,12 @@ CParty* CCharacter::GetParty( )
     return NULL;
 }
 
+// VIRTUAL [return clan pointer]
+CLAN* CCharacter::GetClan( )
+{
+    return NULL;
+}
+
 bool CCharacter::IsAttacking( )
 {
     if(IsOnBattle( ))

@@ -172,6 +172,7 @@ class CPlayer: public CCharacter
         bool RefreshHPMP();  //LMA HP / MP Jumping
         void ReduceABC( );
         CParty* GetParty( );
+        CLAN* GetClan( );
         unsigned int AddItem( CItem item );
         void TakeFuel(int add_fuel=0);   //LMA: Using fuel :)
         void GiveCP(unsigned int points);    //LMA: Give Clan Points

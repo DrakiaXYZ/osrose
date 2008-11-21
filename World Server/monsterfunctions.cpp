@@ -114,6 +114,7 @@ CPlayer* CMonster::GetNearPlayer( UINT mdist )
     return thisplayer;
 }
 
+
 // return true if is a ghost
 bool CMonster::IsGhost( )
 {

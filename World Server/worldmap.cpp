@@ -165,6 +165,7 @@ CMonster* CMap::AddMonster( UINT montype, fPoint position, UINT owner, CMDrops* 
     }
 
     monster->SpawnTime = clock( );
+    monster->lastDegenTime=clock();
     monster->OnSpawn( false );
     monster->lastAiUpdate = clock();
     monster->hitcount = 0xFF;

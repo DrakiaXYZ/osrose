@@ -798,6 +798,22 @@ struct CSkills {
     UINT svalue1;
     UINT gm_aoe;
 };
+
+// -----------------------------------------------------------------------------------------
+// Status Object
+// -----------------------------------------------------------------------------------------
+struct CStatus
+{
+  UINT id; //
+  UINT type; // Unk [1]
+  UINT duplication; // Unk [2]
+  UINT dir; // 0: Up 1: Down 2: ? [3]
+  UINT repeat; // 1: Repeat 2: Once 3: Special [4]
+  UINT ability[2]; // Status # to call? [5][7]
+  UINT amount[2]; // # to increase/decrease by? [6][8]
+  UINT decrease; // 1: decrease 0: increase [17]
+};
+
 // -----------------------------------------------------------------------------------------
 // Sell data object
 // -----------------------------------------------------------------------------------------
