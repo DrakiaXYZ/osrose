@@ -803,11 +803,12 @@ void CWorldServer::LoadConfigurations( char* file )
 
     Log (MSG_INFO, "osRose - http://forum.dev-osrose.com");
 
-    //LMA: jRose.
+    /* //LMA: jRose.
     if(Config.jrose==1)
        Log (MSG_INFO, "Handling ONLY jRose client.");
     else
        Log (MSG_INFO, "Handling ONLY RoseNA client.");
+    */
 
     //Password
 	Config.LoginPass            = ConfigGetInt    ( file, "loginpass", 123456 );

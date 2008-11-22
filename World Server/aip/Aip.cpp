@@ -77,7 +77,16 @@ void CWorldServer::ReadAIP(strings path, dword index)
 
 void CWorldServer::LoadAipData()
 {
-	CStrStb* stbAip = new CStrStb("3DDATA\\STB\\FILE_AI.STB");
+    //LMA: loading Pegasus data.
+    CStrStb* stbAip=NULL;
+    if(Config.is_pegasus==1)
+    {
+        stbAip = new CStrStb("3DDataPeg\\STB\\FILE_AI.STB");
+    }
+    else
+    {
+        stbAip = new CStrStb("3DDATA\\STB\\FILE_AI.STB");
+    }
 
 	for(dword i = 1; i < stbAip->Rows(); i++)
 	{
@@ -86,7 +95,8 @@ void CWorldServer::LoadAipData()
 			GServer->ReadAIP(stbAip->Data(i, 0),i);
 		}
 	}
-//Log(MSG_INFO, "%i aip entrys",AipList.size());
+
+    //Log(MSG_INFO, "%i aip entrys",AipList.size());
 	Log(MSG_INFO, "Finished loading aip data                              ");
 
 	aiCondFunc[0] = &F_AI_COND_000;

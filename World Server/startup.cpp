@@ -22,32 +22,68 @@
 bool CWorldServer::LoadSTBData( )
 {
     Log( MSG_LOAD, "STB Data             " );  // all of the stb loading was from osiRose and ospRose
-    STBStoreData( "3DData\\STB\\LIST_NPC.STB", &STB_NPC );
-    STBStoreData( "3DData\\STB\\LIST_SKILL.STB", &STB_SKILL );
-    STBStoreData( "3DData\\STB\\LIST_STATUS.STB", &STB_STATUS );
-//    STBStoreData( "3DData\\STB\\LIST_QUEST.STB", &STB_QUEST ); //declared already in line 304
-    STBStoreData( "3DData\\STB\\LIST_FACEITEM.STB", &STB_ITEM[0] );
-	STBStoreData( "3DData\\STB\\LIST_CAP.STB", &STB_ITEM[1] );
-	STBStoreData( "3DData\\STB\\LIST_BODY.STB", &STB_ITEM[2] );
-	STBStoreData( "3DData\\STB\\LIST_ARMS.STB", &STB_ITEM[3] );
-	STBStoreData( "3DData\\STB\\LIST_FOOT.STB", &STB_ITEM[4] );
-	STBStoreData( "3DData\\STB\\LIST_BACK.STB", &STB_ITEM[5] );
-	STBStoreData( "3DData\\STB\\LIST_JEWEL.STB", &STB_ITEM[6] );
-	STBStoreData( "3DData\\STB\\LIST_WEAPON.STB", &STB_ITEM[7] );
-	STBStoreData( "3DData\\STB\\LIST_SUBWPN.STB", &STB_ITEM[8] );
-	STBStoreData( "3DData\\STB\\LIST_USEITEM.STB", &STB_ITEM[9] );
-	STBStoreData( "3DData\\STB\\LIST_JEMITEM.STB", &STB_ITEM[10] );
-	STBStoreData( "3DData\\STB\\LIST_NATURAL.STB", &STB_ITEM[11] );
-	STBStoreData( "3DData\\STB\\LIST_QUESTITEM.STB", &STB_ITEM[12] );
-	STBStoreData( "3DData\\STB\\LIST_PAT.STB", &STB_ITEM[13] );
-	STBStoreData( "3DData\\STB\\LIST_PRODUCT.STB", &STB_PRODUCT );
-	STBStoreData( "3DData\\STB\\LIST_SELL.STB", &STB_SELL );
-	STBStoreData( "3DData\\STB\\LIST_ZONE.STB", &STB_ZONE );
-	STBStoreData( "3DData\\STB\\ITEM_DROP.STB", &STB_DROP );
-	STBStoreData("3DData\\STB\\LIST_UPGRADE.STB", &upgradeData);
 
-	//LMA: for break and chest and blue craft.
-	STBStoreData("3DData\\STB\\LIST_BREAK.STB", &BreakData);
+    //LMA: loading Pegasus data.
+    if(Config.is_pegasus==1)
+    {
+        STBStoreData( "3DDataPeg\\STB\\LIST_NPC.STB", &STB_NPC );
+        STBStoreData( "3DDataPeg\\STB\\LIST_SKILL.STB", &STB_SKILL );
+        STBStoreData( "3DDataPeg\\STB\\LIST_STATUS.STB", &STB_STATUS );
+        //STBStoreData( "3DDataPeg\\STB\\LIST_QUEST.STB", &STB_QUEST ); //declared already in line 304
+        STBStoreData( "3DDataPeg\\STB\\LIST_FACEITEM.STB", &STB_ITEM[0] );
+        STBStoreData( "3DDataPeg\\STB\\LIST_CAP.STB", &STB_ITEM[1] );
+        STBStoreData( "3DDataPeg\\STB\\LIST_BODY.STB", &STB_ITEM[2] );
+        STBStoreData( "3DDataPeg\\STB\\LIST_ARMS.STB", &STB_ITEM[3] );
+        STBStoreData( "3DDataPeg\\STB\\LIST_FOOT.STB", &STB_ITEM[4] );
+        STBStoreData( "3DDataPeg\\STB\\LIST_BACK.STB", &STB_ITEM[5] );
+        STBStoreData( "3DDataPeg\\STB\\LIST_JEWEL.STB", &STB_ITEM[6] );
+        STBStoreData( "3DDataPeg\\STB\\LIST_WEAPON.STB", &STB_ITEM[7] );
+        STBStoreData( "3DDataPeg\\STB\\LIST_SUBWPN.STB", &STB_ITEM[8] );
+        STBStoreData( "3DDataPeg\\STB\\LIST_USEITEM.STB", &STB_ITEM[9] );
+        STBStoreData( "3DDataPeg\\STB\\LIST_JEMITEM.STB", &STB_ITEM[10] );
+        STBStoreData( "3DDataPeg\\STB\\LIST_NATURAL.STB", &STB_ITEM[11] );
+        STBStoreData( "3DDataPeg\\STB\\LIST_QUESTITEM.STB", &STB_ITEM[12] );
+        STBStoreData( "3DDataPeg\\STB\\LIST_PAT.STB", &STB_ITEM[13] );
+        STBStoreData( "3DDataPeg\\STB\\LIST_PRODUCT.STB", &STB_PRODUCT );
+        STBStoreData( "3DDataPeg\\STB\\LIST_SELL.STB", &STB_SELL );
+        STBStoreData( "3DDataPeg\\STB\\LIST_ZONE.STB", &STB_ZONE );
+        STBStoreData( "3DDataPeg\\ITEM_DROP.STB", &STB_DROP );
+        STBStoreData("3DDataPeg\\STB\\LIST_UPGRADE.STB", &upgradeData);
+
+        //LMA: for break and chest and blue craft.
+        STBStoreData("3DDataPeg\\STB\\LIST_BREAK.STB", &BreakData);
+    }
+    else
+    {
+        STBStoreData( "3DData\\STB\\LIST_NPC.STB", &STB_NPC );
+        STBStoreData( "3DData\\STB\\LIST_SKILL.STB", &STB_SKILL );
+        STBStoreData( "3DData\\STB\\LIST_STATUS.STB", &STB_STATUS );
+        //STBStoreData( "3DData\\STB\\LIST_QUEST.STB", &STB_QUEST ); //declared already in line 304
+        STBStoreData( "3DData\\STB\\LIST_FACEITEM.STB", &STB_ITEM[0] );
+        STBStoreData( "3DData\\STB\\LIST_CAP.STB", &STB_ITEM[1] );
+        STBStoreData( "3DData\\STB\\LIST_BODY.STB", &STB_ITEM[2] );
+        STBStoreData( "3DData\\STB\\LIST_ARMS.STB", &STB_ITEM[3] );
+        STBStoreData( "3DData\\STB\\LIST_FOOT.STB", &STB_ITEM[4] );
+        STBStoreData( "3DData\\STB\\LIST_BACK.STB", &STB_ITEM[5] );
+        STBStoreData( "3DData\\STB\\LIST_JEWEL.STB", &STB_ITEM[6] );
+        STBStoreData( "3DData\\STB\\LIST_WEAPON.STB", &STB_ITEM[7] );
+        STBStoreData( "3DData\\STB\\LIST_SUBWPN.STB", &STB_ITEM[8] );
+        STBStoreData( "3DData\\STB\\LIST_USEITEM.STB", &STB_ITEM[9] );
+        STBStoreData( "3DData\\STB\\LIST_JEMITEM.STB", &STB_ITEM[10] );
+        STBStoreData( "3DData\\STB\\LIST_NATURAL.STB", &STB_ITEM[11] );
+        STBStoreData( "3DData\\STB\\LIST_QUESTITEM.STB", &STB_ITEM[12] );
+        STBStoreData( "3DData\\STB\\LIST_PAT.STB", &STB_ITEM[13] );
+        STBStoreData( "3DData\\STB\\LIST_PRODUCT.STB", &STB_PRODUCT );
+        STBStoreData( "3DData\\STB\\LIST_SELL.STB", &STB_SELL );
+        STBStoreData( "3DData\\STB\\LIST_ZONE.STB", &STB_ZONE );
+        STBStoreData( "3DData\\STB\\ITEM_DROP.STB", &STB_DROP );
+        STBStoreData("3DData\\STB\\LIST_UPGRADE.STB", &upgradeData);
+
+        //LMA: for break and chest and blue craft.
+        STBStoreData("3DData\\STB\\LIST_BREAK.STB", &BreakData);
+    }
+
+
 }
 
 //LMA: loading LTB (for AIP)
@@ -56,8 +92,18 @@ bool CWorldServer::LoadLTB( )
     maxltbaip=0;
     maxltbqsd=0;
     Log(MSG_INFO, "Loading LTB strings");
-    LTBStoreData("3DData\\AI\\ULNGTB_AI.LTB",&MyLTB);
-    LTBStoreData("3DData\\QUESTDATA\\ULNGTB_QST.LTB",&MyLTBQSD);
+
+    //LMA: loading Pegasus data.
+    if(Config.is_pegasus==1)
+    {
+        LTBStoreData("3DDataPeg\\AI\\ULNGTB_AI.LTB",&MyLTB);
+        LTBStoreData("3DDataPeg\\QUESTDATA\\ULNGTB_QST.LTB",&MyLTBQSD);
+    }
+    else
+    {
+        LTBStoreData("3DData\\AI\\ULNGTB_AI.LTB",&MyLTB);
+        LTBStoreData("3DData\\QUESTDATA\\ULNGTB_QST.LTB",&MyLTBQSD);
+    }
 
     if (MyLTB.record.size()==0||MyLTBQSD.record.size()==0)
     {
@@ -948,8 +994,19 @@ bool CWorldServer::LoadTeleGateData( )
 {
 	Log( MSG_LOAD, "Telegates data              " );
 	MYSQL_ROW row;
-//	MYSQL_RES *result = DB->QStore("SELECT id,x,y,map FROM list_telegates");
-	MYSQL_RES *result = DB->QStore("SELECT id, srcx, srcy, srcmap, destx, desty, destmap FROM list_telegates");
+    //	MYSQL_RES *result = DB->QStore("SELECT id,x,y,map FROM list_telegates");
+
+    //LMA: Pegasus
+    MYSQL_RES *result=NULL;
+    if(Config.is_pegasus==1)
+    {
+        result = DB->QStore("SELECT id, srcx, srcy, srcmap, destx, desty, destmap FROM list_telegates_p");
+    }
+    else
+    {
+        result = DB->QStore("SELECT id, srcx, srcy, srcmap, destx, desty, destmap FROM list_telegates");
+    }
+
 	if(result==NULL) return false;
 	while( row = mysql_fetch_row(result) )
     {
@@ -981,7 +1038,16 @@ bool CWorldServer::LoadTeleGateData( )
 #ifdef USENEWQUESTSYSTEM
 bool CWorldServer::LoadQuestSTB()
 {
-    STBStoreData( "3ddata/stb/LIST_QUEST.STB", &STB_QUEST );
+    //LMA: loading Pegasus data.
+    if(Config.is_pegasus==1)
+    {
+        STBStoreData( "3DDataPeg/stb/LIST_QUEST.STB", &STB_QUEST );
+    }
+    else
+    {
+        STBStoreData( "3ddata/stb/LIST_QUEST.STB", &STB_QUEST );
+    }
+
     Log(MSG_INFO,"STB Loaded for QSD Version !!!");
     return true;
 }
@@ -1313,7 +1379,17 @@ bool CWorldServer::LoadMobGroups()
   //MYSQL_RES *result = DB->QStore("SELECT `id`, `map`, `x`, `y`, `range`, `respawntime`, `limit`, `tacticalpoints`, `moblist` FROM `list_mobgroups`");
 
   //LMA: Day and night (for Halloween)
-  MYSQL_RES *result = DB->QStore("SELECT `id`, `map`, `x`, `y`, `range`, `respawntime`, `limit`, `tacticalpoints`, `moblist`,`daynight`,`isactive`  FROM `list_mobgroups`");
+  //For pegasus too
+  MYSQL_RES *result=NULL;
+    if(Config.is_pegasus==1)
+    {
+        result = DB->QStore("SELECT `id`, `map`, `x`, `y`, `range`, `respawntime`, `limit`, `tacticalpoints`, `moblist`,`daynight`,`isactive`  FROM `list_mobgroups_p`");
+    }
+    else
+    {
+        result = DB->QStore("SELECT `id`, `map`, `x`, `y`, `range`, `respawntime`, `limit`, `tacticalpoints`, `moblist`,`daynight`,`isactive`  FROM `list_mobgroups`");
+    }
+
   if (result == NULL) return false;
   while (row = mysql_fetch_row(result))
   {
@@ -1687,7 +1763,18 @@ bool CWorldServer::LoadNPCs( )
 	Log( MSG_LOAD, "NPC spawn                   " );
 	MYSQL_ROW row;
 	NpcNameList.clear();
-	MYSQL_RES *result = DB->QStore("SELECT type,map,dir,x,y,dialogid,eventid,tempdialogid,name FROM list_npcs");
+
+    //LMA: Pegasus
+    MYSQL_RES *result=NULL;
+    if(Config.is_pegasus==1)
+    {
+        result = DB->QStore("SELECT type,map,dir,x,y,dialogid,eventid,tempdialogid,name FROM list_npcs_p");
+    }
+    else
+    {
+        result = DB->QStore("SELECT type,map,dir,x,y,dialogid,eventid,tempdialogid,name FROM list_npcs");
+    }
+
 	if(result==NULL) return false;
 	while(row = mysql_fetch_row(result))
     {
@@ -3433,7 +3520,7 @@ bool CWorldServer::LoadConfig( )
         pvp_acc, skill_damage, maxlevel, drop_type, savetime, partygap, maxstat, cfmode, autosave, mapdelay, \
         visualdelay, worlddelay, fairymode, fairystay, fairywait, fairytestmode, osrosever, testgrid, jrose, \
         unionslaughter, unionduration, unionmin, unionslaughterloop, unionslaughterdelay_loop, unionwar, \
-        unionwarloop, unionwardelay_loop, unionwarduration, unionwarmin FROM list_config");
+        unionwarloop, unionwardelay_loop, unionwarduration, unionwarmin, is_pegasus FROM list_config");
 
     if(result==NULL)
     {
@@ -3499,16 +3586,31 @@ bool CWorldServer::LoadConfig( )
        GServer->Config.unionwardelay_loop = atoi(row[39]);
        GServer->Config.unionwarduration = atoi(row[40]);
        GServer->Config.unionwarmin = atoi(row[41]);
+       GServer->Config.is_pegasus = atoi(row[42]);
     }
+
+    //LMA: jRose.
+    if(Config.jrose==1)
+       Log (MSG_INFO, "Handling ONLY jRose client.");
+    else
+       Log (MSG_INFO, "Handling ONLY RoseNA client.");
+
+    //LMA: Pegasus
+    if(Config.is_pegasus==1)
+       Log (MSG_INFO, "Handling Pegasus STB, AIP, QSD, database.");
+    else
+       Log (MSG_INFO, "Handling naRose STB, AIP, QSD, database.");
+
     //logging
     //Log(MSG_INFO,"value GServer->Config.EXP_RATE=%i",GServer->Config.EXP_RATE);
     //Log(MSG_INFO,"value row[0]=%s",row[0]);
 
-/*    for (int k=0;k<21;k++)
+    /*for (int k=0;k<21;k++)
     {
-	Log(MSG_INFO,"value row[%i]=%s, atoi(row[%i])=%i",k,row[k],k,atoi(row[k]));
+        Log(MSG_INFO,"value row[%i]=%s, atoi(row[%i])=%i",k,row[k],k,atoi(row[k]));
     }
-*/
+    */
+
     DB->QFree( );
     Log( MSG_INFO, "Config Data Loaded" );
     return true;

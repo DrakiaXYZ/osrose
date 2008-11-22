@@ -65,8 +65,18 @@ void CWorldServer::ReadQSD(strings path, dword index){
 }
 
 
-void CWorldServer::LoadQuestData(){
-	CStrStb* stbQuest = new CStrStb("3ddata/stb/LIST_QUESTDATA.STB");
+void CWorldServer::LoadQuestData()
+{
+    //LMA: loading Pegasus data.
+    CStrStb* stbQuest=NULL;
+    if(Config.is_pegasus==1)
+    {
+        stbQuest = new CStrStb("3DDataPeg/stb/LIST_QUESTDATA.STB");
+    }
+    else
+    {
+        stbQuest = new CStrStb("3ddata/stb/LIST_QUESTDATA.STB");
+    }
 
 	char buffer [100];
 
