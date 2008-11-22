@@ -66,13 +66,16 @@ QUESTCOND(003){
             word tempValue = client->CharInfo->Job / 100;
                 if(!OperateValues<word>(curAbil->btOp, (word*)&tempValue, curAbil->iValue))
                 return QUEST_FAILURE;
-            break;
         }
+        break;
 
-			/*case sUnion: // Unions aren't implemented? - Drakia
-				if(!OperateValues<int>(curAbil->btOp, (int*)&client->Union], curAbil->iValue))
-				return QUEST_FAILURE;
-			break;*/
+		case sUnion:
+		{
+		    Log(MSG_INFO,"[Union] QUESTCOND(003) btOp %i, value: %i",curAbil->btOp,curAbil->iValue);
+			/*	if(!OperateValues<int>(curAbil->btOp, (int*)&client->Union], curAbil->iValue))
+				return QUEST_FAILURE;*/
+		}
+        break;
 
 		case sStrength:
 				if(!OperateValues<int>(curAbil->btOp, (int*)&client->Attr->Str, curAbil->iValue))

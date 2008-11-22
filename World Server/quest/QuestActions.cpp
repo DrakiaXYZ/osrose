@@ -199,9 +199,12 @@ QUESTREWD(003){
 			break;
 
 		case sUnion:
+		{
+		    Log(MSG_INFO,"[Union] QUESTREWD(003) btOp %i, value: %i",curAbil->btOp,curAbil->iValue);
 			//if(!OperateValues<word>(curAbil->btOp, &client->Attr->u, curAbil->iValue))
 			//	return QUEST_FAILURE;
 			// We actually don't have union code.
+		}
 			break;
 
 		case sStrength:
