@@ -47,7 +47,7 @@ bool CWorldServer::LoadSTBData( )
         STBStoreData( "3DDataPeg\\STB\\LIST_PRODUCT.STB", &STB_PRODUCT );
         STBStoreData( "3DDataPeg\\STB\\LIST_SELL.STB", &STB_SELL );
         STBStoreData( "3DDataPeg\\STB\\LIST_ZONE.STB", &STB_ZONE );
-        STBStoreData( "3DDataPeg\\ITEM_DROP.STB", &STB_DROP );
+        STBStoreData( "3DDataPeg\\STB\\ITEM_DROP.STB", &STB_DROP );
         STBStoreData("3DDataPeg\\STB\\LIST_UPGRADE.STB", &upgradeData);
 
         //LMA: for break and chest and blue craft.
@@ -2165,11 +2165,14 @@ bool CWorldServer::LoadUpgrade( )
 
     for (UINT i = 0; i<upgradeData.rowcount; i++) {
         // weapons
-        if (upgradeData.rows[i][0] != 0) {
+        if (upgradeData.rows[i][0] != 0)
+        {
             upgrade[0][upgradeData.rows[i][0]] = upgradeData.rows[i][1];
         }
+
         // gear
-        if (upgradeData.rows[i][2] != 0) {
+        if (upgradeData.rows[i][2] != 0)
+        {
             upgrade[1][upgradeData.rows[i][2]] = upgradeData.rows[i][3];
         }
     }
@@ -3555,17 +3558,14 @@ bool CWorldServer::LoadConfig( )
        GServer->Config.MaxLevel = atoi(row[15]);
        GServer->Config.DROP_TYPE = atoi(row[16]);
        GServer->Config.SAVETIME = atoi(row[17]);
-       Log(MSG_INFO,"Config.SAVETIME %i",GServer->Config.SAVETIME);
        GServer->Config.Partygap = atoi(row[18]);
        GServer->Config.MaxStat = atoi(row[19]);
        GServer->Config.Cfmode = atoi(row[20]);
         // added to remove from worldserver.conf
         //need to remove old from worldserver.cpp
        GServer->Config.AutoSave = atoi(row[21]);
-       Log(MSG_INFO,"Config.AutoSave %i",GServer->Config.AutoSave);
        //LMA: in osRose we are using: AUTOSAVE...
        GServer->Config.AUTOSAVE = atoi(row[21]);
-
        GServer->Config.MapDelay = atoi(row[22]);
        GServer->Config.VisualDelay = atoi(row[23]);
        GServer->Config.WorldDelay = atoi(row[24]);

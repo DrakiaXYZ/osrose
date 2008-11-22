@@ -92,7 +92,43 @@ void CWorldServer::LoadAipData()
 	{
 		if(stbAip->Data(i, 0))
 		{
-			GServer->ReadAIP(stbAip->Data(i, 0),i);
+
+		    //LMA: Code for Pegasus...
+		    if(Config.is_pegasus==1)
+		    {
+                char buffer [100];
+                char path[100];
+                char temp[] = "3DDATA/";
+                strcpy((char*)&buffer, stbAip->Data(i, 0));
+
+                for (int loop = 0; buffer[loop] !=0; loop++)
+                {
+                    buffer[loop] = toupper(buffer[loop]);
+                    if (buffer[loop] == '\\')
+                    {
+                        buffer[loop] = '/';
+                    }
+
+                    if(loop<7)
+                        path[loop]=toupper(buffer[loop]);
+                }
+
+			    if(strcmp (temp,path)==0)
+			    {
+			        string temps=buffer;
+			        temps="3DDATAPEG/"+temps.substr(7);
+                    strcpy ((char*)&buffer,temps.c_str());
+                    buffer[temps.size()]=0;
+			    }
+
+                GServer->ReadAIP((strings)&buffer,i);
+		    }
+		    else
+		    {
+                GServer->ReadAIP(stbAip->Data(i, 0),i);
+		    }
+		    //LMA End.
+
 		}
 	}
 

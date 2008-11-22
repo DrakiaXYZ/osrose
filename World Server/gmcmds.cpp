@@ -3831,6 +3831,9 @@ bool CWorldServer::pakGMEventType(CPlayer* thisclient, int npctype, int dialog, 
     ADDWORD    ( pak, thisnpc->event );	  //LMA: Welcome in the real Word ^_^
     thisclient->client->SendPacket(&pak);
 
+    //changing objvar as well.
+    GServer->ObjVar[npctype][0]=thisnpc->event;
+
     //Saving in database
     //DB->QExecute("UPDATE npc_data SET dialog=%i, eventid=%i WHERE id=%i", dialog, type,npctype);
     //New way.

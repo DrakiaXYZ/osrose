@@ -31,7 +31,7 @@ int STBStoreData( char* filename, CSTBData* data )
 			fread( &fieldlen, 2, 1, fh );
 			fread( tmpfield, 1, fieldlen, fh );
 			tmpfield[fieldlen]=0;
-			tmp[j] = atoi( tmpfield ); 
+			tmp[j] = atoi( tmpfield );
 		}
 		fclose( fh );
 	}
@@ -41,6 +41,8 @@ int STBStoreData( char* filename, CSTBData* data )
 
 void STBFreeData( CSTBData* data )
 {
+    if(data->rowcount==0)
+        return;
 	delete [] data->rows[0];
 	delete [] data->rows;
 }

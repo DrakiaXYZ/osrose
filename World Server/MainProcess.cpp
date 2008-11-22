@@ -810,9 +810,6 @@ PVOID MapProcess( PVOID TS )
                          monster->aip_clientid=npc->clientid;
                          monster->thisnpc = thisnpc;
 
-                         if (monster->thisnpc->AI==1116)
-                            Log(MSG_DEBUG,"DoAIP mainprocess NPC %i,1",monster->thisnpc->AI);
-
                          int lma_previous_eventID=npc->thisnpc->eventid;
                          monster->DoAi(monster->thisnpc->AI, 1);
 
@@ -853,8 +850,6 @@ PVOID MapProcess( PVOID TS )
 // Visibility Process
 PVOID VisibilityProcess(PVOID TS)
 {
-    Log(MSG_INFO,"in VisibilityProcess, begin, auto save=%i",GServer->Config.AUTOSAVE);
-
     while(GServer->ServerOnline)
     {
         pthread_mutex_lock( &GServer->PlayerMutex );

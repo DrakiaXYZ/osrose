@@ -610,7 +610,7 @@ AICOND(016)
 AICOND(017)
 {
 	GETAICONDDATA(017);
-	Log(MSG_DEBUG,"Setting NPC ref number AICOND(017)");
+	Log(MSG_DEBUG,"Setting NPC ref number AICOND(017) to %i",data->iNpcNo);
 	CMonster* monster = reinterpret_cast<CMonster*>(entity);
 	if(monster == NULL) return AI_FAILURE;
 	monster->thisnpc->refNPC = data->iNpcNo; // sets the reference variable for the correct ObjVar

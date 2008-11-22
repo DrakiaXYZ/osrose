@@ -6,7 +6,7 @@ void CWorldServer::ReadQSD(strings path, dword index){
 	CRoseFile* fh = new CRoseFile(path, FM_READ | FM_BINARY);
 	if(fh->IsOpen()) { // goto done;
 
-	Log(MSG_LOAD, "Loading %s                              ", path);
+	Log(MSG_LOAD, "Loading %s", path);
 
 	fh->Seek(4, SEEK_CUR);
 	dword BlockCount = fh->Get<dword>();
@@ -79,17 +79,39 @@ void CWorldServer::LoadQuestData()
     }
 
 	char buffer [100];
+	char path[100];
 
 	for(dword i = 1; i < stbQuest->Rows(); i++){
 		if(stbQuest->Data(i, 0)){
 			strcpy((char*)&buffer, stbQuest->Data(i, 0));
 
-			for (int loop = 0; buffer[loop] !=0; loop++) {
+			for (int loop = 0; buffer[loop] !=0; loop++)
+			{
 				buffer[loop] = toupper(buffer[loop]);
-				if (buffer[loop] == '\\') {
+				if (buffer[loop] == '\\')
+				{
 					buffer[loop] = '/';
 				}
+
+                //LMA: For Pegasus.
+			    if(Config.is_pegasus==1&&loop<7)
+                    path[loop]=toupper(buffer[loop]);
 			}
+
+			//LMA: Patch for Pegasus server data files:
+			if(Config.is_pegasus==1)
+			{
+			    char temp[] = "3DDATA/";
+			    if(strcmp (temp,path)==0)
+			    {
+			        string temps=buffer;
+			        temps="3DDATAPEG/"+temps.substr(7);
+                    strcpy ((char*)&buffer,temps.c_str());
+                    buffer[temps.size()]=0;
+			    }
+
+			}
+
 			GServer->ReadQSD((strings)&buffer,i);
 		}
 	}

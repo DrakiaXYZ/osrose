@@ -66,6 +66,7 @@ bool CWorldServer::SendGlobalMSG( CPlayer* thisclient, char msg[200] )
 // NPC Announce to the server
 bool CWorldServer::NPCAnnounce( char* msg, char* npc)
 {
+    Log(MSG_INFO,"%s announces: %s",npc,msg);
     BEGINPACKET( pak, 0x702 );
     ADDSTRING( pak, npc );
 	ADDSTRING( pak, "> " );
