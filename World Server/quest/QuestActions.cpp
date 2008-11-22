@@ -7,7 +7,7 @@ dword GetRewardValue(dword function, dword amount, CPlayer* client, word nDupCNT
 		case 0:
 		{
 			dword tempVal = amount + 0x1E;
-      tempVal *= client->Attr->Cha + 0x0a; // We need to add a way to get all stats totals (Including buff, E, etc) - Drakia
+            tempVal *= client->Attr->Cha + 0x0a; // We need to add a way to get all stats totals (Including buff, E, etc) - Drakia
 			tempVal *= (100 & 0xFFFF);//World Rate
 			tempVal *= 0x14;//Fame + 0x14
 			tempVal = ((tempVal / (client->Stats->Level + 0x46)) / 0x7530) + amount;
@@ -200,13 +200,50 @@ QUESTREWD(003){
 
 		case sUnion:
 		{
-		    Log(MSG_INFO,"[Union] QUESTREWD(003) btOp %i, value: %i",curAbil->btOp,curAbil->iValue);
-			//if(!OperateValues<word>(curAbil->btOp, &client->Attr->u, curAbil->iValue))
-			//	return QUEST_FAILURE;
-			// We actually don't have union code.
+		    Log(MSG_INFO,"[Union] ? QUESTREWD(003) btOp %i, value: %i",curAbil->btOp,curAbil->iValue);
+		    if(!OperateValues<int>(curAbil->btOp, (int*)&client->CharInfo->unionid, curAbil->iValue))
+				return QUEST_FAILURE;
+            Log(MSG_INFO,"[Union] OK QUESTREWD(003) SET to %i",curAbil->iValue);
+            BEGINPACKET( pak, 0x721 );
+            ADDWORD( pak, 0x05 );
+            ADDWORD( pak, curAbil->iValue );
+            ADDWORD( pak, 0x0000 );
+            client->client->SendPacket(&pak);
 		}
 			break;
-
+        case 81:    //LMA: Union Points (no break, it's NOT a mistake)...
+        {
+            if (curAbil->iType==81)
+                client->CharInfo->union01=curAbil->iValue;
+        }
+        case 82:
+        {
+            if (curAbil->iType==82)
+                client->CharInfo->union02=curAbil->iValue;
+        }
+        case 83:
+        {
+            if (curAbil->iType==83)
+                client->CharInfo->union03=curAbil->iValue;
+        }
+        case 84:
+        {
+            if (curAbil->iType==84)
+                client->CharInfo->union04=curAbil->iValue;
+        }
+        case 85:
+        {
+            if (curAbil->iType==85)
+                client->CharInfo->union05=curAbil->iValue;
+            Log(MSG_INFO,"[UnionPoints] ? QUESTREWD(003) btOp %i, value: %i",curAbil->btOp,curAbil->iValue);
+            BEGINPACKET( pak, 0x721 );
+            ADDWORD( pak, curAbil->iType );
+            ADDWORD( pak, curAbil->iValue );
+            ADDWORD( pak, 0x0000 );
+            client->client->SendPacket( &pak );
+            Log(MSG_INFO,"[UnionPoints] OK QUESTREWD(003) SET union0%i to %i",curAbil->iType-80,curAbil->iValue);
+        }
+        break;
 		case sStrength:
 			if(!OperateValues<int>(curAbil->btOp, (int*)&client->Attr->Str, curAbil->iValue))
 				return QUEST_FAILURE;

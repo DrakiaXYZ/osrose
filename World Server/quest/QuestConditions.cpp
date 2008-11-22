@@ -71,12 +71,42 @@ QUESTCOND(003){
 
 		case sUnion:
 		{
-		    Log(MSG_INFO,"[Union] QUESTCOND(003) btOp %i, value: %i",curAbil->btOp,curAbil->iValue);
-			/*	if(!OperateValues<int>(curAbil->btOp, (int*)&client->Union], curAbil->iValue))
-				return QUEST_FAILURE;*/
+		    Log(MSG_INFO,"[Union] ? QUESTCOND(003) btOp %i, value: %i",curAbil->btOp,curAbil->iValue);
+            if(!OperateValues<int>(curAbil->btOp, (int*)&client->CharInfo->unionid, curAbil->iValue))
+            return QUEST_FAILURE;
+            Log(MSG_INFO,"[Union] OK QUESTCOND(003) GET union %i",curAbil->iValue);
 		}
         break;
-
+        case 81:    //LMA: Union Points (no break, it's NOT a mistake)...
+        {
+                if(!OperateValues<int>(curAbil->btOp, (int*)&client->CharInfo->union01, curAbil->iValue))
+                    return QUEST_FAILURE;
+        }
+        break;
+        case 82:
+        {
+                if(!OperateValues<int>(curAbil->btOp, (int*)&client->CharInfo->union02, curAbil->iValue))
+                    return QUEST_FAILURE;
+        }
+        break;
+        case 83:
+        {
+                if(!OperateValues<int>(curAbil->btOp, (int*)&client->CharInfo->union03, curAbil->iValue))
+                    return QUEST_FAILURE;
+        }
+        break;
+        case 84:
+        {
+                if(!OperateValues<int>(curAbil->btOp, (int*)&client->CharInfo->union04, curAbil->iValue))
+                    return QUEST_FAILURE;
+        }
+        break;
+        case 85:
+        {
+                if(!OperateValues<int>(curAbil->btOp, (int*)&client->CharInfo->union05, curAbil->iValue))
+                    return QUEST_FAILURE;
+        }
+        break;
 		case sStrength:
 				if(!OperateValues<int>(curAbil->btOp, (int*)&client->Attr->Str, curAbil->iValue))
 				return QUEST_FAILURE;
