@@ -298,12 +298,12 @@ bool CWorldServer::pakDoIdentify( CPlayer *thisclient, CPacket *P )
 	ADDDWORD   ( pak, 0x534d5547 );
 	ADDWORD    ( pak, 0x3e3e );
 	ADDBYTE    ( pak, 0x00 );
-	thisclient->client->SendPacket( &pak );
+	thisclient->client->SendPacket( &pak );*/
+
 	RESETPACKET( pak, 0x702 );
 	ADDSTRING  ( pak, Config.WELCOME_MSG );
 	ADDBYTE    ( pak, 0 );
 	thisclient->client->SendPacket( &pak );
-	*/
 
 	//SendSysMsg( thisclient, "Open Source Rose Online Private Server" );
 

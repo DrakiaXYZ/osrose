@@ -3464,16 +3464,21 @@ bool CWorldServer::LoadConfig( )
        //GServer->Config.MonsterAcc = atoi(row[12]);
        //GServer->Config.PvpAcc = atoi(row[13]);
        //GServer->Config.SkillDmg = atoi(row[14]);
-// new update - from PurpleYouko
+        // new update - from PurpleYouko
        GServer->Config.MaxLevel = atoi(row[15]);
        GServer->Config.DROP_TYPE = atoi(row[16]);
        GServer->Config.SAVETIME = atoi(row[17]);
+       Log(MSG_INFO,"Config.SAVETIME %i",GServer->Config.SAVETIME);
        GServer->Config.Partygap = atoi(row[18]);
        GServer->Config.MaxStat = atoi(row[19]);
        GServer->Config.Cfmode = atoi(row[20]);
-// added to remove from worldserver.conf
-//need to remove old from worldserver.cpp
+        // added to remove from worldserver.conf
+        //need to remove old from worldserver.cpp
        GServer->Config.AutoSave = atoi(row[21]);
+       Log(MSG_INFO,"Config.AutoSave %i",GServer->Config.AutoSave);
+       //LMA: in osRose we are using: AUTOSAVE...
+       GServer->Config.AUTOSAVE = atoi(row[21]);
+
        GServer->Config.MapDelay = atoi(row[22]);
        GServer->Config.VisualDelay = atoi(row[23]);
        GServer->Config.WorldDelay = atoi(row[24]);

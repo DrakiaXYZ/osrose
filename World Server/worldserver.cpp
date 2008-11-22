@@ -767,18 +767,18 @@ void CWorldServer::LoadConfigurations( char* file )
     //Config.DROP_TYPE            = ConfigGetInt    ( file, "drop_type", 2 );
 	//Config.ZULY_RATE            = ConfigGetInt    ( file, "zuly_rate", 1 );
 	Config.WELCOME_MSG          = ConfigGetString ( file, "welcome_msg", "Welcome to Rose Online" );
-    ///Config.AUTOSAVE             = ConfigGetInt    ( file, "autosave", 0 );
+    //Config.AUTOSAVE             = ConfigGetInt    ( file, "autosave", 0 );
 	//Config.SAVETIME             = ConfigGetInt    ( file, "savetime", 3600 );
-    ///Config.MapDelay             = ConfigGetInt    ( file, "mapdelay", 10 );
-    ///Config.WorldDelay           = ConfigGetInt    ( file, "worlddelay", 200 );
-    ///Config.VisualDelay          = ConfigGetInt    ( file, "visualdelay", 500 );
+    //Config.MapDelay             = ConfigGetInt    ( file, "mapdelay", 10 );
+    //Config.WorldDelay           = ConfigGetInt    ( file, "worlddelay", 200 );
+    //Config.VisualDelay          = ConfigGetInt    ( file, "visualdelay", 500 );
     //Config.Partygap             = ConfigGetInt    ( file, "partygap", 10 );
     //Config.MaxStat              = ConfigGetInt    ( file, "maxstat", 254 );
-    ///Config.FairyMode            = ConfigGetInt    ( file, "fairy", 1 );
-    ///Config.FairyStay            = ConfigGetInt    ( file, "fairystay", 20 );
-    ///Config.FairyWait            = ConfigGetInt    ( file, "fairywait", 15 );
-    ///Config.FairyMax             = ConfigGetInt    ( file, "fairymax", 0);
-    ///Config.FairyTestMode        = ConfigGetInt    ( file, "fairytestmode", 1);
+    //Config.FairyMode            = ConfigGetInt    ( file, "fairy", 1 );
+    //Config.FairyStay            = ConfigGetInt    ( file, "fairystay", 20 );
+    //Config.FairyWait            = ConfigGetInt    ( file, "fairywait", 15 );
+    //Config.FairyMax             = ConfigGetInt    ( file, "fairymax", 0);
+    //Config.FairyTestMode        = ConfigGetInt    ( file, "fairytestmode", 1);
     //Config.PlayerDmg            = ConfigGetInt    ( file, "playerdmg", 120);
     //Config.MonsterDmg           = ConfigGetInt    ( file, "monsterdmg", 100);
     //Config.BlueChance           = ConfigGetInt    ( file, "bluechance", 5); //hidden
@@ -787,18 +787,18 @@ void CWorldServer::LoadConfigurations( char* file )
     //Config.RefineChance         = ConfigGetInt    ( file, "refinechance", 5); //hidden
     //Config.Cfmode               = ConfigGetInt    ( file, "cfmode", 0);
     //Config.osRoseVer            = ConfigGetString    ( file, "osRoseVer", "79.999");
-    ///Config.testgrid             = ConfigGetInt    ( file, "testgrid", 0); //LMA: maps tests grids (0=usual, 1=grid)
-    ///Config.jrose                = ConfigGetInt    ( file, "jrose", 0); //LMA: Special code for jRose handling (163)
-    ///Config.unionslaughter       = ConfigGetInt    ( file, "unionslaughter", 0); //LMA: is Union Slaughter active?
-    ///Config.unionmin             = ConfigGetInt    ( file, "unionmin", 1); //LMA: union Slaughter (nb players / union, min)
-    ///Config.unionduration        = ConfigGetInt    ( file, "unionduration", 12000); //LMA: duration of union Slaughter in minutes
-    ///Config.unionslaughterloop        = ConfigGetInt    ( file, "unionslaughterloop", 1); //LMA: does US loops?
-    ///Config.unionslaughterdelay_loop        = ConfigGetInt    ( file, "unionslaughterdelay_loop", 1440); //LMA: delay between 2 US (in minutes)
-    ///Config.unionwar             = ConfigGetInt    ( file, "unionwar", 0); //LMA: is Union War active?
-    ///Config.unionwarmin        = ConfigGetInt    ( file, "unionwarmin", 1); //LMA: min amount of players for UW (attacker or defenders)
-    ///Config.unionwarduration        = ConfigGetInt    ( file, "unionwarduration", 1); //LMA: duration in min for UW
-    ///Config.unionwarloop        = ConfigGetInt    ( file, "unionwarloop", 1); //LMA: do we loop UW?
-    ///Config.unionwardelay_loop        = ConfigGetInt    ( file, "unionwardelay_loop", 1); //LMA: delay between 2 loops (minutes)
+    //Config.testgrid             = ConfigGetInt    ( file, "testgrid", 0); //LMA: maps tests grids (0=usual, 1=grid)
+    //Config.jrose                = ConfigGetInt    ( file, "jrose", 0); //LMA: Special code for jRose handling (163)
+    //Config.unionslaughter       = ConfigGetInt    ( file, "unionslaughter", 0); //LMA: is Union Slaughter active?
+    //Config.unionmin             = ConfigGetInt    ( file, "unionmin", 1); //LMA: union Slaughter (nb players / union, min)
+    //Config.unionduration        = ConfigGetInt    ( file, "unionduration", 12000); //LMA: duration of union Slaughter in minutes
+    //Config.unionslaughterloop        = ConfigGetInt    ( file, "unionslaughterloop", 1); //LMA: does US loops?
+    //Config.unionslaughterdelay_loop        = ConfigGetInt    ( file, "unionslaughterdelay_loop", 1440); //LMA: delay between 2 US (in minutes)
+    //Config.unionwar             = ConfigGetInt    ( file, "unionwar", 0); //LMA: is Union War active?
+    //Config.unionwarmin        = ConfigGetInt    ( file, "unionwarmin", 1); //LMA: min amount of players for UW (attacker or defenders)
+    //Config.unionwarduration        = ConfigGetInt    ( file, "unionwarduration", 1); //LMA: duration in min for UW
+    //Config.unionwarloop        = ConfigGetInt    ( file, "unionwarloop", 1); //LMA: do we loop UW?
+    //Config.unionwardelay_loop        = ConfigGetInt    ( file, "unionwardelay_loop", 1); //LMA: delay between 2 loops (minutes)
     //LMA
 
     Log (MSG_INFO, "osRose - http://forum.dev-osrose.com");

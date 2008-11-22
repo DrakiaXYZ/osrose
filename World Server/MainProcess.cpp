@@ -853,6 +853,8 @@ PVOID MapProcess( PVOID TS )
 // Visibility Process
 PVOID VisibilityProcess(PVOID TS)
 {
+    Log(MSG_INFO,"in VisibilityProcess, begin, auto save=%i",GServer->Config.AUTOSAVE);
+
     while(GServer->ServerOnline)
     {
         pthread_mutex_lock( &GServer->PlayerMutex );
@@ -865,7 +867,10 @@ PVOID VisibilityProcess(PVOID TS)
             for(UINT j=0;j<map->PlayerList.size();j++)
             {
                 CPlayer* player = map->PlayerList.at(j);
-                if(!player->Session->inGame) continue;
+                if(!player->Session->inGame)
+                {
+                    continue;
+                }
                 if(!player->VisiblityList()) Log(MSG_WARNING, "Visibility False: %u", player->clientid );
                 if( GServer->Config.AUTOSAVE == 1 )
                 {
