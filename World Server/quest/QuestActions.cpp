@@ -1,7 +1,5 @@
 // Props to ExJam for this code :D Ported to OSpRose by Drakia
 #include "../worldserver.h"
-#ifdef USENEWQUESTSYSTEM
-
 dword GetRewardValue(dword function, dword amount, CPlayer* client, word nDupCNT){
 	switch(function){
 		case 0:
@@ -706,5 +704,3 @@ QUESTREWD(034){
 
     return QUEST_FAILURE;
 }
-
-#endif

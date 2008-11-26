@@ -3760,9 +3760,6 @@ bool CWorldServer::pakGMReborn(CPlayer* thisclient)
          thisclient->CharInfo->Exp = 0;
 
          thisclient->ActiveQuest = 0;
-#ifndef USENEWQUESTSYSTEM
-         thisclient->MyQuest.clear();
-#endif
 
         /*Update Reborn Command {By CrAshInSiDe*/
         int x = 5098;

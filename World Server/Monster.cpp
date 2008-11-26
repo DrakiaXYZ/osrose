@@ -24,92 +24,9 @@
 bool CMonster::UpdateValues( )
 {
     //LMA: All should be handled by AIP now...
-    //2do: test if bonfire like stuff disepear.
+
+
     return true;
-
-    /*
-    //LMA: Some special case where special monsters stay still (mc, bonfires and so on...)
-    if(stay_still&&(!IsBonfire()))
-       return true;
-
-    if(IsSummon( ) && CanMove( ))
-    {
-        CPlayer* thisclient = GetOwner( );
-        if(thisclient!=NULL)
-        {
-            if(!IsBonfire())
-            {
-                if(!IsOnBattle( ) && thisclient->IsAttacking( ))
-                {
-                    Battle->target = thisclient->Battle->target;
-                    Battle->atktarget = Battle->target;
-                    Battle->atktype = NORMAL_ATTACK;
-                    Battle->contatk = true;
-                    CCharacter* Enemy = GetCharTarget( );
-
-                    //LMA: TEST monster skills.
-                    int lma_rand=GServer->RandNumber(0,10);
-                    if(Enemy!=NULL)
-                    {
-
-                        if(montype==663)
-                        {
-                           Log(MSG_INFO,"Telling to do a skill attack");
-                           StartAction( Enemy, SKILL_ATTACK,3562);
-                        }
-                        else
-                        {
-                           StartAction( Enemy, NORMAL_ATTACK );
-                        }
-
-                    }
-
-
-                }
-                else
-                if(!IsOnBattle( ))
-                {
-                    Position->source = thisclient->Position->current;
-                    float distance = GServer->distance( Position->destiny , thisclient->Position->current );
-                    if((distance>15 && !IsOnBattle()) || distance>50)
-                        Move( );
-                }
-
-            }
-            else
-            {
-                //LMA: Let's kill bonfires if owner too far away :).
-                float distance = GServer->distance( Position->current , thisclient->Position->current );
-                if(distance>25)
-                {
-                   UnspawnMonster( );
-                   return false;
-                }
-
-                return true;
-            }
-
-        }
-        else
-        {
-            UnspawnMonster( );
-            return false;
-        }
-    }
-    if(!IsMoving( ) && !IsOnBattle( ) && CanMove( ))
-    {
-        clock_t etime = clock() - Position->lastMoveTime;
-        if(etime > 20*CLOCKS_PER_SEC)
-            Move( );
-    }
-    if(!IsSummon( ))
-    {
-        CPlayer* player = GetNearPlayer( 10 );
-        if(player!=NULL)
-            OnEnemyOnSight( player );
-    }
-    return true;
-    */
 }
 
 // Spawn a monster

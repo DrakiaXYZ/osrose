@@ -28,7 +28,6 @@
 #include "character.h"
 #include "party.h"
 
-#ifdef USENEWQUESTSYSTEM
 #include "stbhandler.h"
 #include "quest/strhashing.h"
 #include "quest/CRoseArray.hpp"
@@ -36,7 +35,6 @@
 #include "quest/CStrStb.hpp"
 #include "quest/CIntStb.hpp"
 #include "quest/QuestTrigger.h"
-#endif
 
 //LMA: LTB:
 #include "ltbhandler.h"
@@ -110,27 +108,17 @@ class CWorldServer : public CServerSocket
         //------------------ QUEST DATA (quest.cpp)
     	bool pakGiveQuest( CPlayer* thisclient, CPacket* P );
 
-        #ifdef SKILLOSPROSE
     	//------------------ BUFFS (buff.cpp)
-            CBValue GetBuffValue( CSkills* thisskill, CCharacter* character, UINT Evalue, UINT i, UINT up, UINT down, UINT CurrentValue, bool Buff=true, bool Status=false );
-        	//CBValue GetBuffValue( CSkills* thisskill, CCharacter* character, UINT Evalue, UINT i, UINT up, UINT down, UINT CurrentValue, bool Buff=true );
-            bool CheckABuffs( CSkills* thisskill, CCharacter* character, int Evalue ,int i);
-            //bool CheckDBuffs( CSkills* thisskill, CCharacter* character, int Evalue ,int i);
-        	bool AddBuffs( CSkills* thisskill, CCharacter* character, int Evalue , bool flag);
-        	//bool AddDeBuffs( CSkills* thisskill, CCharacter* character, int Evalue );
-        	bool AddBuffs( CSkills* thisskill, CCharacter* character, int Evalue );
-        	bool InstantBuff( CSkills* thisskill, CCharacter* character, int Evalue, int i );
-            UINT BuildUpBuffs( CCharacter* player );
-            UINT BuildDeBuffs( CCharacter* player );
-        #else
-    	//------------------ BUFFS (buff.cpp)
-        	CBValue GetBuffValue( CSkills* thisskill, CCharacter* character, UINT Evalue, UINT i, UINT up, UINT down, UINT CurrentValue, bool Buff=true, bool Status=false );
-            bool CheckABuffs( CSkills* thisskill, CCharacter* character, int Evalue ,int i);
-            bool CheckDBuffs( CSkills* thisskill, CCharacter* character, int Evalue ,int i);
-        	bool AddBuffs( CSkills* thisskill, CCharacter* character, int Evalue , bool flag);
-        	bool AddDeBuffs( CSkills* thisskill, CCharacter* character, int Evalue );
-        	bool AddBuffs( CSkills* thisskill, CCharacter* character, int Evalue );
-        #endif
+        CBValue GetBuffValue( CSkills* thisskill, CCharacter* character, UINT Evalue, UINT i, UINT up, UINT down, UINT CurrentValue, bool Buff=true, bool Status=false );
+        //CBValue GetBuffValue( CSkills* thisskill, CCharacter* character, UINT Evalue, UINT i, UINT up, UINT down, UINT CurrentValue, bool Buff=true );
+        bool CheckABuffs( CSkills* thisskill, CCharacter* character, int Evalue ,int i);
+        //bool CheckDBuffs( CSkills* thisskill, CCharacter* character, int Evalue ,int i);
+        bool AddBuffs( CSkills* thisskill, CCharacter* character, int Evalue , bool flag);
+        //bool AddDeBuffs( CSkills* thisskill, CCharacter* character, int Evalue );
+        bool AddBuffs( CSkills* thisskill, CCharacter* character, int Evalue );
+        bool InstantBuff( CSkills* thisskill, CCharacter* character, int Evalue, int i );
+        UINT BuildUpBuffs( CCharacter* player );
+        UINT BuildDeBuffs( CCharacter* player );
 
 
     	//------------------ SERVER EXTRAS (extrafunctions.cpp)
@@ -175,9 +163,7 @@ class CWorldServer : public CServerSocket
     	UINT BuildItemData( CItem thisitem );
     	CMonster* GetMonsterByID( UINT id, UINT map );
     	CSpawnArea* GetSpawnArea( UINT id, UINT map=0 );
-#ifdef USEIFO
         CMobGroup* GetMobGroup( UINT id, UINT map=0 );
-#endif
         bool DeleteSpawn( CSpawnArea* spawn );
         CNPCData* GetNPCDataByID( UINT id );
     	void SendToMap( CPacket* pak, int mapid );
@@ -390,10 +376,8 @@ class CWorldServer : public CServerSocket
     	//----------------- Server StartUp Functions (startup.cpp)
     	bool LoadSTBData( );
 
-        #ifdef AUTOINDEX
         //lma: initializing arrays default values...
         bool InitDefaultValues();
-        #endif
 
         bool LoadLTB( );    //LMA: LTB.
     	bool LoadZoneData( );
@@ -411,13 +395,10 @@ class CWorldServer : public CServerSocket
         bool LoadCustomTeleGate( );
         bool LoadCustomEvents( );
         bool LoadMonsterSpawn( );
-#ifdef USEIFO
         bool LoadMobGroups( );
         bool LoadMobGroupsSpecial( );   //LMA: Special Spawns (Halloween for example)
-#endif
         bool LoadRespawnData( );
 
-#ifdef USENEWQUESTSYSTEM
         // QSD Fuctions
         void ReadQSD(strings path, dword index);
         void LoadQuestData( );
@@ -434,9 +415,6 @@ class CWorldServer : public CServerSocket
         fpQuestRewdC qstRewdFuncC[35];
 
         CSTBData                STB_QUEST;
-#else
-        bool LoadQuestData( );
-#endif
 
         //LMA: AIP:
         inline int round(double x) {return int(x > 0.0 ? x + 0.5 : x - 0.5);};
@@ -497,12 +475,8 @@ class CWorldServer : public CServerSocket
     	char*					cct;					// Encryption table for char server
 
     	vector<CTeleGate*>		TeleGateList;			// Telegates List
-        #ifdef AUTOINDEX
         CStatus                 **StatusList;
         int                     maxStatus;
-        #else
-        vector<CStatus*>        StatusList;             // Status List
-        #endif
     	map<int,char*>          NpcNameList;            //LMA: npc name map.
         vector<CCustomGate*>    CustomGateList;         // Custom Telegate list
         vector<CCustomEvent*>   CustomEventList;        //Custom events list
@@ -510,22 +484,14 @@ class CWorldServer : public CServerSocket
         vector<CQuest*>         QuestList;              // Quest List
         vector<CSkills*>        SkillListOld;           // Skills List (LMA: for debug)
 
-        #ifdef AUTOINDEX
         CSkills                 **SkillList;
         int                     maxSkills;              //Nb Skills
-        #else
-        vector<CSkills*>        SkillList;              // Skills List
-        #endif
 
         vector<CMDrops*>        MDropList;              // Drops List
         vector<CMDrops*>        SkillbookList;          // Skillbook drop list (hidden)
 
-        #ifdef AUTOINDEX
         CNPCData                **NPCData;
         int                     maxNPC;                 //Nb NPC/Mobs
-        #else
-        vector<CNPCData*>       NPCData;                // NPC/Mobs List
-        #endif
 
         vector<CParty*>         PartyList;              // Party List
         vector<CFairy*>         FairyList;              // Fairy List

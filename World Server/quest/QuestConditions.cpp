@@ -1,6 +1,5 @@
 // Props to ExJam for this code :D Ported to OSpRose by Drakia
 #include "../worldserver.h"
-#ifdef USENEWQUESTSYSTEM
 
 //Check Quest
 QUESTCOND(000){
@@ -453,4 +452,3 @@ QUESTCOND(030){
     return QUEST_SUCCESS;
 }
 
-#endif

@@ -399,7 +399,6 @@ CSpawnArea* CWorldServer::GetSpawnArea( UINT id, UINT map )
 	return NULL;
 }
 
-#ifdef USEIFO
 CMobGroup* CWorldServer::GetMobGroup(UINT id, UINT map ) {
   if (map != 0) {
     for (unsigned j = 0; j < MapList.Index[map]->MobGroupList.size(); j++) {
@@ -418,7 +417,6 @@ CMobGroup* CWorldServer::GetMobGroup(UINT id, UINT map ) {
   }
   return NULL;
 }
-#endif
 
 
 // delete a spawn
@@ -664,23 +662,13 @@ CSkills* CWorldServer::GetSkillByID( unsigned int id )
 //LMA: new version since we load all skills from STB (even empty ones).
 CSkills* CWorldServer::GetSkillByID( unsigned int id )
 {
-    #ifdef AUTOINDEX
-    if (id>=maxSkills)
+   if (id>=maxSkills)
     {
            Log( MSG_WARNING,"SKILL NOT FOUND! %i>=%i", id,maxSkills);
            return NULL;
     }
 
     CSkills* thisskill = SkillList[id];
-    #else
-    if (id>=SkillList.size())
-    {
-           Log( MSG_WARNING,"SKILL NOT FOUND! %i>=%i", id,SkillList.size());
-           return NULL;
-    }
-
-    CSkills* thisskill = (CSkills*) SkillList.at(id);
-    #endif
 
     //stupid test, but you never know...
     if (id!=thisskill->id)
@@ -694,7 +682,6 @@ CSkills* CWorldServer::GetSkillByID( unsigned int id )
 }
 
 // Search Status By ID
-#ifdef AUTOINDEX
 CStatus* CWorldServer::GetStatusByID( unsigned int id )
 {
     if (id>=maxStatus)
@@ -714,36 +701,6 @@ CStatus* CWorldServer::GetStatusByID( unsigned int id )
 
     return thisStatus;
 }
-#else
-CStatus* CWorldServer::GetStatusByID( unsigned int id )
-{
-    unsigned int A=0,B=0,C=0;
-    for(A=0,B=StatusList.size()-1;A<=B;)
-    {
-        if(A==B)
-        {
-            CStatus* thisstatus = (CStatus*) StatusList.at( A );
-            if( id = thisstatus->id )
-                return thisstatus;
-            else
-            {
-                Log(MSG_WARNING,"STATUS NOT FOUND! %i", id );
-                return NULL;
-            }
-        }
-        C = (A+B)/2;
-        CStatus* thisstatus = (CStatus*) StatusList.at( C );
-        if(thisstatus->id == id)
-            return thisstatus;
-        if(thisstatus->id > id)
-            B=C-1;
-        else
-            A=C+1;
-    }
-    Log( MSG_WARNING,"STATUS NOT FOUND! %i", id );
-    return NULL;
-}
-#endif
 
 
 // Get Monster Drop By ID
@@ -820,7 +777,6 @@ CNPCData* CWorldServer::GetNPCDataByID( unsigned int id )
 //LMA: new version since we load all NPC from STB (even empty ones).
 CNPCData* CWorldServer::GetNPCDataByID( unsigned int id )
 {
-    #ifdef AUTOINDEX
     if (id>=maxNPC)
     {
         Log( MSG_WARNING,"NPC NOT FOUND! %i>=%i", id,maxNPC);
@@ -828,15 +784,6 @@ CNPCData* CWorldServer::GetNPCDataByID( unsigned int id )
     }
 
     CNPCData* thisnpc = (CNPCData*) NPCData[id];
-    #else
-    if (id>=NPCData.size())
-    {
-        Log( MSG_WARNING,"NPC NOT FOUND! %i>=%i", id,NPCData.size());
-        return NULL;
-    }
-
-    CNPCData* thisnpc = (CNPCData*) NPCData.at(id);
-    #endif
 
     //stupid test.
     if(id!=thisnpc->id)
@@ -1305,14 +1252,8 @@ bool CWorldServer::IsValidItem(UINT type, UINT id )
         return false;
     if(type<10)
     {
-        //if(id>4999)
-        #ifdef AUTOINDEX
         if(id>=EquipList[type].max)
             return false;
-        #else
-        if(id>=MAX_EQUIP_DATA)
-            return false;
-        #endif
         if(EquipList[type].Index[id]->id==0)
             return false;
     }
@@ -1321,50 +1262,27 @@ bool CWorldServer::IsValidItem(UINT type, UINT id )
         switch(type)
         {
             case 10:
-                //if(id>1999)
-                #ifdef AUTOINDEX
                 if(id>=UseList.max)
                     return false;
-                #else
-                if(id>=MAX_USE_DATA)
-                    return false;
-                #endif
                 if(UseList.Index[id]->id==0)
                     return false;
             break;
             case 11:
-                //if(id>3999)
-                #ifdef AUTOINDEX
                 if(id>=JemList.max)
                     return false;
-                #else
-                if(id>=MAX_JEM_DATA)
-                    return false;
-                #endif
                 if(JemList.Index[id]->id==0)
                     return false;
             break;
             case 12:
-                //if(id>999)
-                #ifdef AUTOINDEX
                 if(id>=NaturalList.max)
                     return false;
-                #else
-                if(id>=MAX_NATURAL_DATA)
-                    return false;
-                #endif
                 if(NaturalList.Index[id]->id==00)
                     return false;
             break;
             case 14:
                 //if(id>999)
-                #ifdef AUTOINDEX
                 if(id>=PatList.max)
                     return false;
-                #else
-                if(id>=MAX_PAT_DATA)
-                    return false;
-                #endif
                 if(PatList.Index[id]->id==00)
                     return false;
             break;
@@ -2823,10 +2741,8 @@ void CWorldServer::UWDecide()
 //LMA: We delete all Union Quest for all players.
 void CWorldServer::UWForceDelAllQuest(int questid)
 {
-     #ifdef USENEWQUESTSYSTEM
      Log(MSG_INFO,"QSD mode: UWForceDelAllQuest unavailable");
      return;
-     #endif
     GServer->DB->QExecute( "DELETE FROM list_quest WHERE questid=%i",questid);
 
 
@@ -2836,15 +2752,8 @@ void CWorldServer::UWForceDelAllQuest(int questid)
 //LMA: We force a delete quest, but fast way.
 void CWorldServer::UWForceDelQuest(CPlayer* thisclient,int action,int questpart,int questid)
 {
-     #ifdef USENEWQUESTSYSTEM
      Log(MSG_INFO,"QSD mode: UWForceDelQuest unavailable");
      return;
-     #endif
-
-    //server part
-    #ifndef USENEWQUESTSYSTEM
-    thisclient->DelQuestUW( questid );
-    #endif
 
     //Player's part.
     BEGINPACKET( pak, 0x730);

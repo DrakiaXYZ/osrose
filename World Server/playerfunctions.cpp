@@ -1779,7 +1779,6 @@ bool CPlayer::PrizeExchange(CPlayer* thisclient, UINT prizeid)
 
 
 //QSD Quests
-#ifdef USENEWQUESTSYSTEM
 int CPlayer::ExecuteQuestTrigger(dword hash)
 {
     CQuestTrigger* trigger = NULL;
@@ -1916,5 +1915,4 @@ int CPlayer::GetQuestVar(short nVarType, short nVarNO){
   return -1;
 }
 
-#endif
 

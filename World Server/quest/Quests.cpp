@@ -1,6 +1,5 @@
 // Props to ExJam for this code :D
 #include "../worldserver.h"
-#ifdef USENEWQUESTSYSTEM
 
 void CWorldServer::ReadQSD(strings path, dword index){
 	CRoseFile* fh = new CRoseFile(path, FM_READ | FM_BINARY);
@@ -249,4 +248,3 @@ void CWorldServer::LoadQuestData()
 
 	delete stbQuest;
 }
-#endif

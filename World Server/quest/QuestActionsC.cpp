@@ -2,7 +2,6 @@
 
 //LMA: This file if specifically for CCharacter QSD (NPC, monsters...)
 #include "../worldserver.h"
-#ifdef USENEWQUESTSYSTEM
 dword GetRewardValueC(dword function, dword amount, CCharacter* client, word nDupCNT){
 	switch(function){
 		case 0:
@@ -775,5 +774,4 @@ QUESTREWDC(034){
     return QUEST_SUCCESS;
 }
 
-#endif
 

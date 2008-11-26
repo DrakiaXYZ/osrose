@@ -102,17 +102,11 @@ class CPlayer: public CCharacter
     int p_skills;
     int dual_scratch_index; //LMA: trying to guess dual scratch skill index...
 
-#ifdef USENEWQUESTSYSTEM
     // ExJam Quest Code - Info
     DWORD ActiveQuest;  //active quest #
     int CheckQuest; // The currently checked quest.
     strings TriggerName[10];
     SQuestData quest; // Character's quest information
-#else
-    // Quest info
-    vector<QUESTS*> MyQuest; // List of quest
-    BYTE ActiveQuest;  //active quest #
-#endif
 
     // Time
 	clock_t lastRegenTime;
@@ -185,26 +179,12 @@ class CPlayer: public CCharacter
         bool PlasticSurgeon(CQuest* thisquest);      //LMA: Plastic Surgery coupons
         bool CheckItem(int itemnb,int familyid,int nb);   //Check if a peculiar item is in inventory
 
-#ifdef USENEWQUESTSYSTEM
         // ExJam Quest Code
         void savequests( CPlayer* thisclient );
         SQuest* GetActiveQuest( );
         int GetQuestVar(short nVarType, short nVarNO);
         void SetQuestVar(short nVarType, short nVarNO, short nValue);
         int ExecuteQuestTrigger(dword hash);
-#else
-        // quest
-        bool AddQuest( unsigned long int questid );
-        bool DelInactiveQuest( unsigned long int questid );    //LMA
-        bool DelQuest( unsigned long int questid );
-        bool DelQuestUW( unsigned long int questid );    //LMA: Special for UW
-        bool GiveQuestReward( CQuest* thisquest );
-        QUESTS* GetQuestByQuestID( unsigned long int questid );
-        QUESTS* GetQuestByItemID( unsigned long int itemid );
-        QUESTS* GetQuestByMob( UINT mob );
-        //void LogQuest( char buffer2[200] );    //LMA: Logging quests.
-        void LogQuest( char *Format, ...);    //LMA: Logging quests.
-#endif
 
     	// Player Stats
         unsigned int GetAttackPower( );

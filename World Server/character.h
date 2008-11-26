@@ -50,9 +50,7 @@ class CCharacter
 
         //LMA: for AIP.
         CNPC* refnpc;
-       #ifdef USENEWQUESTSYSTEM
        int ExecuteQuestTrigger(dword hash);
-       #endif
 
        // Battle Functions
         void DoAttack( );

@@ -30,175 +30,9 @@ CWorldServer::CWorldServer( string fn )
     //Clear or Vector list
     PartyList.clear();
     MDropList.clear();
-    #ifndef AUTOINDEX
-    SkillList.clear();
-    #endif
     QuestList.clear();
     FairyList.clear();
     TeleGateList.clear();
-
-    #ifndef AUTOINDEX
-    //Equip null init
-    CEquip* nullequip = new CEquip;
-    nullequip->id = 0;
-    nullequip->equiptype = 0;
-    nullequip->type = 0;
-    nullequip->price = 0;
-    nullequip->pricerate = 0;
-    nullequip->weight = 0;
-    nullequip->quality = 0;
-    nullequip->level = 0;
-    nullequip->material = 0;
-    nullequip->defense = 0;
-    nullequip->magicresistence = 0;
-    nullequip->attackdistance = 0;
-    nullequip->movespeed = 0;
-    nullequip->attackpower = 0;
-    nullequip->attackspeed =0;
-    nullequip->itemgrade = 0;
-    for(int i=0;i<3;i++)
-    {
-        nullequip->occupation[i] = 0;
-        nullequip->condition1[i] = 0;
-        nullequip->condition2[i] = 0;
-    }
-    for(int i=0;i<2;i++)
-    {
-        nullequip->stat1[i] = 0;
-        nullequip->stat2[i] = 0;
-    }
-    for(int i=0;i<10;i++)
-    {
-        EquipList[i].nullequip = nullequip;
-        for(UINT j=0;j<MAX_EQUIP_DATA;j++)
-            EquipList[i].Index[j] = nullequip;
-    }
-
-    //natural null init
-    CNaturalData* nullnatural = new CNaturalData;
-    nullnatural->id = 0;
-    nullnatural->type = 0;
-    nullnatural->price = 0;
-    nullnatural->pricerate = 0;
-    nullnatural->weight = 0;
-    nullnatural->quality = 0;
-    nullnatural->pricevalue = 0;
-    NaturalList.nullnatural = nullnatural;
-
-    for(UINT i=0;i<MAX_NATURAL_DATA;i++)
-    {
-        NaturalList.Index[i] = nullnatural;
-    }
-
-    //pat null init
-    CPatData* nullpat = new CPatData;
-    nullpat->id = 0;
-    nullpat->type = 0;
-    nullpat->price = 0;
-    nullpat->pricerate = 0;
-    nullpat->weight = 0;
-    nullpat->quality = 0;
-    nullpat->material = 0;
-    nullpat->partversion = 0;
-    nullpat->maxfuel = 0;
-    nullpat->fuelcons = 0;
-    nullpat->speed = 0;
-    nullpat->attackdistance = 0;
-    nullpat->attackpower = 0;
-    nullpat->attackspeed = 0;
-    PatList.nullpat = nullpat;
-    for(UINT i=0;i<MAX_PAT_DATA;i++)
-    {
-        PatList.Index[i] = nullpat;
-    }
-
-    //sell null init
-    CCSellData* nullsell = new CCSellData;
-    nullsell->id = 0;
-    for(UINT i=0;i<48;i++)
-        nullsell->item[i] = 0;
-    SellList.nullsell = nullsell ;
-
-    for(UINT i=0;i<MAX_SELL_DATA;i++)
-    {
-        SellList.Index[i] = nullsell;
-    }
-
-    //map null init
-    CMap* nullzone = new CMap( );
-    nullzone->id =0;
-    nullzone->dayperiod = 1;
-    nullzone->morningtime = 0;
-    nullzone->daytime = 0;
-    nullzone->eveningtime = 0;
-    nullzone->nighttime = 0;
-    nullzone->allowpvp = 0;
-    nullzone->allowpat = 0;
-    nullzone->MapTime = 0;
-    nullzone->LastUpdate = 0;
-    nullzone->CurrentTime = 0;
-    for(UINT i=0;i<MAX_MAP_DATA;i++)
-    {
-        MapList.Index[i] = nullzone;
-    }
-
-    MapList.nullzone = nullzone;
-
-    //Use null init
-    CUseData* nulluse = new CUseData;
-    nulluse->id = 0;
-    nulluse->restriction = 0;
-    nulluse->type = 0;
-    nulluse->price = 0;
-    nulluse->pricerate = 0;
-    nulluse->weight = 0;
-    nulluse->quality = 0;
-    nulluse->pricevalue = 0;
-    for(int i=0;i<2;i++)
-    {
-        nulluse->usecondition[i] = 0;
-        nulluse->useeffect[i] = 0;
-    }
-    UseList.nulluse = nulluse;
-    for(UINT i=0;i<MAX_USE_DATA;i++)
-    {
-        UseList.Index[i] = nulluse;
-    }
-
-    //product null init
-    CProductData* nullproduct = new CProductData;
-    nullproduct->id = 0;
-    for(UINT i=0;i<50;i++)
-    {
-        nullproduct->item[i];
-        nullproduct->amount[i];
-    }
-    ProductList.nullproduct = nullproduct;
-    for(UINT i=0;i<MAX_PRODUCT_DATA;i++)
-    {
-        ProductList.Index[i] = nullproduct;
-    }
-
-    //jem null init
-    CJemData* nulljem = new CJemData;
-    nulljem->id = 0;
-    nulljem->type = 0;
-    nulljem->price = 0;
-    nulljem->pricerate = 0;
-    nulljem->weight = 0;
-    nulljem->quality = 0;
-    nulljem->material = 0;
-    for(int i=0;i<2;i++)
-    {
-        nulljem->stat1[i] = 0;
-        nulljem->stat2[i] = 0;
-    }
-    JemList.nulljem = nulljem ;
-    for(UINT i=0;i<MAX_JEM_DATA;i++)
-    {
-        JemList.Index[i] = nulljem;
-    }
-    #endif
 
     //Stats null init
     for(UINT i=0;i<500;i++)
@@ -229,14 +63,6 @@ CWorldServer::~CWorldServer( )
     for(UINT i=0;i<MDropList.size();i++)
         delete MDropList.at(i);
 
-    #ifndef AUTOINDEX
-    for(UINT i=0;i<SkillList.size();i++)
-        delete SkillList.at(i);
-    for(UINT i=0;i<NPCData.size();i++)
-        delete NPCData.at(i);
-    #endif
-
-    #ifdef AUTOINDEX
     //deleting arrays.
     delete [] SkillList;
     delete [] NPCData;
@@ -252,7 +78,6 @@ CWorldServer::~CWorldServer( )
     {
         delete [] EquipList[i].Index;
     }
-    #endif
 
     /*
     //LMA: Useless Vectors.
@@ -538,10 +363,8 @@ bool CWorldServer::OnServerReady( )
     LoadConfig( );
     //LoadLTB( );
     LoadSTBData( );
-    #ifdef AUTOINDEX
     //LMA: init default values.
     InitDefaultValues();
-    #endif
     LoadZoneData( );
     LoadGrids( );   //resetting grids...
     LoadConsItem( );
@@ -570,9 +393,7 @@ bool CWorldServer::OnServerReady( )
     //End debug.
 
     //Load our Server Info
-#ifdef USENEWQUESTSYSTEM
     LoadQuestSTB();
-#endif
 
     //hidden
     // LoadDropsData( );
@@ -590,12 +411,8 @@ bool CWorldServer::OnServerReady( )
     LoadNPCData( );
     LoadTeleGateData( );
     LoadRespawnData( );
-#ifndef USEIFO
-    LoadMonsterSpawn( );
-#else
     LoadMobGroups( );
     LoadMobGroupsSpecial( );    //LMA: Special spawns (Halloween for example).
-#endif
     LoadNPCs( );
     LoadNPCsSpecial( );  //Special NPC load
     LoadMonsters( );

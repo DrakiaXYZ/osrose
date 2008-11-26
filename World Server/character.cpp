@@ -138,7 +138,6 @@ bool CCharacter::UpdateValues( )
 }
 
 //LMA: AIP (qsd quests).
-#ifdef USENEWQUESTSYSTEM
 int CCharacter::ExecuteQuestTrigger(dword hash)
 {
     CQuestTrigger* trigger = NULL;
@@ -197,7 +196,6 @@ int CCharacter::ExecuteQuestTrigger(dword hash)
     }
     return success;
 }
-#endif
 
 // update position
 void CCharacter::UpdatePosition( bool monster_stay_still )

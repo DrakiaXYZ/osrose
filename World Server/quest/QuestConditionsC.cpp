@@ -2,7 +2,6 @@
 
 //LMA: This file if specifically for CCharacter QSD (NPC, monsters...)
 #include "../worldserver.h"
-#ifdef USENEWQUESTSYSTEM
 
 //Check Quest
 QUESTCONDC(000){
@@ -484,5 +483,4 @@ QUESTCONDC(030){
 	return QUEST_SUCCESS;
 }
 
-#endif
 

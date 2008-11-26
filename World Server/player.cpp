@@ -191,11 +191,7 @@ CPlayer::CPlayer( CClientSocket* CLIENT )
     for(int i=0;i<MAX_QUICKBAR;i++)
         quickbar[i] = 0;
 
-    #ifndef USENEWQUESTSYSTEM
-    MyQuest.clear( );
-    #else
     quest.selectedNpc = NULL;
-    #endif
 
     ActiveQuest = 0;
     lastRegenTime = 0;
@@ -224,9 +220,6 @@ CPlayer::~CPlayer( )
     if(Session!=NULL) delete Session;
     if(Clan!=NULL) delete Clan;
     if(Attr!=NULL) delete Attr;
-#ifndef USENEWQUESTSYSTEM
-         MyQuest.clear();
-#endif
 
     VisiblePlayers.clear();
     VisibleDrops.clear();

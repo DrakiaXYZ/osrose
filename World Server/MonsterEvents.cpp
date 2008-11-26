@@ -578,7 +578,7 @@ bool CMonster::DragonEgg(CMonster* monster,CMap* map)
      return true;
 }
 */
-///LMA: added by rl2171 Handling 1st Turak :)
+//LMA: added by rl2171 Handling 1st Turak :)
 bool CMonster::Turak1(CMonster* monster,CMap* map)
 {
      if (monster->hitcount>=monster->maxhitcount)
@@ -761,7 +761,7 @@ void CMonster::DoAi(int ainumber,char type)//ainumber is monster->AI type is add
     //LMA: halloween debug (Odelo).
     bool lma_debug=false;
     int nb_turns=0;
-    if(ainumber==1116)
+    if(ainumber==1112)
     {
         lma_debug=true;
     }

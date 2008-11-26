@@ -22,7 +22,6 @@
 #ifndef __ROSE_SOCKETS__
 #define __ROSE_SOCKETS__
 // Comment the below to use the normal spawns instead of the IFO spawns
-#define USEIFO
 
 #ifdef _WIN32
     #define FD_SETSIZE 1024
