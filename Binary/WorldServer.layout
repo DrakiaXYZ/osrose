@@ -21,7 +21,7 @@ Open=0
 Top=0
 [Editors]
 Focused=-1
-Order=-1
+Order=
 [Editor_0]
 Open=0
 Top=0
@@ -278,7 +278,7 @@ TopLine=701
 >>>>>>> .r85
 LeftChar=1
 [Editor_36]
-Open=1
+Open=0
 <<<<<<< .mine
 Top=0
 CursorCol=33
@@ -367,8 +367,8 @@ CursorRow=186
 TopLine=163
 LeftChar=1
 [Editor_48]
-Open=1
-Top=1
+Open=0
+Top=0
 CursorCol=60
 CursorRow=803
 TopLine=778
