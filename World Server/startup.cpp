@@ -29,7 +29,6 @@ bool CWorldServer::LoadSTBData( )
         STBStoreData( "3DDataPeg\\STB\\LIST_NPC.STB", &STB_NPC );
         STBStoreData( "3DDataPeg\\STB\\LIST_SKILL.STB", &STB_SKILL );
         STBStoreData( "3DDataPeg\\STB\\LIST_STATUS.STB", &STB_STATUS );
-        //STBStoreData( "3DDataPeg\\STB\\LIST_QUEST.STB", &STB_QUEST ); //declared already in line 304
         STBStoreData( "3DDataPeg\\STB\\LIST_FACEITEM.STB", &STB_ITEM[0] );
         STBStoreData( "3DDataPeg\\STB\\LIST_CAP.STB", &STB_ITEM[1] );
         STBStoreData( "3DDataPeg\\STB\\LIST_BODY.STB", &STB_ITEM[2] );
@@ -49,16 +48,13 @@ bool CWorldServer::LoadSTBData( )
         STBStoreData( "3DDataPeg\\STB\\LIST_ZONE.STB", &STB_ZONE );
         STBStoreData( "3DDataPeg\\STB\\ITEM_DROP.STB", &STB_DROP );
         STBStoreData("3DDataPeg\\STB\\LIST_UPGRADE.STB", &upgradeData);
-
-        //LMA: for break and chest and blue craft.
-        STBStoreData("3DDataPeg\\STB\\LIST_BREAK.STB", &BreakData);
+        STBStoreData("3DDataPeg\\STB\\LIST_BREAK.STB", &BreakData);    //LMA: for break and chest and blue break.
     }
     else
     {
         STBStoreData( "3DData\\STB\\LIST_NPC.STB", &STB_NPC );
         STBStoreData( "3DData\\STB\\LIST_SKILL.STB", &STB_SKILL );
         STBStoreData( "3DData\\STB\\LIST_STATUS.STB", &STB_STATUS );
-        //STBStoreData( "3DData\\STB\\LIST_QUEST.STB", &STB_QUEST ); //declared already in line 304
         STBStoreData( "3DData\\STB\\LIST_FACEITEM.STB", &STB_ITEM[0] );
         STBStoreData( "3DData\\STB\\LIST_CAP.STB", &STB_ITEM[1] );
         STBStoreData( "3DData\\STB\\LIST_BODY.STB", &STB_ITEM[2] );
@@ -78,9 +74,7 @@ bool CWorldServer::LoadSTBData( )
         STBStoreData( "3DData\\STB\\LIST_ZONE.STB", &STB_ZONE );
         STBStoreData( "3DData\\STB\\ITEM_DROP.STB", &STB_DROP );
         STBStoreData("3DData\\STB\\LIST_UPGRADE.STB", &upgradeData);
-
-        //LMA: for break and chest and blue craft.
-        STBStoreData("3DData\\STB\\LIST_BREAK.STB", &BreakData);
+        STBStoreData("3DData\\STB\\LIST_BREAK.STB", &BreakData);    //LMA: for break and chest and blue break.
     }
 
 
@@ -1868,42 +1862,6 @@ bool CWorldServer::LoadZoneData( )
        newzone->mon_exp = 0;
        newzone->percent=0;
 
-       //LMA: Union Wars and union slaughter:
-       newzone->utime_begin=0;
-       newzone->utime_end=0;
-       newzone->is_union_fired=false;
-       newzone->us_loop=false;
-        newzone->us_duration=0;
-        newzone->us_delay_loop=0;
-        newzone->is_uw_fired=false;
-        newzone->sunsetkilled=false;
-        newzone->sunrisekilled=false;
-        newzone->sunsetspawned=false;
-        newzone->duskkilled=false;
-        newzone->uw_end=0;
-        newzone->uw_begin=0;
-        newzone->uw_loop=false;
-        newzone->uw_duration=0;
-        newzone->uw_delay_loop=0;
-        newzone->announce_done=false;
-        newzone->npc_id=0;
-        newzone->defenders=0;
-        newzone->attackers=0;
-
-        if (newzone->id==8)
-        {
-            newzone->us_loop=GServer->Config.unionslaughterloop;
-            newzone->us_duration=GServer->Config.unionduration;
-            newzone->us_delay_loop=GServer->Config.unionslaughterdelay_loop;
-        }
-
-        if(newzone->id==9)
-        {
-            newzone->uw_loop=GServer->Config.unionwarloop;
-            newzone->uw_duration=GServer->Config.unionwarduration;
-            newzone->uw_delay_loop=GServer->Config.unionwardelay_loop;
-        }
-
        //mode 1: one monster temporarily, then the "real" one :)
         if (newzone->is_cf==1)
         {
@@ -2369,8 +2327,7 @@ bool CWorldServer::LoadConfig( )
         refine_chance, rare_refine, kill_on_fail, player_damage, monster_damage, player_acc, monster_acc, \
         pvp_acc, skill_damage, maxlevel, drop_type, savetime, partygap, maxstat, cfmode, autosave, mapdelay, \
         visualdelay, worlddelay, fairymode, fairystay, fairywait, fairytestmode, osrosever, testgrid, jrose, \
-        unionslaughter, unionduration, unionmin, unionslaughterloop, unionslaughterdelay_loop, unionwar, \
-        unionwarloop, unionwardelay_loop, unionwarduration, unionwarmin, is_pegasus FROM list_config");
+        is_pegasus FROM list_config");
 
     if(result==NULL)
     {
@@ -2423,17 +2380,7 @@ bool CWorldServer::LoadConfig( )
        GServer->Config.osRoseVer = strdup(row[29]);
        GServer->Config.testgrid = atoi(row[30]);
        GServer->Config.jrose = atoi(row[31]);
-       GServer->Config.unionslaughter = atoi(row[32]);
-       GServer->Config.unionduration = atoi(row[33]);
-       GServer->Config.unionmin = atoi(row[34]);
-       GServer->Config.unionslaughterloop = atoi(row[35]);
-       GServer->Config.unionslaughterdelay_loop = atoi(row[36]);
-       GServer->Config.unionwar = atoi(row[37]);
-       GServer->Config.unionwarloop = atoi(row[38]);
-       GServer->Config.unionwardelay_loop = atoi(row[39]);
-       GServer->Config.unionwarduration = atoi(row[40]);
-       GServer->Config.unionwarmin = atoi(row[41]);
-       GServer->Config.is_pegasus = atoi(row[42]);
+       GServer->Config.is_pegasus = atoi(row[32]);
     }
 
     //LMA: jRose.

@@ -90,41 +90,13 @@ void CMonster::SpawnMonster( CPlayer* player, CMonster* thismon )
 
 	ADDDWORD   ( pak, Stats->HP );
 	if(thismon->owner != player->clientid)
-        {
-            CMap* map = GServer->MapList.Index[Position->Map];
+    {
+        CMap* map = GServer->MapList.Index[Position->Map];
 
-            //LMA: UW
-            if(map->id==9)
-            {
-                int lma_alliance=0x07D0;
-                if(montype!=433)
-                {
-                    if (map->attackers==1)
-                    {
-                        lma_alliance=0x03E8;
-                    }
-
-                }
-                else
-                {
-                    if (map->attackers==2)
-                    {
-                        lma_alliance=0x03E8;
-                    }
-
-                }
-
-                ADDDWORD(pak, lma_alliance);
-                Log(MSG_INFO,"Spawn monster %i",lma_alliance);
-            }
-            else
-            {
-                if(IsSummon( ) && map->allowpvp!=0) {ADDDWORD( pak, 0x00000064 );} //Hostil
-                else if (IsSummon( ) && map->allowpvp==0) {ADDDWORD ( pak, 0x00000000 );}//Friendly
-                else {ADDDWORD( pak, 0x00000064 );} //Hostil
-            }
-
-        }
+        if(IsSummon( ) && map->allowpvp!=0) {ADDDWORD( pak, 0x00000064 );} //Hostil
+        else if (IsSummon( ) && map->allowpvp==0) {ADDDWORD ( pak, 0x00000000 );}//Friendly
+        else {ADDDWORD( pak, 0x00000064 );} //Hostil
+    }
     else {ADDDWORD( pak, 0x00000000 );}//Friendly
     ADDDWORD( pak, GServer->BuildBuffs( this ) );
 	ADDWORD   ( pak, montype );

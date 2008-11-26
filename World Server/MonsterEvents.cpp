@@ -48,40 +48,6 @@ bool CMonster::OnBeAttacked( CCharacter* Enemy )
 bool CMonster::OnDie( )
 {
     CMap* map = GServer->MapList.Index[Position->Map];
-    /*
-    //AIP should do it...
-    if(map->ghost!=0)
-    {
-     if((map->IsNight( ) || map->ghost==2) && !IsGhost( ) && !IsGhostSeed( ) && !IsSummon( ))
-       {
-        UINT gs = GServer->RandNumber( 0, 100 );
-        if(gs<30) // 30% / 70%
-            {   // spawn a ghost seed [for now will be 701 [level 1 ghost seed] ]
-                map->AddMonster( 701, Position->current, 0, NULL, NULL, Position->respawn, true );
-            }
-        }
-    }
-    */
-
-    //LMA: Union Wars :)
-    //A stone has been killed?
-    if (map->id==9&&(this->montype==431||this->montype==432||this->montype==433))
-    {
-       if (map->is_uw_fired)
-       {
-         if(this->montype==431)
-            map->sunsetkilled=true;
-         if(this->montype==432)
-            map->sunrisekilled=true;
-         if(this->montype==433)
-            map->duskkilled=true;
-       }
-
-    }
-
-    //UW END
-
-
 
     //LMA begin
     //CF mode 1
@@ -547,6 +513,7 @@ bool CMonster::DragonEgg(CMonster* monster,CMap* map)
 
      return true;
 }
+
 /*bool CMonster::DragonEgg(CMonster* monster,CMap* map)
 {
      if (monster->hitcount>=monster->maxhitcount)
@@ -641,6 +608,7 @@ bool CMonster::Turak2(CMonster* monster,CMap* map)
 
      return true;
 }
+
 /*
 //LMA: added by rl2171 Handling 3rd Turak :)
 bool CMonster::Turak3(CMonster* monster,CMap* map)

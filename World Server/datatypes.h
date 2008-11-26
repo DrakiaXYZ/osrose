@@ -578,30 +578,6 @@ struct CRespawnPoints
 };
 
 // -----------------------------------------------------------------------------------------
-// An item that a client owns
-// -----------------------------------------------------------------------------------------
-/*
-struct CItem {
-	unsigned		itemnum;
-	UINT	itemtype;
-	UINT	refine;
-	UINT	lifespan;
-	UINT	durability;
-	bool			socketed;
-	bool			appraised;
-	int				count;
-	UINT 	stats;
-	UINT    gem;
-	UINT    durabLeft;
-	long int sig_head;
-	long int sig_data;
-	int sig_gem;
-	int sp_value;
-	int last_sp_value;
-};
-*/
-
-// -----------------------------------------------------------------------------------------
 // An item that a client owns (qsd version)
 // -----------------------------------------------------------------------------------------
 class CItem {
@@ -703,34 +679,6 @@ struct Dialog
 // -----------------------------------------------------------------------------------------
 // Skill Data
 // -----------------------------------------------------------------------------------------
-/*
-struct CSkills {
-    UINT id;
-    UINT level;
-    UINT type;
-    UINT range;
-    UINT target;
-    UINT duration;
-    UINT atkpower;
-    UINT mp;
-    UINT weapon[5];
-    UINT rskill[3];
-    UINT lskill[3];
-    UINT c_class[4];
-    UINT clevel;
-    UINT success;
-    UINT sp;
-    UINT buff[3];
-    UINT value1[3];
-    UINT value2[3];
-    UINT nbuffs;
-    unsigned short int aoe;
-    UINT aoeradius;
-    UINT script;
-    UINT svalue1;
-    UINT gm_aoe;
-};
-*/
 struct CSkills {
     UINT id;
     UINT level;

@@ -166,28 +166,6 @@ CPlayer::CPlayer( CClientSocket* CLIENT )
         cskills[i].thisskill=NULL;
     }
 
-    /*
-    for(int i=0;i<MAX_DRIVING_SKILL;i++)
-    {
-        dskills[i] = 0;
-    }
-
-    for(int i=0;i<MAX_MILEAGE_SKILL;i++)
-    {
-        mskills[i].id = 0;
-        mskills[i].level = 0;
-    }
-
-    for(int i=0;i<MAX_UNIQUE_SKILL;i++)
-    {
-        uskills[i].id = 0;
-        uskills[i].level = 0;
-    }
-
-    for(int i=0;i<MAX_BASICSKILL;i++)
-        bskills[i] = 0;
-    */
-
     for(int i=0;i<MAX_QUICKBAR;i++)
         quickbar[i] = 0;
 
@@ -327,29 +305,6 @@ bool CPlayer::SpawnToPlayer( CPlayer* player, CPlayer* otherclient )
         CMap* map = GServer->MapList.Index[player->Position->Map];
         if(map->allowpvp==1)
         {
-            //LMA: testing something for CF maps...
-            // pvp all vs all
-            //ADDDWORD(pak, 0x00000051 );
-
-            /*
-            if((player->Clan->clanid != otherclient->Clan->clanid) && ((map->id>=11) && (map->id<=13)))
-            {
-                //CF Maps
-                Log(MSG_INFO,"Two players not in same clan, sending 0x51");
-                ADDDWORD(pak, 0x00000051 );
-            }
-            else if((map->id>=11) && (map->id<=13))
-            {
-                Log(MSG_INFO,"Two players IN same clan, sending 0x00");
-                ADDDWORD(pak, 0x00000000 );
-            }
-            else
-            {
-                Log(MSG_INFO,"standard pvp map");
-                ADDDWORD(pak, 0x00000051 );
-            }
-            */
-
             if((map->id>=11) && (map->id<=13))
             {
                 //CF Maps
@@ -367,27 +322,10 @@ bool CPlayer::SpawnToPlayer( CPlayer* player, CPlayer* otherclient )
         }
         else if(map->allowpvp==2) // pvp group vs group
         {
-            /*
-            if((player->Clan->clanid != otherclient->Clan->clanid) && ((map->id>0) && (map->id<121)))
-            {
-                //Clan War map (pedion)
-                ADDDWORD(pak, 0x00000051 );
-            }
-            else if((player->Clan->clanid == otherclient->Clan->clanid) && ((map->id>0) && (map->id<=100)))
-            {
-                //other pvp group vs group map
-                ADDDWORD(pak, 0x00000051 );
-            }
-            else
-            {
-                ADDDWORD(pak, 0x00000000 );
-            }
-            */
             //test maxxon:
             Log(MSG_INFO,"[PVP2] sending clanid %i",Clan->clanid);
             ADDDWORD(pak, Clan->clanid);
-
-            //2do: special case for union wars.
+            //2do: special case for union wars, there are two alliances, 1000/2000 (see map)?
         }
         else
         {

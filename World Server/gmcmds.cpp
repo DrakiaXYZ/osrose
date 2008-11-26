@@ -277,36 +277,6 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
         Log( MSG_GMACTION, " %s : /ann %s" , thisclient->CharInfo->charname, &P->Buffer[5] );
 		return pakGMAnn(thisclient, P);
     }
-    /*else if(strcmp(command, "bodysize")==0)
-    {
-        if ((tmp = strtok(NULL, " ")) == NULL) return true; UINT size=atoi(tmp);
-        BEGINPACKET(pak, 0x721);
-        ADDWORD(pak, 36);
-        ADDWORD(pak, size);
-        ADDWORD(pak, 0);
-        thisclient->client->SendPacket(&pak);
-        RESETPACKET(pak, 0x0730);
-        ADDWORD(pak, 5);
-        ADDWORD(pak, 0xa24d);
-        ADDWORD(pak, 0x40b3);
-        thisclient->client->SendPacket(&pak);
-        SendSysMsg(thisclient, "Body size changed!");
-    }*/
-    /*else if(strcmp(command, "headsize")==0)
-    {
-        if ((tmp = strtok(NULL, " ")) == NULL) return true; UINT size=atoi(tmp);
-        BEGINPACKET(pak, 0x721);
-        ADDWORD(pak, 35);
-        ADDWORD(pak, size);
-        ADDWORD(pak, 0);
-        thisclient->client->SendPacket(&pak);
-        RESETPACKET(pak, 0x0730);
-        ADDWORD(pak, 5);
-        ADDWORD(pak, 0xa24d);
-        ADDWORD(pak, 0x40b3);
-        thisclient->client->SendPacket(&pak);
-        SendSysMsg(thisclient, "Head size changed!");
-    }*/
     else if(strcmp(command, "face")==0)
     {
         if(Config.Command_Face > thisclient->Session->accesslevel)
@@ -425,7 +395,6 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
             }
             break;
         }
-
 
     }
     else if(strcmp(command, "who")==0)
@@ -614,175 +583,6 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
         }
         return true;
     }
-//Old spawning gm command - commented out for now
-/*
-    //******************************* START RESPAWN ***************************
-    else if (strcmp(command, "SSPAWN")==0)
-    { //STARTPOINT IDMOB CANTMIN CANTMAX RESPAWNTIME(s)  (3 points minimum)
-        if(Config.Command_SSpawn > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)
-          {
-           Log( MSG_GMACTION, " %s : /SSPAWN NOT ALLOWED" , thisclient->CharInfo->charname);
-           char buffer[200];
-           sprintf ( buffer, "SSPAWN NOT ALLOWED");
-           SendPM(thisclient, buffer);
-	                    return true;
-           }
-        Log( MSG_GMACTION, " %s : /SSPAWN", thisclient->CharInfo->charname);
-        thisclient->GMRespawnPoints.map = thisclient->Position->Map;
-        if ((tmp = strtok(NULL, " "))==NULL)
-        {
-            thisclient->GMRespawnPoints.b=0;
-            return true;
-        }
-        thisclient->GMRespawnPoints.mobID=atoi(tmp);
-        if ((tmp = strtok(NULL, " "))==NULL)
-        {
-            thisclient->GMRespawnPoints.b=0;
-            return true;
-        }
-        thisclient->GMRespawnPoints.min=atoi(tmp);
-        if ((tmp = strtok(NULL, " "))==NULL)
-        {
-            thisclient->GMRespawnPoints.b=0;
-            return true;
-        }
-        thisclient->GMRespawnPoints.max=atoi(tmp);
-        if ((tmp = strtok(NULL, " "))==NULL)
-        {
-            thisclient->GMRespawnPoints.b=0;
-            return true;
-        }
-        thisclient->GMRespawnPoints.n=0;
-        thisclient->GMRespawnPoints.respawntime=atoi(tmp);
-        thisclient->GMRespawnPoints.b=1;
-		BEGINPACKET( pak, 0x702 );
-		ADDSTRING( pak, "STARTPOINT" );
-		ADDBYTE( pak, 0 );
-		thisclient->client->SendPacket(&pak);
-		thisclient->GMRespawnPoints.d=0;
-        return true;
-    }
-    else if (strcmp(command, "SET")==0)
-    {
-        if(Config.Command_Set > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)
-           {
-           Log( MSG_GMACTION, " %s : /SET NOT ALLOWED" , thisclient->CharInfo->charname);
-           char buffer[200];
-           sprintf ( buffer, "SET NOT ALLOWED");
-           SendPM(thisclient, buffer);
-	                    return true;
-           }
-        Log( MSG_GMACTION, " %s : /SET" , thisclient->CharInfo->charname);
-        if(thisclient->GMRespawnPoints.b==1 && thisclient->GMRespawnPoints.n<50)
-        {
-            int n=thisclient->GMRespawnPoints.n;
-            thisclient->GMRespawnPoints.points[n].x=floor(thisclient->Position->destiny.x);
-            thisclient->GMRespawnPoints.points[n].y=floor(thisclient->Position->destiny.y);
-            thisclient->GMRespawnPoints.n++;
-            char text[10];
-            sprintf(text,"--POINT #%i",thisclient->GMRespawnPoints.n);
-		    BEGINPACKET( pak, 0x702 );
-		    ADDSTRING( pak,text );
-		    ADDBYTE( pak, 0 );
-		    thisclient->client->SendPacket(&pak);
-            return true;
-        }
-        return true;
-    }
-    else if (strcmp(command, "ESPAWN")==0)
-    {
-        if(Config.Command_ESpawn > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)
-           {
-           Log( MSG_GMACTION, " %s : /ESPAWN NOT ALLOWED" , thisclient->CharInfo->charname);
-           char buffer[200];
-           sprintf ( buffer, "ESPAWN NOT ALLOWED");
-           SendPM(thisclient, buffer);
-	                    return true;
-           }
-        Log( MSG_GMACTION, " %s : /ESPAWN" , thisclient->CharInfo->charname);
-        if(thisclient->GMRespawnPoints.n>3 && thisclient->GMRespawnPoints.b==1)
-        {
-            if ((tmp = strtok(NULL, " "))==NULL)
-                return true;
-            int id=atoi(tmp);
-            if ((tmp = strtok(NULL, " "))==NULL)
-                return true;
-            int agressive=atoi(tmp);
-            int n=thisclient->GMRespawnPoints.n;
-            char points[1000] = "";
-            sprintf(&points[0],"%i",n);
-            for(int i=0;i<n;i++)
-            {
-                sprintf(&points[strlen(points)],"|%.0f,%.0f",thisclient->GMRespawnPoints.points[i].x,thisclient->GMRespawnPoints.points[i].y);
-            }
-            DB->QExecute("INSERT into list_spawnareas (id,map,montype,respawntime,points,min,max,agressive) values (%i,%i,%i,%i,'%s',%i,%i,%i)",
-            id,thisclient->GMRespawnPoints.map, thisclient->GMRespawnPoints.mobID,thisclient->GMRespawnPoints.respawntime,
-            points,thisclient->GMRespawnPoints.min,thisclient->GMRespawnPoints.max,agressive);
-            thisclient->GMRespawnPoints.b=0;
-            thisclient->GMRespawnPoints.d=1;
-		    BEGINPACKET( pak, 0x702 );
-		    ADDSTRING( pak,"ENDSPAWN" );
-		    ADDBYTE( pak, 0 );
-		    thisclient->client->SendPacket(&pak);
-		    ReloadMobSpawn(thisclient, id );
-            return true;
-        }
-        return true;
-    }
-    else if (strcmp(command, "DSPAWN")==0)
-      {
-        if(Config.Command_DSpawn > thisclient->Session->accesslevel)
-//        if(Config.Command_DSpawn > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)
-           {
-           Log( MSG_GMACTION, " %s : /DSPAWN NOT ALLOWED" , thisclient->CharInfo->charname);
-           char buffer[200];
-           sprintf ( buffer, "SSPAWN NOT ALLOWED");
-           SendPM(thisclient, buffer);
-	                    return true;
-           }
-        Log( MSG_GMACTION, " %s : /DSPAWN" , thisclient->CharInfo->charname);
-        if ((tmp = strtok(NULL, " "))==NULL)
-            return true;
-        int id=atoi(tmp);
-        if ((tmp = strtok(NULL, " "))==NULL)
-            return true;
-        thisclient->GMRespawnPoints.mobID=atoi(tmp);
-        if ((tmp = strtok(NULL, " "))==NULL)
-            return true;
-        thisclient->GMRespawnPoints.min=atoi(tmp);
-        if ((tmp = strtok(NULL, " "))==NULL)
-            return true;
-        thisclient->GMRespawnPoints.max=atoi(tmp);
-        if ((tmp = strtok(NULL, " "))==NULL)
-            return true;
-        thisclient->GMRespawnPoints.respawntime=atoi(tmp);
-        if ((tmp = strtok(NULL, " "))==NULL)
-            return true;
-        int agressive = atoi(tmp);
-        if(thisclient->GMRespawnPoints.n>3 && thisclient->GMRespawnPoints.d==1)
-        {
-            int n=thisclient->GMRespawnPoints.n;
-            char points[1000] = "";
-            sprintf(&points[0],"%i",n);
-            for(int i=0;i<n;i++)
-            {
-                sprintf(&points[strlen(points)],"|%.0f,%.0f",thisclient->GMRespawnPoints.points[i].x,thisclient->GMRespawnPoints.points[i].y);
-            }
-            DB->QExecute("INSERT into list_spawnareas (id,map,montype,respawntime,points,min,max,agressive) values (%i,%i,%i,%i,'%s',%i,%i,%i)",
-            id,thisclient->GMRespawnPoints.map,
-            thisclient->GMRespawnPoints.mobID,thisclient->GMRespawnPoints.respawntime,
-            points,thisclient->GMRespawnPoints.min,thisclient->GMRespawnPoints.max,agressive);
-            thisclient->GMRespawnPoints.b=0;
-		    BEGINPACKET( pak, 0x702 );
-		    ADDSTRING( pak, "DUPESPAWN" );
-		    ADDBYTE( pak, 0 );
-		    thisclient->client->SendPacket(&pak);
-		    ReloadMobSpawn(thisclient, id );
-            return true;
-        }
-        return true;
-    }
-*/
     else if(strcmp(command, "DELETESPAWN")==0)
     {
          if(Config.Command_DelSpawn > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)
@@ -2178,106 +1978,6 @@ else if (strcmp(command, "give2")==0)
         ADDWORD( pak, 0x40b3 );
         thisclient->client->SendPacket( &pak );
     }
-    /*
-    else if (strcmp(command, "killunion")==0)
-    {
-        if(Config.Command_Partylvl > thisclient->Session->accesslevel)
-	       return true;
-        if ((tmp = strtok(NULL, " "))==NULL) return true; int type_union= atoi( tmp );
-        if ((tmp = strtok(NULL, " "))==NULL) return true; int kill_union= atoi( tmp );
-        if ((tmp = strtok(NULL, " "))==NULL) return true; int test_union= atoi( tmp );
-
-        Log( MSG_GMACTION, "killUnion type %i, value %i, loop or key %i by %s" ,type_union,kill_union, test_union, thisclient->CharInfo->charname);
-
-        //LMA: changing union kill :)
-        //28 00 d0 8a ff ff
-        if (type_union==1)
-        {
-            BEGINPACKET( pak, 0x720 );
-            ADDWORD( pak, test_union );
-            ADDWORD( pak, kill_union );
-            //ADDWORD( pak, 0xFFFF );
-            ADDWORD( pak, 0x0 );
-            thisclient->client->SendPacket( &pak );
-            RESETPACKET( pak, 0x0730 );
-            ADDWORD( pak, 5 );
-            ADDWORD( pak, 0xa24d );
-            ADDWORD( pak, 0x40b3 );
-            thisclient->client->SendPacket( &pak );
-            char buffer[200];
-            sprintf ( buffer, "killUnion 720 set to %i, test %i by %s" , kill_union, test_union, thisclient->CharInfo->charname);
-            SendPM(thisclient, buffer);
-
-            return true;
-        }
-
-        if (type_union==101)
-        {
-
-            Log(MSG_INFO,"721, test_union %i, value %i",test_union,kill_union);
-            for (int k=10;k<test_union;k++)
-            {
-                BEGINPACKET( pak, 0x721 );
-                RESETPACKET( pak, 0x721 );
-                ADDWORD( pak, k );
-                ADDWORD( pak, kill_union );
-                ADDWORD( pak, 0x0000 );
-                thisclient->client->SendPacket( &pak );
-            	RESETPACKET( pak, 0x730 );
-                ADDWORD    ( pak, 0x0005 );
-                ADDDWORD   ( pak, 0x40b3a24d );
-                thisclient->client->SendPacket( &pak );
-                Log(MSG_INFO,"killUnion 721 set to %i, key %i by %s" , kill_union, k, thisclient->CharInfo->charname);
-                //char buffer[200];
-                //sprintf ( buffer, "killUnion 721 set to %i, test %i by %s" , kill_union, k, thisclient->CharInfo->charname);
-                //SendPM(thisclient, buffer);
-            }
-
-            return true;
-        }
-
-        if (type_union==102)
-        {
-
-            for (int k=10;k<test_union;k++)
-            {
-                BEGINPACKET( pak, 0x720 );
-                ADDWORD( pak, k );
-                ADDWORD( pak, kill_union );
-                //ADDWORD( pak, 0xFFFF );
-                ADDWORD( pak, 0x0 );
-                thisclient->client->SendPacket( &pak );
-                RESETPACKET( pak, 0x0730 );
-                ADDWORD( pak, 5 );
-                ADDWORD( pak, 0xa24d );
-                ADDWORD( pak, 0x40b3 );
-                thisclient->client->SendPacket( &pak );
-                Log(MSG_INFO,"killUnion 720 set to %i, key %i by %s" , kill_union, k, thisclient->CharInfo->charname);
-                //char buffer[200];
-                //sprintf ( buffer, "killUnion 720 set to %i, test %i by %s" , kill_union, k, thisclient->CharInfo->charname);
-                //SendPM(thisclient, buffer);
-            }
-
-            return true;
-        }
-
-        BEGINPACKET( pak, 0x721 );
-        ADDWORD( pak, test_union );
-        ADDWORD( pak, kill_union );
-        ADDWORD( pak, 0x0000 );
-        thisclient->client->SendPacket( &pak );
-    	RESETPACKET( pak, 0x730 );
-        ADDWORD    ( pak, 0x0005 );
-        ADDDWORD   ( pak, 0x40b3a24d );
-        thisclient->client->SendPacket( &pak );
-
-       char buffer[200];
-       sprintf ( buffer, "killUnion 721 set to %i, test %i by %s" , kill_union, test_union, thisclient->CharInfo->charname);
-       SendPM(thisclient, buffer);
-
-
-        return true;
-    }*/
     else if (strcmp(command, "union")==0)
     {
         if(Config.Command_Union > thisclient->Session->accesslevel)
@@ -2354,69 +2054,6 @@ else if (strcmp(command, "give2")==0)
 	    Log( MSG_GMACTION, " Test Grid set at %i by %s" , Config.testgrid, thisclient->CharInfo->charname);
 	    return true;
 	}
-	else if(strcmp(command, "unionmode")==0)
-    {
-        if(Config.Command_UnionMode > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)
-       {
-           Log( MSG_GMACTION, " %s : /unionmode NOT ALLOWED" , thisclient->CharInfo->charname);
-           char buffer[200];
-           sprintf ( buffer, "unionmode NOT ALLOWED");
-           SendPM(thisclient, buffer);
-           return true;
-       }
-
-        if ((tmp = strtok(NULL, " "))==NULL)
-        {
-            char line0[200];
-            sprintf(line0,"UW %i, dur %i min, loop? %i, loopdelay=%i, min players %i.",Config.unionwar,Config.unionwarduration,Config.unionwarloop,Config.unionwardelay_loop,Config.unionwarmin);
-            SendPM(thisclient,line0);
-            sprintf(line0,"Us %i, dur %i min, loop? %i, loopdelay=%i, min players %i.",Config.unionslaughter,Config.unionduration,Config.unionslaughterloop,Config.unionslaughterdelay_loop,Config.unionmin);
-            SendPM(thisclient,line0);
-
-            return true;
-        }
-
-        char* namemode=tmp;
-         int value_loop_delay=0;
-         int value_begin=0;
-         int value_duration=0;
-         int value_nb_players=0;
-         int value_loop=0;
-
-        if ((tmp = strtok(NULL, " "))==NULL)
-        {
-            return true;
-        }
-        int value_on_off= atoi( tmp );
-
-        if ((tmp = strtok(NULL, " "))!=NULL)
-        {
-            value_begin= atoi( tmp );
-        }
-
-        if ((tmp = strtok(NULL, " "))!=NULL)
-        {
-            value_duration= atoi( tmp );
-        }
-
-        if ((tmp = strtok(NULL, " "))!=NULL)
-        {
-            value_nb_players= atoi( tmp );
-        }
-
-        if ((tmp = strtok(NULL, " "))!=NULL)
-        {
-            value_loop= atoi( tmp );
-        }
-
-        if ((tmp = strtok(NULL, " "))!=NULL)
-        {
-            value_loop_delay= atoi( tmp );
-        }
-
-
-        return pakGMUnionMode(thisclient,namemode,value_on_off,value_begin,value_duration,value_nb_players,value_loop,value_loop_delay);
-	}
 	else if(strcmp(command, "unionpoints")==0)
     {
         if(Config.Command_UnionPoints > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)
@@ -2470,25 +2107,6 @@ else if (strcmp(command, "give2")==0)
             ADDBYTE    (pak, 0x03);
         }
         thisclient->client->SendPacket( &pak );
-        return true;
-
-       /*
-       if ((tmp = strtok(NULL, " "))==NULL) return true; int action= atoi( tmp );
-       if ((tmp = strtok(NULL, " "))==NULL) return true; int questpart= atoi( tmp );
-       if ((tmp = strtok(NULL, " "))==NULL) return true; int questid= atoi( tmp );
-       //DWORD questid=3628754895;
-
-       //03 01 23 0b 00 00
-        BEGINPACKET( pak, 0x730);
-        ADDBYTE    (pak, action);
-        ADDBYTE    (pak, questpart);
-        //03 01 00 00 0b 23
-        //ADDDWORD   (pak, 0x00000b23);
-        ADDWORD   (pak, questid);
-        ADDWORD   (pak, 0x0000);
-    	thisclient->client->SendPacket( &pak );
-        */
-
         return true;
 	}
     else if(strcmp(command, "skill")==0)
@@ -2729,26 +2347,12 @@ else if (strcmp(command, "give2")==0)
              sprintf ( buffer2, "My attack speed is %i", thisclient->Stats->Attack_Speed);
              SendPM(thisclient, buffer2);
          }
-//         else if(strcmp(tmp, "xprate")==0)
-//         {
-//             char buffer2[200];
-//             sprintf ( buffer2, "My xp rate is %i", thisclient->Stats->xprate);
-//             SendPM(thisclient, buffer2);
-//         }
          else if(strcmp(tmp, "stamina")==0)
          {
              char buffer2[200];
              sprintf ( buffer2, "My Stamina is %i", thisclient->CharInfo->stamina);
              SendPM(thisclient, buffer2);
          }
-//         else if(strcmp(tmp, "weight")==0)
-//         {
-//             int weight = thisclient->GetCurrentWeight();
-//             int maxweight = thisclient->GetMaxWeight();
-//             char buffer2[200];
-//             sprintf ( buffer2, "My current weight is %i. max weight = %i", weight,maxweight);
-//             SendPM(thisclient, buffer2);
-//         }
          else if(strcmp(tmp, "clan")==0)
          {
              SendPM(thisclient, "My clan id is: %i My clan rank is: %i", thisclient->Clan->clanid, thisclient->Clan->clanrank);
@@ -3793,6 +3397,7 @@ bool CWorldServer::pakGMReborn(CPlayer* thisclient)
 
          //saving skills.
          thisclient->saveskills();
+         thisclient->ResetSkillOffset();
          thisclient->client->isActive = false;
       }
 
@@ -3832,8 +3437,6 @@ bool CWorldServer::pakGMEventType(CPlayer* thisclient, int npctype, int dialog, 
     GServer->ObjVar[npctype][0]=thisnpc->event;
 
     //Saving in database
-    //DB->QExecute("UPDATE npc_data SET dialog=%i, eventid=%i WHERE id=%i", dialog, type,npctype);
-    //New way.
     DB->QExecute("UPDATE list_npcs SET tempdialogid=%i, eventid=%i WHERE type=%i", dialog, type,npctype);
 
 
@@ -4529,149 +4132,6 @@ bool CWorldServer::pakGMUnionPoints(CPlayer* thisclient, char* name, int nb_poin
    sprintf ( buffer, "You have been given %i Faction Points by %s",nb_points,thisclient->CharInfo->charname);
    SendPM(otherclient, buffer);
    Log( MSG_GMACTION, "%i Faction points given to %s by %s" , nb_points,name,thisclient->CharInfo->charname);
-
-
-     return true;
-}
-
-
-//LMA: setting union war or union slaughter
-bool CWorldServer::pakGMUnionMode(CPlayer* thisclient, char* namemode, int value_on_off, int value_begin, int value_duration,int value_nb_players, int value_loop, int value_loop_delay)
-{
-   int value=0;
-
-
-    value=value_on_off;
-
-   if (strcmp(namemode, "uw")==0)
-   {
-       if (value<0||value>1)
-          value=0;
-
-       CMap* map = MapList.Index[9];
-       if(value==0)
-       {
-         if (map->is_uw_fired)
-         {
-            SendPM(thisclient,"You can't cancel Union War now, a session is running...");
-            return true;
-         }
-
-       }
-       else
-       {
-         if (map->announce_done)
-         {
-            SendPM(thisclient,"You can't enable Union War now, it is already on...");
-            return true;
-         }
-
-        }
-
-        if(value==0)
-        {
-           GServer->UWNPCdialogs(0);
-           map->uw_end=0;
-           map->is_uw_fired=false;
-           map->uw_begin=0;
-           map->announce_done=false;
-           map->uw_loop=false;
-           map->uw_delay_loop=0;
-           map->uw_duration=0;
-           Config.unionwar=value;
-           Config.unionwarloop=0;
-           Config.unionwardelay_loop=0;
-           Config.unionwarduration=0;
-           Config.unionwarmin=0;
-           char line0[200];
-           sprintf(line0,"We set Union War to OFF .");
-            SendPM(thisclient,line0);
-            Log( MSG_GMACTION, " Union War set to OFF by %s" ,thisclient->CharInfo->charname);
-            return true;
-        }
-
-        //We want to set it on :)
-        if(value_duration==0||(value_loop!=0&&value_loop_delay==0)||value_begin==0||value_nb_players<=0)
-        {
-             char line0[200];
-           sprintf(line0,"Uncorrect values for Union wars, duration is 0 or delay loop is 0 when loop is enabled...");
-            SendPM(thisclient,line0);
-            return true;
-        }
-
-       time_t etime=time(NULL);
-       GServer->UWNPCdialogs(0);
-       map->uw_end=0;
-       map->is_uw_fired=false;
-       map->uw_begin=etime+(60*value_begin);
-       map->announce_done=false;
-       map->uw_loop=value_loop;
-       map->uw_delay_loop=value_loop_delay;
-       map->uw_duration=value_duration;
-       Config.unionwar=value;
-       Config.unionwarloop=value_loop;
-       Config.unionwardelay_loop=value_loop_delay;
-       Config.unionwarduration=value_duration;
-       Config.unionwarmin=value_nb_players;
-       char line0[200];
-       sprintf(line0,"UW ON in %i min, dur %i min, nb players %i, loop? %i, loopdelay=%i.",value_begin,value_duration,value_nb_players,value_loop,value_loop_delay);
-        SendPM(thisclient,line0);
-        Log( MSG_GMACTION, "UW ON in %i min, dur %i min, nb players %i, loop? %i, loopdelay=%i by %s.",value_begin,value_duration,value_nb_players,value_loop,value_loop_delay,thisclient->CharInfo->charname);
-
-
-        return true;
-   }
-
-   //Union Slaughter
-   if (value<0||value>1)
-      value=0;
-
-   CMap* map = MapList.Index[8];
-   if(value==0)
-   {
-     if (map->is_union_fired)
-     {
-        SendPM(thisclient,"You can't cancel Union Slaughter now, a session is running...");
-        return true;
-     }
-
-   }
-
-    if(value==0)
-    {
-        map->utime_begin=0;
-        Config.unionslaughter=value;
-        char line0[200];
-        sprintf(line0,"We set Union slaughter to OFF .");
-        SendPM(thisclient,line0);
-        Log( MSG_GMACTION, " Union slaughter set OFF by %s" , thisclient->CharInfo->charname);
-        return true;
-    }
-
-        //We want to set it on :)
-        if(value_duration==0||(value_loop!=0&&value_loop_delay==0)||value_begin==0||value_nb_players<=0)
-        {
-             char line0[200];
-           sprintf(line0,"Uncorrect values for Union Slaughter, duration is 0 or delay loop is 0 when loop is enabled...");
-            SendPM(thisclient,line0);
-            return true;
-        }
-
-       time_t etime=time(NULL);
-       map->utime_end=0;
-       map->utime_begin=etime+(60*value_begin);
-       map->us_loop=value_loop;
-       map->us_delay_loop=value_loop_delay;
-       map->us_duration=value_duration;
-       Config.unionslaughter=value;
-       Config.unionslaughterloop=value_loop;
-       Config.unionslaughterdelay_loop=value_loop_delay;
-       Config.unionduration=value_duration;
-       Config.unionmin=value_nb_players;
-       char line0[200];
-       sprintf(line0,"US ON in %i min, dur %i min, nb players %i, loop? %i, loopdelay=%i.",value_begin,value_duration,value_nb_players,value_loop,value_loop_delay);
-        SendPM(thisclient,line0);
-        Log( MSG_GMACTION, "US ON in %i min, dur %i min, nb players %i, loop? %i, loopdelay=%i by %s.",value_begin,value_duration,value_nb_players,value_loop,value_loop_delay,thisclient->CharInfo->charname);
 
 
      return true;
@@ -6272,6 +5732,7 @@ bool CWorldServer::pakGMAllSkill(CPlayer* thisclient, char* name)
     if(is_ok)
     {
         thisclient->saveskills();
+        thisclient->ResetSkillOffset();
     }
 
 
@@ -6279,139 +5740,26 @@ bool CWorldServer::pakGMAllSkill(CPlayer* thisclient, char* name)
 }
 
 //GM: DeleteSkills {modified from allskill command - rl2171}
-    bool CWorldServer::pakGMDelSkills(CPlayer* thisclient, char* name)
+bool CWorldServer::pakGMDelSkills(CPlayer* thisclient, char* name)
 {
 
     CPlayer* otherclient = GetClientByCharName( name );
     if(otherclient==NULL)
-    return true;
+        return true;
 
-{
-otherclient->cskills[0].id = 0;
-otherclient->cskills[0].level = 1;
-otherclient->cskills[1].id = 0;
-otherclient->cskills[1].level = 1;
-otherclient->cskills[2].id = 0;
-otherclient->cskills[2].level = 1;
-otherclient->cskills[3].id = 0;
-otherclient->cskills[3].level = 1;
-otherclient->cskills[4].id = 0;
-otherclient->cskills[4].level = 1;
-otherclient->cskills[5].id = 0;
-otherclient->cskills[5].level = 1;
-otherclient->cskills[6].id = 0;
-otherclient->cskills[6].level = 1;
-otherclient->cskills[7].id = 0;
-otherclient->cskills[7].level = 1;
-otherclient->cskills[8].id = 0;
-otherclient->cskills[8].level = 1;
-otherclient->cskills[9].id = 0;
-otherclient->cskills[9].level = 1;
-otherclient->cskills[10].id = 0;
-otherclient->cskills[10].level = 1;
-otherclient->cskills[11].id = 0;
-otherclient->cskills[11].level = 1;
-otherclient->cskills[12].id = 0;
-otherclient->cskills[12].level = 1;
-otherclient->cskills[13].id = 0;
-otherclient->cskills[13].level = 1;
-otherclient->cskills[14].id = 0;
-otherclient->cskills[14].level = 1;
-otherclient->cskills[15].id = 0;
-otherclient->cskills[15].level = 1;
-otherclient->cskills[16].id = 0;
-otherclient->cskills[16].level = 1;
-otherclient->cskills[17].id = 0;
-otherclient->cskills[17].level = 1;
-otherclient->cskills[18].id = 0;
-otherclient->cskills[18].level = 1;
-otherclient->cskills[19].id = 0;
-otherclient->cskills[19].level = 1;
-otherclient->cskills[20].id = 0;
-otherclient->cskills[20].level = 1;
-otherclient->cskills[21].id = 0;
-otherclient->cskills[21].level = 1;
-otherclient->cskills[22].id = 0;
-otherclient->cskills[22].level = 1;
-otherclient->cskills[23].id = 0;
-otherclient->cskills[23].level = 1;
-otherclient->cskills[24].id = 0;
-otherclient->cskills[24].level = 1;
-otherclient->cskills[25].id = 0;
-otherclient->cskills[25].level = 1;
-otherclient->cskills[26].id = 0;
-otherclient->cskills[26].level = 1;
-otherclient->cskills[27].id = 0;
-otherclient->cskills[27].level = 1;
-otherclient->cskills[28].id = 0;
-otherclient->cskills[28].level = 1;
-otherclient->cskills[29].id = 0;
-otherclient->cskills[29].level = 1;
-otherclient->cskills[30].id = 0;
-otherclient->cskills[30].level = 1;
-otherclient->cskills[31].id = 0;
-otherclient->cskills[31].level = 1;
-otherclient->cskills[32].id = 0;
-otherclient->cskills[32].level = 1;
-otherclient->cskills[33].id = 0;
-otherclient->cskills[33].level = 1;
-otherclient->cskills[34].id = 0;
-otherclient->cskills[34].level = 1;
-otherclient->cskills[35].id = 0;
-otherclient->cskills[35].level = 1;
-otherclient->cskills[36].id = 0;
-otherclient->cskills[36].level = 1;
-otherclient->cskills[37].id = 0;
-otherclient->cskills[37].level = 1;
-otherclient->cskills[38].id = 0;
-otherclient->cskills[38].level = 1;
-otherclient->cskills[39].id = 0;
-otherclient->cskills[39].level = 1;
-otherclient->cskills[40].id = 0;
-otherclient->cskills[40].level = 1;
-otherclient->cskills[41].id = 0;
-otherclient->cskills[41].level = 1;
-otherclient->cskills[42].id = 0;
-otherclient->cskills[42].level = 1;
-otherclient->cskills[43].id = 0;
-otherclient->cskills[43].level = 1;
-otherclient->cskills[44].id = 0;
-otherclient->cskills[44].level = 1;
-otherclient->cskills[45].id = 0;
-otherclient->cskills[45].level = 1;
-otherclient->cskills[46].id = 0;
-otherclient->cskills[46].level = 1;
-otherclient->cskills[47].id = 0;
-otherclient->cskills[47].level = 1;
-otherclient->cskills[48].id = 0;
-otherclient->cskills[48].level = 1;
-otherclient->cskills[49].id = 0;
-otherclient->cskills[49].level = 1;
-otherclient->cskills[50].id = 0;
-otherclient->cskills[50].level = 1;
-otherclient->cskills[51].id = 0;
-otherclient->cskills[51].level = 1;
-otherclient->cskills[52].id = 0;
-otherclient->cskills[52].level = 1;
-otherclient->cskills[53].id = 0;
-otherclient->cskills[53].level = 1;
-otherclient->cskills[54].id = 0;
-otherclient->cskills[54].level = 1;
-otherclient->cskills[55].id = 0;
-otherclient->cskills[55].level = 1;
-//added for ver 144
-otherclient->cskills[56].id = 0;
-otherclient->cskills[56].level = 1;
-otherclient->cskills[57].id = 0;
-otherclient->cskills[57].level = 1;
-//added for ver.160
-otherclient->cskills[58].id = 0;
-otherclient->cskills[58].level = 1;
-otherclient->cskills[59].id = 0;
-otherclient->cskills[59].level = 1;
+    //LMA: deleting class skills, unique skills, mileage skills.
+    for (int k=0;k<320;k++)
+    {
+        otherclient->cskills[k].id = 0;
+        otherclient->cskills[k].level = 1;
+        otherclient->cskills[k].thisskill=NULL;
+    }
 
-SendPM (thisclient, "Relogin to remove All Skills");
-}
+    SendPM (thisclient, "Relogin to remove All Skills");
+    thisclient->ResetSkillOffset();
+    thisclient->saveskills();
+
+
     return true;
 }
 

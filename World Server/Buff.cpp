@@ -600,18 +600,6 @@ CBValue CWorldServer::GetBuffValue( CSkills* thisskill, CCharacter* character, U
     if(BuffFlag == false) // no available spaces found
         return NewValue;
 
-
-
-
-    //if(up != 0xff) //currently have a buff. up is its location
-    //{
-    //    UpValue = character->MagicStatus[up].Value;
-        //Log(MSG_INFO, "Current active buff detected in position %i with value %i", NewValue.Position,UpValue);
-    //    NormalValue = CurrentValue - character->MagicStatus[up].Value;
-    //    if(Buff)
-    //        NewValue.Position = up;
-    //}
-
     //else // don't currently have a buff
     if(NewValue.Position == 0xff)
     {
@@ -647,72 +635,6 @@ CBValue CWorldServer::GetBuffValue( CSkills* thisskill, CCharacter* character, U
             NormalValue = CurrentValue; // no buffs currently active so set normalvalue to currentvalue
         }
     }
-
-    /*
-    if (!Status) // status boolean set false as default so it will run this code in pretty much all cases
-    {
-        Log(MSG_INFO, "Status set to false so checking for debuffs");
-        if( down != 0xff) //do we have a debuff in place already? down is its location
-        {
-            DownValue = character->MagicStatus[down].Value;
-            Log(MSG_INFO, "Current active de-buff detected in position %i with value %i", i,DownValue);
-            if( NormalValue!=0)
-                NormalValue += character->MagicStatus[down].Value;
-            else
-                NormalValue = CurrentValue + character->MagicStatus[down].Value;
-            if(!Buff)
-                NewValue.Position = down;
-        }
-        else
-        {
-            Log(MSG_INFO, "No de-buff currently active");
-            if(!Buff) //is this a debuff?
-            {
-                Log(MSG_INFO, "Buff is false so adding a new de-buff");
-                for(UINT z=15;z<30;z++) // 15 to 29 are downward
-                {
-                    if(character->MagicStatus[z].Status == thisskill->status[i])
-                    {
-                        NewValue.Position = z; //z is the index in the magicstatus array where the de-buff will be placed
-                        Log(MSG_INFO, "#1 found status De-Buff in position = %i. refreshing it.",z);
-                        break;
-                    }
-                    if(character->MagicStatus[z].Status == 0)
-                    {
-                        NewValue.Position = z; //z is the new index in the magicstatus array where the de-buff will be placed
-                        Log(MSG_INFO, "#1 De-Buff position = %i",z);
-                        break;
-                    }
-                }
-                if(NewValue.Position == 0xff)
-                    return NewValue;
-                NormalValue = CurrentValue;
-            }
-        }
-    }
-    else if ( down != 0xff ) //Status = true and we currently have a debuff in effect??
-    {
-         Log(MSG_INFO, "Current active debuff detected in position %i with value %i", DownValue, character->MagicStatus[down].Value);
-         NormalValue = CurrentValue + character->MagicStatus[down].Value;
-         if(!Buff)
-            NewValue.Position = down;
-    }
-    else //status set true and no current debuff. Used for skills with only a Status effect but no buff/debuff value
-    {
-        for(UINT z=15;z<30;z++) //check magicstatus array debuff area for spaces
-        {
-            if(character->MagicStatus[z].Status == 0)
-            {
-                NewValue.Position = z; //z is the new index in the magicstatus array where the de-buff will be placed
-                Log(MSG_INFO, "#2 De-Buff position = %i",z);
-                break;
-            }
-        }
-        if(NewValue.Position == 0xff)
-            return NewValue;
-        NormalValue = CurrentValue;
-    }
-    */
 
     //Log(MSG_INFO, "Newvalue.position = %i",NewValue.Position);
     if( thisskill->value2[i] > 0 )

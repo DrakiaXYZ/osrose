@@ -158,20 +158,6 @@ CMonster* CMap::AddMonster( UINT montype, fPoint position, UINT owner, CMDrops* 
     monster->lastAiUpdate = clock();
     monster->hitcount = 0xFF;
 
-    //LMA BEGIN
-    //20070621-211100/test
-    //The bug still exists, I activate it...
-    //solves 99.99% this problem.
-    //We search if a player is nearby and we force the refresh
-    /*
-      CPlayer* player = monster->GetNearPlayer( );
-      if(player!=NULL)
-      {
-          player->ForceRefreshMonster(false,monster->clientid);
-      }
-    */
-    //LMA END
-
     monster->hitcount=0;
     monster->maxhitcount=0;
     monster->stay_still=false;
@@ -208,26 +194,26 @@ CMonster* CMap::AddMonster( UINT montype, fPoint position, UINT owner, CMDrops* 
        monster->maxhitcount=1;   //rl2171: 2nd Turak
     }
 
-/*     if(monster->thisnpc->id==560)
+    /*if(monster->thisnpc->id==560)
     {
        monster->maxhitcount=1;   //rl2171: 3rd Turak
     }
-*/
+    */
     //Sunrise, Sunset and Dusk Crystal in Junon Cartel
     if (monster->thisnpc->id>=431&&monster->thisnpc->id<=433)
        monster->stay_still=true;
 
     //Rune Stone, Green, Blue, Red, White Crystal in Luna
-//    if (monster->thisnpc->id>=325&&monster->thisnpc->id<=329)
-//       monster->stay_still=true;
+    //    if (monster->thisnpc->id>=325&&monster->thisnpc->id<=329)
+    //       monster->stay_still=true;
 
-    //Seal Stone
-//    if (monster->thisnpc->id>=451&&monster->thisnpc->id<=457)
-//       monster->stay_still=true;
+        //Seal Stone
+    //    if (monster->thisnpc->id>=451&&monster->thisnpc->id<=457)
+    //       monster->stay_still=true;
 
-    //Clan Wars gate - wall
-//    if (monster->thisnpc->id>=1022&&monster->thisnpc->id<=1023)
-//       monster->stay_still=true;
+        //Clan Wars gate - wall
+    //    if (monster->thisnpc->id>=1022&&monster->thisnpc->id<=1023)
+    //       monster->stay_still=true;
 
     //LMA: bonfire (and salamender...) don't move and don't attack ;)
     if (monster->IsBonfire())

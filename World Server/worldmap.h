@@ -76,33 +76,6 @@ class CMap
     BYTE allowpvp;     // pvp allowed?
     bool allowpat;     // pat allowed?
 
-    //LMA: Union slaughter (map 8)
-    bool is_union_fired;  //LMA: is union slaughter on?
-    time_t utime_end;   //LMA: When ends Union Slaughter?
-    time_t utime_begin;  //LMA: when begins Union Slaughter?
-    int nb_kills[8];     //LMA: nb killed by this union
-    int nb_killed[8];     //LMA: how many times this union has been killed
-    bool us_loop;   //LMA: does the US loop?
-    int us_duration;    //LMA: duration of US (minutes)
-    int us_delay_loop;  //LMA: delay between 2 US (minutes)
-
-    //LMA: Union War (map 9)
-    bool is_uw_fired;     //LMA: UW started?
-    bool sunsetkilled;    //LMA: UW
-    bool sunrisekilled;   //LMA: UW
-    bool sunsetspawned;   //LMA: UW
-    bool duskkilled;      //LMA: UW
-    time_t uw_end;   //LMA: When ends Union war?
-    time_t uw_begin;  //LMA: when begins Union war?
-    bool uw_loop;   //LMA: does the UW loop?
-    int uw_duration;    //LMA: duration of UW (minutes)
-    int uw_delay_loop;  //LMA: delay between 2 UW (minutes)
-    int announce_done;  //LMA: Announce done?
-    UINT npc_id;      //LMA: NPC client ID for UW.
-    int defenders;    //LMA: who attacks?
-    int attackers;    //LMA: who defends?
-
-
     //LMA BEGIN
     //20070621-211100
     //For CF Mode 1

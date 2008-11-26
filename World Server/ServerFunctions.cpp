@@ -21,20 +21,6 @@
 #include "worldserver.h"
 
 // from Paul_T
-/*
-bool CWorldServer::SendPM( CPlayer* thisclient, char msg[200] )
-{
-           BEGINPACKET( pak, 0x0784 );
-           ADDSTRING( pak, "Server" );
-           ADDBYTE( pak, 0 );
-           ADDSTRING( pak, msg );
-           ADDBYTE( pak, 0 );
-           thisclient->client->SendPacket(&pak);
-           return true;
-}
-*/
-
-// from Paul_T
 bool CWorldServer::SendPM( CPlayer* thisclient, char* Format, ... )
 {
   char buf[512];
@@ -878,31 +864,10 @@ bool CWorldServer::LearnSkill( CPlayer* thisclient, UINT skill, bool takeSP)
             }
         }
     }
-    /*        if(b==1)
-    {
-        thisclient->cskills[thisclient->p_skills].id = skill;
-        thisclient->cskills[thisclient->p_skills].level=1;
-        thisclient->cskills[thisclient->p_skills].thisskill = thisskill;
-        thisclient->CharInfo->SkillPoints -= 1;
-        thisclient->p_skills++;
-    }
-    */
 
     if(b==1)
     {
         //LMA: Looking for good place to save it now...
-        /*
-        thisclient->cskills[thisclient->p_skills].id = skill;
-        thisclient->cskills[thisclient->p_skills].level=1;
-        thisclient->cskills[thisclient->p_skills].thisskill = thisskill;
-        if (takeSP)
-        {
-            thisclient->CharInfo->SkillPoints -= thisskill->sp;
-        }
-
-        thisclient->p_skills++;
-        */
-
         int family=thisclient->GoodSkill(skill);
         if(family==-1)
         {
@@ -948,18 +913,6 @@ bool CWorldServer::LearnSkill( CPlayer* thisclient, UINT skill, bool takeSP)
     ADDWORD    ( pak, skill);
     ADDWORD    ( pak, thisclient->CharInfo->SkillPoints);
     thisclient->client->SendPacket( &pak);
-
-    /*
-    if(b==1)
-    {
-        thisclient->SetStats( );
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-    */
 
     return false;
 }

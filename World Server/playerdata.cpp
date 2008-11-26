@@ -125,49 +125,6 @@ bool CPlayer::loaddata( )
             quickbar[i]=0;
     }
 
-    //LMA: Old way:
-    /*
-	for(UINT i=0;i<42;i++)
-    {
-        char* tmp=strtok((i==0?row[20]:NULL), ",");
-        if (tmp!=NULL)
-            bskills[i]=atoi(tmp);
-        else
-            bskills[i]=0;
-    }
-	for(UINT i=0;i<60;i++)
-	{
-        char* tmp=strtok((i==0?row[21]:NULL), ",");
-        if (tmp!=NULL)
-        {
-            if(atoi(tmp)!=0)
-                p_skills++;
-            cskills[i].id=atoi(tmp);
-        }
-        else
-            cskills[i].id=0;
-    }
-	for(UINT i=0;i<60;i++)
-    {
-        char* tmp=strtok((i==0?row[22]:NULL), ",");
-        if (tmp!=NULL)
-            cskills[i].level=atoi(tmp);
-        else
-            cskills[i].level=1;
-    }
-    for(int i=0;i<60;i++)
-    {
-        if(cskills[i].id==0)
-        {
-            cskills[i].thisskill = NULL;
-        }
-        else
-        {
-            cskills[i].thisskill = GServer->GetSkillByID( cskills[i].id+cskills[i].level-1 );
-        }
-    }
-    */
-
     //LMA: new way BEGIN
     bool do_save=false;
     int cur_cskills[5];
@@ -439,77 +396,6 @@ bool CPlayer::loaddata( )
     for (int i=0;i<5;i++)
         cur_max_skills[i]=cur_cskills[i];
 
-    //reconstructing all the skills again...
-    //Not needed...
-    /*
-    //driving skills.
-    int cpt=0;
-    for (int i=60;i<MAX_DRIVING_SKILL;i++)
-    {
-        dskills[cpt]=cskills[i].id;
-        cskills[i].thisskill=NULL;
-        if(dskills[cpt]!=0)
-            cur_max_skills[1]++;
-        cpt++;
-    }
-
-    //basic
-    cpt=0;
-    for (int i=320;i<MAX_BASICSKILL;i++)
-    {
-        bskills[cpt]=cskills[i].id;
-        cskills[i].thisskill=NULL;
-        if(bskills[cpt]!=0)
-            cur_max_skills[2]++;
-        cpt++;
-    }
-
-    //unique.
-    cpt=0;
-    for (int i=90;i<MAX_UNIQUE_SKILL;i++)
-    {
-        uskills[cpt].id=cskills[i].id;
-        uskills[cpt].level=cskills[i].level;
-        cskills[i].thisskill=NULL;
-        if(cskills[i].id!=0)
-        {
-            cur_max_skills[3]++;
-            cskills[i].thisskill = GServer->GetSkillByID( cskills[i].id+cskills[i].level-1 );
-        }
-
-    }
-
-    //mileage.
-    cpt=0;
-    for (int i=120;i<MAX_MILEAGE_SKILL;i++)
-    {
-        mskills[cpt].id=cskills[i].id;
-        mskills[cpt].level=cskills[i].level;
-        cskills[i].thisskill=NULL;
-        if(cskills[i].id!=0)
-        {
-            cur_max_skills[4]++;
-            cskills[i].thisskill = GServer->GetSkillByID( cskills[i].id+cskills[i].level-1 );
-        }
-
-    }
-
-    //class skills.
-    cpt=0;
-    for (int i=0;i<MAX_SKILL;i++)
-    {
-        cskills[i].thisskill=NULL;
-        if(cskills[i].id!=0)
-        {
-            cur_max_skills[0]++;
-            cskills[i].thisskill = GServer->GetSkillByID( cskills[i].id+cskills[i].level-1 );
-        }
-
-    }
-    */
-    //LMA: new way END
-
-
     //LMA: reset inventory.
     for(int i=0;i<MAX_INVENTORY;i++)
     {
@@ -775,32 +661,6 @@ void CPlayer::savedata( )
 	    char quick[1024];
 
 	    //LMA: we save the skills elsewhere now :)
-	    /*
-	    char basic[1024];
-	    char sclass[1024];
- 	    char slevel[1024];
-    	for(UINT i=0;i<MAX_SKILL;i++)
-    	{
-            if(i==0)
-            {
-    	       sprintf(&sclass[i], "%i",cskills[i].id);
-    	       sprintf(&slevel[i], "%i",cskills[i].level);
-            }
-            else
-            {
-    	       sprintf(&sclass[strlen(sclass)], ",%i",cskills[i].id);
-    	       sprintf(&slevel[strlen(slevel)], ",%i",cskills[i].level);
-            }
-        }
-    	for(UINT i=0;i<42;i++)
-    	{
-            if(i==0)
-            	sprintf(&basic[i], "%i",bskills[i]);
-            else
-                sprintf(&basic[strlen(basic)], ",%i",bskills[i]);
-        }
-        */
-
         for(UINT i=0;i<48;i++)
         {
             if(i==0)
@@ -826,18 +686,7 @@ void CPlayer::savedata( )
             temp_timer=0;
         }
 
-        //LMA: adding union stuff.
-        //LMA: Saving skills elsewhere now :)
-        //GServer->DB->QExecute("UPDATE characters SET classid=%i,level=%i,zuly=%i,curHp=%i,curMp=%i,str=%i,con=%i,dex=%i,_int=%i,cha=%i,sen=%i,exp=%i,skillp=%i,statp=%i, stamina=%i,quickbar='%s',class_skills='%s',class_skills_level='%s',basic_skills='%s',respawnid=%i,clanid=%i,clan_rank=%i, townid=%i, rewardpoints=%i, bonusxp=%i, timerxp=%i, shoptype=%i, timershop=%i, unionid=%i, unionfame=%i, union01=%i, union02=%i, union03=%i, union04=%i, union05=%i WHERE id=%i",
-        /*
-        GServer->DB->QExecute("UPDATE characters SET classid=%i,level=%i,zuly=%i,curHp=%i,curMp=%i,str=%i,con=%i,dex=%i,_int=%i,cha=%i,sen=%i,exp=%i,skillp=%i,statp=%i, stamina=%i,quickbar='%s',class_skills='%s',class_skills_level='%s',basic_skills='%s',respawnid=%i,clanid=%i,clan_rank=%i, townid=%i, rewardpoints=%i, bonusxp=%i, timerxp=%i, shoptype=%i, timershop=%i, unionid=%i, unionfame=%i, union01=%i, union02=%i, union03=%i, union04=%i, union05=%i WHERE id=%i",
-                    CharInfo->Job,Stats->Level, CharInfo->Zulies, (UINT) hp, (UINT) Stats->MP,
-                    Attr->Str,Attr->Con,Attr->Dex,Attr->Int,Attr->Cha,Attr->Sen,
-                    (UINT) CharInfo->Exp,CharInfo->SkillPoints,CharInfo->StatPoints,CharInfo->stamina,
-                    quick, sclass,slevel,basic,Position->respawn,Clan->clanid,Clan->clanrank,Position->saved,CharInfo->rewardpoints,temp_xp,temp_timer,Shop->ShopType,Shop->mil_shop_time,
-                    CharInfo->unionid,CharInfo->unionfame,CharInfo->union01,CharInfo->union02,CharInfo->union03,CharInfo->union04,CharInfo->union05,CharInfo->charid);
-        */
-
+        //LMA: new save.
         GServer->DB->QExecute("UPDATE characters SET classid=%i,level=%i,zuly=%i,curHp=%i,curMp=%i,str=%i,con=%i,dex=%i,_int=%i,cha=%i,sen=%i,exp=%i,skillp=%i,statp=%i, stamina=%i,quickbar='%s',respawnid=%i,clanid=%i,clan_rank=%i, townid=%i, rewardpoints=%i, bonusxp=%i, timerxp=%i, shoptype=%i, timershop=%i, unionid=%i, unionfame=%i, union01=%i, union02=%i, union03=%i, union04=%i, union05=%i WHERE id=%i",
                     CharInfo->Job,Stats->Level, CharInfo->Zulies, (UINT) hp, (UINT) Stats->MP,
                     Attr->Str,Attr->Con,Attr->Dex,Attr->Int,Attr->Cha,Attr->Sen,
@@ -845,8 +694,7 @@ void CPlayer::savedata( )
                     quick,Position->respawn,Clan->clanid,Clan->clanrank,Position->saved,CharInfo->rewardpoints,temp_xp,temp_timer,Shop->ShopType,Shop->mil_shop_time,
                     CharInfo->unionid,CharInfo->unionfame,CharInfo->union01,CharInfo->union02,CharInfo->union03,CharInfo->union04,CharInfo->union05,CharInfo->charid);
 
-        //LMA: intelligent item save (?)
-    	//if(!GServer->DB->QExecute("DELETE FROM items WHERE owner=%i", CharInfo->charid)) return;
+        //LMA: intelligent item save.
     	int res_check=0;
     	int nb_saved=0;
     	int nb_delete=0;
@@ -874,13 +722,6 @@ void CPlayer::savedata( )
                 continue;
             }
 
-            //Add or update item (new way, mysql 4.1+)
-            /*
-    		GServer->DB->QExecute("INSERT INTO items (owner,itemnum,itemtype,refine,durability,lifespan,slotnum,count,stats,socketed,appraised,gem) VALUES(%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i)",
-    								CharInfo->charid, items[i].itemnum, items[i].itemtype,items[i].refine, items[i].durability,
-    								items[i].lifespan, i, items[i].count, items[i].stats, (items[i].socketed?1:0),
-    								(items[i].appraised?1:0),items[i].gem );
-            */
             nb_saved++;
             sp_item_value=0;
             if(items[i].itemtype==14)
@@ -890,50 +731,6 @@ void CPlayer::savedata( )
     								items[i].lifespan, items[i].count, items[i].stats, (items[i].socketed?1:0),
     								(items[i].appraised?1:0),items[i].gem,sp_item_value );
     	}
-
-    	//Log(MSG_INFO,"We saved %i slots, deleted %i",nb_saved,nb_delete);
-
-
-    	/*
-    	//LMA: We're saving storage separetly now :)
-    	if(!GServer->DB->QExecute("DELETE FROM storage WHERE owner=%i", Session->userid)) return;
-    	for(UINT i=0;i<160;i++)
-        {
-    		if (storageitems[i].count > 0)
-            {
-    			GServer->DB->QExecute("INSERT INTO storage (owner,itemnum,itemtype,refine,durability,lifespan,slotnum,count,stats,socketed,appraised,gem) VALUES(%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i)",
-    								Session->userid, storageitems[i].itemnum, storageitems[i].itemtype,storageitems[i].refine, storageitems[i].durability,
-    								storageitems[i].lifespan, i, storageitems[i].count, storageitems[i].stats, (storageitems[i].socketed?1:0),
-                                    (storageitems[i].appraised?1:0), storageitems[i].gem );//Gem Fix by Irulagain
-    		}
-    	}
-    	*/
-
-    	//We save quests elsewhere.
-    	/*
-    	if(!GServer->DB->QExecute( "DELETE FROM list_quest WHERE owner=%i",CharInfo->charid )) return;
-    	for(int i=0;i<MyQuest.size();i++)
-    	{
-            QUESTS* myquest = MyQuest.at( i );
-     	    char nqitem[200];
-        	for( int j=0;j<5;j++ )
-        	{
-                if( j==0 )
-                {
-        	       sprintf(&nqitem[j], "%i",myquest->items[j]);
-                }
-                else
-                {
-        	       sprintf(&nqitem[strlen(nqitem)], "|%i",myquest->items[j]);
-                }
-            }
-            GServer->DB->QExecute("INSERT INTO list_quest (owner,questid,nitems,active) VALUES (%i,%i,'%s',%i)",
-            CharInfo->charid, myquest->thisquest->id, nqitem, myquest->active );
-        }
-        */
-
-        //We save Zuly storage elsewhere.
-		//GServer->DB->QExecute("update accounts set zulystorage = %i where id = %i", CharInfo->Storage_Zulies, Session->userid);
 
 		//QSD Save
 		//2do, save on used?
@@ -1112,7 +909,7 @@ int CPlayer::GoodSkill(int skill_id)
     if (type>=20&&type<30)
         return 0;   //class
     if (type>=30&&type<40)
-        return 1;   //driving
+        return 1;   //driving and others?
 
 
     return -1;
@@ -1143,168 +940,32 @@ int CPlayer::FindSkillOffset(int family)
         return res;
     }
 
-    /*
-    switch(family)
-    {
-        case 0:
-        {
-            begin=0;
-            end=60;
-        }
-        break;
-        case 1:
-        {
-            begin=60;
-            end=90;
-        }
-        break;
-        case 2:
-        {
-            begin=320;
-            end=362;
-        }
-        break;
-        case 3:
-        {
-            begin=90;
-            end=120;
-        }
-        break;
-        case 4:
-        {
-            begin=120;
-            end=320;
-        }
-        break;
-        default:
-        break;
-    }
-
-    for (int i=begin;i<end;i++)
-    {
-        if(cskills[i].id==0)
-            return i;
-    }
-    */
-
 
     return -1;
 }
 
-//LMA: Save some skills informations for later... (useless)
-/*
-void CPlayer::SaveSkillInfo(int family,int offset,int id,int level)
+//LMA: reset skill offsets.
+void CPlayer::ResetSkillOffset()
 {
-    //No need for class.
-    if (family==0)
-        return;
+    int begin[5];
 
-    if(family==1)
-    {
-        if(dskills[offset]!=0)
-            Log(MSG_WARNING,"Skill overwrite");
-        dskills[offset]=id;
-        return;
-    }
 
-    if(family==2)
-    {
-        if(bskills[offset]!=0)
-            Log(MSG_WARNING,"Skill overwrite");
-        bskills[offset]=id;
-        return;
-    }
+    begin[0]=0;
+    begin[1]=60;
+    begin[2]=320;
+    begin[3]=90;
+    begin[4]=120;
 
-    if(family==3)
+    for (int k=0;k<4;k++)
     {
-        if(uskills[offset].id!=0)
-            Log(MSG_WARNING,"Skill overwrite");
-        uskills[offset].id=id;
-        uskills[offset].level=level;
-        return;
-    }
-
-    if(family==4)
-    {
-        if(mskills[offset].id!=0)
-            Log(MSG_WARNING,"Skill overwrite");
-        mskills[offset].id=id;
-        mskills[offset].level=level;
-        return;
+        //We don't reset the basic skills.
+        if(k==2)
+            continue;
+        cur_max_skills[k]=begin[k];
     }
 
 
     return;
 }
-*/
-
-//LMA: Upgrade a skill level (useless)...
-/*
-void CPlayer::UpgradeSkillInfo(int offset,int skillid,int nb_upgrade)
-{
-    //no need for class.
-    int family=0;
-    if (offset<60)
-        return;
-
-    //driving, useless...
-    if (offset>=60&&offset<64)
-        return;
-
-    //basic, no level...
-    if (offset>=64&&offset<90)
-        return;
-
-    if (offset>=90&&offset<120)
-        family=3;
-
-    if (offset>=120&&offset<320)
-        family=4;
 
 
-    if(family==3)
-    {
-        for (int i=0;i<MAX_UNIQUE_SKILL;i++)
-        {
-
-            if (uskills[i].id==0)
-            {
-                Log(MSG_WARNING,"Skill %i not found during upgrade unique",skillid);
-                return;
-            }
-
-            if (uskills[i].id==skillid)
-            {
-                uskills[i].level+=nb_upgrade;
-                return;
-            }
-
-        }
-
-    }
-
-    if(family==4)
-    {
-        for (int i=0;i<MAX_MILEAGE_SKILL;i++)
-        {
-
-            if (mskills[i].id==0)
-            {
-                Log(MSG_WARNING,"Skill %i not found during upgrade mileage",skillid);
-                return;
-            }
-
-            if (mskills[i].id==skillid)
-            {
-                mskills[i].level+=nb_upgrade;
-                return;
-            }
-
-        }
-
-    }
-
-
-    return;
-}
-*/

@@ -1,3 +1,24 @@
+/*
+    Rose Online Server Emulator
+    Copyright (C) 2006,2007 OSRose Team http://www.dev-osrose.com
+
+    This program is free software; you can redistribute it and/or
+    modify it under the terms of the GNU General Public License
+    as published by the Free Software Foundation; either version 2
+    of the License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+    depeloped with Main erose/hrose source server + some change from the original eich source
+*/
+
 //Made by Caali
 
 #define __CROSEFILE_HPP__
@@ -157,7 +178,7 @@ class CRoseFile
 		}
 
 	public:
-           
+
            /** The current filehandle
         */
 		FILE* fh;
@@ -167,7 +188,7 @@ class CRoseFile
 		{
 			fh = NULL;
 			ftype = FT_NONE;
-			fmode = FM_NONE;	
+			fmode = FM_NONE;
 			flasterr = FE_SUCCESS;
 		}
         /** Contructor opening a file after contructing
@@ -180,7 +201,7 @@ class CRoseFile
 		{
 			fh = NULL;
 			ftype = FT_NONE;
-			fmode = FM_NONE;	
+			fmode = FM_NONE;
 			flasterr = FE_SUCCESS;
 			Open( fname, mode );
 		}
@@ -202,7 +223,7 @@ class CRoseFile
 		If there is already an opened file, CFile will close it and open the new file
         */
 		CFILE_BOOLEAN Open( CFILE_CHAR* fname, CFILE_CHAR mode )
-		{	
+		{
 			if( fh != NULL ) Close( );
 			fmode = mode;
 			CFILE_CHAR* fasciimode = ConvertBitFieldFileModeToASCIIFileMode( fmode );
@@ -218,9 +239,9 @@ class CRoseFile
 		#ifndef CFILE_NODEPRECATE
 			if( fopen_s( &fh, fname, fasciimode ) == 0 )
 			{
-		#else 
+		#else
 			if( ( fh = fopen( fname, fasciimode ) ) != NULL )
-			{		
+			{
 		#endif
 				delete[] fasciimode;
 				//Check if unicode or ascii
@@ -241,7 +262,7 @@ class CRoseFile
 							}
 							#ifndef CFILE_NODEPRECATE
 								fopen_s( &fh, fname, fasciimode );
-							#else 
+							#else
 								fh = fopen( fname, fasciimode );
 							#endif
 							SetAbsPos( 2 );
@@ -328,7 +349,7 @@ class CRoseFile
 		FILEERROR GetLastError( )
 		{
 			return flasterr;
-		}	
+		}
 
         /** Moves the file position to a custom point
 		@param
@@ -382,7 +403,7 @@ class CRoseFile
 		@result
 		Boolean indicating if the rewinding process has successed
 		@note
-		This function checks if the file has been opened in unicode mode, and if so, it sets the pointer to 2, 
+		This function checks if the file has been opened in unicode mode, and if so, it sets the pointer to 2,
 		the start of the file AFTER the unicode file header
 		*/
 		CFILE_BOOLEAN GoToStart( )
@@ -481,7 +502,7 @@ class CRoseFile
 		@param
 		offset: The offset to start reading from, relative to [origin]
 		@param
-		origin: Where offset is relative to, SEEK_SET -> Beginning of file | SEEK_CUR -> Current position | SEEK_END -> End of file 
+		origin: Where offset is relative to, SEEK_SET -> Beginning of file | SEEK_CUR -> Current position | SEEK_END -> End of file
 		@result
 		Unsigned int indicating the number of bytes read
         */
@@ -499,7 +520,7 @@ class CRoseFile
 			}
 			if( !Seek( offset, origin ) ) return 0;
 			return (CFILE_UINT)( Read( buf, element_size, element_count ) );
-		}		
+		}
         /** Reads from the file starting at from and ending at to
 		@param
 		buf: A pointer to a buffer where the data will be stored
@@ -617,7 +638,7 @@ class CRoseFile
 			}
 			DoError( FE_INTERNALERROR );
 			return NULL;
-		}		
+		}
         /** Reads one line
 		@result
 		string with the line read
@@ -661,7 +682,7 @@ class CRoseFile
 						res[i] = 0x00;
 						break;
 					}
-				}	
+				}
 				delete result;
 				return res;
 			}
@@ -699,7 +720,7 @@ class CRoseFile
 			CVector2F result;
 			Read( &result, sizeof( CVector2F ), 1 );
 			return result;
-		}	*/	
+		}	*/
         /** Reads the whole file into the memory
 		@result
 		string: pointer to the memory section, NULL on error
@@ -746,7 +767,7 @@ class CRoseFile
 				*
 			}
 		}*/
-	
+
         /** Writes to the file
 		@param
 		ptr: A pointer to a buffer where the data will be read to write from
@@ -903,7 +924,7 @@ class CRoseFile
 					#else
 						mbstowcs( buffer, str->arr, str->size() );
 					#endif
-					return (fputws( buffer, fh )!=EOF)?(true):(false);	
+					return (fputws( buffer, fh )!=EOF)?(true):(false);
 				#else
 					DoError( FE_UNICODENOTALLOWED );
 					return false;

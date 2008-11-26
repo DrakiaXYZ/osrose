@@ -85,17 +85,8 @@ class CPlayer: public CCharacter
     CItem items[MAX_INVENTORY];
 
     // skills/quickbar
-    //SKILLS cskills[MAX_SKILL];
     SKILLS cskills[MAX_ALL_SKILL];
 
-    /*
-    UINT bskills[MAX_BASICSKILL];
-
-    //LMA: Other skills.
-    UINT dskills[MAX_DRIVING_SKILL];
-    SKILLS uskills[MAX_UNIQUE_SKILL];
-    SKILLS mskills[MAX_MILEAGE_SKILL];
-    */
     int cur_max_skills[5];
 
     UINT quickbar[MAX_QUICKBAR];
@@ -131,90 +122,91 @@ class CPlayer: public CCharacter
     vector<CNPC*>			    VisibleNPCs;	   // Visible npcs
 
     // Functions
-        bool CheckPlayerLevelUP( );
-        bool CheckDoubleEquip( );  //LMA: Core fix for double weapon and shield
-        bool CheckZulies( );
-        bool CheckPortal( );  //custom events
-        bool CheckEvents( );  //custom events
-      //bool CheckCustomQuest( );
-        bool PrizeExchange(CPlayer* thisclient, UINT prizeid );  //custom events
-        bool CheckItems ( );
-        void SetStats( );
-        bool GetPlayerInfo( );
-        bool IsMonster( );
-        bool CleanPlayerVector( );
-       	bool loaddata( );
-       	void saveskills();  //LMA: Only saving skills there.
-        void savedata( );
-        int GoodSkill(int skill_id);    //LMA: which skill family?
-        int FindSkillOffset(int family);    //LMA: Find a skill offset...
-        void SaveSkillInfo(int family,int offset,int id,int level);    //LMA: Save some skills informations for later...
-        //void UpgradeSkillInfo(int offset,int skillid,int nb_upgrade);  //LMA: Upgrade a skill level...
-        void CalculateSignature( int slot );    //LMA: get item signature
-        int CheckSignature( int slot );         //LMA: check signature
-        UINT GetNewStorageItemSlot( CItem thisitem );
-        UINT GetPlayerSkill( unsigned int id ); // Required skill check by insider
-        UINT GetNewItemSlot( CItem thisitem );
-        bool ClearObject( unsigned int otherclientid );
-        void RestartPlayerVal( );
-        bool Regeneration( );
-        bool PlayerHeal( );
-        bool VisiblityList( );
-        bool ForceRefreshMonster(bool refresh_all, UINT monster_id);      //LMA: force refresh (20070621-211100)
-        bool SpawnToPlayer( CPlayer* player, CPlayer* otherclient );
-        bool UpdateValues( );
-        bool RefreshHPMP();  //LMA HP / MP Jumping
-        void ReduceABC( );
-        CParty* GetParty( );
-        CLAN* GetClan( );
-        unsigned int AddItem( CItem item );
-        void TakeFuel(int add_fuel=0);   //LMA: Using fuel :)
-        void GiveCP(unsigned int points);    //LMA: Give Clan Points
-        void UpdateInventory( unsigned int slot1, unsigned int slot2=0xffff );   //LMA: this one saves into database immediatly
-        void UpdateInventoryNoSave( unsigned int slot1, unsigned int slot2=0xffff );   //LMA: This one doesn't immediatly save into database.
-        void SaveSlot( unsigned int slot); //LMA: Saving slot into MySQL database.
-        void SaveSlot41( unsigned int slot); //LMA: Saving slot into MySQL database (Mysql 4.1+ function).
-        void reduceItemsLifeSpan( bool attacked);
-        bool SaveQuest( QUESTS* myquest );       //LMA: Saving quests data (Mysql 4.1+ function).
-        bool PlasticSurgeon(CQuest* thisquest);      //LMA: Plastic Surgery coupons
-        bool CheckItem(int itemnb,int familyid,int nb);   //Check if a peculiar item is in inventory
+    bool CheckPlayerLevelUP( );
+    bool CheckDoubleEquip( );  //LMA: Core fix for double weapon and shield
+    bool CheckZulies( );
+    bool CheckPortal( );  //custom events
+    bool CheckEvents( );  //custom events
+  //bool CheckCustomQuest( );
+    bool PrizeExchange(CPlayer* thisclient, UINT prizeid );  //custom events
+    bool CheckItems ( );
+    void SetStats( );
+    bool GetPlayerInfo( );
+    bool IsMonster( );
+    bool CleanPlayerVector( );
+    bool loaddata( );
+    void saveskills();  //LMA: Only saving skills there.
+    void savedata( );
+    int GoodSkill(int skill_id);    //LMA: which skill family?
+    int FindSkillOffset(int family);    //LMA: Find a skill offset...
+    void ResetSkillOffset(); //LMA: reset skill offsets.
+    void SaveSkillInfo(int family,int offset,int id,int level);    //LMA: Save some skills informations for later...
+    //void UpgradeSkillInfo(int offset,int skillid,int nb_upgrade);  //LMA: Upgrade a skill level...
+    void CalculateSignature( int slot );    //LMA: get item signature
+    int CheckSignature( int slot );         //LMA: check signature
+    UINT GetNewStorageItemSlot( CItem thisitem );
+    UINT GetPlayerSkill( unsigned int id ); // Required skill check by insider
+    UINT GetNewItemSlot( CItem thisitem );
+    bool ClearObject( unsigned int otherclientid );
+    void RestartPlayerVal( );
+    bool Regeneration( );
+    bool PlayerHeal( );
+    bool VisiblityList( );
+    bool ForceRefreshMonster(bool refresh_all, UINT monster_id);      //LMA: force refresh (20070621-211100)
+    bool SpawnToPlayer( CPlayer* player, CPlayer* otherclient );
+    bool UpdateValues( );
+    bool RefreshHPMP();  //LMA HP / MP Jumping
+    void ReduceABC( );
+    CParty* GetParty( );
+    CLAN* GetClan( );
+    unsigned int AddItem( CItem item );
+    void TakeFuel(int add_fuel=0);   //LMA: Using fuel :)
+    void GiveCP(unsigned int points);    //LMA: Give Clan Points
+    void UpdateInventory( unsigned int slot1, unsigned int slot2=0xffff );   //LMA: this one saves into database immediatly
+    void UpdateInventoryNoSave( unsigned int slot1, unsigned int slot2=0xffff );   //LMA: This one doesn't immediatly save into database.
+    void SaveSlot( unsigned int slot); //LMA: Saving slot into MySQL database.
+    void SaveSlot41( unsigned int slot); //LMA: Saving slot into MySQL database (Mysql 4.1+ function).
+    void reduceItemsLifeSpan( bool attacked);
+    bool SaveQuest( QUESTS* myquest );       //LMA: Saving quests data (Mysql 4.1+ function).
+    bool PlasticSurgeon(CQuest* thisquest);      //LMA: Plastic Surgery coupons
+    bool CheckItem(int itemnb,int familyid,int nb);   //Check if a peculiar item is in inventory
 
-        // ExJam Quest Code
-        void savequests( CPlayer* thisclient );
-        SQuest* GetActiveQuest( );
-        int GetQuestVar(short nVarType, short nVarNO);
-        void SetQuestVar(short nVarType, short nVarNO, short nValue);
-        int ExecuteQuestTrigger(dword hash);
+    // ExJam Quest Code
+    void savequests( CPlayer* thisclient );
+    SQuest* GetActiveQuest( );
+    int GetQuestVar(short nVarType, short nVarNO);
+    void SetQuestVar(short nVarType, short nVarNO, short nValue);
+    int ExecuteQuestTrigger(dword hash);
 
-    	// Player Stats
-        unsigned int GetAttackPower( );
-        unsigned int GetDefense( );
-        unsigned int GetDodge( );
-        unsigned int GetAccury( );
-        unsigned int GetMagicDefense( );
-        unsigned int GetCritical( );
-        unsigned int GetAttackSpeed( );
-        unsigned int GetMoveSpeed( );
-        unsigned int GetCartSpeed( );
+    // Player Stats
+    unsigned int GetAttackPower( );
+    unsigned int GetDefense( );
+    unsigned int GetDodge( );
+    unsigned int GetAccury( );
+    unsigned int GetMagicDefense( );
+    unsigned int GetCritical( );
+    unsigned int GetAttackSpeed( );
+    unsigned int GetMoveSpeed( );
+    unsigned int GetCartSpeed( );
 
-        //unsigned int GetMaxHP( );
-        unsigned long long GetMaxHP( );
+    //unsigned int GetMaxHP( );
+    unsigned long long GetMaxHP( );
 
-        unsigned int GetMaxMP( );
-        float GetAttackDistance( );
-        unsigned int GetHPRegenAmount( );
-        unsigned int GetMPRegenAmount( );
-        unsigned int GetMaxWeight( );
-      	unsigned int GetCurrentWeight( );
-      	unsigned int GetMPReduction( );
-        unsigned int GetMaxSummonGauge( );
-        void GetExtraStats( );
-        unsigned int GetLevelEXP( );
-        unsigned int GetInt( );
-        unsigned getWeaponType();
-        bool AddClanPoints(unsigned int count);
-        void RebuildItemMall(); //LMA: Rebuild player's itemmall.
-        CClientSocket* getClient();
+    unsigned int GetMaxMP( );
+    float GetAttackDistance( );
+    unsigned int GetHPRegenAmount( );
+    unsigned int GetMPRegenAmount( );
+    unsigned int GetMaxWeight( );
+    unsigned int GetCurrentWeight( );
+    unsigned int GetMPReduction( );
+    unsigned int GetMaxSummonGauge( );
+    void GetExtraStats( );
+    unsigned int GetLevelEXP( );
+    unsigned int GetInt( );
+    unsigned getWeaponType();
+    bool AddClanPoints(unsigned int count);
+    void RebuildItemMall(); //LMA: Rebuild player's itemmall.
+    CClientSocket* getClient();
 };
 
 #endif

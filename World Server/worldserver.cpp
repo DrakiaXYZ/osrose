@@ -79,37 +79,15 @@ CWorldServer::~CWorldServer( )
         delete [] EquipList[i].Index;
     }
 
-    /*
-    //LMA: Useless Vectors.
-    for(UINT i=0;i<JemList.Data.size();i++)
-        delete JemList.Data.at(i);
-    for(UINT i=0;i<NaturalList.Data.size();i++)
-        delete NaturalList.Data.at(i);
-    for(UINT i=0;i<PatList.Data.size();i++)
-        delete PatList.Data.at(i);
-    for(UINT i=0;i<ProductList.Data.size();i++)
-        delete ProductList.Data.at(i);
-    for(UINT i=0;i<SellList.Data.size();i++)
-        delete SellList.Data.at(i);
-    for(UINT i=0;i<UseList.Data.size();i++)
-        delete UseList.Data.at(i);
-    */
-
     for(UINT i=0;i<MapList.Map.size();i++)
         delete MapList.Map.at(i);
-
-    /*
-    //LMA: Useless Vectors.
-    for(UINT i=0;i<10;i++)
-        for(UINT j=0;j<EquipList[i].Data.size();j++)
-            delete EquipList[i].Data.at(j);
-    */
 
     for(UINT i=0;i<ClientList.size();i++)
     {
         delete (CPlayer*)ClientList.at(i)->player;
         delete ClientList.at(i);
     }
+
     delete EquipList[0].nullequip;
     delete JemList.nulljem;
     delete NaturalList.nullnatural;
@@ -579,53 +557,9 @@ void CWorldServer::LoadConfigurations( char* file )
     //World
     Config.MinimumAccessLevel   = ConfigGetInt    ( file, "minimal_access_level", 100 );
 	Config.usethreads           = ConfigGetInt    ( file, "usethreads", 0 )==0?false:true;
-	//Config.EXP_RATE             = ConfigGetInt    ( file, "exp_rate", 10 );
-	//Config.DROP_RATE            = ConfigGetInt    ( file, "drop_rate", 1 );
-    //Config.DROP_TYPE            = ConfigGetInt    ( file, "drop_type", 2 );
-	//Config.ZULY_RATE            = ConfigGetInt    ( file, "zuly_rate", 1 );
 	Config.WELCOME_MSG          = ConfigGetString ( file, "welcome_msg", "Welcome to Rose Online" );
-    //Config.AUTOSAVE             = ConfigGetInt    ( file, "autosave", 0 );
-	//Config.SAVETIME             = ConfigGetInt    ( file, "savetime", 3600 );
-    //Config.MapDelay             = ConfigGetInt    ( file, "mapdelay", 10 );
-    //Config.WorldDelay           = ConfigGetInt    ( file, "worlddelay", 200 );
-    //Config.VisualDelay          = ConfigGetInt    ( file, "visualdelay", 500 );
-    //Config.Partygap             = ConfigGetInt    ( file, "partygap", 10 );
-    //Config.MaxStat              = ConfigGetInt    ( file, "maxstat", 254 );
-    //Config.FairyMode            = ConfigGetInt    ( file, "fairy", 1 );
-    //Config.FairyStay            = ConfigGetInt    ( file, "fairystay", 20 );
-    //Config.FairyWait            = ConfigGetInt    ( file, "fairywait", 15 );
-    //Config.FairyMax             = ConfigGetInt    ( file, "fairymax", 0);
-    //Config.FairyTestMode        = ConfigGetInt    ( file, "fairytestmode", 1);
-    //Config.PlayerDmg            = ConfigGetInt    ( file, "playerdmg", 120);
-    //Config.MonsterDmg           = ConfigGetInt    ( file, "monsterdmg", 100);
-    //Config.BlueChance           = ConfigGetInt    ( file, "bluechance", 5); //hidden
-    //Config.StatChance           = ConfigGetInt    ( file, "statchance", 5); //hidden
-    //Config.SlotChance           = ConfigGetInt    ( file, "slotchance", 5); //hidden
-    //Config.RefineChance         = ConfigGetInt    ( file, "refinechance", 5); //hidden
-    //Config.Cfmode               = ConfigGetInt    ( file, "cfmode", 0);
-    //Config.osRoseVer            = ConfigGetString    ( file, "osRoseVer", "79.999");
-    //Config.testgrid             = ConfigGetInt    ( file, "testgrid", 0); //LMA: maps tests grids (0=usual, 1=grid)
-    //Config.jrose                = ConfigGetInt    ( file, "jrose", 0); //LMA: Special code for jRose handling (163)
-    //Config.unionslaughter       = ConfigGetInt    ( file, "unionslaughter", 0); //LMA: is Union Slaughter active?
-    //Config.unionmin             = ConfigGetInt    ( file, "unionmin", 1); //LMA: union Slaughter (nb players / union, min)
-    //Config.unionduration        = ConfigGetInt    ( file, "unionduration", 12000); //LMA: duration of union Slaughter in minutes
-    //Config.unionslaughterloop        = ConfigGetInt    ( file, "unionslaughterloop", 1); //LMA: does US loops?
-    //Config.unionslaughterdelay_loop        = ConfigGetInt    ( file, "unionslaughterdelay_loop", 1440); //LMA: delay between 2 US (in minutes)
-    //Config.unionwar             = ConfigGetInt    ( file, "unionwar", 0); //LMA: is Union War active?
-    //Config.unionwarmin        = ConfigGetInt    ( file, "unionwarmin", 1); //LMA: min amount of players for UW (attacker or defenders)
-    //Config.unionwarduration        = ConfigGetInt    ( file, "unionwarduration", 1); //LMA: duration in min for UW
-    //Config.unionwarloop        = ConfigGetInt    ( file, "unionwarloop", 1); //LMA: do we loop UW?
-    //Config.unionwardelay_loop        = ConfigGetInt    ( file, "unionwardelay_loop", 1); //LMA: delay between 2 loops (minutes)
-    //LMA
 
     Log (MSG_INFO, "osRose - http://forum.dev-osrose.com");
-
-    /* //LMA: jRose.
-    if(Config.jrose==1)
-       Log (MSG_INFO, "Handling ONLY jRose client.");
-    else
-       Log (MSG_INFO, "Handling ONLY RoseNA client.");
-    */
 
     //Password
 	Config.LoginPass            = ConfigGetInt    ( file, "loginpass", 123456 );
@@ -741,7 +675,6 @@ void CWorldServer::LoadCommandLevels( void )
     Config.Command_TeleToMe = ConfigGetInt    ( "commands.ini", "teletome", 299 );
     Config.Command_Transx = ConfigGetInt    ( "commands.ini", "transx", 299 );
     Config.Command_Union = ConfigGetInt    ( "commands.ini", "union", 299 );
-    Config.Command_UnionMode = ConfigGetInt    ( "commands.ini", "unionmode", 299 );
     Config.Command_UnionPoints = ConfigGetInt    ( "commands.ini", "unionpoints", 299 );
     Config.Command_Who = ConfigGetInt    ( "commands.ini", "who", 299 );
     Config.Command_Who2 = ConfigGetInt    ( "commands.ini", "who2", 299 );

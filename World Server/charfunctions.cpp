@@ -182,18 +182,6 @@ void CCharacter::StartAction( CCharacter* Target, BYTE action, UINT skillid, boo
         case AOE_TARGET:
         {
             //LMA 2008/09/02: new version, the target is a zone, not a monster... so we stick with aoedestiny ;)
-            /*
-            RESETPACKET( pak, 0x7b4 );
-            ADDWORD    ( pak, clientid );
-            ADDWORD    ( pak, skillid );
-            ADDFLOAT   ( pak, Target->Position->current.x*100 );
-            ADDFLOAT   ( pak, Target->Position->current.y*100 );
-            Battle->atktype = action;
-            Battle->skillid = skillid;
-            Battle->skilltarget = Target->clientid;
-            Battle->target = Target->clientid;     //LMA: just for compatibility use...
-            Log(MSG_INFO,"StartAction, AOE_TARGET, target ID %i, (%.2f,%.2f)",Target->clientid,Target->Position->current.x,Target->Position->current.y);
-            */
             RESETPACKET( pak, 0x7b4 );
             ADDWORD    ( pak, clientid );
             ADDWORD    ( pak, skillid );
@@ -228,11 +216,6 @@ void CCharacter::StartAction( CCharacter* Target, BYTE action, UINT skillid, boo
 
 bool CCharacter::IsOnBattle( )
 {
-    /*
-    if (Battle->atktype==SUMMON_BUFF)
-       Log(MSG_INFO,"IsOnBattle, atktype: %i/%i, bufftarget %i, skill %i ",Battle->atktype,SUMMON_BUFF,Battle->bufftarget,Battle->skillid);
-    */
-
     if(Battle->atktype==0) return false;
     switch(Battle->atktype)
     {

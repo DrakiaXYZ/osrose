@@ -61,25 +61,6 @@ bool CMonster::PlayerInGrid()
         //Log(MSG_INFO,"[GRID-%i] Mob %i X(%.2f,%.2f)",coords,clientid,Position->current.x,Position->current.y);
        return true;
     }
-    else
-    {
-        /*
-        if (coords==292||coords==294||coords==312||coords==313)
-        {
-          Log(MSG_INFO,"monster %i in cell %i (none)",clientid,coords);
-            Log(MSG_INFO,"GServer->gridmaps[grid_id].coords[coords]: %i",GServer->gridmaps[grid_id].coords[coords]);
-            Log(MSG_INFO,"GServer->gridmaps[grid_id].coords[coords+1]: %i",GServer->gridmaps[grid_id].coords[coords+1]);
-            Log(MSG_INFO,"GServer->gridmaps[grid_id].coords[coords-1]: %i",GServer->gridmaps[grid_id].coords[coords-1]);
-            Log(MSG_INFO,"GServer->gridmaps[grid_id].coords[coords+col_offset]: %i",GServer->gridmaps[grid_id].coords[coords+col_offset]);
-            Log(MSG_INFO,"GServer->gridmaps[grid_id].coords[coords+col_offset+1]: %i",GServer->gridmaps[grid_id].coords[coords+col_offset+1]);
-            Log(MSG_INFO,"GServer->gridmaps[grid_id].coords[coords+col_offset-1]: %i",GServer->gridmaps[grid_id].coords[coords+col_offset-1]);
-            Log(MSG_INFO,"GServer->gridmaps[grid_id].coords[coords-col_offset]: %i",GServer->gridmaps[grid_id].coords[coords-col_offset]);
-            Log(MSG_INFO,"GServer->gridmaps[grid_id].coords[coords-col_offset+1]: %i",GServer->gridmaps[grid_id].coords[coords-col_offset+1]);
-            Log(MSG_INFO,"GServer->gridmaps[grid_id].coords[coords-col_offset-1]: %i",GServer->gridmaps[grid_id].coords[coords-col_offset-1]);
-            Log(MSG_INFO,"total %i",GServer->gridmaps[grid_id].coords[coords]+GServer->gridmaps[grid_id].coords[coords+1]+GServer->gridmaps[grid_id].coords[coords-1]+GServer->gridmaps[grid_id].coords[coords+col_offset]+GServer->gridmaps[grid_id].coords[coords+col_offset+1]+GServer->gridmaps[grid_id].coords[coords+col_offset-1]+GServer->gridmaps[grid_id].coords[coords-col_offset]+GServer->gridmaps[grid_id].coords[coords-col_offset+1]+GServer->gridmaps[grid_id].coords[coords-col_offset-1]);
-        }
-        */
-    }
 
     //Still here? Special case for very little maps or special maps.
     if (map->PlayerList.size()>0&&GServer->allmaps[map->id].always_on==true)

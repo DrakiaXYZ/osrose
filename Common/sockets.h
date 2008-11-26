@@ -203,25 +203,8 @@ struct CROSEServerConfig
     int testgrid; //LMA: maps, testing grids...
     int jrose; //LMA: for handling jRose (163)
 
-    //For union wars and union slaughter
-    //char* uniontime; //LMA: union slaughter time
-    int unionduration; //LMA: union slaughter duration (minutes)
-    int unionslaughter;       //LMA: is union slaughter active?
-    int unionmin; //LMA: nb of min players / union (union slaughter)
-    int unionslaughterloop;     //LMA: is UW looping?
-    int unionslaughterdelay_loop;   //LMA: delay between 2 loops (minutes)
-
-    //LMA: Union Wars
-    int unionwar;      //LMA: is unionwar active?
-    int unionwarloop;     //LMA: is UW looping?
-    int unionwardelay_loop;   //LMA: delay between 2 loops (minutes)
-    int unionwarduration;    //LMA: duration or CW (minutes)
-    int unionwarmin;          //LMA: number of players needed for UW (attackers and defenders)
-
     //LMA: Pegasus
     int is_pegasus; //LMA: if we use Pegasus client.
-
-
 
     // COMMAND LEVELS
     int Command_Addquest; // by Drakia
@@ -326,7 +309,6 @@ struct CROSEServerConfig
     int Command_TeleToMe;
     int Command_Transx;
     int Command_Union;
-    int Command_UnionMode;
     int Command_UnionPoints;
     int Command_Who;
     int Command_Who2;

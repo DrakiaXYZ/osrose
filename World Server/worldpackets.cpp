@@ -53,22 +53,6 @@ void CWorldServer::pakPlayer( CPlayer *thisclient )
     if (thisclient->Stats->MP>thisclient->GetMaxMP())
        thisclient->Stats->MP=thisclient->GetMaxMP();
 
-    //LMA: Checking if a player has a CG or cart license ^_^
-    //checking too if dual scratch is in the basic skill list...
-    /*
-	for(int i=0; i<42; i++)
-	{
-	    if(thisclient->bskills[i]==5000)
-            has_cart=true;
-	    if(thisclient->bskills[i]==5001)
-            has_cg=true;
-        if(thisclient->bskills[i]==101)
-            is_dual_scratch=true;
-        if(is_dual_scratch)
-            break;
-	}
-	*/
-
 	//driving skills :)
 	for (int i=60;i<60+MAX_DRIVING_SKILL;i++)
 	{
@@ -111,7 +95,6 @@ void CWorldServer::pakPlayer( CPlayer *thisclient )
 
     ADDBYTE( pak, 0 );                                           //LMA: Union Fame
     ADDBYTE( pak, thisclient->CharInfo->unionfame );             //LMA: Union Fame
-    //ADDWORD    ( pak, thisclient->CharInfo->unionfame );             //LMA: Union Fame
 
     ADDWORD    ( pak, thisclient->Attr->Str );			         // Str
     ADDWORD    ( pak, thisclient->Attr->Dex );				     // Dex
@@ -130,20 +113,18 @@ void CWorldServer::pakPlayer( CPlayer *thisclient )
     for(int i=0; i<4; i++)
        ADDWORD( pak,0);       //null
 
-    //Union killed
+    //LMA: Union points
     ADDWORD( pak, thisclient->CharInfo->union01 );
     ADDWORD( pak, thisclient->CharInfo->union02 );
     ADDWORD( pak, thisclient->CharInfo->union03 );
     ADDWORD( pak, thisclient->CharInfo->union04 );
     ADDWORD( pak, thisclient->CharInfo->union05 );
+
     //rest is 0?
 	for(int i=0; i<19; i++)
         ADDBYTE( pak, 0 );    //null
+
     ADDWORD( pak, thisclient->CharInfo->stamina );					// Stamina
-
-
-    //TEST
-    //for(int i=0; i<326; i++) ADDBYTE( pak, 0 );
     for(int i=0; i<320; i++) ADDBYTE( pak, 0 );
 
     //LMA: Value for driving skill so it doesn't say missing conditions ?
@@ -171,8 +152,7 @@ void CWorldServer::pakPlayer( CPlayer *thisclient )
         ADDWORD( pak, thisclient->cskills[i].id+thisclient->cskills[i].level-1 );
  	}
 
-    //Driving skill.
-	//driving skills :)
+    //Driving skill (and some stuff)
 	for (int i=60;i<60+MAX_DRIVING_SKILL;i++)
 	{
         ADDWORD( pak, thisclient->cskills[i].id );
@@ -266,39 +246,11 @@ bool CWorldServer::pakDoIdentify( CPlayer *thisclient, CPacket *P )
     pakInventory(thisclient);
     pakQuestData(thisclient);
 
-
     //LMA: Jrose unlimited (zrose)
     RESETPACKET( pak, 0x7de );
     ADDWORD ( pak, 0x1001 ); // 0x1001 to 0x1013 (game plan?)
     ADDDWORD ( pak, 2 ); // options (plan time?) [2 = unlimited]
     thisclient->client->SendPacket( &pak );
-
-
-	/*Old way
-	//RESETPACKET( pak, 0x7de );
-    ADDDWORD   ( pak, 0x000c1003 );
-	ADDDWORD   ( pak, 0xffff0000 );
-	ADDDWORD   ( pak, 0x00000000 );
-	ADDDWORD   ( pak, 0x9b000038 );
-	ADDDWORD   ( pak, 0x7272656a );
-	ADDDWORD   ( pak, 0x3c3c3479 );
-	ADDDWORD   ( pak, 0x534d5547 );
-	ADDWORD    ( pak, 0x3e3e );
-	ADDBYTE    ( pak, 0x00 );*/
-
-	/*"new way"
-	// This packet didn't match what I was getting on official. Changing it allowed jRose connections. This is a "Platinum" packet.
-	RESETPACKET( pak, 0x7de );
-	ADDDWORD   ( pak, 0x00011002 );
-	ADDDWORD   ( pak, 0x006f0000 );
-	ADDDWORD   ( pak, 0x32350000 );
-	ADDDWORD   ( pak, 0x1d383239 );
-	ADDDWORD   ( pak, 0x31093033 );
-	ADDDWORD   ( pak, 0x3c3c6c09 );
-	ADDDWORD   ( pak, 0x534d5547 );
-	ADDWORD    ( pak, 0x3e3e );
-	ADDBYTE    ( pak, 0x00 );
-	thisclient->client->SendPacket( &pak );*/
 
 	RESETPACKET( pak, 0x702 );
 	ADDSTRING  ( pak, Config.WELCOME_MSG );
@@ -406,7 +358,8 @@ bool CWorldServer::pakDoID( CPlayer* thisclient, CPacket* P )
     }
     else if(map->allowpvp==2) // pvp group vs group
     {
-        //LMA: for UW
+        //LMA: for Union war.
+        //2do: check packet.
         if (map->id==9&&thisclient->CharInfo->unionid>0)
         {
             int lma_alliance=0x07D0;
@@ -1115,28 +1068,6 @@ bool CWorldServer::pakStartAttack( CPlayer* thisclient, CPacket* P )
     thisclient->StartAction( character, NORMAL_ATTACK, 0 );
     thisclient->Battle->contatk = true;
 
-    //LMA: test for PVP maps
-    if (map->allowpvp!=0)
-    {
-       //Log(MSG_INFO,"[Start Attack] Sending packet 0x796 to client ID %i (%.2f,%.2f)",thisclient->clientid,thisclient->Position->current.x,thisclient->Position->current.y);
-       /*
- 	   BEGINPACKET( pak, 0x796 );
-	   ADDWORD    ( pak, thisclient->clientid );
-       ADDFLOAT   ( pak, thisclient->Position->current.x*100 );
-       ADDFLOAT   ( pak, thisclient->Position->current.y*100 );
-       ADDWORD    ( pak, 0x0000 );
-	   thisclient->client->SendPacket( &pak );
-       */
-
-       /*
-       BEGINPACKET( pak, 0x796 );
-	   ADDWORD    ( pak, thisclient->clientid );
-       ADDFLOAT   ( pak, thisclient->Position->current.x*100 );
-       ADDFLOAT   ( pak, thisclient->Position->current.y*100 );
-       ADDWORD    ( pak, 0x0000 );
-	   SendToVisible( &pak, thisclient );
-       */
-    }
 
 	return true;
 }
@@ -1144,15 +1075,6 @@ bool CWorldServer::pakStartAttack( CPlayer* thisclient, CPacket* P )
 //LMA-Shin: PVP Packet? In fact sent to tell to stop...
 bool CWorldServer::pakPvp796( CPlayer* thisclient, CPacket* P )
 {
-   /*
-   BEGINPACKET( pak, 0x796 );
-   ADDWORD    ( pak, thisclient->clientid );
-   ADDFLOAT   ( pak, thisclient->Position->current.x*100 );
-   ADDFLOAT   ( pak, thisclient->Position->current.y*100 );
-   ADDWORD    ( pak,0x0000 );
-   thisclient->client->SendPacket( &pak );
-   */
-
    BEGINPACKET( pak, 0x796 );
    ADDWORD    ( pak, thisclient->clientid );
    ADDWORD    ( pak, thisclient->Battle->target);
@@ -1163,41 +1085,6 @@ bool CWorldServer::pakPvp796( CPlayer* thisclient, CPacket* P )
 
 	return true;
 }
-/*
-// Goto next map through gate
-bool CWorldServer::pakGate( CPlayer* thisclient, CPacket* P )
-{
-    thisclient->Session->inGame = false;
-	CTeleGate* thisgate = GetTeleGateByID( GETWORD((*P), 0x00) );
-
-	float tempx=0;
-	float tempy=0;
-    UINT tempmap=0;
-    tempmap=GETWORD((*P), 0x00);
-    tempx=GETFLOAT((*P), 0x02 )/100;
-    tempy=GETFLOAT((*P), 0x06 )/100;
-    Log(MSG_INFO,"Gate activated %i, (%.2f:%.2f)",tempmap,tempx,tempy);
-
-    fPoint position;
-    UINT map = 0;
-	if( thisgate==NULL )
-    {
-		map = 61;
-		position.x = 5800.00;
-        position.y = 5200.00;
-	}
-    else
-    {
-		map = thisgate->destMap;
-		position = thisgate->dest;
-	}
-
-	Log(MSG_INFO,"Player warped to map %i (%.2f,%.2f)",map,position.x,position.y);
-
-    MapList.Index[map]->TeleportPlayer( thisclient, position );
-	return true;
-}
-*/
 
 //Drakia's telegate hacker fix - needs testing.  Comment above and uncomment below for test
 // Goto next map through gate
@@ -1608,16 +1495,6 @@ bool CWorldServer::pakNPCBuy ( CPlayer* thisclient, CPacket* P )
 			thisitem.gem = 0;
 
 			//checking money / reward points now...
-			/*
-			thisclient->items[newslot] = thisitem;
-
-			ADDBYTE  ( pak, newslot );
-			ADDDWORD ( pak, BuildItemHead( thisclient->items[newslot] ) );
-			ADDDWORD ( pak, BuildItemData( thisclient->items[newslot] ) );
-            ADDDWORD( pak, 0x00000000 );
-            ADDWORD ( pak, 0x0000 );
-            */
-
     		switch(thisitem.itemtype)
     		{
                 case 1:
@@ -2797,94 +2674,6 @@ bool CWorldServer::pakUseItem ( CPlayer* thisclient, CPacket* P )
     return true;
 }
 
-
-
-
-
-// Level UP Skill
-/*
-bool  CWorldServer::pakLevelUpSkill( CPlayer *thisclient, CPacket* P )
-{
-    WORD pos = GETWORD ((*P),0);   // number of skill. appears to be an array index
-    WORD skill = GETWORD ((*P),2); // skill id
-    if(pos >= MAX_SKILL)             //can't have more than 60 skills apparently
-    {
-        Log( MSG_HACK, "Invalid Skill id %i for %s ", pos, thisclient->CharInfo->charname );
-        return false;
-    }
-    CSkills* thisskill = GetSkillByID( skill );
-    if(thisskill==NULL)
-        return true;
-    if(thisclient->cskills[pos].id != skill - thisclient->cskills[pos].level)
-        return true;
-
-
-
-// checks made for prerequisite skills here.
-    UINT hasPreskill = 0;
-    for(int i=0;i<3;i++)
-    {
-        int preskill = thisskill->rskill[i];
-        if(thisskill->lskill[i] > 0)
-            preskill += thisskill->lskill[i] - 1;
-        if(preskill == 0)
-        {
-            hasPreskill ++; // no preskill defined in this element so give a credit then skip to the next preskill.
-            continue;
-        }
-//        Log( MSG_INFO, "[DEBUG] Checking %i / 3, preskill %i",i,preskill);
-
-   for(int skillid=0;skillid<MAX_SKILL;skillid++)
-        {
-            //Log( MSG_INFO, "[DEBUG] Skillid %i < %u",skillid,MAX_SKILL);
-            if(thisclient->cskills[skillid].id == thisskill->rskill[i] && thisclient->cskills[skillid].level >= thisskill->lskill[i])
-            //int checkskill = thisclient->cskills[skillid].id + thisclient->cskills[skillid].level -1;
-            //if(preskill == checkskill)
-            {
-                hasPreskill ++;
-                //Log( MSG_INFO, "[DEBUG] Skill matched to requirements");
-                break; // no need to carry on. Skill found
-            }
-        }
-   }
-//    Log( MSG_INFO, "[DEBUG] hasPreskill state = %i",hasPreskill);
-    if(hasPreskill != 3)
-    {
-        Log( MSG_INFO, "Prerequisite skills not all found" );
-        return true; //doesn't have the necessary prerequisite skill
-    }
-
-    // is character a high enough level?
-    if(thisskill->clevel > thisclient->Stats->Level)
-    {
-        Log( MSG_INFO, "Character level too low" );
-        return true; //not high enough level
-    }
-
-    //check that it is the next skill in the series
-    if(thisclient->cskills[pos].id != skill - thisclient->cskills[pos].level) //check that it is the next skill in the series
-    {
-        Log( MSG_INFO, "Skill Id doesn't match next in the CSkills series" );
-        return true;
-    }
-
-    if(thisclient->CharInfo->SkillPoints >= thisskill->sp)
-    {
-       thisclient->CharInfo->SkillPoints -= 1;
-       BEGINPACKET( pak, 0x7b1 );
-       ADDBYTE    ( pak, 0x00);
-       ADDWORD    ( pak, pos);
-       ADDWORD    ( pak, skill);
-       ADDWORD    ( pak, thisclient->CharInfo->SkillPoints);
-       thisclient->client->SendPacket( &pak );
-       thisclient->cskills[pos].level+=1;
-       thisclient->cskills[pos].thisskill = thisskill;
-       thisclient->SetStats( );
-    }
-    return true;
-}
-*/
-
 //LMA: Level UP Skill (new way)
 bool  CWorldServer::pakLevelUpSkill( CPlayer *thisclient, CPacket* P )
 {
@@ -3191,55 +2980,7 @@ bool CWorldServer::pakSkillAOE( CPlayer* thisclient, CPacket* P)
     if(thisskill==NULL) return true;
     if(thisskill->aoe==1)
     {
-        //Log(MSG_INFO,"[pakSkillAOE] is AOE");
-        /*Previous version:
-        if(isSkillTargetFriendly( thisskill ))
-        {
-            cout << "Friendly skill: " << thisclient->Battle->skillid << endl;
-        }
-        else
-        {
-            CMap* map = MapList.Index[thisclient->Position->Map];
-            CCharacter* character = map->GetCharInMap( thisclient->Battle->target );
-            if(character==NULL)
-            {
-               Log(MSG_INFO,"[pakSkillAOE] character not found! (%i)",thisclient->Battle->target);
-               return true;
-            }
-
-            Log(MSG_INFO,"[pakSkillAOE] start action (character found)");
-            thisclient->StartAction( character , AOE_TARGET, skillid );
-        }
-        */
-
-        //LMA 2008/09/02: new version, the target is a zone, not a monster... so we stick with aoedestiny ;)
-        /*
-        //LMA: The packet doesn't give the target, only a location :)
-        //So we try to get a monster near the coordinates we have...
-        CMonster* thismonster=LookAOEMonster(thisclient);
-        if (thismonster==NULL)
-        {
-           //Log(MSG_INFO,"[pakSkillAOE] character not found at given coordinates %.2f,%.2f",thisclient->Position->aoedestiny.x,thisclient->Position->aoedestiny.y);
-           return true;
-        }
-
-        //CCharacter* character = map->GetCharInMap( thisclient->Battle->target );
-        CMap* map = MapList.Index[thisclient->Position->Map];
-        CCharacter* character = map->GetCharInMap( thismonster->clientid);
-        if(character==NULL)
-        {
-           //Log(MSG_INFO,"[pakSkillAOE] character not found! (%i)",thismonster->clientid);
-           return true;
-        }
-
-        thisclient->StartAction( character , AOE_TARGET, skillid );
-        */
-
         thisclient->StartAction( NULL , AOE_TARGET, skillid );
-    }
-    else
-    {
-        //Log( MSG_INFO, "no aoe, skillid = %i ", thisclient->Battle->skillid);
     }
 
 
@@ -3309,17 +3050,6 @@ bool CWorldServer::pakChangeStorage( CPlayer* thisclient, CPacket* P)
             BYTE itemslot = GETBYTE((*P),1);
             if(!CheckInventorySlot( thisclient, itemslot ))
                 return false;
-
-            /*
-            //LMA: checking if item is the same we get from packet, testing itemtype and itemnum...
-            //2do: test other things too (later)
-            CItem testitem = GetItemByHeadAndData(GETDWORD((*P),2),GETDWORD((*P),6));
-            if ((testitem.itemnum!=thisclient->items[itemslot].itemnum)||(testitem.itemtype!=thisclient->items[itemslot].itemtype))
-            {
-               Log(MSG_HACK,"%s, Different object in Packet [%i:%i] and in inventory slot %i [%i:%i]",thisclient->CharInfo->charname,testitem.itemtype,testitem.itemnum,itemslot,thisclient->items[itemslot].itemtype,thisclient->items[itemslot].itemnum);
-               return false;
-            }
-            */
 
             CItem newitem = thisclient->items[itemslot];
  			//Maxxon: Deposit Fee
@@ -3455,12 +3185,6 @@ bool CWorldServer::pakChangeStorage( CPlayer* thisclient, CPacket* P)
     		ADDQWORD   ( pak, thisclient->CharInfo->Zulies );
             thisclient->client->SendPacket( &pak );
 
-            //LMA: previous code:
-            /*
-            thisclient->storageitems[newslot] = newitem;
-            thisclient->nstorageitems++;
-            */
-
             thisclient->storageitems[newslot] = newitem;
 
             //LMA: need to save the storage item...
@@ -3484,17 +3208,6 @@ bool CWorldServer::pakChangeStorage( CPlayer* thisclient, CPacket* P)
                 Log( MSG_HACK, "%s, Invalid storage slot %i from %s (from Mysql)",thisclient->CharInfo->charname, storageslot, thisclient->Session->username );
                 return false;
             }
-
-            /*
-            //LMA: checking if item is the same we get from packet, testing itemtype and itemnum...
-            //2do: test other things too (later)
-            CItem testitem = GetItemByHeadAndData(GETDWORD((*P),2),GETDWORD((*P),6));
-            if ((testitem.itemnum!=thisclient->storageitems[storageslot].itemnum)||(testitem.itemtype!=thisclient->storageitems[storageslot].itemtype))
-            {
-               Log(MSG_HACK,"%s, Different object in Packet [%i:%i] and in storage slot %i [%i:%i]",thisclient->CharInfo->charname,testitem.itemtype,testitem.itemnum,storageslot,thisclient->storageitems[storageslot].itemtype,thisclient->storageitems[storageslot].itemnum);
-               return false;
-            }
-            */
 
             //CItem newitem =  newitem = thisclient->storageitems[storageslot];
             CItem newitem = thisclient->storageitems[storageslot];
@@ -4108,127 +3821,127 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
 
             if (!ischest)
             {
-/////////////////////////////////////   start disassemble
-            BYTE src = GETBYTE((*P),3);
-            if(!CheckInventorySlot( thisclient, src))
-                return false;
-            if(thisclient->items[src].count < 1)
-                return false;
+                //start disassemble
+                BYTE src = GETBYTE((*P),3);
+                if(!CheckInventorySlot( thisclient, src))
+                    return false;
+                if(thisclient->items[src].count < 1)
+                    return false;
 
-           int k = BreakList.size();
-           for(int i=0;i<BreakList.size();i++)
-           {
-                if(thisclient->items[src].itemnum == BreakList.at(i)->itemnum && thisclient->items[src].itemtype == BreakList.at(i)->itemtype)
+               int k = BreakList.size();
+               for(int i=0;i<BreakList.size();i++)
+               {
+                    if(thisclient->items[src].itemnum == BreakList.at(i)->itemnum && thisclient->items[src].itemtype == BreakList.at(i)->itemtype)
+                    {
+                       k = i;
+                       break;
+                    }
+
+               }
+
+               bool is_failed=false;
+               if(k==BreakList.size())
+               {
+                   is_failed=true;
+               }
+
+               UINT totalprob = 0;
+                if(!is_failed)
                 {
-                   k = i;
-                   break;
+                   for(int i=0;i<BreakList.at(k)->total;i++)
+                   {
+                       totalprob += BreakList.at(k)->prob[i];
+                   }
+
                 }
 
-           }
-
-           bool is_failed=false;
-           if(k==BreakList.size())
-           {
-               is_failed=true;
-           }
-
-           UINT totalprob = 0;
-            if(!is_failed)
-            {
-               for(int i=0;i<BreakList.at(k)->total;i++)
-               {
-                   totalprob += BreakList.at(k)->prob[i];
-               }
-
-            }
-
-           if(totalprob==0)
-           {
-               is_failed=true;
-               //return false;
-           }
-
-           UINT rand = RandNumber(0,99999);
-           UINT m = 99;
-            if(!is_failed)
-            {
-               for(int i=0;i<BreakList.at(k)->total;i++)
-               {
-                   if(rand < BreakList.at(k)->prob[i])
-                       m = i;
-                   else
-                       rand -= BreakList.at(k)->prob[i];
-               }
-
-               if(m>14)
+               if(totalprob==0)
                {
                    is_failed=true;
                    //return false;
                }
 
-            }
+               UINT rand = RandNumber(0,99999);
+               UINT m = 99;
+                if(!is_failed)
+                {
+                   for(int i=0;i<BreakList.at(k)->total;i++)
+                   {
+                       if(rand < BreakList.at(k)->prob[i])
+                           m = i;
+                       else
+                           rand -= BreakList.at(k)->prob[i];
+                   }
 
-            //LMA: we have to return something, else it'll crash the client !
-            //If me return no packet, it freezes the client anyway ^_^
-            if(is_failed)
-            {
-               Log(MSG_WARNING,"Player %s tried to disassemble item (%i:%i), it's not in break list or in error!",thisclient->CharInfo->charname,thisclient->items[src].itemtype,thisclient->items[src].itemnum);
-                //let's give him a banana for his trouble ;)
-              CItem newitem;
-               newitem.itemnum = 102;
-               newitem.itemtype = 10;
-               newitem.count = 1;
-               newitem.refine = 0;
-               newitem.lifespan = 100;
-               newitem.durability = 40;
-               newitem.socketed=0;
-               newitem.appraised=0;
-               newitem.stats=0;
-               newitem.gem=0;
+                   if(m>14)
+                   {
+                       is_failed=true;
+                       //return false;
+                   }
 
-               unsigned newslot = thisclient->GetNewItemSlot(newitem);
-               if(newslot == 0xffff)
-               {
-                   //This should never happen since client is handling that.
-                   //We let the client crashes in this case ^_^
-                   return false;
-               }
+                }
 
-               if(thisclient->items[newslot].count > 0)
-               {
-                   thisclient->items[newslot].count += newitem.count;
-                   if(thisclient->items[newslot].count > 999)
-                       thisclient->items[newslot].count = 999;
-               }
-               else
-                   thisclient->items[newslot] = newitem;
+                //LMA: we have to return something, else it'll crash the client !
+                //If me return no packet, it freezes the client anyway ^_^
+                if(is_failed)
+                {
+                   Log(MSG_WARNING,"Player %s tried to disassemble item (%i:%i), it's not in break list or in error!",thisclient->CharInfo->charname,thisclient->items[src].itemtype,thisclient->items[src].itemnum);
+                    //let's give him a banana for his trouble ;)
+                  CItem newitem;
+                   newitem.itemnum = 102;
+                   newitem.itemtype = 10;
+                   newitem.count = 1;
+                   newitem.refine = 0;
+                   newitem.lifespan = 100;
+                   newitem.durability = 40;
+                   newitem.socketed=0;
+                   newitem.appraised=0;
+                   newitem.stats=0;
+                   newitem.gem=0;
 
-              thisclient->items[src].count -= 1;
-              if( thisclient->items[src].count < 1)
-                  ClearItem( thisclient->items[src] );
-              thisclient->UpdateInventory(src);
+                   unsigned newslot = thisclient->GetNewItemSlot(newitem);
+                   if(newslot == 0xffff)
+                   {
+                       //This should never happen since client is handling that.
+                       //We let the client crashes in this case ^_^
+                       return false;
+                   }
 
-              BEGINPACKET( pak, 0x7bc );
-              ADDBYTE    ( pak, 0x07 );//disassemble success
-              ADDBYTE    ( pak, 0x02 );//number of items to follow
-              ADDBYTE    ( pak, newslot );
-              ADDDWORD   ( pak, BuildItemHead( thisclient->items[newslot] ) );
-              ADDDWORD   ( pak, BuildItemData( thisclient->items[newslot] ) );
-              ADDWORD    ( pak, 0x0000);
-              ADDWORD    ( pak, 0x0000);
-              ADDWORD    ( pak, 0x0000);
-              ADDBYTE    ( pak, src );
-              ADDDWORD   ( pak, BuildItemHead( thisclient->items[src] ) );
-              ADDDWORD   ( pak, BuildItemData( thisclient->items[src] ) );
-              ADDWORD    ( pak, 0x0000);
-              ADDWORD    ( pak, 0x0000);
-              ADDWORD    ( pak, 0x0000);
-              thisclient->client->SendPacket( &pak );
-               return true;
-            }
+                   if(thisclient->items[newslot].count > 0)
+                   {
+                       thisclient->items[newslot].count += newitem.count;
+                       if(thisclient->items[newslot].count > 999)
+                           thisclient->items[newslot].count = 999;
+                   }
+                   else
+                       thisclient->items[newslot] = newitem;
 
-           UINT num = BreakList.at(k)->product[m] % 1000;
-           UINT type = int(BreakList.at(k)->product[m] / 1000);
+                  thisclient->items[src].count -= 1;
+                  if( thisclient->items[src].count < 1)
+                      ClearItem( thisclient->items[src] );
+                  thisclient->UpdateInventory(src);
+
+                  BEGINPACKET( pak, 0x7bc );
+                  ADDBYTE    ( pak, 0x07 );//disassemble success
+                  ADDBYTE    ( pak, 0x02 );//number of items to follow
+                  ADDBYTE    ( pak, newslot );
+                  ADDDWORD   ( pak, BuildItemHead( thisclient->items[newslot] ) );
+                  ADDDWORD   ( pak, BuildItemData( thisclient->items[newslot] ) );
+                  ADDWORD    ( pak, 0x0000);
+                  ADDWORD    ( pak, 0x0000);
+                  ADDWORD    ( pak, 0x0000);
+                  ADDBYTE    ( pak, src );
+                  ADDDWORD   ( pak, BuildItemHead( thisclient->items[src] ) );
+                  ADDDWORD   ( pak, BuildItemData( thisclient->items[src] ) );
+                  ADDWORD    ( pak, 0x0000);
+                  ADDWORD    ( pak, 0x0000);
+                  ADDWORD    ( pak, 0x0000);
+                  thisclient->client->SendPacket( &pak );
+                   return true;
+                }
+
+               UINT num = BreakList.at(k)->product[m] % 1000;
+               UINT type = int(BreakList.at(k)->product[m] / 1000);
 
                CItem newitem;
                newitem.itemnum = num;
@@ -4280,9 +3993,11 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
               ADDWORD    ( pak, 0x0000);
               ADDWORD    ( pak, 0x0000);
               thisclient->client->SendPacket( &pak );
+              //   end disassemble
+
               return true;
-/////////////////////////////////////    end disassemble
             }
+
             unsigned int randv = RandNumber( 1, thischest->probmax );
 
             DWORD prob = 1;
@@ -4446,13 +4161,13 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
             ADDBYTE    ( pak, material );
             ADDDWORD   ( pak, BuildItemHead( thisclient->items[material] ) );
             ADDDWORD   ( pak, BuildItemData( thisclient->items[material] ) );
-        ADDDWORD( pak, 0x00000000 );
-        ADDWORD ( pak, 0x0000 );
+            ADDDWORD( pak, 0x00000000 );
+            ADDWORD ( pak, 0x0000 );
             ADDBYTE    ( pak, item );
             ADDDWORD   ( pak, BuildItemHead( thisclient->items[item] ) );
             ADDDWORD   ( pak, BuildItemData( thisclient->items[item] ) );
-        ADDDWORD( pak, 0x00000000 );
-        ADDWORD ( pak, 0x0000 );
+            ADDDWORD( pak, 0x00000000 );
+            ADDWORD ( pak, 0x0000 );
             ADDBYTE    ( pak, 0x00 );
             ADDDWORD   ( pak, 0x002f0000 );
             ADDDWORD   ( pak, 0x00000017 );

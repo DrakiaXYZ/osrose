@@ -65,7 +65,6 @@ class CCharacter
         void UseDebuffSkill ( CCharacter* Enemy, CSkills* skill );//netwolf
         void UseBuffSkill( CCharacter* Target, CSkills* skill );
         void UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff= false );
-        void UWKill(CCharacter* Enemy);   //LMA: For Union War.
         bool UseSkill( CSkills* skill, CCharacter *Target = NULL ); //for gm command
 
         //functions
@@ -84,45 +83,45 @@ class CCharacter
         bool IsAttacking( );
 
         // virtual functions
-            // Events
-            virtual bool OnBeAttacked( CCharacter* );
-            virtual bool OnDie( );
-            virtual bool OnEnemyDie( CCharacter* );
-            virtual bool OnEnemyOnSight( void* );
-            virtual bool OnSpawn( bool );
-            virtual bool OnAlmostDie( );
-            virtual bool OnFar( );
+        // Events
+        virtual bool OnBeAttacked( CCharacter* );
+        virtual bool OnDie( );
+        virtual bool OnEnemyDie( CCharacter* );
+        virtual bool OnEnemyOnSight( void* );
+        virtual bool OnSpawn( bool );
+        virtual bool OnAlmostDie( );
+        virtual bool OnFar( );
 
-            // Functions
-            virtual CDrop* GetDrop( );
-            //virtual void AddDamage( CCharacter* enemy, long int hitpower);
-            virtual void AddDamage( CCharacter* enemy, long long hitpower);
-            virtual void UpdatePosition( bool monster_stay_still);       //LMA: changed for some monsters.
-            virtual bool UpdateValues( );
-            virtual void ReduceABC( );
-            virtual int GetEVBuff( );
-            void RefreshBuff( );
-            virtual CParty* GetParty( );
-            virtual CLAN* GetClan( );
-            virtual void reduceItemsLifeSpan( bool);
+        // Functions
+        virtual CDrop* GetDrop( );
+        //virtual void AddDamage( CCharacter* enemy, long int hitpower);
+        virtual void AddDamage( CCharacter* enemy, long long hitpower);
+        virtual void UpdatePosition( bool monster_stay_still);       //LMA: changed for some monsters.
+        virtual bool UpdateValues( );
+        virtual void ReduceABC( );
+        virtual int GetEVBuff( );
+        void RefreshBuff( );
+        virtual CParty* GetParty( );
+        virtual CLAN* GetClan( );
+        virtual void reduceItemsLifeSpan( bool);
 
-            // stats
-            virtual unsigned int GetAttackPower( );
-            virtual unsigned int GetDefense( );
-            virtual unsigned int GetDodge( );
-            virtual unsigned int GetAccury( );
-            virtual unsigned int GetMagicDefense( );
-            virtual unsigned int GetCritical( );
-            virtual unsigned int GetAttackSpeed( );
-            virtual unsigned int GetMoveSpeed( );
-            //virtual unsigned int GetMaxHP( );
-            virtual unsigned long long GetMaxHP( );
-            virtual unsigned int GetMaxMP( );
-            virtual float GetAttackDistance( );
-            virtual unsigned int GetInt( );
-            virtual unsigned getWeaponType( );
-            virtual bool AddClanPoints(unsigned int count);
-            virtual CClientSocket* getClient();
+        // stats
+        virtual unsigned int GetAttackPower( );
+        virtual unsigned int GetDefense( );
+        virtual unsigned int GetDodge( );
+        virtual unsigned int GetAccury( );
+        virtual unsigned int GetMagicDefense( );
+        virtual unsigned int GetCritical( );
+        virtual unsigned int GetAttackSpeed( );
+        virtual unsigned int GetMoveSpeed( );
+        //virtual unsigned int GetMaxHP( );
+        virtual unsigned long long GetMaxHP( );
+        virtual unsigned int GetMaxMP( );
+        virtual float GetAttackDistance( );
+        virtual unsigned int GetInt( );
+        virtual unsigned getWeaponType( );
+        virtual bool AddClanPoints(unsigned int count);
+        virtual CClientSocket* getClient();
 };
 
 #endif

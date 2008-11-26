@@ -51,9 +51,6 @@
 #define NB_MAPS 120        //Nb maps (120 maps, including bad and non existant).
 #define NB_GRIDS 72        //nb active grids
 
-//LMA: UW
-#define MAP_UW 8           //Union wars map.
-
 //LMA: LTB.
 #define LTBINDEX 0
 #define LTBKOREAN 1
@@ -183,19 +180,6 @@ class CWorldServer : public CServerSocket
     	void SendToAll( CPacket* pak );
     	void SendToAllInMap( CPacket* pak, int mapid);     //LMA: Send a message to all people in a given map
 
-    	//LMA: For Union War.
-    	void UWstones(int type=0);
-    	void KillStones();
-   	    bool CheckEnoughUW();
-    	UINT SummonNPCUW(bool kill=false,int npc_id=0);
-    	void UWOver();
-    	void UWNPCdialogs(int status);
-    	void UWWarpAttackers();
-    	void UWDecide();
-        void UWForceDelQuest(CPlayer* thisclient,int action,int questpart,int questid);
-        int UWNextTime(int remaining_time);
-        void UWForceDelAllQuest(int questid);
-
     	UINT GetNewClientID( );
     	void DisconnectAll();
     	CPlayer* GetClientByUserID( UINT userid );
@@ -214,11 +198,6 @@ class CWorldServer : public CServerSocket
         void ReturnItemMallList(CPlayer* thisclient);   //LMA: Return ItemMall List
         void TakeItemMallList(CPlayer* thisclient,int qty,int slot); //LMA: takes an item from Item Mall to player's inventory
         void RefreshFairy( );
-
-        //LMA: For Union Slaughter
-        bool CheckOkUnion();
-        bool GoUnionWar(vector<CPlayer*>  PlayerListToWarp);
-        bool WarIsOver();
 
         // PY extra stats lookup
         UINT GetExtraStats( UINT modifier );
@@ -351,7 +330,6 @@ class CWorldServer : public CServerSocket
         bool pakGMInfo(CPlayer* thisclient, char* name);
         bool pakGMNpc(CPlayer* thisclient, int npcid, int dialogid,int eventid);
         bool pakGMUnion(CPlayer* thisclient, char* name, int which_union);      //LMA: UW.
-        bool pakGMUnionMode(CPlayer* thisclient, char* namemode, int value_on_off, int value_begin, int value_duration,int value_nb_players, int value_loop, int value_loop_delay);  //LMA: for UW and US
         bool pakGMUnionPoints(CPlayer* thisclient, char* name, int nb_points);    //LMA: giving faction points
       	bool pakGMGotomap( CPlayer* thisclient, int map );
       	bool pakGMMute( CPlayer* thisclient, char* name, int time);

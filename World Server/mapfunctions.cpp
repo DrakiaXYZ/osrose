@@ -266,21 +266,6 @@ void CMap::RespawnMonster( )
       if (rtime < thisgroup->respawntime*CLOCKS_PER_SEC || thisgroup->active >= thisgroup->limit)
         continue;
 
-      //LMA: We don't update a group if it's not the night and those monsters come only at night...
-      /*
-      if(thisgroup->daynight==2)
-      {
-        if (last_map!=thisgroup->map)
-        {
-            CMap* map = GServer->MapList.Index[thisgroup->map];
-            last_map=map->id;
-            is_night=map->IsNight();
-        }
-
-        if(!is_night)
-            continue;
-      }
-      */
       //LMA: handling day and night this time.
       if(thisgroup->daynight!=0)
       {

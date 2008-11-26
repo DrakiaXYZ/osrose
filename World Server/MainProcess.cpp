@@ -26,10 +26,6 @@ PVOID MapProcess( PVOID TS )
     bool ok_cont=false;
     UINT loopcount=0;
     clock_t time_skill=0;
-    time_t next_time=0;
-    time_t next_timeuw=0;
-    int no_dial[2]={5,1};
-
 
     while(GServer->ServerOnline)
     {

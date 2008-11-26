@@ -1,3 +1,24 @@
+/*
+    Rose Online Server Emulator
+    Copyright (C) 2006,2007 OSRose Team http://www.dev-osrose.com
+
+    This program is free software; you can redistribute it and/or
+    modify it under the terms of the GNU General Public License
+    as published by the Free Software Foundation; either version 2
+    of the License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+    depeloped with Main erose/hrose source server + some change from the original eich source
+*/
+
 #ifdef _WIN32
     #include <conio.h>
     #include <windows.h>
@@ -40,7 +61,7 @@ void textcolor(int color)
     __FOREGROUND = color;
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color + (__BACKGROUND << 4));
     #else
-    
+
     #endif
 }
 
@@ -70,28 +91,28 @@ void Log( enum msg_type flag, char *Format, ... )
 			textcolor(WHITE);
 			vprintf( Format, ap );
 			break;
-		case MSG_STATUS: 
+		case MSG_STATUS:
 			textcolor(GREEN);
 			printf("[STATUS]: ");
 			break;
-		case MSG_SQL: 
+		case MSG_SQL:
 			textcolor(CYAN);
 			printf("[SQL]: ");
 			break;
-		case MSG_INFO: 
+		case MSG_INFO:
 			textcolor(LIGHTGREEN);
 			printf("[INFO]: ");
 			break;
-		case MSG_NOTICE: 
+		case MSG_NOTICE:
 			textcolor(LIGHTCYAN);
 			printf("[NOTICE]: ");
 			break;
-		case MSG_WARNING: 
+		case MSG_WARNING:
 			textcolor(YELLOW);
 			printf("[WARNING]: ");
 			break;
-		case MSG_DEBUG: 
-			textcolor(LIGHTBLUE); 
+		case MSG_DEBUG:
+			textcolor(LIGHTBLUE);
 			printf("[DEBUG]: ");
 			break;
 		case MSG_ERROR:
@@ -113,12 +134,12 @@ void Log( enum msg_type flag, char *Format, ... )
 		case MSG_GMACTION:
 			textcolor(MAGENTA);
 			printf("[GM ACTION]: ");
-			break;	   
+			break;
         case MSG_START:
             textcolor(MAGENTA);
             vprintf( Format, ap );
             printf( "\r\n" );
-            break;                    								
+            break;
 	   }
     }
     else
@@ -126,7 +147,7 @@ void Log( enum msg_type flag, char *Format, ... )
         if(flag==MSG_CONSOLE)
         {
 			textcolor(LIGHTRED);
-			printf("[CONSOLE]: ");            
+			printf("[CONSOLE]: ");
         }
     }
 	if(PRINT_LOG || flag==MSG_CONSOLE)
@@ -140,23 +161,23 @@ void Log( enum msg_type flag, char *Format, ... )
     switch(LOG_THISSERVER)
     {
         case LOG_LOGIN_SERVER:
-            fh = fopen(LOG_DIRECTORY LOG_FILENAME_LOGINFILE, "a+" );     
+            fh = fopen(LOG_DIRECTORY LOG_FILENAME_LOGINFILE, "a+" );
         break;
         case LOG_CHARACTER_SERVER:
-            fh = fopen(LOG_DIRECTORY LOG_FILENAME_CHARFILE, "a+" );                 
+            fh = fopen(LOG_DIRECTORY LOG_FILENAME_CHARFILE, "a+" );
         break;
         case LOG_WORLD_SERVER:
-            fh = fopen(LOG_DIRECTORY LOG_FILENAME_WORLDFILE, "a+" );                 
+            fh = fopen(LOG_DIRECTORY LOG_FILENAME_WORLDFILE, "a+" );
         break;
         case LOG_SAME_FILE:
-            fh = fopen(LOG_DIRECTORY LOG_DEFAULT_FILE, "a+" );                 
-        break;                                                
+            fh = fopen(LOG_DIRECTORY LOG_DEFAULT_FILE, "a+" );
+        break;
     }
     if(flag==MSG_QUERY)
     {
         if(fh!=NULL)
             fclose(fh);
-        fh = fopen(LOG_DIRECTORY "queries.txt", "a+" ); 
+        fh = fopen(LOG_DIRECTORY "queries.txt", "a+" );
     }
     if ( fh != NULL )
     {

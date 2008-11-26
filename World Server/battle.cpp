@@ -411,19 +411,6 @@ void CCharacter::NormalAttack( CCharacter* Enemy )
     ADDDWORD   ( pak, hitpower );
     if(Enemy->IsDead())
     {
-        //LMA: Union Wars
-        if (IsPlayer()&&Enemy->IsPlayer()&&(Position->Map==8||Position->Map==9))
-        {
-            Log(MSG_INFO,"UWKILL begin normal atk");
-            UWKill(Enemy);
-            ClearBattle( Battle );
-        }
-        else
-        {
-            Log(MSG_INFO,"Not for UWKILL, killer isplayer? %i, killed? %i, map? %i",IsPlayer(),Enemy->IsPlayer(),Position->Map==MAP_UW);
-        }
-        //
-
         Log(MSG_INFO,"Someone died.");
 
         CDrop* thisdrop = NULL;
@@ -738,15 +725,6 @@ bool CCharacter::AoeSkill( CSkills* skill, CCharacter* Enemy )
     {
         if(!Enemy->IsDead( ))
         {
-            //LMA: Union Wars
-            if (IsPlayer()&&Enemy->IsPlayer()&&(Position->Map==8||Position->Map==9))
-            {
-                Log(MSG_INFO,"UWKill begin for AOE skill");
-                UWKill(Enemy);
-                ClearBattle( Battle );
-            }
-            //
-
             Battle->atktarget = Battle->target;
             Battle->atktype = NORMAL_ATTACK;
             Battle->skilltarget = 0;
@@ -997,15 +975,6 @@ void CCharacter::UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff )
     if(Enemy->IsDead())
     {
         Log(MSG_INFO,"Ennemy is dead");
-        //LMA: Union Wars
-        if (IsPlayer()&&Enemy->IsPlayer()&&(Position->Map==8||Position->Map==9))
-        {
-            Log(MSG_INFO,"UWKILL begins for atkskill");
-            UWKill(Enemy);
-            ClearBattle( Battle );
-        }
-        //
-
         CDrop* thisdrop = NULL;
         ADDDWORD   ( pak, 16 );
         if(!Enemy->IsSummon( ) && !Enemy->IsPlayer( ))
@@ -1127,222 +1096,6 @@ void CCharacter::UseDebuffSkill( CCharacter* Enemy, CSkills* skill )
     ADDWORD    ( pak, 1);
     GServer->SendToVisible( &pak, (CCharacter*)this );
 }
-
-//LMA: Union war kill and Slaughter kill
-void CCharacter::UWKill(CCharacter* Enemy)
-{
-    CMap* map = GServer->MapList.Index[Position->Map];
-    if (!map->is_union_fired&&!map->is_uw_fired)
-    {
-       Log(MSG_INFO,"[UWKILL] Not in the good map %i or not union fired %i or not slaughter fired %i",Position->Map,map->is_union_fired,map->is_uw_fired);
-       return;
-    }
-
-    Log(MSG_INFO,"[UWKILL] client ID killer %i, killed %i",clientid,Enemy->clientid);
-
-    //CPlayer* plkiller=GServer->GetClientByID(clientid,Position->Map);
-    //CPlayer* plkilled=GServer->GetClientByID(Enemy->clientid,Enemy->Position->Map);
-    CPlayer* plkiller=(CPlayer*) this;
-    CPlayer* plkilled=(CPlayer*) Enemy;
-
-    if (plkiller==NULL||plkilled==NULL)
-    {
-       Log(MSG_INFO,"[UWKILL] we've not found either killer %i or killed %i",clientid,Enemy->clientid);
-       return;
-    }
-    else
-    {
-        Log(MSG_INFO,"[UWKILL] it seems player %s (%i) killed player %s (%i)",plkiller->CharInfo->charname,clientid,plkilled->CharInfo->charname,Enemy->clientid);
-    }
-
-    //UW case
-    if (map->is_uw_fired)
-    {
-        bool is_ally=false;
-        switch (plkiller->CharInfo->unionid)
-        {
-           case 1:
-           case 2:
-           case 3:
-                if(plkilled->CharInfo->unionid==1||plkilled->CharInfo->unionid==2||plkilled->CharInfo->unionid==3)
-                  is_ally=true;
-                break;
-
-           case 4:
-           case 5:
-           case 6:
-           case 7:
-                if(plkilled->CharInfo->unionid==4||plkilled->CharInfo->unionid==5||plkilled->CharInfo->unionid==6||plkilled->CharInfo->unionid==7)
-                  is_ally=true;
-                break;
-
-           default:
-               break;
-        }
-
-        if (is_ally)
-        {
-           Log(MSG_INFO,"Too bad, players in same union or allies, %i, %i",plkiller->CharInfo->unionid,plkilled->CharInfo->unionid);
-           return;
-        }
-
-        //We give money to the killer ;)
-        UINT temp_fame=0;
-        temp_fame=GServer->GetColorExp(plkiller->Stats->Level,plkilled->Stats->Level,100000);
-        //Ok, let's send PM now :)
-        char msg[200];
-        sprintf(msg, "You've killed %s !",plkilled->CharInfo->charname);
-        GServer->SendPM(plkiller,msg);
-        sprintf(msg, "You've been killed by %s !",plkiller->CharInfo->charname);
-        GServer->SendPM(plkilled, msg);
-        plkiller->CharInfo->Zulies += temp_fame;
-        BEGINPACKET(pak, 0x7a7);
-        ADDWORD(pak, plkiller->clientid);
-        ADDWORD(pak, 0);
-        ADDBYTE(pak, 0);
-        ADDDWORD(pak, 0xccccccdf);
-        ADDDWORD(pak, temp_fame);
-        ADDDWORD( pak, 0xcccccccc );
-        ADDWORD ( pak, 0xcccc );
-        plkiller->client->SendPacket(&pak);
-        Log(MSG_INFO,"We gave %i Z to %s",temp_fame,plkiller->CharInfo->charname);
-
-
-       return;
-    }
-
-    //Union Slaughter.
-    //only counts if he killed someone from another side than his ;)
-    if (plkiller->CharInfo->unionid!=plkilled->CharInfo->unionid)
-    {
-        Log(MSG_INFO,"[UWKILL] too bad,they were in same union");
-        return;
-    }
-
-    UINT temp_fame=0;
-    /*
-    plkiller->CharInfo->union01++;  //Nb kills (total)
-    plkiller->CharInfo->union02++;  //Nb kills (this session)
-    plkilled->CharInfo->union03++;  //Nb beeing killed (total)
-    plkilled->CharInfo->union04++;  //Nb beeing killed (this session)
-    */
-
-    //Log(MSG_INFO,"Plkiller stats: %i,%i,%i",plkiller->CharInfo->union01,plkiller->CharInfo->union02,plkiller->CharInfo->union05);
-
-    //Fame if level difference is not far (not really cool to kill a noob).
-    temp_fame=GServer->GetColorExp(plkiller->Stats->Level,plkilled->Stats->Level,100);
-
-    //This one can't be updated :(
-    //plkiller->CharInfo->unionfame=temp_fame; //fame...
-    //plkiller->CharInfo->union05+=temp_fame;  //Nb kills (money?)
-
-       int new_amount=0;
-        int new_offset=80+plkiller->CharInfo->unionid;
-        switch(new_offset)
-        {
-            case 81:
-            {
-                plkiller->CharInfo->union01+=20;
-                new_amount=plkiller->CharInfo->union01;
-            }
-            break;
-            case 82:
-            {
-                plkiller->CharInfo->union02+=20;
-                new_amount=plkiller->CharInfo->union02;
-            }
-            break;
-            case 83:
-            {
-                plkiller->CharInfo->union03+=20;
-                new_amount=plkiller->CharInfo->union03;
-            }
-            break;
-            case 84:
-            {
-                plkiller->CharInfo->union04+=20;
-                new_amount=plkiller->CharInfo->union04;
-            }
-            break;
-            case 85:
-            {
-                plkiller->CharInfo->union05+=20;
-                new_amount=plkiller->CharInfo->union05;
-            }
-            break;
-        }
-
-        BEGINPACKET( pak, 0x721 );
-        ADDWORD( pak, new_offset );
-        ADDWORD( pak, new_amount );
-        ADDWORD( pak, 0x0000 );
-        plkiller->client->SendPacket( &pak );
-        RESETPACKET( pak, 0x730 );
-        ADDWORD    ( pak, 0x0005 );
-        ADDDWORD   ( pak, 0x40b3a24d );
-        plkiller->client->SendPacket( &pak );
-
-    //let's update stats.
-    /*
-    int unionvalues[5];
-    unionvalues[0]=plkiller->CharInfo->union01;
-    unionvalues[1]=plkiller->CharInfo->union02;
-    unionvalues[2]=plkiller->CharInfo->union03;
-    unionvalues[3]=plkiller->CharInfo->union04;
-    unionvalues[4]=plkiller->CharInfo->union05;
-
-    for (int k=0;k<5;k++)
-    {
-         int key=81+k;
-         //let's update values "live" ;)
-        BEGINPACKET( pak, 0x721 );
-        ADDWORD( pak, key );
-        ADDWORD( pak, unionvalues[k] );
-        ADDWORD( pak, 0x0000 );
-        plkiller->client->SendPacket( &pak );
-        RESETPACKET( pak, 0x730 );
-        ADDWORD    ( pak, 0x0005 );
-        ADDDWORD   ( pak, 0x40b3a24d );
-        plkiller->client->SendPacket( &pak );
-    }
-    */
-    /*
-    unionvalues[0]=plkilled->CharInfo->union01;
-    unionvalues[1]=plkilled->CharInfo->union02;
-    unionvalues[2]=plkilled->CharInfo->union03;
-    unionvalues[3]=plkilled->CharInfo->union04;
-    unionvalues[4]=plkilled->CharInfo->union05;
-
-    for (int k=0;k<5;k++)
-    {
-         int key=81+k;
-         //let's update values "live" ;)
-        BEGINPACKET( pak, 0x721 );
-        ADDWORD( pak, key );
-        ADDWORD( pak, unionvalues[k] );
-        ADDWORD( pak, 0x0000 );
-        plkilled->client->SendPacket( &pak );
-        RESETPACKET( pak, 0x730 );
-        ADDWORD    ( pak, 0x0005 );
-        ADDDWORD   ( pak, 0x40b3a24d );
-        plkilled->client->SendPacket( &pak );
-    }
-    */
-
-    //Ok, let's send PM now :)
-    char msg[200];
-    sprintf(msg, "You've killed %s !",plkilled->CharInfo->charname);
-    GServer->SendPM(plkiller,msg);
-    sprintf(msg, "You've been killed by %s !",plkiller->CharInfo->charname);
-    GServer->SendPM(plkilled, msg);
-
-    //let's update stats for the map session :)
-    map->nb_kills[plkiller->CharInfo->unionid-1]++;
-    map->nb_killed[plkilled->CharInfo->unionid-1]++;
-
-  return;
-}
-
 
 // Use a skill (gm command)
 bool CCharacter::UseSkill( CSkills* skill, CCharacter *Target )

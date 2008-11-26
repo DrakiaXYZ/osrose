@@ -861,7 +861,6 @@ unsigned int CPlayer::GetAttackPower( )
                             if( cskills[i].thisskill->value1[j] > 0 )
                             {
                                 attack += cskills[i].thisskill->value1[j];
-                                Log(MSG_INFO,"Attack Skill passive + %i from slot %i skill %i",cskills[i].thisskill->value1[j],i,cskills[i].id);
                             }
                         }
                     }
@@ -2352,7 +2351,6 @@ void CPlayer::SetStats( )
     Stats->MaxHP = GetMaxHP( );
     Stats->MaxMP = GetMaxMP( );
     Stats->Attack_Power = GetAttackPower( );
-    Log(MSG_INFO,"Attack power %u",Stats->Attack_Power);
     Stats->Defense = GetDefense( );
     Stats->Critical = GetCritical( );
     Stats->Move_Speed = GetMoveSpeed( );

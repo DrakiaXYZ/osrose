@@ -41,6 +41,7 @@ int STBStoreData( char* filename, CSTBData* data )
 
 void STBFreeData( CSTBData* data )
 {
+    //LMA: test to avoid stupid crash id STB not found.
     if(data->rowcount==0)
         return;
 	delete [] data->rows[0];
