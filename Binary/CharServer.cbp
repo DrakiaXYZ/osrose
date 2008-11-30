@@ -15,10 +15,13 @@
 				</Compiler>
 			</Target>
 		</Build>
+		<Compiler>
+			<Add option="-g" />
+		</Compiler>
 		<Linker>
-			<Add library="..\..\codeblocks\mingw\w32api-3.6\lib\libws2_32.a" />
-			<Add library="..\..\codeblocks\plugins\lib\libmysql.a" />
-			<Add library="..\..\codeblocks\plugins\lib\libpthreadGC2.a" />
+			<Add library="mysql" />
+			<Add library="pthreadGC" />
+			<Add library="ws2_32" />
 		</Linker>
 		<Unit filename="..\Char Server\charclient.cpp" />
 		<Unit filename="..\Char Server\charpackets.cpp" />

@@ -16,9 +16,9 @@
 			<Add option="-g" />
 		</Compiler>
 		<Linker>
-			<Add library="..\..\CBNB5208\plugins\lib\libpthreadGC.a" />
-			<Add library="..\..\CBNB5208\plugins\lib\libmysql.a" />
-			<Add library="..\..\..\..\..\mingw\lib\libws2_32.a" />
+			<Add library="mysql" />
+			<Add library="pthreadGC" />
+			<Add library="ws2_32" />
 		</Linker>
 		<Unit filename="..\Common\SocketBase.cpp" />
 		<Unit filename="..\Common\SocketClient.cpp" />
