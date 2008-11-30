@@ -2327,7 +2327,7 @@ bool CWorldServer::LoadConfig( )
         refine_chance, rare_refine, kill_on_fail, player_damage, monster_damage, player_acc, monster_acc, \
         pvp_acc, skill_damage, maxlevel, drop_type, savetime, partygap, maxstat, cfmode, autosave, mapdelay, \
         visualdelay, worlddelay, fairymode, fairystay, fairywait, fairytestmode, osrosever, testgrid, jrose, \
-        is_pegasus FROM list_config");
+        is_pegasus, monmax FROM list_config");
 
     if(result==NULL)
     {
@@ -2381,6 +2381,7 @@ bool CWorldServer::LoadConfig( )
        GServer->Config.testgrid = atoi(row[30]);
        GServer->Config.jrose = atoi(row[31]);
        GServer->Config.is_pegasus = atoi(row[32]);
+       GServer->Config.monmax = atoi(row[33]);
     }
 
     //LMA: jRose.

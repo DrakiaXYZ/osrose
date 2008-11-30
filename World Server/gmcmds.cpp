@@ -694,6 +694,7 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
 	                    return true;
 		if ((tmp = strtok(NULL, " "))==NULL) return true; unsigned montype=atoi(tmp);
 		if ((tmp = strtok(NULL, " "))==NULL) return true; unsigned moncount=atoi(tmp);
+        if (moncount > Config.monmax) moncount = Config.monmax; //max monsters from config
 		Log( MSG_GMACTION, " %s : /mon %i,%i" , thisclient->CharInfo->charname, montype, moncount);
 		return pakGMMon( thisclient, montype, moncount );
 	}
@@ -2173,8 +2174,8 @@ else if (strcmp(command, "give2")==0)
 	    Log( MSG_GMACTION, " mSpeedModif changed to %i by %s" , mSpeedModif, thisclient->CharInfo->charname);
 	    return pakGMChangeMSpeedModif(thisclient, mSpeedModif);
 	}
-	// buff - debuff by Drakia
-    else if (strcmp(command, "buff")==0)
+	// buff - debuff by Drakia (buff commented out for now)
+/*    else if (strcmp(command, "buff")==0)
     {
         if(Config.Command_Buff > thisclient->Session->accesslevel)
 //        if (thisclient->Session->accesslevel < 300)
@@ -2187,7 +2188,7 @@ else if (strcmp(command, "give2")==0)
         Log( MSG_GMACTION, "buff : character [ %s ] Strength [ %d ]", thisclient->CharInfo->charname, strength);
         pakGMBuff(thisclient, strength);
         return true;
-     }
+     } */
      else if ( strcmp(command, "debuff")==0)
      {
         if(Config.Command_Debuff > thisclient->Session->accesslevel)

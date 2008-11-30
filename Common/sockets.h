@@ -202,6 +202,7 @@ struct CROSEServerConfig
     char* osRoseVer ; //Revision of server
     int testgrid; //LMA: maps, testing grids...
     int jrose; //LMA: for handling jRose (163)
+    int monmax; //for max monster gm spawning
 
     //LMA: Pegasus
     int is_pegasus; //LMA: if we use Pegasus client.
