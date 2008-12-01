@@ -54,6 +54,11 @@ void CWorldServer::ReadAIP(strings path, dword index)
 						CAip::SAipDatum* data = new CAip::SAipDatum();
 						data->size = fh->Get<dword>();
 						data->opcode = fh->Get<dword>() - 0x04000001;
+
+						//LMA test.
+						if (data->opcode==24)
+                            Log(MSG_INFO,"%s has a cdt %i",path,data->opcode);
+
 						data->data = new byte[data->size - 8];
 						fh->Read(data->data, data->size - 8, 1);
 						script->Conditions[k] = data;
@@ -73,6 +78,11 @@ void CWorldServer::ReadAIP(strings path, dword index)
 						CAip::SAipDatum* data = new CAip::SAipDatum();
 						data->size = fh->Get<dword>();
 						data->opcode = fh->Get<dword>() - 0x0B000001;
+
+						//LMA test.
+						if (data->opcode==28)
+                            Log(MSG_INFO,"%s has an action %i",path,data->opcode);
+
 						data->data = new byte[data->size - 8];
 						fh->Read(data->data, data->size - 8, 1);
 						script->Actions[k] = data;

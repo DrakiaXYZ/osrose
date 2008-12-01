@@ -5732,6 +5732,7 @@ bool CWorldServer::pakGMAllSkill(CPlayer* thisclient, char* name)
 
     if(is_ok)
     {
+        thisclient->AttrAllSkills();
         thisclient->saveskills();
         thisclient->ResetSkillOffset();
     }

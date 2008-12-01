@@ -125,6 +125,9 @@ unsigned int CPlayer::GetAccury( )
         if(cskills[i].id==0&&i>=120)
             break;
 
+        if(cskills[i].thisskill==NULL)
+            continue;
+
         if( cskills[i].thisskill->type == 15 ) //Pasive
         {
             for(UINT j=0;j<3;j++ )
@@ -219,6 +222,9 @@ unsigned int CPlayer::GetCritical( )
 
         if(cskills[i].id==0&&i>=120)
             break;
+
+        if(cskills[i].thisskill==NULL)
+            continue;
 
     	if( cskills[i].thisskill->type == 15 ) //Pasive
         {   // Passive skill fixed by tomiz
@@ -425,6 +431,9 @@ unsigned int CPlayer::GetAttackPower( )
                 if(cskills[i].id==0&&i>=120)
                     break;
 
+                if(cskills[i].thisskill==NULL)
+                    continue;
+
                 if( cskills[i].thisskill->type == 15 ) //Pasive
                 {
                     for( UINT j=0;j<3;j++ )
@@ -466,6 +475,9 @@ unsigned int CPlayer::GetAttackPower( )
                 if(cskills[i].id==0&&i>=120)
                     break;
 
+                if(cskills[i].thisskill==NULL)
+                    continue;
+
                 if( cskills[i].thisskill->type == 15 ) //Pasive
                 {
                     for( UINT j=0;j<3;j++ )
@@ -506,6 +518,9 @@ unsigned int CPlayer::GetAttackPower( )
 
                 if(cskills[i].id==0&&i>=120)
                     break;
+
+                if(cskills[i].thisskill==NULL)
+                    continue;
 
                 if( cskills[i].thisskill->type == 15 ) //Pasive
                 {
@@ -549,6 +564,9 @@ unsigned int CPlayer::GetAttackPower( )
                 if(cskills[i].id==0&&i>=120)
                     break;
 
+                if(cskills[i].thisskill==NULL)
+                    continue;
+
                 if( cskills[i].thisskill->type == 15 ) //Pasive
                 {
                     for( UINT j=0;j<3;j++ )
@@ -590,6 +608,9 @@ unsigned int CPlayer::GetAttackPower( )
 
             if(cskills[i].id==0&&i>=120)
                 break;
+
+            if(cskills[i].thisskill==NULL)
+                continue;
 
                 if( cskills[i].thisskill->type == 15 ) //Pasive
                 {
@@ -636,6 +657,9 @@ unsigned int CPlayer::GetAttackPower( )
                 if(cskills[i].id==0&&i>=120)
                     break;
 
+                if(cskills[i].thisskill==NULL)
+                    continue;
+
                 if( cskills[i].thisskill->type == 15 ) //Pasive
                 {
                     for( UINT j=0;j<3;j++ )
@@ -680,6 +704,9 @@ unsigned int CPlayer::GetAttackPower( )
 
                 if(cskills[i].id==0&&i>=120)
                     break;
+
+                if(cskills[i].thisskill==NULL)
+                    continue;
 
                 if( cskills[i].thisskill->type == 15 ) //Pasive
                 {
@@ -727,6 +754,9 @@ unsigned int CPlayer::GetAttackPower( )
                 if(cskills[i].id==0&&i>=120)
                     break;
 
+                if(cskills[i].thisskill==NULL)
+                    continue;
+
                 if( cskills[i].thisskill->type == 15 ) //Pasive
                 {
                     for( UINT j=0;j<3;j++ )
@@ -767,6 +797,9 @@ unsigned int CPlayer::GetAttackPower( )
 
                 if(cskills[i].id==0&&i>=120)
                     break;
+
+                if(cskills[i].thisskill==NULL)
+                    continue;
 
                 if( cskills[i].thisskill->type == 15 ) //Pasive
                 {
@@ -809,6 +842,9 @@ unsigned int CPlayer::GetAttackPower( )
                 if(cskills[i].id==0&&i>=120)
                     break;
 
+                if(cskills[i].thisskill==NULL)
+                    continue;
+
                 if( cskills[i].thisskill->type == 15 ) //Pasive
                 {
                     for( UINT j=0;j<3;j++ )
@@ -850,6 +886,9 @@ unsigned int CPlayer::GetAttackPower( )
                 if(cskills[i].id==0&&i>=120)
                     break;
 
+                if(cskills[i].thisskill==NULL)
+                    continue;
+
                 if( cskills[i].thisskill->type == 15 ) //Pasive
                 {
                     for( UINT j=0;j<3;j++ )
@@ -890,6 +929,9 @@ unsigned int CPlayer::GetAttackPower( )
 
                 if(cskills[i].id==0&&i>=120)
                     break;
+
+                if(cskills[i].thisskill==NULL)
+                    continue;
 
                 if( cskills[i].thisskill->type == 15 ) //Pasive
                 {
@@ -1028,6 +1070,9 @@ unsigned int CPlayer::GetDefense( )
             if(cskills[i].id==0&&i>=120)
                 break;
 
+            if(cskills[i].thisskill==NULL)
+                continue;
+
             if( cskills[i].thisskill->type == 15 ) //Pasive
             {
                 for( UINT j=0;j<3;j++ )
@@ -1063,6 +1108,9 @@ unsigned int CPlayer::GetDefense( )
 
         if(cskills[i].id==0&&i>=120)
             break;
+
+        if(cskills[i].thisskill==NULL)
+            continue;
 
         if( cskills[i].thisskill->type == 15 ) //Pasive
         {
@@ -1190,6 +1238,9 @@ unsigned int CPlayer::GetAttackSpeed( )
                 if(cskills[i].id==0&&i>=120)
                     break;
 
+                if(cskills[i].thisskill==NULL)
+                    continue;
+
                 if( cskills[i].thisskill->type == 15 ) //Pasive
                 {
                     for( UINT j=0;j<3;j++ )
@@ -1228,6 +1279,9 @@ unsigned int CPlayer::GetAttackSpeed( )
 
                 if(cskills[i].id==0&&i>=120)
                     break;
+
+                if(cskills[i].thisskill==NULL)
+                    continue;
 
                 if( cskills[i].thisskill->type == 15 ) //Pasive
                 {
@@ -1268,6 +1322,9 @@ unsigned int CPlayer::GetAttackSpeed( )
                 if(cskills[i].id==0&&i>=120)
                     break;
 
+                if(cskills[i].thisskill==NULL)
+                    continue;
+
                 if( cskills[i].thisskill->type == 15 ) //Pasive
                 {
                     for( UINT j=0;j<3;j++ )
@@ -1306,6 +1363,9 @@ unsigned int CPlayer::GetAttackSpeed( )
                 if(cskills[i].id==0&&i>=120)
                     break;
 
+                if(cskills[i].thisskill==NULL)
+                    continue;
+
                 if( cskills[i].thisskill->type == 15 ) //Pasive
                 {
                     for( UINT j=0;j<3;j++ )
@@ -1343,6 +1403,9 @@ unsigned int CPlayer::GetAttackSpeed( )
 
                 if(cskills[i].id==0&&i>=120)
                     break;
+
+                if(cskills[i].thisskill==NULL)
+                    continue;
 
                 if( cskills[i].thisskill->type == 15 ) //Pasive
                 {
@@ -1516,6 +1579,9 @@ unsigned int CPlayer::GetMoveSpeed( )
                 if(cskills[i].id==0&&i>=120)
                     break;
 
+                if(cskills[i].thisskill==NULL)
+                    continue;
+
                 if( cskills[i].thisskill->type == 15 ) //Pasive
                 {
                     for( UINT j=0;j<3;j++ )
@@ -1626,6 +1692,9 @@ unsigned long long CPlayer::GetMaxHP( )
 
         if(cskills[i].id==0&&i>=120)
             break;
+
+        if(cskills[i].thisskill==NULL)
+            continue;
 
         if( cskills[i].thisskill->type == 15 ) //Pasive
         {
@@ -1765,6 +1834,9 @@ unsigned int CPlayer::GetMaxMP( )
         if(cskills[i].id==0&&i>=120)
             break;
 
+        if(cskills[i].thisskill==NULL)
+            continue;
+
         if( cskills[i].thisskill->type == 15 ) //Pasive
         {
             for(UINT j=0;j<3;j++ )
@@ -1862,6 +1934,9 @@ unsigned int CPlayer::GetHPRegenAmount( )
         if(cskills[i].id==0&&i>=120)
             break;
 
+        if(cskills[i].thisskill==NULL)
+            continue;
+
         if( cskills[i].thisskill->type == 15 ) //Pasive
         {
             for(UINT j=0;j<3;j++ )
@@ -1952,6 +2027,9 @@ unsigned int CPlayer::GetMPRegenAmount( )
         if(cskills[i].id==0&&i>=120)
             break;
 
+        if(cskills[i].thisskill==NULL)
+            continue;
+
         if( cskills[i].thisskill->type == 15 ) //Pasive
         {
             for(UINT j=0;j<3;j++ )
@@ -2038,6 +2116,9 @@ unsigned int CPlayer::GetMaxWeight( )
 
         if(cskills[i].id==0&&i>=120)
             break;
+
+        if(cskills[i].thisskill==NULL)
+            continue;
 
         if( cskills[i].thisskill->type == 15 ) //Pasive
         {
@@ -2142,6 +2223,9 @@ unsigned int CPlayer::GetMPReduction( )
         if(cskills[i].id==0&&i>=120)
             break;
 
+        if(cskills[i].thisskill==NULL)
+            continue;
+
         if( cskills[i].thisskill->type == 15 ) //Pasive
         {
             for(UINT j=0;j<3;j++ )
@@ -2208,6 +2292,9 @@ unsigned int CPlayer::GetMaxSummonGauge( )
 
         if(cskills[i].id==0&&i>=120)
             break;
+
+        if(cskills[i].thisskill==NULL)
+            continue;
 
         if( cskills[i].thisskill->type == 15 ) //Pasive
         {

@@ -968,4 +968,23 @@ void CPlayer::ResetSkillOffset()
     return;
 }
 
+//LMA: searchs all the skills for a player (to be used after allskill gm command for example).
+void CPlayer::AttrAllSkills()
+{
+    for (int k=0;k<MAX_ALL_SKILL;k++)
+    {
+        if(cskills[k].id==0)
+            continue;
 
+        cskills[k].thisskill = GServer->GetSkillByID( cskills[k].id+cskills[k].level-1 );
+        if(cskills[k].thisskill==NULL)
+        {
+            cskills[k].id=0;
+            cskills[k].level=1;
+        }
+
+    }
+
+
+    return;
+}

@@ -729,7 +729,8 @@ void CMonster::DoAi(int ainumber,char type)//ainumber is monster->AI type is add
     //LMA: halloween debug (Odelo).
     bool lma_debug=false;
     int nb_turns=0;
-    if(ainumber==1112)
+    //if(ainumber>=1088||ainumber<=1114)
+    if(ainumber>=1113||ainumber<=1114)
     {
         lma_debug=true;
     }
@@ -741,7 +742,7 @@ void CMonster::DoAi(int ainumber,char type)//ainumber is monster->AI type is add
         {
             nb_turns++;
             if (lma_debug)
-                Log(MSG_INFO,"BEGIN CDT Turn %i",nb_turns);
+                Log(MSG_INFO,"BEGIN%i CDT Turn %i",ainumber,nb_turns);
 
             script = GServer->AipList.at(j);
             /*
@@ -750,8 +751,8 @@ void CMonster::DoAi(int ainumber,char type)//ainumber is monster->AI type is add
             */
             if (lma_debug)
             {
-                Log(MSG_DEBUG, "DoAI1116 script %i, Record count = %i",script->AipID,script->recordcount[type]);
-                Log(MSG_DEBUG, "DoAI1116 aiCondition type: %i AI index: %i condition count %i", type, aiindex, script->ConditionCount);
+                Log(MSG_DEBUG, "DoAI%i script %i, Record count = %i",ainumber,script->AipID,script->recordcount[type]);
+                Log(MSG_DEBUG, "DoAI%i aiCondition type: %i AI index: %i condition count %i",ainumber,type, aiindex, script->ConditionCount);
             }
 
             int success = AI_SUCCESS; //needs to be AI_SUCCESS otherwise would not perform conditionless actions
@@ -767,25 +768,25 @@ void CMonster::DoAi(int ainumber,char type)//ainumber is monster->AI type is add
                 if (success == AI_FAILURE)
                 {
                     if (lma_debug)
-                        Log(MSG_DEBUG, "aiCondition %03u, %i/%i Failure.",command,i,script->ConditionCount-1);
+                        Log(MSG_DEBUG, "DoAI%i aiCondition %03u, %i/%i Failure.",ainumber,command,i,script->ConditionCount-1);
                     break;
                 }
                 else
                 {
                     if (lma_debug)
-                        Log(MSG_DEBUG, "aiCondition %03u, %i/%i Success.",command,i,script->ConditionCount-1);
+                        Log(MSG_DEBUG, "DoAI%i aiCondition %03u, %i/%i Success.",ainumber,command,i,script->ConditionCount-1);
                 }
 
             }
 
             if (lma_debug)
-                Log(MSG_INFO,"END CDT Turn %i",nb_turns);
+                Log(MSG_INFO,"DoAI%i END CDT Turn %i",ainumber,nb_turns);
 
 
             if (success == AI_SUCCESS)
             {
                 if (lma_debug)
-                    Log(MSG_INFO,"BEGIN ACT Turn %i",nb_turns);
+                    Log(MSG_INFO,"DoAI%i BEGIN ACT Turn %i",ainumber,nb_turns);
 
                 for (dword i = 0; i < script->ActionCount; i++)
                 {
@@ -795,19 +796,19 @@ void CMonster::DoAi(int ainumber,char type)//ainumber is monster->AI type is add
                     if(ainumber == AIWatch)Log(MSG_DEBUG, "aiAction: %03u returned %d", command, success);
 
                     if(lma_debug)
-                        Log(MSG_DEBUG, "aiAction: %03u returned %d, %i/%i", command, success,i,script->ActionCount-1);
+                        Log(MSG_DEBUG, "DoAI%i aiAction: %03u returned %d, %i/%i",ainumber,command, success,i,script->ActionCount-1);
                 }
 
                 if(success == AI_SUCCESS)
                 {
                   if(lma_debug)
-                        Log(MSG_INFO,"END ACT SUCCESS Turn %i",nb_turns);
+                        Log(MSG_INFO,"DoAI%i END ACT SUCCESS Turn %i",ainumber,nb_turns);
                     return; //automatically return after performing the first successful action
                 }
                 else
                 {
                   if(lma_debug)
-                        Log(MSG_INFO,"END ACT FAILURE Turn %i",nb_turns);
+                        Log(MSG_INFO,"DoAI%i END ACT FAILURE Turn %i",ainumber,nb_turns);
                 }
 
             }

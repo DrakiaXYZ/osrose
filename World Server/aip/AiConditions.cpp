@@ -779,6 +779,8 @@ AICOND(024)
     word wMin = ((sTIME.wHour * 60) + sTIME.wMinute);
     word wFrom = (data->btHour1 * 60) + data->btMin1;
     word wTo = (data->btHour2 * 60) + data->btMin2;
+
+    Log(MSG_INFO,"AIC24 time h(%i>=%i>=%i) m(%i>=%i>=%i)",data->btHour2,sTIME.wHour,data->btHour1,data->btMin2,sTIME.wMinute,data->btMin1);
     if(wMin >= wFrom && wMin <= wTo)
     	return AI_SUCCESS;
 	return AI_FAILURE;

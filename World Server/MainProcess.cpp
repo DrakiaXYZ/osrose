@@ -41,8 +41,11 @@ PVOID MapProcess( PVOID TS )
         {
             CMap* map = GServer->MapList.Map.at(i);
 
+            //LMA: test for Union.
+            /*
             if( map->PlayerList.size()<1 )
                 continue;
+            */
 
             // Player update //------------------------
             for(UINT j=0;j<map->PlayerList.size();j++)
@@ -307,6 +310,7 @@ PVOID MapProcess( PVOID TS )
                          monster->thisnpc = thisnpc;
 
                          int lma_previous_eventID=npc->thisnpc->eventid;
+                         Log(MSG_INFO,"DoAI for NPC %i",npc->npctype);
                          monster->DoAi(monster->thisnpc->AI, 1);
 
                          //LMA: check if eventID changed, if we do it in AIP conditions / actions, it just fails...
