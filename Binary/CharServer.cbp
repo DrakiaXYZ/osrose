@@ -20,7 +20,7 @@
 		</Compiler>
 		<Linker>
 			<Add library="mysql" />
-			<Add library="pthreadGC" />
+			<Add library="pthreadGC2" />
 			<Add library="ws2_32" />
 		</Linker>
 		<Unit filename="..\Char Server\charclient.cpp" />
