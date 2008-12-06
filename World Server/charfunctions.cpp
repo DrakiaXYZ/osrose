@@ -1,6 +1,6 @@
 /*
     Rose Online Server Emulator
-    Copyright (C) 2006,2007 OSRose Team http://www.dev-osrose.com
+    Copyright (C) 2006,2007,2008,2009 OSRose Team http://www.dev-osrose.com
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -16,7 +16,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-    depeloped with Main erose/hrose source server + some change from the original eich source
+    developed with Main erose/hrose source server + some change from the original eich source
 */
 #include "character.h"
 #include "worldserver.h"
@@ -491,8 +491,9 @@ void CCharacter::RefreshBuff( )
                      Status->CanCastSkill = true;
                      Status->CanAttack = true;
                 break;
-                case 54: //A_GMExtra_Damage:
                 case 36: //A_Extra_Damage:
+                case 54: //A_GMExtra_Damage:
+                case 83: //Valkyrie Charm:
                      if(i<15)
                      {
                         Status->ExtraDamage_up = 0xff;
@@ -508,6 +509,21 @@ void CCharacter::RefreshBuff( )
                 case 56: // Taunt
                      Status->Taunt = 0xff;
                 break;
+                case 58: case 61: case 71: case 77:  case 78: case 79: case 80://flame
+                     Status->Flamed = 0xff;
+                break;
+                case 33://Stealth,Camoflauge
+                     if(i<15)
+                        Status->Stealth = 0xff;
+                     if(IsAttacking( ))
+                        MagicStatus[i].Duration = 0;
+                     else
+                        0xff;
+                break;
+                case 34://Cloaking
+                     Status->Cloaking = 0xff;
+                break;
+
             }
 
             MagicStatus[i].Status = 0;
@@ -575,6 +591,65 @@ void CCharacter::RefreshBuff( )
                  GServer->SendToVisible( &pak, this );
              }
          }
+else if ( MagicStatus[i].Status == 58 || MagicStatus[i].Status == 61 || MagicStatus[i].Status == 71 || MagicStatus[i].Status >= 77 && MagicStatus[i].Status <= 80 && etime > 1*CLOCKS_PER_SEC) //Do flame dmg every 1.5 seconds
+        {
+             Stats->HP -= MagicStatus[i].Status;
+             MagicStatus[i].BuffTime += 1*CLOCKS_PER_SEC;
+             MagicStatus[i].Duration -= 1;
+             printf("did %i flame dmg to the player, still %i seconds and %i HP remain \n", MagicStatus[i].Status, MagicStatus[i].Duration, Stats->HP);
+ 
+             //A bunch of messy code to send dmg packet
+             BEGINPACKET( pak, 0x7b6 );
+             ADDWORD    ( pak, clientid );
+             ADDWORD    ( pak, 0 );
+             ADDDWORD   ( pak, 0x000007f8 );
+             ADDBYTE    ( pak, 0x00 );
+             ADDDWORD   ( pak, MagicStatus[i].Status );
+ 
+             //If Enemy is killed
+             if( IsDead())
+             {
+                 //printf("char died\n");
+                 CDrop* thisdrop = NULL;
+                 ADDDWORD   ( pak, 16 );
+                 if( !IsSummon( ) && !IsPlayer( ))
+                 {
+                     thisdrop = GetDrop( );
+                     if( thisdrop!=NULL)
+                     {
+                         ADDFLOAT   ( pak, thisdrop->pos.x*100 );
+                         ADDFLOAT   ( pak, thisdrop->pos.y*100 );
+                         if( thisdrop->type==1)
+                         {
+                             ADDDWORD( pak, 0xccccccdf );
+                             ADDDWORD( pak, thisdrop->amount );
+                            ADDDWORD( pak, 0xcccccccc );
+                            ADDWORD ( pak, 0xcccc );
+                         }
+                         else
+                         {
+                             ADDDWORD   ( pak, GServer->BuildItemHead( thisdrop->item ) );
+                             ADDDWORD   ( pak, GServer->BuildItemData( thisdrop->item ) );
+                            ADDDWORD( pak, 0x00000000 );
+                            ADDWORD ( pak, 0x0000 );
+                         }
+                         ADDWORD    ( pak, thisdrop->clientid );
+                         ADDWORD    ( pak, thisdrop->owner );
+                         CMap* map = GServer->MapList.Index[thisdrop->posMap];
+                         map->AddDrop( thisdrop );
+                     }
+                 }
+                 GServer->SendToVisible( &pak, this, thisdrop );
+             }
+ 
+             //If enemy is still alive
+             else
+             {
+                 ADDDWORD   ( pak, 4 );
+                 GServer->SendToVisible( &pak, this );
+             }
+         }
+         
     }
     if(bflag)
     {

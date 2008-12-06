@@ -1,6 +1,6 @@
 /*
     Rose Online Server Emulator
-    Copyright (C) 2006,2007 OSRose Team http://www.dev-osrose.com
+    Copyright (C) 2006,2007,2008,2009 OSRose Team http://www.dev-osrose.com
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -16,7 +16,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-    depeloped with Main erose/hrose source server + some change from the original eich source
+    developed with Main erose/hrose source server + some change from the original eich source
 */
 
 /* Datatypes Compatibility Header, to be merges into osRose */
@@ -188,6 +188,7 @@
 #define sFlame5 78
 #define sFlame6 79
 #define sFlame7 80
+#define sAddDmg3 83
 
 
 // Skills - Classes

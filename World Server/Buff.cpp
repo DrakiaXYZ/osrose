@@ -1,6 +1,6 @@
 /*
     Rose Online Server Emulator
-    Copyright (C) 2006,2007 OSRose Team http://www.dev-osrose.com
+    Copyright (C) 2006,2007,2008,2009 OSRose Team http://www.dev-osrose.com
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -16,7 +16,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-    depeloped with Main erose/hrose source server + some change from the original eich source
+    developed with Main erose/hrose source server + some change from the original eich source
 */
 #include "worldserver.h"
 
@@ -221,8 +221,9 @@ bool CWorldServer::CheckABuffs( CSkills* thisskill, CCharacter* character, int E
             }
             break;
 
-            case 54: //A_GMExtra_Damage:    // this isn't going to work at all the way it is written. the buff is in skill power, not buffs
             case 36: //A_Extra_Damage:
+            case 54: //A_GMExtra_Damage:    // this isn't going to work at all the way it is written. the buff is in skill power, not buffs
+            case 83: //Valkyrie Charm:
             {
                  CBValue BuffValue = GetBuffValue( thisskill, character, Evalue, i,
                                                 character->Status->ExtraDamage_up,
@@ -502,6 +503,71 @@ bool CWorldServer::CheckABuffs( CSkills* thisskill, CCharacter* character, int E
                 }
             }
             break;
+            case 58: case 61: case 71: case 77:  case 78: case 79: case 80: //Flame
+            {
+                Log( MSG_INFO, "checkabuffs: Flamed Status detected %i", thisskill->status[i] );
+                CBValue BuffValue = GetBuffValue( thisskill, character, Evalue, i, 0xff, character->Status->Flamed, character->Status->Flamed,true, true );
+                if(BuffValue.Position != 0xff)
+                {
+                    UINT j = BuffValue.Position;
+                    if(j>14)
+                    {
+                        character->Status->Flamed = j;
+                        character->MagicStatus[j].Buff = 1; // needs some value or else it will not be counted in GetBuffValue. trying it with 1
+                        character->MagicStatus[j].BuffTime = clock();
+                        character->MagicStatus[j].Duration = thisskill->duration;
+                        character->MagicStatus[j].Value = 0; // this might cause headaches later
+                        character->MagicStatus[j].Status = thisskill->status[i];
+                        Log( MSG_INFO, "Flamed Status applied");
+                        bflag = true;
+                    }
+                }
+            }
+            break;
+            case 33: //Stealth
+            {
+                Log( MSG_INFO, "checkabuffs: Stealth Status detected %i", thisskill->status[i] );
+                CBValue BuffValue = GetBuffValue( thisskill, character, Evalue, i, 0xff,
+                                                    character->Status->Stealth, true );
+                if(BuffValue.Position != 0xff)
+                {
+                    UINT j = BuffValue.Position;
+                    if(j>14)
+                    {
+                        UINT j = BuffValue.Position;
+                        character->Status->Stealth = j;
+                        character->MagicStatus[j].Buff = thisskill->buff[i];
+                        character->MagicStatus[j].BuffTime = clock();
+                        character->MagicStatus[j].Duration = thisskill->duration;
+                        character->MagicStatus[j].Value = BuffValue.Value;
+                        Log( MSG_INFO, "Stealth Status applied");
+                        bflag = true;
+                    }
+                }
+            }
+            break;
+            case 34: //Cloak
+            {
+                Log( MSG_INFO, "checkabuffs: Cloak Status detected %i", thisskill->status[i] );
+                CBValue BuffValue = GetBuffValue( thisskill, character, Evalue, i, 0xff,
+                                                    character->Status->Cloaking, true );
+                if(BuffValue.Position != 0xff)
+                {
+                    UINT j = BuffValue.Position;
+                    if(j>14)
+                    {
+                        UINT j = BuffValue.Position;
+                        character->Status->Cloaking = j;
+                        character->MagicStatus[j].Buff = thisskill->buff[i];
+                        character->MagicStatus[j].BuffTime = clock();
+                        character->MagicStatus[j].Duration = thisskill->duration;
+                        character->MagicStatus[j].Value = BuffValue.Value;
+                        Log( MSG_INFO, "Cloak Status applied");
+                        bflag = true;
+                    }
+                }
+            }
+            break;            
         }
     }
     return bflag;
@@ -524,11 +590,12 @@ CBValue CWorldServer::GetBuffValue( CSkills* thisskill, CCharacter* character, U
     switch(thisskill->status[i])
     {
         case 12: case 14: case 16: case 18: case 20: case 22: case 24: case 26: case 28: case 35: case 36: case 53:
-        case 54:
+        case 54: case 83:
              Buff = true;
         break;
         case 7: case 8: case 9: case 10: case 13: case 15: case 17: case 19: case 21: case 23: case 25: case 27: case 29:
-        case 30: case 31: case 32: case 59: case 60:
+        case 30: case 31: case 32: case 59: case 60: 
+        case 58: case 61: case 71: case 77:  case 78: case 79: case 80:
              Buff = false;
         break;
         default:
@@ -727,6 +794,13 @@ unsigned int CWorldServer::BuildBuffs( CCharacter* character )
                 buff1+= POISONED;
     if(character->Status->Muted != 0xff)//A_MUTE
                 buff3+= MUTED;
+    if(character->Status->Flamed != 0xff)//A_FLAME
+                buff1+= FLAMED;
+    if(character->Status->Stealth != 0xff)//A_STEALTH
+                buff4 += STEALTH;
+    if(character->Status->Cloaking != 0xff)//A_CLOAKING
+                buff4 += CLOAKING;
+                
     return (buff1 * 0x01) + (buff2 * 0x100 ) + (buff3 * 0x10000) + (buff4 * 0x1000000);
 }
 
@@ -798,5 +872,12 @@ unsigned int CWorldServer::BuildDeBuffs( CCharacter* character )
                 buff1+= POISONED;
     if(character->Status->Muted != 0xff)//A_MUTE
                 buff3+= MUTED;
+    if(character->Status->Flamed != 0xff)//A_FLAME
+                buff1+= FLAMED;
+    if(character->Status->Stealth != 0xff)//A_STEALTH
+                buff4 += STEALTH;
+    if(character->Status->Cloaking != 0xff)//A_CLOAKING
+                buff4 += CLOAKING;
+               
     return (buff1 * 0x01) + (buff2 * 0x100 ) + (buff3 * 0x10000) + (buff4 * 0x1000000);
 }
