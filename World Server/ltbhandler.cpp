@@ -11,13 +11,13 @@ void LTBStoreData(char* filename, LTBData* data)
     WORD nb_dial_box=0;
     int nb_dialogs=0;
     char templma[2];
-    char tempfield[1024];
+    //char tempfield[1024];
 
 
     FILE* fh = fopen( filename, "rb" );
 	if (  fh== NULL )
 	{
-		cout << "Could not load LTB" << endl;
+		Log(MSG_WARNING,"Could not load LTB %s",filename);
 		return;
 	}
 
@@ -67,7 +67,7 @@ void LTBStoreData(char* filename, LTBData* data)
 
 	for (unsigned int k=0;k<list_dialog.size();k++)
 	{
-	    lang=k%nb_box;
+        lang=k%nb_box;
 	    no_block=int(k/nb_box);
 
 		if(lang==LTBINDEX)
@@ -100,7 +100,9 @@ void LTBStoreData(char* filename, LTBData* data)
 
 		if(lang!=LTBENGLISH&&lang!=LTBINDEX&&lang!=LTBKOREAN)
 		{
-		    fread(&tempfield,list_dialog[k].lengthd*2,1,fh);
+		    //LMA: jumping...
+		    //fread(&tempfield,list_dialog[k].lengthd*2,1,fh);
+		    fseek(fh,list_dialog[k].lengthd*2,SEEK_CUR);
 		    continue;
 		}
 
