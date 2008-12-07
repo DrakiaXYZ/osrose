@@ -96,14 +96,14 @@
 #define A_MP_REC_RATE 28
 #define A_MP_CONSUMATION 29
 #define A_STEALTH 33
-#define A_CLOAK 34
+#define A_CLOAKING 34
 #define A_Extra_Damage 36
 #define A_MAX_HP 38
 #define A_MAX_MP 39
 #define A_STUN 40
 #define A_MUTE 41
 #define A_POISON 42
-#define A_FLAME 58
+#define A_FLAMED 58
 #define A_SLEEP 43
 
 
