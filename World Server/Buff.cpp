@@ -595,7 +595,7 @@ CBValue CWorldServer::GetBuffValue( CSkills* thisskill, CCharacter* character, U
         break;
         case 7: case 8: case 9: case 10: case 13: case 15: case 17: case 19: case 21: case 23: case 25: case 27: case 29:
         case 30: case 31: case 32: case 59: case 60: 
-        case 58: case 61: case 71: case 77:  case 78: case 79: case 80:
+        case 58: case 61: case 71: case 77:  case 78: case 79: case 80: case 33: case 34:
              Buff = false;
         break;
         default:
