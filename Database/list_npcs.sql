@@ -141,6 +141,7 @@ INSERT INTO `list_npcs` VALUES (0, '[Ranger] Paul', 1155, 29, 330.956, 5157.10, 
 INSERT INTO `list_npcs` VALUES (0, '[Beach Resident] Judith', 1204, 37, 358.499, 5115.68, 5324.15, 308,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Event Info] Santa Claus', 1205, 38, 3.012, 5069.18, 5362.51, 309,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Event Info] Loelsch', 1206, 38, 66.941, 5057.19, 5351.61, 310,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Evil Reindeer] Bob', 1490, 38, 97.961, 5065.61, 5206.88, 318,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Event Info] Lucille Fete', 1203, 40, 333.435, 5254.64, 5216.39, 307,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Station Guide] Illiya', 1188, 51, 148.307, 5107.24, 4996.57, 288,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Tavern Owner] Anzhelika', 1186, 51, 139.107, 5263.61, 5079.49, 286,0,0);
