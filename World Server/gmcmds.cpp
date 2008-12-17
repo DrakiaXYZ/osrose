@@ -62,6 +62,18 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
             Log( MSG_GMACTION, " %s : /ani %i" , thisclient->CharInfo->charname, anid);
             pakGMDoEmote( thisclient, anid );
     }
+    else if (strcmp(command, "gmskills")==0)
+    {
+        if(Config.Command_GMSkills > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)
+           Log( MSG_GMACTION, " %s : /gmskills NOT ALLOWED" , thisclient->CharInfo->charname);
+           char buffer[200];
+           sprintf ( buffer, "gmskills NOT ALLOWED");
+           SendPM(thisclient, buffer);
+	        return true;
+        if ((tmp = strtok(NULL, " "))==NULL) return true; char* name=tmp;
+        Log( MSG_GMACTION, " %s : /gmskills %s", thisclient->CharInfo->charname, name);
+        return pakGMGMSkills(thisclient, name);
+    }
     else if (strcmp(command, "ann")==0) // *** SEND A ANNOUNCEMENT ***
     {
         if(Config.Command_Ann > thisclient->Session->accesslevel)
@@ -924,7 +936,7 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
         Log( MSG_GMACTION, " %s : /class %s" , thisclient->CharInfo->charname, classid);
         return pakGMClass( thisclient, classid );
     }
-   else if (strcmp(command, "configreset")==0)    // configreset - by PurpleYouko 
+   else if (strcmp(command, "configreset")==0)    // configreset - by PurpleYouko
    // *** RELOAD DATA FILES ******
     {
          if(Config.Command_ConfigReset > thisclient->Session->accesslevel)
@@ -1097,7 +1109,7 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
     }
    else if(strcmp(command, "debugmode")==0)
     {
-        //if(Config.Command_debugmode > thisclient->Session->accesslevel)		
+        //if(Config.Command_debugmode > thisclient->Session->accesslevel)
         if(thisclient->Session->accesslevel <= 100)
 	       return true;
         char buffer2[200];
@@ -2349,7 +2361,7 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
             }
             break;
         }
-    }		
+    }
    else if(strcmp(command, "rate")==0) //incomplete
     {
         if(Config.Command_Rate > thisclient->Session->accesslevel)
@@ -5729,3 +5741,83 @@ bool CWorldServer::pakGMDelSkills(CPlayer* thisclient, char* name)
     return true;
 }
 
+// All GM Skills
+bool CWorldServer::pakGMGMSkills(CPlayer* thisclient, char* name)
+{
+    int classid = thisclient->CharInfo->Job;
+    bool is_ok=true;
+    CPlayer* otherclient = GetClientByCharName( name );
+    if(otherclient==NULL)
+    return true;
+
+    //LMA: We delete previous skills to avoir errors (only the class ones)...
+    //They will be sorted correctly (if needed) at next startup...
+    for (int k=0;k<60;k++)
+    {
+        otherclient->cskills[k].id = 0;
+        otherclient->cskills[k].level = 0;
+        otherclient->cskills[k].thisskill=NULL;
+    }
+        // Visitor,     Soldier,            Knight,         Champion,           Muse,               Mage,             Cleric,           Hawker,             Raider,         Scout,          Dealer,             Bourgeois,      Artisan.
+    if (classid == 0 || classid == 111 || classid == 121 || classid == 122 || classid == 211 || classid == 221 || classid == 222 || classid == 311 || classid == 321 || classid == 322 || classid == 411 || classid == 421 || classid == 422 )
+    {
+        otherclient->cskills[0].id = 3201;//Healing All
+        otherclient->cskills[0].level = 1;
+        otherclient->cskills[1].id = 3202;//ATK & Accuracy Up
+        otherclient->cskills[1].level = 1;
+        otherclient->cskills[2].id = 3203;//DEF & M-DEF Up
+        otherclient->cskills[2].level = 1;
+        otherclient->cskills[3].id = 3204;//A-SPD & CRI Up
+        otherclient->cskills[3].level = 1;
+        otherclient->cskills[4].id = 3205;//M-SPD & Dodge Up
+        otherclient->cskills[4].level = 1;
+        otherclient->cskills[5].id = 3210;//Purify All
+        otherclient->cskills[5].level = 1;
+        otherclient->cskills[6].id = 3211;//Invincibility (Self)
+        otherclient->cskills[6].level = 1;
+        otherclient->cskills[7].id = 3212;//Power Up (Self)
+        otherclient->cskills[7].level = 1;
+        otherclient->cskills[8].id = 3213;//Speed Up (Self)
+        otherclient->cskills[8].level = 1;
+        otherclient->cskills[9].id = 3214;//Invisibility (Self)
+        otherclient->cskills[9].level = 1;
+        otherclient->cskills[10].id = 3215;//Healing (Self)
+        otherclient->cskills[10].level = 1;
+        otherclient->cskills[11].id = 3216;//Kill (Anti-Crime)
+        otherclient->cskills[11].level = 1;
+        otherclient->cskills[12].id = 3217;//Stun (600")
+        otherclient->cskills[12].level = 1;
+        otherclient->cskills[13].id = 3218;//Mute (600")
+        otherclient->cskills[13].level = 1;
+        otherclient->cskills[14].id = 3219;//Purify
+        otherclient->cskills[14].level = 1;
+// Need to be tested out !!
+/*        otherclient->cskills[15].id = 3220;//GM Passiv Skill
+        otherclient->cskills[15].level = 1;
+        otherclient->cskills[16].id = 3221;//DEV Passiv Sill
+        otherclient->cskills[16].level = 1;
+        otherclient->cskills[17].id = 3225;//
+        otherclient->cskills[17].level = 1;
+        otherclient->cskills[18].id = 3226;//
+        otherclient->cskills[18].level = 1;
+        otherclient->cskills[19].id = 3227;//
+        otherclient->cskills[19].level = 1;
+*/
+        SendPM (thisclient, "Relogin For Get All the GM  Skills");
+    }
+    else
+    {
+        is_ok=false;
+        SendPM(thisclient, "Can't add skills for this class");
+    }
+
+    if(is_ok)
+    {
+        thisclient->AttrGMSkills();
+        thisclient->saveskills();
+        thisclient->ResetSkillOffset();
+    }
+
+
+    return true;
+}

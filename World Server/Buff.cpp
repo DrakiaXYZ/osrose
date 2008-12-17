@@ -220,7 +220,6 @@ bool CWorldServer::CheckABuffs( CSkills* thisskill, CCharacter* character, int E
                 bflag = false;
             }
             break;
-
             case 36: //A_Extra_Damage:
             case 54: //A_GMExtra_Damage:    // this isn't going to work at all the way it is written. the buff is in skill power, not buffs
             case 83: //Valkyrie Charm:
@@ -245,11 +244,29 @@ bool CWorldServer::CheckABuffs( CSkills* thisskill, CCharacter* character, int E
                     bflag = true;
                 }
             }
+            break;
             case 35: // shield damage
             {
-                // uses skill power not buff value. Add later
+                 CBValue BuffValue = GetBuffValue( thisskill, character, Evalue, i,
+                                                character->Status->ShieldDamage_up,
+                                                character->Status->ShieldDamage_down,true);
+//                                                character->Stats->ShieldDamage, true );
+                 if(BuffValue.NewValue!=0)
+                {
+                    UINT j = BuffValue.Position;
+//                    character->Stats->ShieldDamage = thisskill->atkpower;
+                    if(j<15)
+                        character->Status->ShieldDamage_up = j;
+                    else
+                        character->Status->ShieldDamage_down = j;
+                    character->MagicStatus[j].Buff = thisskill->buff[i];
+                    character->MagicStatus[j].BuffTime = clock();
+                    character->MagicStatus[j].Duration = thisskill->duration;
+                    character->MagicStatus[j].Value = BuffValue.Value;  // wrongO . shield damage uses skill power not buff value. Fix later
+                    character->MagicStatus[j].Status = thisskill->status[i];
+                    bflag = true;
+                }
             }
-            break;
             break;
             case 18: // attack power up
             case 19: // attack power down
@@ -526,7 +543,7 @@ bool CWorldServer::CheckABuffs( CSkills* thisskill, CCharacter* character, int E
             break;
             case 33: //Stealth
             {
-                Log( MSG_INFO, "checkabuffs: Stealth Status detected %i", thisskill->status[i] );
+                //Log( MSG_INFO, "checkabuffs: Stealth Status detected %i", thisskill->status[i] );
                 CBValue BuffValue = GetBuffValue( thisskill, character, Evalue, i, 0xff,
                                                     character->Status->Stealth, true );
                 if(BuffValue.Position != 0xff)
@@ -534,13 +551,13 @@ bool CWorldServer::CheckABuffs( CSkills* thisskill, CCharacter* character, int E
                     UINT j = BuffValue.Position;
                     if(j>14)
                     {
-                        UINT j = BuffValue.Position;
                         character->Status->Stealth = j;
                         character->MagicStatus[j].Buff = thisskill->buff[i];
                         character->MagicStatus[j].BuffTime = clock();
                         character->MagicStatus[j].Duration = thisskill->duration;
                         character->MagicStatus[j].Value = BuffValue.Value;
-                        Log( MSG_INFO, "Stealth Status applied");
+                        character->MagicStatus[j].Status = thisskill->status[i];
+                        //Log( MSG_INFO, "Stealth Status applied");
                         bflag = true;
                     }
                 }
@@ -548,7 +565,7 @@ bool CWorldServer::CheckABuffs( CSkills* thisskill, CCharacter* character, int E
             break;
             case 34: //Cloak
             {
-                Log( MSG_INFO, "checkabuffs: Cloak Status detected %i", thisskill->status[i] );
+                //Log( MSG_INFO, "checkabuffs: Cloak Status detected %i", thisskill->status[i] );
                 CBValue BuffValue = GetBuffValue( thisskill, character, Evalue, i, 0xff,
                                                     character->Status->Cloaking, true );
                 if(BuffValue.Position != 0xff)
@@ -556,18 +573,18 @@ bool CWorldServer::CheckABuffs( CSkills* thisskill, CCharacter* character, int E
                     UINT j = BuffValue.Position;
                     if(j>14)
                     {
-                        UINT j = BuffValue.Position;
                         character->Status->Cloaking = j;
                         character->MagicStatus[j].Buff = thisskill->buff[i];
                         character->MagicStatus[j].BuffTime = clock();
                         character->MagicStatus[j].Duration = thisskill->duration;
                         character->MagicStatus[j].Value = BuffValue.Value;
-                        Log( MSG_INFO, "Cloak Status applied");
+                        character->MagicStatus[j].Status = thisskill->status[i];
+                        //Log( MSG_INFO, "Cloak Status applied");
                         bflag = true;
                     }
                 }
             }
-            break;            
+            break;
         }
     }
     return bflag;
@@ -594,7 +611,7 @@ CBValue CWorldServer::GetBuffValue( CSkills* thisskill, CCharacter* character, U
              Buff = true;
         break;
         case 7: case 8: case 9: case 10: case 13: case 15: case 17: case 19: case 21: case 23: case 25: case 27: case 29:
-        case 30: case 31: case 32: case 59: case 60: 
+        case 30: case 31: case 32: case 59: case 60:
         case 58: case 61: case 71: case 77:  case 78: case 79: case 80: case 33: case 34:
              Buff = false;
         break;
@@ -767,6 +784,8 @@ unsigned int CWorldServer::BuildBuffs( CCharacter* character )
                 buff1 += DODGE_UP;
     if(character->Status->ExtraDamage_up != 0xff)//A_Extra_Damage:
                 buff4 += DAMAGE_UP;
+    if(character->Status->ShieldDamage_up != 0xff)//A_Shield_Damage:
+                buff4 += SHIELD_DAMAGE;
         //Down
     if(character->Status->Attack_down != 0xff) // A_ATTACK:
                 buff2 += ATTACK_DOWN;
@@ -800,7 +819,7 @@ unsigned int CWorldServer::BuildBuffs( CCharacter* character )
                 buff4 += STEALTH;
     if(character->Status->Cloaking != 0xff)//A_CLOAKING
                 buff4 += CLOAKING;
-                
+
     return (buff1 * 0x01) + (buff2 * 0x100 ) + (buff3 * 0x10000) + (buff4 * 0x1000000);
 }
 
@@ -835,6 +854,8 @@ unsigned int CWorldServer::BuildUpBuffs( CCharacter* character )
                 buff1 += DODGE_UP;
     if(character->Status->ExtraDamage_up != 0xff)//A_Extra_Damage:
                 buff4 += DAMAGE_UP;
+    if(character->Status->ShieldDamage_up != 0xff)//A_Shield_Damage:
+                buff4 += SHIELD_DAMAGE;
     return (buff1 * 0x01) + (buff2 * 0x100 ) + (buff3 * 0x10000) + (buff4 * 0x1000000);
 }
 // Build Buffs to Show
@@ -878,6 +899,6 @@ unsigned int CWorldServer::BuildDeBuffs( CCharacter* character )
                 buff4 += STEALTH;
     if(character->Status->Cloaking != 0xff)//A_CLOAKING
                 buff4 += CLOAKING;
-               
+
     return (buff1 * 0x01) + (buff2 * 0x100 ) + (buff3 * 0x10000) + (buff4 * 0x1000000);
 }

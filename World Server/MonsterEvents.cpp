@@ -730,7 +730,8 @@ void CMonster::DoAi(int ainumber,char type)//ainumber is monster->AI type is add
     bool lma_debug=false;
     int nb_turns=0;
     //if(ainumber>=1088||ainumber<=1114)
-    if(ainumber>=1113||ainumber<=1114)
+    //if(ainumber>=1113||ainumber<=1114)
+    if(ainumber==1205||ainumber==1201)
     {
         lma_debug=true;
     }

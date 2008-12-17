@@ -26,6 +26,7 @@ PVOID MapProcess( PVOID TS )
     bool ok_cont=false;
     UINT loopcount=0;
     clock_t time_skill=0;
+    bool only_npc=false;    //LMA: AIP is done by NPC even when no player in map.
 
     while(GServer->ServerOnline)
     {
@@ -42,253 +43,262 @@ PVOID MapProcess( PVOID TS )
             CMap* map = GServer->MapList.Map.at(i);
 
             //LMA: test for Union.
-            /*
+            only_npc=false;
             if( map->PlayerList.size()<1 )
-                continue;
-            */
-
-            // Player update //------------------------
-            for(UINT j=0;j<map->PlayerList.size();j++)
             {
-                CPlayer* player = map->PlayerList.at(j);
-                if(!player->Session->inGame) continue;
-
-                if(player->IsDead( ))
-                {
-                      player->lastRegenTime=0;
-                      player->lastShowTime=0;
-                      continue;
-                 }
-
-                 player->RefreshHPMP();         //LMA HP / MP Jumping
-                if(player->UpdateValues( )) //Does nothing except for rides... equals to true if player isn't on the back seat
-                    player->UpdatePosition(false);
-                if(player->IsOnBattle( ))
-                    player->DoAttack( );
-                player->CheckItems( );
-                player->RefreshBuff( );
-                player->PlayerHeal( );
-                player->Regeneration( );
-                player->CheckPlayerLevelUP( );
-                player->CheckPortal( );  //Custom Events
-                player->CheckEvents( );  //Custom Events
-
-                player->CheckDoubleEquip(); //LMA: Core fix for double weapon and shield
-                player->CheckZulies( );
-
-                //Fuel handling.
-                if (player->Status->Stance==DRIVING&&(player->last_fuel>0)&&(clock()-player->last_fuel>60000))
-                {
-                  //We kill some fuel every now and then :)
-                  player->TakeFuel();
-                  player->last_fuel=clock();
-                }
-
-                //LMA: mileage coupon checks.
-                time_t etime=time(NULL);
-                if(player->bonusxp>1&&(etime>=player->timerxp))
-                {
-                  BEGINPACKET( pak, 0x702 );
-                  ADDSTRING( pak, "[Mileage] Bonus Xp vanished.");
-                  ADDBYTE( pak, 0 );
-                  player->client->SendPacket(&pak);
-                  player->bonusxp=1;
-                  player->timerxp=0;
-                  player->wait_validation=0;
-                }
-
-                if(player->Shop->ShopType>0&&(etime>=player->Shop->mil_shop_time))
-                {
-                  BEGINPACKET( pak, 0x702 );
-                  ADDSTRING( pak, "[Mileage] Mileage shop expired !");
-                  ADDBYTE( pak, 0 );
-                  player->client->SendPacket(&pak);
-                  player->Shop->ShopType=0;
-                  player->Shop->mil_shop_time=0;
-                }
-
+                only_npc=true;    //LMA: AIP is done by NPC even when no player in map.
+                //continue;
             }
-            // Monster update //------------------------
-            pthread_mutex_lock( &map->MonsterMutex );
 
-            for(UINT j=0;j<map->MonsterList.size();j++)
+            if (!only_npc)
             {
-                CMonster* monster = map->MonsterList.at(j);
-
-                //LMA: AIP CODE
-				if(monster->hitcount == 0xFF)//this is a delay for new monster spawns this might olso fix invisible monsters(if they attack directly on spawning the client dosn't get the attack packet(its not in it's visible list yet))
+                // Player update //------------------------
+                for(UINT j=0;j<map->PlayerList.size();j++)
                 {
-                    if(1000 < (UINT)GServer->round((clock( ) - monster->lastAiUpdate)))
+                    CPlayer* player = map->PlayerList.at(j);
+                    if(!player->Session->inGame) continue;
+
+                    if(player->IsDead( ))
                     {
-                        //Log(MSG_DEBUG,"DoAIP mainprocess monster loop %i",monster->thisnpc->AI);
-                        monster->hitcount = 0;
-                        monster->DoAi(monster->thisnpc->AI, 0);
-                        monster->lastAiUpdate=clock();
+                          player->lastRegenTime=0;
+                          player->lastShowTime=0;
+                          continue;
+                     }
+
+                     player->RefreshHPMP();         //LMA HP / MP Jumping
+                    if(player->UpdateValues( )) //Does nothing except for rides... equals to true if player isn't on the back seat
+                        player->UpdatePosition(false);
+                    if(player->IsOnBattle( ))
+                        player->DoAttack( );
+                    player->CheckItems( );
+                    player->RefreshBuff( );
+                    player->PlayerHeal( );
+                    player->Regeneration( );
+                    player->CheckPlayerLevelUP( );
+                    player->CheckPortal( );  //Custom Events
+                    player->CheckEvents( );  //Custom Events
+
+                    player->CheckDoubleEquip(); //LMA: Core fix for double weapon and shield
+                    player->CheckZulies( );
+
+                    //Fuel handling.
+                    if (player->Status->Stance==DRIVING&&(player->last_fuel>0)&&(clock()-player->last_fuel>60000))
+                    {
+                      //We kill some fuel every now and then :)
+                      player->TakeFuel();
+                      player->last_fuel=clock();
                     }
+
+                    //LMA: mileage coupon checks.
+                    time_t etime=time(NULL);
+                    if(player->bonusxp>1&&(etime>=player->timerxp))
+                    {
+                      BEGINPACKET( pak, 0x702 );
+                      ADDSTRING( pak, "[Mileage] Bonus Xp vanished.");
+                      ADDBYTE( pak, 0 );
+                      player->client->SendPacket(&pak);
+                      player->bonusxp=1;
+                      player->timerxp=0;
+                      player->wait_validation=0;
+                    }
+
+                    if(player->Shop->ShopType>0&&(etime>=player->Shop->mil_shop_time))
+                    {
+                      BEGINPACKET( pak, 0x702 );
+                      ADDSTRING( pak, "[Mileage] Mileage shop expired !");
+                      ADDBYTE( pak, 0 );
+                      player->client->SendPacket(&pak);
+                      player->Shop->ShopType=0;
+                      player->Shop->mil_shop_time=0;
+                    }
+
                 }
-                //END AIP CODE
+                // Monster update //------------------------
+                pthread_mutex_lock( &map->MonsterMutex );
 
-                //LMA: maps (using grid now?)
-                 ok_cont=false;
-                 if (GServer->Config.testgrid!=0)
-                     ok_cont=monster->PlayerInGrid( );
-                 else
-                     ok_cont=monster->PlayerInRange( );
-
-                if (!ok_cont)
-                    continue;
-
-                //LMA: daynight stuff :) kinda vampire code for spawns ^_^
-                if((monster->daynight!=0)&&((monster->daynight==2&&!map->IsNight())||(monster->daynight==1&&map->IsNight())))
+                for(UINT j=0;j<map->MonsterList.size();j++)
                 {
-                    //Bye bye little monster...
-                    map->DeleteMonster( monster, true, j );
-                    continue;
-                }
+                    CMonster* monster = map->MonsterList.at(j);
 
-               //LMA begin
-               //20070621-211100
-                //Beans for CF...
-                if(map->is_cf==1&&monster->montype==map->id_temp_mon)
-                {
-                  //we use butterflies (temporary monster) as decoys ;)
-                   UINT etime = (UINT)round((clock( ) - monster->SpawnTime));
-                   if(etime<20000)
-                   {
-                     //if(!monster->PlayerInRange( )) continue;
-                     if(!monster->UpdateValues( )) continue;
-                     monster->UpdatePosition(monster->stay_still);
-                   }
-                   else if(etime>20000 && etime<120000) // convert temporary monster to definitive 20 seconds after the temporary was spawned
-                   {
+                    //LMA: AIP CODE
+                    if(monster->hitcount == 0xFF)//this is a delay for new monster spawns this might olso fix invisible monsters(if they attack directly on spawning the client dosn't get the attack packet(its not in it's visible list yet))
+                    {
+                        if(1000 < (UINT)GServer->round((clock( ) - monster->lastAiUpdate)))
+                        {
+                            //Log(MSG_DEBUG,"DoAIP mainprocess monster loop %i",monster->thisnpc->AI);
+                            monster->hitcount = 0;
+                            monster->DoAi(monster->thisnpc->AI, 0);
+                            monster->lastAiUpdate=clock();
+                        }
+                    }
+                    //END AIP CODE
+
+                    //LMA: maps (using grid now?)
+                     ok_cont=false;
+                     if (GServer->Config.testgrid!=0)
+                         ok_cont=monster->PlayerInGrid( );
+                     else
+                         ok_cont=monster->PlayerInRange( );
+
+                    if (!ok_cont)
+                        continue;
+
+                    //LMA: daynight stuff :) kinda vampire code for spawns ^_^
+                    if((monster->daynight!=0)&&((monster->daynight==2&&!map->IsNight())||(monster->daynight==1&&map->IsNight())))
+                    {
+                        //Bye bye little monster...
+                        map->DeleteMonster( monster, true, j );
+                        continue;
+                    }
+
+                   //LMA begin
+                   //20070621-211100
+                    //Beans for CF...
+                    if(map->is_cf==1&&monster->montype==map->id_temp_mon)
+                    {
+                      //we use butterflies (temporary monster) as decoys ;)
+                       UINT etime = (UINT)round((clock( ) - monster->SpawnTime));
+                       if(etime<20000)
+                       {
+                         //if(!monster->PlayerInRange( )) continue;
+                         if(!monster->UpdateValues( )) continue;
+                         monster->UpdatePosition(monster->stay_still);
+                       }
+                       else if(etime>20000 && etime<120000) // convert temporary monster to definitive 20 seconds after the temporary was spawned
+                       {
+                        //if(!monster->PlayerInRange( )) continue;
+                        if(!monster->UpdateValues( )) continue;
+                            monster->UpdatePosition(monster->stay_still);
+                          CPlayer* player = monster->GetNearPlayer( );
+                          if(player==NULL) continue;
+                          //time for j&b (definitive monster) to come :)
+                          UINT montype = map->id_def_mon;
+
+                          //We kill the temporary and summon the new one.
+                          fPoint position_cf = GServer->RandInCircle( player->Position->current,20 );
+                          Log( MSG_WARNING, "deleting butterfly for J&B, ID %u",monster->clientid);
+                          map->DeleteMonster( monster, true, j );
+                          CMonster* monster2=map->AddMonster( montype, position_cf, 0, NULL, NULL, 0, true );
+                          //just appear and do nothing :)
+                          monster2->StartAction( (CCharacter*)player, 9, 0 );
+                          continue;
+
+                          //other way
+                          /*
+                          map->ConverToMonster( monster, montype , true );
+                          monster->StartAction( (CCharacter*)player, 9, 0 );
+                          */
+                        }
+                        else if (etime>120000) // delete sweet butterfly (temporary monster)...
+                        {
+                          map->DeleteMonster( monster, true, j ); continue;
+                        }
+
+                      }
+
+                      //if the monster is not killed soon enough, let's destroy it.
+                      if(map->is_cf!=0&&monster->montype==map->id_def_mon)
+                      {
+                           UINT etime = (UINT)round((clock( ) - monster->SpawnTime));
+                           if(etime>180000)
+                           {
+                                map->DeleteMonster( monster, true, j ); continue;
+                           }
+
+                            //if(!monster->PlayerInRange( )) continue;
+                            if(!monster->UpdateValues( )) continue;
+                            monster->UpdatePosition(monster->stay_still);
+                      }
+                    //LMA END
+
+                    //General monsters===============================================================
+                    //LMA: moved to beginning...
                     //if(!monster->PlayerInRange( )) continue;
                     if(!monster->UpdateValues( )) continue;
                         monster->UpdatePosition(monster->stay_still);
-                      CPlayer* player = monster->GetNearPlayer( );
-                      if(player==NULL) continue;
-                      //time for j&b (definitive monster) to come :)
-                      UINT montype = map->id_def_mon;
-
-                      //We kill the temporary and summon the new one.
-                      fPoint position_cf = GServer->RandInCircle( player->Position->current,20 );
-                      Log( MSG_WARNING, "deleting butterfly for J&B, ID %u",monster->clientid);
-                      map->DeleteMonster( monster, true, j );
-                      CMonster* monster2=map->AddMonster( montype, position_cf, 0, NULL, NULL, 0, true );
-                      //just appear and do nothing :)
-                      monster2->StartAction( (CCharacter*)player, 9, 0 );
-                      continue;
-
-                      //other way
-                      /*
-                      map->ConverToMonster( monster, montype , true );
-                      monster->StartAction( (CCharacter*)player, 9, 0 );
-                      */
-                    }
-                    else if (etime>120000) // delete sweet butterfly (temporary monster)...
+                    if(monster->IsOnBattle( ))
                     {
-                      map->DeleteMonster( monster, true, j ); continue;
+                        //monster->DoAttack( );
+                        if(2000<(UINT)GServer->round((clock( ) - monster->lastAiUpdate)))
+                        {
+                            //Log(MSG_DEBUG,"DoAIP mainprocess monster on battle %i,2",monster->thisnpc->AI);
+                             monster->DoAi(monster->thisnpc->AI, 2);
+                             monster->lastAiUpdate = clock();
+                             //Log(MSG_INFO,"Monster type: %i current HP: %i",monster->montype, monster->Stats->HP);
+                        }
+                        else
+                        {
+                             //Log(MSG_INFO,"Monster doing attack");
+                             monster->DoAttack( );
+                        }
+
+
+                        /*LMA: should be done by AIP now.
+                        if(monster->montype==208)
+                            monster->Guardiantree(monster,map);      //LMA: guardiantree 208 (Arnold)
+                        if((monster->montype==659)&&(monster->hitcount<monster->maxhitcount))
+                            monster->MoonChild(monster,map);      //LMA: Moonchild under attack
+                        if((monster->montype==201)&&(monster->hitcount<monster->maxhitcount))
+                            monster->WormDragon(monster,map);      //LMA: Worm Dragon under attack
+                        if((monster->montype==1572)&&(monster->hitcount<monster->maxhitcount))
+                            monster->AntVagabond(monster,map);      //rl2171: Cursed Ant Vagabond under attack (LMA)
+                        if((monster->montype==662)&&(monster->hitcount<monster->maxhitcount))
+                            monster->DragonEgg(monster,map);      //rl2171: Dragon Egg under attack (LMA)
+                        if((monster->montype==558)&&(monster->hitcount<monster->maxhitcount))
+                            monster->Turak1(monster,map);      //rl2171: 1st Turak under attack (LMA)
+                        if((monster->montype==559)&&(monster->hitcount<monster->maxhitcount))
+                            monster->Turak2(monster,map);      //rl2171: 2nd Turak under attack (LMA)
+                        //if((monster->montype==560)&&(monster->hitcount<monster->maxhitcount))
+                           // monster->Turak3(monster,map);      //rl2171: 3rd Turak under attack (LMA)
+                        */
                     }
-
-                  }
-
-                  //if the monster is not killed soon enough, let's destroy it.
-                  if(map->is_cf!=0&&monster->montype==map->id_def_mon)
-                  {
-                       UINT etime = (UINT)round((clock( ) - monster->SpawnTime));
-                       if(etime>180000)
-                       {
-                            map->DeleteMonster( monster, true, j ); continue;
-                       }
-
-                        //if(!monster->PlayerInRange( )) continue;
-                        if(!monster->UpdateValues( )) continue;
-                        monster->UpdatePosition(monster->stay_still);
-                  }
-                //LMA END
-
-                //General monsters===============================================================
-                //LMA: moved to beginning...
-                //if(!monster->PlayerInRange( )) continue;
-                if(!monster->UpdateValues( )) continue;
-                    monster->UpdatePosition(monster->stay_still);
-                if(monster->IsOnBattle( ))
-                {
-                    //monster->DoAttack( );
-                    if(2000<(UINT)GServer->round((clock( ) - monster->lastAiUpdate)))
+                    else if(!monster->IsOnBattle() && !monster->IsDead( ))
                     {
-                        //Log(MSG_DEBUG,"DoAIP mainprocess monster on battle %i,2",monster->thisnpc->AI);
-                         monster->DoAi(monster->thisnpc->AI, 2);
-                         monster->lastAiUpdate = clock();
-                         //Log(MSG_INFO,"Monster type: %i current HP: %i",monster->montype, monster->Stats->HP);
+                        if(2000<(UINT)GServer->round((clock( ) - monster->lastAiUpdate)))
+                        {
+                            //Log(MSG_DEBUG,"DoAIP mainprocess monster iddle? %i,1",monster->thisnpc->AI);
+                            monster->DoAi(monster->thisnpc->AI, 1);
+                            monster->lastAiUpdate = clock();
+                        }
                     }
                     else
                     {
-                         //Log(MSG_INFO,"Monster doing attack");
-                         monster->DoAttack( );
+                        if(monster->IsSummon( ))
+                        {// if is summon and is not attacking we reduce his life 1%
+                            time_t elapsedTime = time(NULL) - monster->lastLifeUpdate;
+                            if(elapsedTime>=5) // every 5 seconds
+                            {
+                                monster->Stats->HP -= (long int)ceil(monster->GetMaxHP( )/100);
+                                monster->lastLifeUpdate = time(NULL);
+                                if(monster->Stats->HP<=0)
+                                {
+                                    map->DeleteMonster( monster, true, j ); continue;
+                                }
+                            }
+                        }
                     }
 
-
-                    /*LMA: should be done by AIP now.
-                    if(monster->montype==208)
-                        monster->Guardiantree(monster,map);      //LMA: guardiantree 208 (Arnold)
-                    if((monster->montype==659)&&(monster->hitcount<monster->maxhitcount))
-                        monster->MoonChild(monster,map);      //LMA: Moonchild under attack
-                    if((monster->montype==201)&&(monster->hitcount<monster->maxhitcount))
-                        monster->WormDragon(monster,map);      //LMA: Worm Dragon under attack
-                    if((monster->montype==1572)&&(monster->hitcount<monster->maxhitcount))
-                        monster->AntVagabond(monster,map);      //rl2171: Cursed Ant Vagabond under attack (LMA)
-                    if((monster->montype==662)&&(monster->hitcount<monster->maxhitcount))
-                        monster->DragonEgg(monster,map);      //rl2171: Dragon Egg under attack (LMA)
-                    if((monster->montype==558)&&(monster->hitcount<monster->maxhitcount))
-                        monster->Turak1(monster,map);      //rl2171: 1st Turak under attack (LMA)
-                    if((monster->montype==559)&&(monster->hitcount<monster->maxhitcount))
-                        monster->Turak2(monster,map);      //rl2171: 2nd Turak under attack (LMA)
-                    //if((monster->montype==560)&&(monster->hitcount<monster->maxhitcount))
-                       // monster->Turak3(monster,map);      //rl2171: 3rd Turak under attack (LMA)
-                    */
-                }
-                else if(!monster->IsOnBattle() && !monster->IsDead( ))
-                {
-                    if(2000<(UINT)GServer->round((clock( ) - monster->lastAiUpdate)))
+                    monster->RefreshBuff( );
+                    if(monster->IsDead( ))
                     {
-                        //Log(MSG_DEBUG,"DoAIP mainprocess monster iddle? %i,1",monster->thisnpc->AI);
-                        monster->DoAi(monster->thisnpc->AI, 1);
-                        monster->lastAiUpdate = clock();
+                        Log(MSG_DEBUG,"DoAIP mainprocess monster is dead %i",monster->thisnpc->AI);
+                        monster->DoAi(monster->thisnpc->AI, 5);
+                        monster->OnDie( );
                     }
-                }
-				else
-				{
-					if(monster->IsSummon( ))
-					{// if is summon and is not attacking we reduce his life 1%
-						time_t elapsedTime = time(NULL) - monster->lastLifeUpdate;
-						if(elapsedTime>=5) // every 5 seconds
-						{
-							monster->Stats->HP -= (long int)ceil(monster->GetMaxHP( )/100);
-							monster->lastLifeUpdate = time(NULL);
-							if(monster->Stats->HP<=0)
-							{
-								map->DeleteMonster( monster, true, j ); continue;
-							}
-						}
-					}
-				}
 
-                monster->RefreshBuff( );
-                if(monster->IsDead( ))
-                {
-                    Log(MSG_DEBUG,"DoAIP mainprocess monster is dead %i",monster->thisnpc->AI);
-                    monster->DoAi(monster->thisnpc->AI, 5);
-                    monster->OnDie( );
-                }
+                    //osprose
+                    if (monster->IsSummon())
+                    {
+                        monster->SummonUpdate(monster,map, j);
+                        continue;
+                    }
 
-                //osprose
-                if (monster->IsSummon())
-                {
-                    monster->SummonUpdate(monster,map, j);
-                    continue;
                 }
 
             }
+
+            if(only_npc)
+                pthread_mutex_lock( &map->MonsterMutex );
 
             //LMA: AIP for NPC.
             for(UINT j=0;j<map->NPCList.size();j++)
@@ -316,7 +326,7 @@ PVOID MapProcess( PVOID TS )
                          //LMA: check if eventID changed, if we do it in AIP conditions / actions, it just fails...
                          if (lma_previous_eventID!=monster->thisnpc->eventid)
                          {
-                            Log(MSG_WARNING,"Event ID not the same NPC %i from %i to %i in map %i, npc->thisnpc->eventid=%i !",npc->npctype,lma_previous_eventID,monster->thisnpc->eventid,map->id,npc->thisnpc->eventid);
+                            Log(MSG_WARNING,"(1)Event ID not the same NPC %i from %i to %i in map %i, npc->thisnpc->eventid=%i !",npc->npctype,lma_previous_eventID,monster->thisnpc->eventid,map->id,npc->thisnpc->eventid);
                             npc->thisnpc->eventid=monster->thisnpc->eventid;
                             npc->event=npc->thisnpc->eventid;
                             //LMA: We have to change the event ID here since we didn't send the clientID :(
@@ -330,10 +340,26 @@ PVOID MapProcess( PVOID TS )
                          npc->lastAiUpdate = clock();
                      }
                 }
+
+                //LMA: Sometimes another NPC does the job for you.
+                if(npc->thisnpc->eventid!=GServer->ObjVar[npc->npctype][0])
+                {
+                    int new_event_id=GServer->ObjVar[npc->npctype][0];
+                    Log(MSG_WARNING,"(2)Event ID not the same NPC %i from %i to %i in map %i, npc->thisnpc->eventid=%i !",npc->npctype,npc->thisnpc->eventid,new_event_id,map->id,npc->thisnpc->eventid);
+                    npc->thisnpc->eventid=new_event_id;
+                    npc->event=new_event_id;
+                    //LMA: We have to change the event ID here since we didn't send the clientID :(
+                    BEGINPACKET( pak, 0x790 );
+                    ADDWORD    ( pak, npc->clientid );
+                    ADDWORD    ( pak, npc->thisnpc->eventid );
+                    GServer->SendToAllInMap(&pak,map->id);
+                }
+
             }
 
             pthread_mutex_unlock( &map->MonsterMutex );
         }
+
         pthread_mutex_unlock( &GServer->MapMutex );
         pthread_mutex_unlock( &GServer->PlayerMutex );
 

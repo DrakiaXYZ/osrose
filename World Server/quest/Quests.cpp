@@ -68,6 +68,14 @@ void CWorldServer::ReadQSD(strings path, dword index){
 					data->data = new byte[data->size - 8];
 					fh->Read(data->data, data->size - 8, 1);
 					trigger->Actions[k] = data;
+
+					if(data->opcode==8)
+					{
+					    STR_REWD_008 * data8 = (STR_REWD_008 *)data->data;
+					    Log(MSG_INFO,"%s has an action 8 monster %i",path,data8->iMonsterSN);
+					}
+
+
 				}
 			}else{
 				trigger->Actions = NULL;

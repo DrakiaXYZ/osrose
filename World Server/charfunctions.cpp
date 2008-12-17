@@ -523,7 +523,19 @@ void CCharacter::RefreshBuff( )
                 case 34://Cloaking
                      Status->Cloaking = 0xff;
                 break;
+                case 35: //ShieldDamage:
+                     if(i<15)
+//                     {
+                        Status->ShieldDamage_up = 0xff;
+//                        Stats->ShieldDamage = 0xff;
+//                     }
+                     else
+//                     {
+                         Status->ShieldDamage_down = 0xff;
+//                         Stats->ShieldDamage = 0xff;
+//                     }
 
+                break;
             }
 
             MagicStatus[i].Status = 0;
@@ -591,7 +603,7 @@ void CCharacter::RefreshBuff( )
                  GServer->SendToVisible( &pak, this );
              }
          }
-else if ( MagicStatus[i].Status == 58 || MagicStatus[i].Status == 61 || MagicStatus[i].Status == 71 || MagicStatus[i].Status >= 77 && MagicStatus[i].Status <= 80 && etime > 1*CLOCKS_PER_SEC) //Do flame dmg every 1.5 seconds
+        else if ( MagicStatus[i].Status == 58 || MagicStatus[i].Status == 61 || MagicStatus[i].Status == 71 || MagicStatus[i].Status >= 77 && MagicStatus[i].Status <= 80 && etime > 1*CLOCKS_PER_SEC) //Do flame dmg every 1.5 seconds
         {
              Stats->HP -= MagicStatus[i].Status;
              MagicStatus[i].BuffTime += 1*CLOCKS_PER_SEC;

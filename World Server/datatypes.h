@@ -105,6 +105,7 @@
 #define A_POISON 42
 #define A_FLAMED 58
 #define A_SLEEP 43
+#define A_Shield_Damage 35
 
 
 //*spawn values
@@ -147,6 +148,7 @@
 //#define INVISIBLE_2 0x04
 #define UNK3 0x08
 #define DAMAGE_UP 0x10
+#define SHIELD_DAMAGE 0x40 // Test for the shield effect if is the right one
 #define SUMMON 0x20
 #define UNK4 0x40
 #define UNK5 0x80

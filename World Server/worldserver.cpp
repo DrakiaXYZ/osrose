@@ -576,6 +576,7 @@ void CWorldServer::LoadCommandLevels( void )
 {
     Config.Command_Addquest = ConfigGetInt ( "commands.ini", "addquest", 299 );
     Config.Command_AllSkill = ConfigGetInt ( "commands.ini", "allskill", 299 );
+    Config.Command_GMSkills = ConfigGetInt ( "commands.ini", "gmskills", 299 );    
     Config.Command_Ani = ConfigGetInt    ( "commands.ini", "ani", 299 );
     Config.Command_Ann = ConfigGetInt    ( "commands.ini", "ann", 299 );
     Config.Command_AtkModif = ConfigGetInt    ( "commands.ini", "atkmodif", 299 );

@@ -56,8 +56,10 @@ void CWorldServer::ReadAIP(strings path, dword index)
 						data->opcode = fh->Get<dword>() - 0x04000001;
 
 						//LMA test.
+						/*
 						if (data->opcode==24)
                             Log(MSG_INFO,"%s has a cdt %i",path,data->opcode);
+                        */
 
 						data->data = new byte[data->size - 8];
 						fh->Read(data->data, data->size - 8, 1);
@@ -79,13 +81,30 @@ void CWorldServer::ReadAIP(strings path, dword index)
 						data->size = fh->Get<dword>();
 						data->opcode = fh->Get<dword>() - 0x0B000001;
 
-						//LMA test.
-						if (data->opcode==28)
-                            Log(MSG_INFO,"%s has an action %i",path,data->opcode);
-
 						data->data = new byte[data->size - 8];
 						fh->Read(data->data, data->size - 8, 1);
 						script->Actions[k] = data;
+
+						//LMA test.
+						/*
+						if (data->opcode==28)
+                            Log(MSG_INFO,"%s has an action %i",path,data->opcode);
+
+						if (data->opcode==36)
+						{
+						    //STR_AI_ACT_036 data36=(STR_AI_ACT_036) data;
+						    STR_AI_ACT_036 * data36 = (STR_AI_ACT_036 *)data->data;
+                            Log(MSG_INFO,"%s has an action 36 monster %i",path,data36->nMonster);
+						}
+
+						if (data->opcode==37)
+						{
+						    //STR_AI_ACT_036 data36=(STR_AI_ACT_036) data;
+						    STR_AI_ACT_037 * data37 = (STR_AI_ACT_037 *)data->data;
+                            Log(MSG_INFO,"%s has an action 37 monster %i",path,data37->nMonster);
+						}
+						*/
+
 					}
 				}
 	            else

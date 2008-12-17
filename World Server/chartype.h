@@ -79,6 +79,7 @@ struct STATS
     unsigned int sidechance; //future expansion of drop system
     unsigned int ExtraDamage;
     unsigned int ExtraDamage_add;
+//    unsigned int ShieldDamage;    
 };
 
 struct BATTLE
@@ -108,6 +109,7 @@ struct STATUS
     BYTE Dash_up;
     BYTE HP_up;
     BYTE MP_up;
+    BYTE ShieldDamage_up;    
     //BYTE ExtraDamage_up;
     //Stats down
     BYTE Attack_down;
@@ -121,6 +123,7 @@ struct STATUS
     BYTE HP_down;
     BYTE MP_down;
     //BYTE ExtraDamage_down;
+    BYTE ShieldDamage_down;    
 
     //LMA: ospRose skill.
     //Status Effects

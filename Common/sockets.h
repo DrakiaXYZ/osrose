@@ -211,6 +211,7 @@ struct CROSEServerConfig
     int Command_Addquest; // by Drakia
     int Command_AllSkill; // by crashinside
     int Command_Ani;
+    int Command_GMSkills;
     int Command_Ann;
     int Command_AtkModif;
     int Command_Ban;

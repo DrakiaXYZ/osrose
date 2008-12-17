@@ -585,6 +585,19 @@ bool CWorldServer::LoadSkillData( )
             newskill->svalue1=0;
         }
 
+        //LMA: Patch for some skills (?)
+        if(newskill->status[0]==35||newskill->status[0]==54||newskill->status[0]==83)
+        {
+            if(newskill->buff[0]==0&&newskill->value1[0]==0)
+            {
+                newskill->buff[0]=newskill->status[0];
+                newskill->value1[0]=newskill->atkpower;
+                Log(MSG_INFO,"Skill (%i) status0=%i, buff0=%i, value=%i",i,newskill->status[0],newskill->buff[0],newskill->value1[0]);
+            }
+
+        }
+        //end of patch.
+
         newskill->nbuffs = 0;
         if(newskill->buff[0] != 0 || newskill->status[0] != 0)
         {
@@ -1237,6 +1250,8 @@ bool CWorldServer::LoadNPCs( )
         //thisnpc->event=thisnpc->thisnpc->eventid; //LMA Event.
         thisnpc->event=atoi(row[6]);                //LMA Event.
         thisnpc->thisnpc->eventid=thisnpc->event;            //LMA Event (left for compatibility).
+        ObjVar[thisnpc->npctype][0]=thisnpc->thisnpc->eventid;  //LMA: eventid for AIP / QSD.
+
         thisnpc->dialog=atoi(row[7]);               //LMA tempdialog ID, used for events for example
 
         //LMA: check if out of memory.
