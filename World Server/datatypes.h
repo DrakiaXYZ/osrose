@@ -422,6 +422,7 @@ struct CUseData
     UINT type;
     UINT price;
     UINT pricerate;
+    UINT is_mileage;
     UINT weight;
     UINT quality;
     UINT material; //core

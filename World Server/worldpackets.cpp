@@ -4006,6 +4006,10 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
               return true;
             }
 
+            //LMA: Mileage box?
+            int is_mileage=GServer->UseList.Index[thisclient->items[chestSlot].itemnum]->is_mileage;
+            int bonus=0;
+
             unsigned int randv = RandNumber( 1, thischest->probmax );
 
             DWORD prob = 1;
@@ -4013,6 +4017,13 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
             {
                 CReward* reward = thischest->Rewards.at( i );
                 prob += reward->prob;
+
+                //LMA: extra bonus for mileage boxes.
+                if(is_mileage==1)
+                    bonus=GServer->RandNumber(1, 300);
+                if(reward->type>=10)
+                    bonus=0;
+
                 if(randv<=prob)
                 {
                     item.itemtype = reward->type;
@@ -4024,7 +4035,7 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
                     item.lifespan = 100;
                     item.durability = 100;
                     item.refine = 0;
-                    item.stats = 0;
+                    item.stats = bonus;
                     item.gem = 0;
                     item.sp_value=0;
                     item.last_sp_value=0;
@@ -4033,6 +4044,8 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
                 }
             }
             unsigned int rewardmax = RandNumber( 1, thischest->rewardposs ); //test
+
+            bonus=0;
 
             //if (rewardCount > 1)
             if (rewardmax >1)
@@ -4045,6 +4058,13 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
                     CReward* reward = thischest->Rewards.at( i );
                     if (reward->id != item.itemnum) {
                         prob += reward->prob;
+
+                        //LMA: extra bonus for mileage boxes.
+                        if(is_mileage==1)
+                            bonus=GServer->RandNumber(1, 300);
+                        if(reward->type>=10)
+                            bonus=0;
+
                         if(randv<=prob)
                         {
                             itemextra.itemtype = reward->type;
@@ -4056,7 +4076,7 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
                             itemextra.lifespan = 100;
                             itemextra.durability = 100;
                             itemextra.refine = 0;
-                            itemextra.stats = 0;
+                            itemextra.stats = bonus;
                             itemextra.gem = 0;
                             itemextra.sp_value=0;
                             itemextra.last_sp_value=0;

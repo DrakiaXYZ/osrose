@@ -1816,6 +1816,12 @@ bool CWorldServer::LoadConsItem( )
         newuse->usecondition[1]= STB_ITEM[9].rows[i][18];
         newuse->useeffect[0]= STB_ITEM[9].rows[i][19];
         newuse->useeffect[1]= STB_ITEM[9].rows[i][20];
+        newuse->is_mileage=0;
+
+        //LMA: mileage box?
+        if(newuse->restriction==6&&newuse->quality==100)
+            newuse->is_mileage=1;
+
         //UseList.Data.push_back( newuse );
         UseList.Index[newuse->id] = newuse;
     }

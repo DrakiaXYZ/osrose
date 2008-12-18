@@ -607,7 +607,7 @@ CDrop* CWorldServer::GetPYDrop( CMonster* thismon, UINT droptype )
         if(thismon->thisnpc->level == 1 && newdrop->item.count > 6) newdrop->item.count = 6; //limit the drop rate of items from level 1 event mobs
         if(newdrop->item.count==0)
             newdrop->item.count = 1;
-// Skillbooks & Chests
+        // Skillbooks & Chests
         if(newdrop->item.itemtype == 10)
         {
             if((newdrop->item.itemnum >=441 && newdrop->item.itemnum <= 888) ||
@@ -617,18 +617,18 @@ CDrop* CWorldServer::GetPYDrop( CMonster* thismon, UINT droptype )
                (newdrop->item.itemnum >=1110 && newdrop->item.itemnum <= 1178) ||
                (newdrop->item.itemnum >=1080 && newdrop->item.itemnum <= 1090) )
                 newdrop->item.count = 1;   // just one skill book or chest per drop
-/*
-441-888    Skills
-247-249    Christmas Presents
-270-275    Dirty Stones
-1001-1028  Prison Chests
-1110-1178  Dispensers
-1080-1090  Event Boxes
-1200-1201  Christmas Gift - Present Box - Mileage
-1202-1203  Boy and Girl Snow Suit - Mileage
-*/
+        /*
+        441-888    Skills
+        247-249    Christmas Presents
+        270-275    Dirty Stones
+        1001-1028  Prison Chests
+        1110-1178  Dispensers
+        1080-1090  Event Boxes
+        1200-1201  Christmas Gift - Present Box - Mileage
+        1202-1203  Boy and Girl Snow Suit - Mileage
+        */
         }
-// Gem Drops
+        // Gem Drops
         if(newdrop->item.itemtype == 11)
             newdrop->item.count = 1;   // just one gem per drop
 
