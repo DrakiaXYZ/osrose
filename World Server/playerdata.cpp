@@ -989,7 +989,7 @@ void CPlayer::AttrAllSkills()
     return;
 }
 
-//DK: ??
+//DK: seems to be the same as AttrAllSkills...
 void CPlayer::AttrGMSkills()
 {
     for (int k=0;k<MAX_ALL_SKILL;k++)

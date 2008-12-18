@@ -66,10 +66,12 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
     {
         if(Config.Command_GMSkills > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)
            Log( MSG_GMACTION, " %s : /gmskills NOT ALLOWED" , thisclient->CharInfo->charname);
+           /*
            char buffer[200];
            sprintf ( buffer, "gmskills NOT ALLOWED");
            SendPM(thisclient, buffer);
 	        return true;
+	        */
         if ((tmp = strtok(NULL, " "))==NULL) return true; char* name=tmp;
         Log( MSG_GMACTION, " %s : /gmskills %s", thisclient->CharInfo->charname, name);
         return pakGMGMSkills(thisclient, name);
@@ -5752,7 +5754,8 @@ bool CWorldServer::pakGMGMSkills(CPlayer* thisclient, char* name)
     if(otherclient==NULL)
     return true;
 
-    //LMA: We delete previous skills to avoir errors (only the class ones)...
+    /*
+    //LMA: We delete previous skills to avoid errors (only the class ones)...
     //They will be sorted correctly (if needed) at next startup...
     for (int k=0;k<60;k++)
     {
@@ -5760,41 +5763,92 @@ bool CWorldServer::pakGMGMSkills(CPlayer* thisclient, char* name)
         otherclient->cskills[k].level = 0;
         otherclient->cskills[k].thisskill=NULL;
     }
+    */
+
+    //LMA: Looking for good place to save it now...
+    int family=3;
+    int nb_gm_skills=15;
+    int index=thisclient->FindSkillOffset(family);
+    if(index==-1)
+    {
+        Log(MSG_WARNING,"No Room anymore for learning Unique Skills.");
+        return true;
+    }
+
+    if (index+nb_gm_skills>=120)
+    {
+        Log(MSG_WARNING,"Not enough place to learn all GM skills.");
+        return true;
+    }
+
+    int index_ini=index;
+
         // Visitor,     Soldier,            Knight,         Champion,           Muse,               Mage,             Cleric,           Hawker,             Raider,         Scout,          Dealer,             Bourgeois,      Artisan.
     if (classid == 0 || classid == 111 || classid == 121 || classid == 122 || classid == 211 || classid == 221 || classid == 222 || classid == 311 || classid == 321 || classid == 322 || classid == 411 || classid == 421 || classid == 422 )
     {
-        otherclient->cskills[0].id = 3201;//Healing All
-        otherclient->cskills[0].level = 1;
-        otherclient->cskills[1].id = 3202;//ATK & Accuracy Up
-        otherclient->cskills[1].level = 1;
-        otherclient->cskills[2].id = 3203;//DEF & M-DEF Up
-        otherclient->cskills[2].level = 1;
-        otherclient->cskills[3].id = 3204;//A-SPD & CRI Up
-        otherclient->cskills[3].level = 1;
-        otherclient->cskills[4].id = 3205;//M-SPD & Dodge Up
-        otherclient->cskills[4].level = 1;
-        otherclient->cskills[5].id = 3210;//Purify All
-        otherclient->cskills[5].level = 1;
-        otherclient->cskills[6].id = 3211;//Invincibility (Self)
-        otherclient->cskills[6].level = 1;
-        otherclient->cskills[7].id = 3212;//Power Up (Self)
-        otherclient->cskills[7].level = 1;
-        otherclient->cskills[8].id = 3213;//Speed Up (Self)
-        otherclient->cskills[8].level = 1;
-        otherclient->cskills[9].id = 3214;//Invisibility (Self)
-        otherclient->cskills[9].level = 1;
-        otherclient->cskills[10].id = 3215;//Healing (Self)
-        otherclient->cskills[10].level = 1;
-        otherclient->cskills[11].id = 3216;//Kill (Anti-Crime)
-        otherclient->cskills[11].level = 1;
-        otherclient->cskills[12].id = 3217;//Stun (600")
-        otherclient->cskills[12].level = 1;
-        otherclient->cskills[13].id = 3218;//Mute (600")
-        otherclient->cskills[13].level = 1;
-        otherclient->cskills[14].id = 3219;//Purify
-        otherclient->cskills[14].level = 1;
-// Need to be tested out !!
-/*        otherclient->cskills[15].id = 3220;//GM Passiv Skill
+        otherclient->cskills[index].id = 3201;//Healing All
+        otherclient->cskills[index].level = 1;
+        index++;
+        otherclient->cskills[index].id = 3202;//ATK & Accuracy Up
+        otherclient->cskills[index].level = 1;
+        index++;
+        otherclient->cskills[index].id = 3203;//DEF & M-DEF Up
+        otherclient->cskills[index].level = 1;
+        index++;
+        otherclient->cskills[index].id = 3204;//A-SPD & CRI Up
+        otherclient->cskills[index].level = 1;
+        index++;
+        otherclient->cskills[index].id = 3205;//M-SPD & Dodge Up
+        otherclient->cskills[index].level = 1;
+        index++;
+        otherclient->cskills[index].id = 3210;//Purify All
+        otherclient->cskills[index].level = 1;
+        index++;
+        otherclient->cskills[index].id = 3211;//Invincibility (Self)
+        otherclient->cskills[index].level = 1;
+        index++;
+        otherclient->cskills[index].id = 3212;//Power Up (Self)
+        otherclient->cskills[index].level = 1;
+        index++;
+        otherclient->cskills[index].id = 3213;//Speed Up (Self)
+        otherclient->cskills[index].level = 1;
+        index++;
+        otherclient->cskills[index].id = 3214;//Invisibility (Self)
+        otherclient->cskills[index].level = 1;
+        index++;
+        otherclient->cskills[index].id = 3215;//Healing (Self)
+        otherclient->cskills[index].level = 1;
+        index++;
+        otherclient->cskills[index].id = 3216;//Kill (Anti-Crime)
+        otherclient->cskills[index].level = 1;
+        index++;
+        otherclient->cskills[index].id = 3217;//Stun (600")
+        otherclient->cskills[index].level = 1;
+        index++;
+        otherclient->cskills[index].id = 3218;//Mute (600")
+        otherclient->cskills[index].level = 1;
+        index++;
+        otherclient->cskills[index].id = 3219;//Purify
+        otherclient->cskills[index].level = 1;
+        index++;
+
+        for (int k=index_ini;k<index;k++)
+        {
+            if (otherclient->cskills[k].id==0)
+                continue;
+
+            otherclient->cskills[k].thisskill = GServer->GetSkillByID( otherclient->cskills[k].id+otherclient->cskills[k].level-1 );
+            if(otherclient->cskills[k].thisskill==NULL)
+            {
+                otherclient->cskills[k].id=0;
+                otherclient->cskills[k].level=1;
+            }
+
+        }
+
+        // Need to be tested out !!
+        /*
+        otherclient->cskills[15].id = 3220;//GM Passiv Skill
         otherclient->cskills[15].level = 1;
         otherclient->cskills[16].id = 3221;//DEV Passiv Sill
         otherclient->cskills[16].level = 1;
@@ -5804,18 +5858,17 @@ bool CWorldServer::pakGMGMSkills(CPlayer* thisclient, char* name)
         otherclient->cskills[18].level = 1;
         otherclient->cskills[19].id = 3227;//
         otherclient->cskills[19].level = 1;
-*/
+        */
         SendPM (thisclient, "Relogin For Get All the GM  Skills");
     }
     else
     {
         is_ok=false;
-        SendPM(thisclient, "Can't add skills for this class");
+        SendPM(thisclient, "Can't add GM skills for this class");
     }
 
     if(is_ok)
     {
-        thisclient->AttrGMSkills();
         thisclient->saveskills();
         thisclient->ResetSkillOffset();
     }

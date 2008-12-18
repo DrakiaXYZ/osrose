@@ -3794,10 +3794,8 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
         }
         break; //case 0x02 ( Surprise gift box )
 
-       case 0x02: // Treasure Chests, Gift Box - by Drakia
-                  // Disassemble - by Geobot
+       case 0x02: // Treasure Chests, Gift Box - by Drakia, // Disassemble - by Geobot
         {
-
             Log(MSG_INFO,"DSM: B0 %i, B1 %i, B2 %i, B3 %i, B4 %i",GETBYTE((*P), 0),GETBYTE((*P), 1),GETBYTE((*P), 2),GETBYTE((*P), 3),GETBYTE((*P), 4));
 
             CItem item;
@@ -3898,6 +3896,8 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
                    newitem.appraised=0;
                    newitem.stats=0;
                    newitem.gem=0;
+                   newitem.sp_value=0;
+                   newitem.last_sp_value=0;
 
                    unsigned newslot = thisclient->GetNewItemSlot(newitem);
                    if(newslot == 0xffff)
@@ -3954,6 +3954,8 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
                newitem.appraised=0;
                newitem.stats=0;
                newitem.gem=0;
+               newitem.sp_value=0;
+               newitem.last_sp_value=0;
 
                unsigned newslot = thisclient->GetNewItemSlot(newitem);
                if(newslot == 0xffff)
@@ -3962,6 +3964,12 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
                    //We let the client crashes in this case ^_^
                    return false;
                }
+
+                //LMA: PAT:
+                if (newslot>=135&&newslot<=136)
+                {
+                    newitem.sp_value=newitem.lifespan*10;
+                }
 
                if(thisclient->items[newslot].count > 0)
                {
@@ -4018,6 +4026,8 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
                     item.refine = 0;
                     item.stats = 0;
                     item.gem = 0;
+                    item.sp_value=0;
+                    item.last_sp_value=0;
                     prob = reward->prob;
                     break;
                 }
@@ -4048,6 +4058,8 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
                             itemextra.refine = 0;
                             itemextra.stats = 0;
                             itemextra.gem = 0;
+                            itemextra.sp_value=0;
+                            itemextra.last_sp_value=0;
                             break;
                         }
                     }
@@ -4067,40 +4079,40 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
             unsigned int tempslot = thisclient->AddItem(item);
             if (tempslot != 0xffff)
             {
-            BEGINPACKET( pak, 0x7bc );
-            ADDBYTE (pak, 0x13);  // Status code. Congrats?
-            //ADDBYTE (pak, (rewardCount + 1));  // Number of items
-            ADDBYTE (pak, (rewardmax + 1));  // Number of items
+                BEGINPACKET( pak, 0x7bc );
+                ADDBYTE (pak, 0x13);  // Status code. Congrats?
+                //ADDBYTE (pak, (rewardCount + 1));  // Number of items
+                ADDBYTE (pak, (rewardmax + 1));  // Number of items
 
-            ADDBYTE (pak, tempslot);
-            ADDDWORD(pak, BuildItemHead(thisclient->items[tempslot]));
-            ADDDWORD(pak, BuildItemData(thisclient->items[tempslot]));
-            ADDDWORD( pak, 0x00000000 );
-            ADDWORD ( pak, 0x0000 );
-            //if (rewardCount > 1)
-            if (rewardmax > 1)
-            {
-                tempslot = thisclient->AddItem(itemextra);
-                if (tempslot != 0xffff)
+                ADDBYTE (pak, tempslot);
+                ADDDWORD(pak, BuildItemHead(thisclient->items[tempslot]));
+                ADDDWORD(pak, BuildItemData(thisclient->items[tempslot]));
+                ADDDWORD( pak, 0x00000000 );
+                ADDWORD ( pak, 0x0000 );
+                //if (rewardCount > 1)
+                if (rewardmax > 1)
                 {
-                    ADDBYTE(pak, tempslot);
-                    ADDDWORD(pak, BuildItemHead(thisclient->items[tempslot]));
-                    ADDDWORD(pak, BuildItemData(thisclient->items[tempslot]));
-                    ADDDWORD(pak, 0x00000000);
-                    ADDWORD(pak, 0x0000);
-                } else {
-                    Log(MSG_WARNING, "Error adding second item");
-                    return true;
+                    tempslot = thisclient->AddItem(itemextra);
+                    if (tempslot != 0xffff)
+                    {
+                        ADDBYTE(pak, tempslot);
+                        ADDDWORD(pak, BuildItemHead(thisclient->items[tempslot]));
+                        ADDDWORD(pak, BuildItemData(thisclient->items[tempslot]));
+                        ADDDWORD(pak, 0x00000000);
+                        ADDWORD(pak, 0x0000);
+                    } else {
+                        Log(MSG_WARNING, "Error adding second item");
+                        return true;
+                    }
                 }
-            }
 
-            ADDBYTE (pak, chestSlot);
-            ADDDWORD(pak, BuildItemHead(thisclient->items[chestSlot]));
-            ADDDWORD(pak, BuildItemData(thisclient->items[chestSlot]));
-            ADDDWORD( pak, 0x00000000 );
-            ADDWORD ( pak, 0x0000 );
+                ADDBYTE (pak, chestSlot);
+                ADDDWORD(pak, BuildItemHead(thisclient->items[chestSlot]));
+                ADDDWORD(pak, BuildItemData(thisclient->items[chestSlot]));
+                ADDDWORD( pak, 0x00000000 );
+                ADDWORD ( pak, 0x0000 );
 
-            thisclient->client->SendPacket( &pak );
+                thisclient->client->SendPacket( &pak );
             }
             return true;
         }
