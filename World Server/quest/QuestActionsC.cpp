@@ -145,7 +145,7 @@ QUESTREWDC(000){
 	}
 	*/
 
-	Log(MSG_WARNING,"Monster/NPC using QuestAction 000");
+	//Log(MSG_WARNING,"Monster/NPC using QuestAction 000");
 
 	return QUEST_SUCCESS;
 }
@@ -161,12 +161,12 @@ QUESTREWDC(001){
 
 	SQuest* curQuest = client->GetActiveQuest();
 	if(curQuest == NULL) {
-	  Log(MSG_DEBUG, "Couldn't find active quest, wtf? Id %u", client->ActiveQuest);
+	  //Log(MSG_DEBUG, "Couldn't find active quest, wtf? Id %u", client->ActiveQuest);
 	  return QUEST_FAILURE;
                          }
 	curQuest->AddItem(&tmpItem, data->btOp);
     */
-    Log(MSG_WARNING,"Monster/NPC using QuestAction 001");
+    //Log(MSG_WARNING,"Monster/NPC using QuestAction 001");
     return QUEST_SUCCESS;
 }
 
@@ -186,7 +186,7 @@ QUESTREWDC(002){
 		client->SetQuestVar(curQst->m_wVarTYPE, curQst->m_wVarNO, tempValue);
     }
     */
-    Log(MSG_WARNING,"Monster/NPC using QuestAction 002");
+    //Log(MSG_WARNING,"Monster/NPC using QuestAction 002");
 	return QUEST_SUCCESS;
 }
 
@@ -272,19 +272,19 @@ QUESTREWDC(003){
             client->client->SendPacket( &pak );
             break;
 		default:
-			Log(MSG_WARNING, "Type Unknown: '%i'", curAbil->iType);
+			//Log(MSG_WARNING, "Type Unknown: '%i'", curAbil->iType);
 			break;
 		}
 	}
 	*/
-	Log(MSG_WARNING,"Monster/NPC using QuestAction 003");
+	//Log(MSG_WARNING,"Monster/NPC using QuestAction 003");
 	return QUEST_SUCCESS;
 }
 
 //Set Quest Variable
 QUESTREWDC(004){
 	//return QUEST_REWDC_002(server, client, raw);
-	Log(MSG_WARNING,"Monster/NPC using QuestAction 004");
+	//Log(MSG_WARNING,"Monster/NPC using QuestAction 004");
 	return QUEST_SUCCESS;
 }
 
@@ -353,7 +353,7 @@ QUESTREWDC(005){
 
 	}
     */
-    Log(MSG_WARNING,"Monster/NPC using QuestAction 005");
+    //Log(MSG_WARNING,"Monster/NPC using QuestAction 005");
 	return QUEST_SUCCESS;
 }
 
@@ -364,7 +364,7 @@ QUESTREWDC(006){
   client->Stats->HP = (long int)((float)client->Stats->MaxHP / 100.0f) * data->iPercentOfHP;
 	client->Stats->MP = (long int)((float)client->Stats->MaxHP / 100.0f) * data->iPercentOfMP;
     */
-    Log(MSG_WARNING,"Monster/NPC using QuestAction 006");
+    //Log(MSG_WARNING,"Monster/NPC using QuestAction 006");
 	return QUEST_SUCCESS;
 }
 
@@ -377,7 +377,7 @@ QUESTREWDC(007){
 	thispoint.y = floor(((float)data->iY)/100);
 	GServer->TeleportTo(client, data->iZoneSN, thispoint);
 	*/
-	Log(MSG_WARNING,"Monster/NPC using QuestAction 007");
+	//Log(MSG_WARNING,"Monster/NPC using QuestAction 007");
 	return QUEST_SUCCESS;
 }
 
@@ -385,7 +385,7 @@ QUESTREWDC(007){
 QUESTREWDC(008){
     GETREWDDATA(008);
 
-    Log(MSG_DEBUG,"BEGIN QUESTREWDC(008)");
+    //Log(MSG_DEBUG,"BEGIN QUESTREWDC(008)");
     fPoint position;
     dword mapId;
     if(data->iX == 0 || data->iY == 0 || data->iZoneSN == 0)
@@ -407,7 +407,7 @@ QUESTREWDC(008){
         CMap* map = GServer->MapList.Index[mapId];
 
         //monster
-        Log(MSG_INFO, "Spawn mob[%i] @ map %i (%f,%f)", data->iMonsterSN, mapId,pos.x, pos.y);
+        //Log(MSG_INFO, "Spawn mob[%i] @ map %i (%f,%f)", data->iMonsterSN, mapId,pos.x, pos.y);
         CMonster* mon = map->AddMonster( data->iMonsterSN, pos, 0, NULL, NULL, 0 , true );
         // ghost rackies = non aggresive, same for Xmas trees.
         if((data->iMonsterSN > 750 && data->iMonsterSN < 755) || (data->iMonsterSN >= 1474 && data->iMonsterSN <= 1489))
@@ -422,7 +422,7 @@ QUESTREWDC(008){
         mon->lastSighCheck = 0; // Force sight check instantly.
     }
 
-    Log(MSG_DEBUG,"END QUESTREWDC(008)");
+    //Log(MSG_DEBUG,"END QUESTREWDC(008)");
     return QUEST_SUCCESS;
 }
 
@@ -452,7 +452,7 @@ QUESTREWDC(010){
 		client->CharInfo->StatPoints += i / 2;
 	}
     */
-    Log(MSG_WARNING,"Monster/NPC using QuestAction 010");
+    //Log(MSG_WARNING,"Monster/NPC using QuestAction 010");
 	return QUEST_SUCCESS;
 }
 
@@ -484,12 +484,12 @@ QUESTREWDC(011)
         CMonster* monster = reinterpret_cast<CMonster*>(client);
         if(monster == NULL)
         {
-            Log(MSG_DEBUG,"QUESTREWDC(011) failed (monster null)");
+            //Log(MSG_DEBUG,"QUESTREWDC(011) failed (monster null)");
             return QUEST_FAILURE;
         }
 
         short tempval = GServer->ObjVar[monster->thisnpc->refNPC][data->nVarNo];
-        Log(MSG_DEBUG,"QSD Set variable NPC %i, data->btOp=%i, data->iValue=%i, data->nVarNo=%i",monster->thisnpc->refNPC,data->btOp,data->iValue,data->nVarNo);
+        //Log(MSG_DEBUG,"QSD Set variable NPC %i, data->btOp=%i, data->iValue=%i, data->nVarNo=%i",monster->thisnpc->refNPC,data->btOp,data->iValue,data->nVarNo);
 
         switch(data->btOp)
         {
@@ -524,7 +524,7 @@ QUESTREWDC(011)
             //GServer->SendToVisible(&pak,client);
             GServer->SendToAllInMap(&pak,monster->Position->Map);
             */
-            Log(MSG_INFO,"QUESTREWDC(011) Changing event for npc %i to %i, map %i",monster->thisnpc->refNPC,tempval,monster->Position->Map);
+            //Log(MSG_INFO,"QUESTREWDC(011) Changing event for npc %i to %i, map %i",monster->thisnpc->refNPC,tempval,monster->Position->Map);
 		}
 
 	}
@@ -536,7 +536,7 @@ QUESTREWDC(011)
 		OperateValues(data->btOp, &VarValue, (short)data->iValue);
 		server->EventVar.SetVar(data->nVarNo, VarValue);
 		*/
-        Log(MSG_WARNING,"SERVER EVENT IN QUESTREWDC(011)");
+        //Log(MSG_WARNING,"SERVER EVENT IN QUESTREWDC(011)");
         //return QUEST_SUCCESS;
 	}
 
@@ -579,21 +579,21 @@ QUESTREWDC(012){
 	//2do: check length + check msg ID...
     if(data->iStrID>=GServer->maxltbqsd)
     {
-        Log(MSG_INFO,"QUESTREWDC(012) QSD LTB index error %i>=%i",data->iStrID,GServer->maxltbqsd);
+        //Log(MSG_INFO,"QUESTREWDC(012) QSD LTB index error %i>=%i",data->iStrID,GServer->maxltbqsd);
         return QUEST_SUCCESS;
     }
 
 	CMonster* thisMonster = reinterpret_cast<CMonster*>(client);
 	if(data->btMsgType == 1)
 	{
-	    //Log(MSG_DEBUG,"%s shouts Nb %i::%s",GServer->LtbstringQSD[data->iStrID]->NPCname,data->iStrID,GServer->LtbstringQSD[data->iStrID]->LTBstring);
+	    ////Log(MSG_DEBUG,"%s shouts Nb %i::%s",GServer->LtbstringQSD[data->iStrID]->NPCname,data->iStrID,GServer->LtbstringQSD[data->iStrID]->LTBstring);
         //GServer->NPCShout(thisMonster,GServer->LtbstringQSD[data->iStrID]->LTBstring,GServer->LtbstringQSD[data->iStrID]->NPCname);
-        Log(MSG_DEBUG,"%s (%i) shouts Nb %i::%s",GServer->GetNPCNameByType(thisMonster->aip_npctype),thisMonster->aip_npctype,data->iStrID,GServer->LtbstringQSD[data->iStrID]->LTBstring);
+        //Log(MSG_DEBUG,"%s (%i) shouts Nb %i::%s",GServer->GetNPCNameByType(thisMonster->aip_npctype),thisMonster->aip_npctype,data->iStrID,GServer->LtbstringQSD[data->iStrID]->LTBstring);
         GServer->NPCShout(thisMonster,GServer->LtbstringQSD[data->iStrID]->LTBstring,GServer->GetNPCNameByType(thisMonster->aip_npctype));
 	}
 	else if(data->btMsgType == 2)
 	{
-	    Log(MSG_DEBUG,"%s (%i) announces Nb %i::%s",GServer->GetNPCNameByType(thisMonster->aip_npctype),thisMonster->aip_npctype,data->iStrID,GServer->LtbstringQSD[data->iStrID]->LTBstring);
+	    //Log(MSG_DEBUG,"%s (%i) announces Nb %i::%s",GServer->GetNPCNameByType(thisMonster->aip_npctype),thisMonster->aip_npctype,data->iStrID,GServer->LtbstringQSD[data->iStrID]->LTBstring);
 	    GServer->NPCAnnounce(GServer->LtbstringQSD[data->iStrID]->LTBstring,GServer->GetNPCNameByType(thisMonster->aip_npctype));
 	}
 
@@ -603,7 +603,7 @@ QUESTREWDC(012){
 
 //Unknown
 QUESTREWDC(013){
-    Log(MSG_WARNING,"Monster/NPC using QuestAction 013");
+    //Log(MSG_WARNING,"Monster/NPC using QuestAction 013");
 	return QUEST_SUCCESS;
 }
 
@@ -614,7 +614,7 @@ QUESTREWDC(014){
     GServer->LearnSkill(client, data->iSkillNo, false);
 //	GServer->LearnSkill(client, data->iSkillNo);
     */
-    Log(MSG_WARNING,"Monster/NPC using QuestAction 014");
+    //Log(MSG_WARNING,"Monster/NPC using QuestAction 014");
 	return QUEST_SUCCESS;
 }
 
@@ -624,13 +624,13 @@ QUESTREWDC(015){
 	GETREWDDATA(015);
 	client->quest.SetFlag(data->nSN, (data->btOp == 1)?true:false);
 	*/
-	Log(MSG_WARNING,"Monster/NPC using QuestAction 015");
+	//Log(MSG_WARNING,"Monster/NPC using QuestAction 015");
 	return QUEST_SUCCESS;
 }
 
 //Unknown
 QUESTREWDC(016){
-    Log(MSG_WARNING,"Monster/NPC using QuestAction 016");
+    //Log(MSG_WARNING,"Monster/NPC using QuestAction 016");
 	return QUEST_SUCCESS;
 }
 
@@ -639,7 +639,7 @@ QUESTREWDC(017){
     /*
   memset(&client->quest.flags, 0, 64);
   */
-  Log(MSG_WARNING,"Monster/NPC using QuestAction 017");
+  //Log(MSG_WARNING,"Monster/NPC using QuestAction 017");
 	return QUEST_SUCCESS;
 }
 
@@ -648,31 +648,31 @@ QUESTREWDC(018){
     /*
     GETREWDDATA(018);
     */
-    Log(MSG_WARNING,"Monster/NPC using QuestAction 018 (annoucment?)");
+    //Log(MSG_WARNING,"Monster/NPC using QuestAction 018 (annoucment?)");
 	return QUEST_SUCCESS;
 }
 
 //Execute Quest Trigger in Other Map
 QUESTREWDC(019){
-    Log(MSG_WARNING,"Monster/NPC using QuestAction 019");
+    //Log(MSG_WARNING,"Monster/NPC using QuestAction 019");
 	return QUEST_SUCCESS;
 }
 
 //PvP Status
 QUESTREWDC(020){
-    Log(MSG_WARNING,"Monster/NPC using QuestAction 020");
+    //Log(MSG_WARNING,"Monster/NPC using QuestAction 020");
 	return QUEST_SUCCESS;
 }
 
 //Set Respawn Position
 QUESTREWDC(021){
-    Log(MSG_WARNING,"Monster/NPC using QuestAction 021");
+    //Log(MSG_WARNING,"Monster/NPC using QuestAction 021");
 	return QUEST_SUCCESS;
 }
 
 //Unknown
 QUESTREWDC(022){
-    Log(MSG_WARNING,"Monster/NPC using QuestAction 022");
+    //Log(MSG_WARNING,"Monster/NPC using QuestAction 022");
 	return QUEST_SUCCESS;
 }
 
@@ -716,31 +716,31 @@ QUESTREWDC(023){
     }
     GServer->DB->QExecute("UPDATE list_clan SET grade=%i WHERE id=%i", client->Clan->grade, client->Clan->clanid);
     */
-    Log(MSG_WARNING,"Monster/NPC using QuestAction 023");
+    //Log(MSG_WARNING,"Monster/NPC using QuestAction 023");
 	return QUEST_SUCCESS;
 }
 
 //Clan Money
 QUESTREWDC(024){
-    Log(MSG_WARNING,"Monster/NPC using QuestAction 024");
+    //Log(MSG_WARNING,"Monster/NPC using QuestAction 024");
 	return QUEST_SUCCESS;
 }
 
 //Clan Points
 QUESTREWDC(025){
-    Log(MSG_WARNING,"Monster/NPC using QuestAction 025");
+    //Log(MSG_WARNING,"Monster/NPC using QuestAction 025");
 	return QUEST_SUCCESS;
 }
 
 //Clan Skill
 QUESTREWDC(026){
-    Log(MSG_WARNING,"Monster/NPC using QuestAction 026");
+    //Log(MSG_WARNING,"Monster/NPC using QuestAction 026");
 	return QUEST_SUCCESS;
 }
 
 //Clan Contribution
 QUESTREWDC(027){
-    Log(MSG_WARNING,"Monster/NPC using QuestAction 027");
+    //Log(MSG_WARNING,"Monster/NPC using QuestAction 027");
 	return QUEST_SUCCESS;
 }
 
@@ -766,7 +766,7 @@ QUESTREWDC(028){
         }
     }
     */
-    Log(MSG_WARNING,"Monster/NPC using QuestAction 028");
+    //Log(MSG_WARNING,"Monster/NPC using QuestAction 028");
 	return QUEST_SUCCESS;
 }
 
@@ -793,7 +793,7 @@ QUESTREWDC(034){
     return QUEST_FAILURE;
     */
 
-    Log(MSG_WARNING,"Monster/NPC using QuestAction 034");
+    //Log(MSG_WARNING,"Monster/NPC using QuestAction 034");
     return QUEST_SUCCESS;
 }
 

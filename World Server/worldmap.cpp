@@ -119,6 +119,13 @@ CMonster* CMap::AddMonster( UINT montype, fPoint position, UINT owner, CMDrops* 
     monster->Stats->HP = monster->Stats->MaxHP;
     monster->Stats->MP = monster->Stats->MaxMP;
 
+    //LMA: no agressivity in Santa's planetoid ;)
+    if(monster->Position->Map=38)
+    {
+        monster->thisnpc->aggresive=0;
+        monster->thisnpc->helpless=1;
+    }
+
     //LMA: Little check, for now we "only" have a DWORD for monster's HP so there is a limit
     //broken by some monsters (Turak boss)
     if(monster->Stats->HP>MAXHPMOB)

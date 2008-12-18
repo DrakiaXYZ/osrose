@@ -67,115 +67,116 @@ QUESTCOND(002){
 //Check Stats
 QUESTCOND(003){
 	GETCONDDATA(003);
-	for(int i = 0; i < data->iDataCnt; i++){
+	for(int i = 0; i < data->iDataCnt; i++)
+	{
 		dword address = i * 0x0C;
 		address += (dword)data;
 		address += 4;
 		STR_ABIL_DATA* curAbil = (STR_ABIL_DATA*)address;
-    if( client->questdebug )
-      server->SendPM(client, "Check Stat[%i] - %i (Op: %i)", curAbil->iType, curAbil->iValue, curAbil->btOp);
+        if( client->questdebug )
+          server->SendPM(client, "Check Stat[%i] - %i (Op: %i)", curAbil->iType, curAbil->iValue, curAbil->btOp);
 		switch( curAbil->iType )
 		{
-		case sGender:
-				if(!OperateValues<int>(curAbil->btOp, (int*)&client->CharInfo->Sex, curAbil->iValue))
-				return QUEST_FAILURE;
-			break;
+            case sGender:
+                    if(!OperateValues<int>(curAbil->btOp, (int*)&client->CharInfo->Sex, curAbil->iValue))
+                    return QUEST_FAILURE;
+                break;
 
-        case sJob:
-        {
-            word tempValue = client->CharInfo->Job / 100;
-                if(!OperateValues<word>(curAbil->btOp, (word*)&tempValue, curAbil->iValue))
+            case sJob:
+            {
+                word tempValue = client->CharInfo->Job / 100;
+                    if(!OperateValues<word>(curAbil->btOp, (word*)&tempValue, curAbil->iValue))
+                    return QUEST_FAILURE;
+            }
+            break;
+
+            case sUnion:
+            {
+                //Log(MSG_INFO,"[Union] ? QUESTCOND(003) btOp %i, value: %i",curAbil->btOp,curAbil->iValue);
+                if(!OperateValues<int>(curAbil->btOp, (int*)&client->CharInfo->unionid, curAbil->iValue))
                 return QUEST_FAILURE;
-        }
-        break;
-
-		case sUnion:
-		{
-		    Log(MSG_INFO,"[Union] ? QUESTCOND(003) btOp %i, value: %i",curAbil->btOp,curAbil->iValue);
-            if(!OperateValues<int>(curAbil->btOp, (int*)&client->CharInfo->unionid, curAbil->iValue))
-            return QUEST_FAILURE;
-            Log(MSG_INFO,"[Union] OK QUESTCOND(003) GET union %i",curAbil->iValue);
-		}
-        break;
-        case 81:    //LMA: Union Points (no break, it's NOT a mistake)...
-        {
-                if(!OperateValues<int>(curAbil->btOp, (int*)&client->CharInfo->union01, curAbil->iValue))
+                //Log(MSG_INFO,"[Union] OK QUESTCOND(003) GET union %i",curAbil->iValue);
+            }
+            break;
+            case 81:    //LMA: Union Points (no break, it's NOT a mistake)...
+            {
+                    if(!OperateValues<int>(curAbil->btOp, (int*)&client->CharInfo->union01, curAbil->iValue))
+                        return QUEST_FAILURE;
+            }
+            break;
+            case 82:
+            {
+                    if(!OperateValues<int>(curAbil->btOp, (int*)&client->CharInfo->union02, curAbil->iValue))
+                        return QUEST_FAILURE;
+            }
+            break;
+            case 83:
+            {
+                    if(!OperateValues<int>(curAbil->btOp, (int*)&client->CharInfo->union03, curAbil->iValue))
+                        return QUEST_FAILURE;
+            }
+            break;
+            case 84:
+            {
+                    if(!OperateValues<int>(curAbil->btOp, (int*)&client->CharInfo->union04, curAbil->iValue))
+                        return QUEST_FAILURE;
+            }
+            break;
+            case 85:
+            {
+                    if(!OperateValues<int>(curAbil->btOp, (int*)&client->CharInfo->union05, curAbil->iValue))
+                        return QUEST_FAILURE;
+            }
+            break;
+            case sStrength:
+                    if(!OperateValues<int>(curAbil->btOp, (int*)&client->Attr->Str, curAbil->iValue))
                     return QUEST_FAILURE;
-        }
-        break;
-        case 82:
-        {
-                if(!OperateValues<int>(curAbil->btOp, (int*)&client->CharInfo->union02, curAbil->iValue))
+                break;
+
+            case sDexterity:
+                    if(!OperateValues<int>(curAbil->btOp, (int*)&client->Attr->Dex, curAbil->iValue))
                     return QUEST_FAILURE;
-        }
-        break;
-        case 83:
-        {
-                if(!OperateValues<int>(curAbil->btOp, (int*)&client->CharInfo->union03, curAbil->iValue))
+                break;
+
+            case sIntelligence:
+                    if(!OperateValues<int>(curAbil->btOp, (int*)&client->Attr->Int, curAbil->iValue))
                     return QUEST_FAILURE;
-        }
-        break;
-        case 84:
-        {
-                if(!OperateValues<int>(curAbil->btOp, (int*)&client->CharInfo->union04, curAbil->iValue))
+                break;
+
+            case sConcentration:
+                    if(!OperateValues<int>(curAbil->btOp, (int*)&client->Attr->Con, curAbil->iValue))
                     return QUEST_FAILURE;
-        }
-        break;
-        case 85:
-        {
-                if(!OperateValues<int>(curAbil->btOp, (int*)&client->CharInfo->union05, curAbil->iValue))
+                break;
+
+            case sCharm:
+                    if(!OperateValues<int>(curAbil->btOp, (int*)&client->Attr->Cha, curAbil->iValue))
                     return QUEST_FAILURE;
-        }
+                break;
+
+            case sSensibility:
+                    if(!OperateValues<int>(curAbil->btOp, (int*)&client->Attr->Sen, curAbil->iValue))
+                    return QUEST_FAILURE;
+                break;
+
+            case sLevel:
+                    if(!OperateValues<int>(curAbil->btOp, (int*)&client->Stats->Level, curAbil->iValue))
+                    return QUEST_FAILURE;
+                break;
+
+            case sStatPoints:
+                    if(!OperateValues<int>(curAbil->btOp, (int*)&client->CharInfo->StatPoints, curAbil->iValue))
+                    return QUEST_FAILURE;
+                break;
+            case sMoney:
+                    if(!OperateValues<int>(curAbil->btOp, (int*)&client->CharInfo->Zulies, curAbil->iValue))
+                    return QUEST_FAILURE;
+                break;
+        case sEXPRate:
+            if(!OperateValues<int>(curAbil->btOp, (int*)&client->bonusxp, curAbil->iValue))
+                        return QUEST_FAILURE;
         break;
-		case sStrength:
-				if(!OperateValues<int>(curAbil->btOp, (int*)&client->Attr->Str, curAbil->iValue))
-				return QUEST_FAILURE;
-			break;
-
-		case sDexterity:
-				if(!OperateValues<int>(curAbil->btOp, (int*)&client->Attr->Dex, curAbil->iValue))
-				return QUEST_FAILURE;
-			break;
-
-		case sIntelligence:
-				if(!OperateValues<int>(curAbil->btOp, (int*)&client->Attr->Int, curAbil->iValue))
-				return QUEST_FAILURE;
-			break;
-
-		case sConcentration:
-				if(!OperateValues<int>(curAbil->btOp, (int*)&client->Attr->Con, curAbil->iValue))
-				return QUEST_FAILURE;
-			break;
-
-		case sCharm:
-				if(!OperateValues<int>(curAbil->btOp, (int*)&client->Attr->Cha, curAbil->iValue))
-				return QUEST_FAILURE;
-			break;
-
-		case sSensibility:
-				if(!OperateValues<int>(curAbil->btOp, (int*)&client->Attr->Sen, curAbil->iValue))
-				return QUEST_FAILURE;
-			break;
-
-		case sLevel:
-				if(!OperateValues<int>(curAbil->btOp, (int*)&client->Stats->Level, curAbil->iValue))
-				return QUEST_FAILURE;
-			break;
-
-		case sStatPoints:
-				if(!OperateValues<int>(curAbil->btOp, (int*)&client->CharInfo->StatPoints, curAbil->iValue))
-				return QUEST_FAILURE;
-			break;
-		case sMoney:
-				if(!OperateValues<int>(curAbil->btOp, (int*)&client->CharInfo->Zulies, curAbil->iValue))
-				return QUEST_FAILURE;
-			break;
-    case sEXPRate:
-		if(!OperateValues<int>(curAbil->btOp, (int*)&client->bonusxp, curAbil->iValue))
-					return QUEST_FAILURE;
-    break;
-		default:
-			Log(MSG_WARNING, "QuestCond 003: Type Unknown: '%i'", curAbil->iType);
+            default:
+                Log(MSG_WARNING, "QuestCond 003: Type Unknown: '%i'", curAbil->iType);
 		}
 	}
 	return QUEST_SUCCESS;
@@ -442,7 +443,7 @@ QUESTCOND(027){
              ADDDWORD    ( pak, client->Clan->CP );
              ADDWORD    ( pak, 0x00);
              //GServer->SendISCPacket( &pak );
-             Log(MSG_NOTICE, "implement CharServer Communication at __FILE__ _LINE__");
+             //Log(MSG_NOTICE, "implement CharServer Communication at __FILE__ _LINE__");
              */
 
              //LMA: temp version...
@@ -452,7 +453,7 @@ QUESTCOND(027){
             ADDDWORD    ( pak, 0);  //Clan points (to be added)
             cryptPacket( (char*)&pak, GServer->cct );
             send( GServer->csock, (char*)&pak, pak.Size, 0 );
-            Log(MSG_NOTICE, "implement CP nb at __FILE__ _LINE__");
+            //Log(MSG_NOTICE, "implement CP nb at __FILE__ _LINE__");
             break;
     }
 	return QUEST_SUCCESS;

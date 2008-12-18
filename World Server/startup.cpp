@@ -382,6 +382,7 @@ bool CWorldServer::LoadNPCData( )
 
         newnpc->atkdistance = STB_NPC.rows[i][26]/100;
         newnpc->aggresive = STB_NPC.rows[i][27];
+        newnpc->helpless=0;
         newnpc->shp = STB_NPC.rows[i][42];
         newnpc->dialogid = 0;   //handled in list_npc now
         newnpc->eventid = 0;   //handled in list_npc now

@@ -390,10 +390,13 @@ void CCharacter::NormalAttack( CCharacter* Enemy )
     }
 
     Enemy->Stats->HP -=  (long long) hitpower;
+
+    /*
     if (Enemy->IsMonster())
-        Log(MSG_INFO,"Normal Attack, monster HP %I64i, hitpower %I64i",Enemy->Stats->HP,hitpower);
+        Log(MSG_INFO,"Normal Attack, monster HP %I64i, hitpower %li",Enemy->Stats->HP,hitpower);
     else
-        Log(MSG_INFO,"Normal Attack, Player HP %I64i, hitpower %I64i",Enemy->Stats->HP,hitpower);
+        Log(MSG_INFO,"Normal Attack, Player HP %I64i, hitpower %li",Enemy->Stats->HP,hitpower);
+    */
 
     // actually the target was hit, if it was sleeping, set duration of
     // sleep to 0. map process will remove sleep then at next player-update

@@ -160,7 +160,7 @@ QUESTREWD(001){
 
 	SQuest* curQuest = client->GetActiveQuest();
 	if(curQuest == NULL) {
-	  Log(MSG_DEBUG, "Couldn't find active quest, wtf? Id %u", client->ActiveQuest);
+	  //Log(MSG_DEBUG, "Couldn't find active quest, wtf? Id %u", client->ActiveQuest);
 	  return QUEST_FAILURE;
                          }
 	curQuest->AddItem(&tmpItem, data->btOp);
@@ -219,10 +219,10 @@ QUESTREWD(003){
 
 		case sUnion:
 		{
-		    Log(MSG_INFO,"[Union] ? QUESTREWD(003) btOp %i, value: %i",curAbil->btOp,curAbil->iValue);
+		    //Log(MSG_INFO,"[Union] ? QUESTREWD(003) btOp %i, value: %i",curAbil->btOp,curAbil->iValue);
 		    if(!OperateValues<int>(curAbil->btOp, (int*)&client->CharInfo->unionid, curAbil->iValue))
 				return QUEST_FAILURE;
-            Log(MSG_INFO,"[Union] OK QUESTREWD(003) SET to %i",curAbil->iValue);
+            //Log(MSG_INFO,"[Union] OK QUESTREWD(003) SET to %i",curAbil->iValue);
             BEGINPACKET( pak, 0x721 );
             ADDWORD( pak, 0x05 );
             ADDWORD( pak, curAbil->iValue );
@@ -254,13 +254,13 @@ QUESTREWD(003){
         {
             if (curAbil->iType==85)
                 client->CharInfo->union05=curAbil->iValue;
-            Log(MSG_INFO,"[UnionPoints] ? QUESTREWD(003) btOp %i, value: %i",curAbil->btOp,curAbil->iValue);
+            //Log(MSG_INFO,"[UnionPoints] ? QUESTREWD(003) btOp %i, value: %i",curAbil->btOp,curAbil->iValue);
             BEGINPACKET( pak, 0x721 );
             ADDWORD( pak, curAbil->iType );
             ADDWORD( pak, curAbil->iValue );
             ADDWORD( pak, 0x0000 );
             client->client->SendPacket( &pak );
-            Log(MSG_INFO,"[UnionPoints] OK QUESTREWD(003) SET union0%i to %i",curAbil->iType-80,curAbil->iValue);
+            //Log(MSG_INFO,"[UnionPoints] OK QUESTREWD(003) SET union0%i to %i",curAbil->iType-80,curAbil->iValue);
         }
         break;
 		case sStrength:
@@ -311,7 +311,7 @@ QUESTREWD(003){
             client->client->SendPacket( &pak );
             break;
 		default:
-			Log(MSG_WARNING, "Type Unknown: '%i'", curAbil->iType);
+			//Log(MSG_WARNING, "Type Unknown: '%i'", curAbil->iType);
 			break;
 		}
 	}
@@ -424,7 +424,7 @@ QUESTREWD(007){
 QUESTREWD(008){
     GETREWDDATA(008);
 
-        Log(MSG_DEBUG,"BEGIN QUESTREWD(008)");
+        //Log(MSG_DEBUG,"BEGIN QUESTREWD(008)");
         fPoint position;
   dword mapId;
   if(data->iX == 0 || data->iY == 0 || data->iZoneSN == 0){
@@ -442,7 +442,7 @@ QUESTREWD(008){
   //LMA: coming from AIP.
     //if( client->questdebug&&!client->is_invisible)
         //server->SendPM(client, "Spawn mob[%i] @ %f, %f", data->iMonsterSN, pos.x, pos.y);
-        Log(MSG_INFO, "Spawn mob[%i] @ map %i (%f,%f)", data->iMonsterSN, mapId,pos.x, pos.y);
+        //Log(MSG_INFO, "Spawn mob[%i] @ map %i (%f,%f)", data->iMonsterSN, mapId,pos.x, pos.y);
 		CMap* map = GServer->MapList.Index[mapId];
 		CMonster* mon = map->AddMonster( data->iMonsterSN, pos, 0, NULL, NULL, 0 , true );
 		if(data->iMonsterSN > 750 && data->iMonsterSN < 755) // ghost rackies = non aggresive
@@ -453,7 +453,7 @@ QUESTREWD(008){
         }
 		mon->lastSighCheck = 0; // Force sight check instantly.
     }
-    Log(MSG_DEBUG,"END QUESTREWD(008)");
+    //Log(MSG_DEBUG,"END QUESTREWD(008)");
 	return QUEST_SUCCESS;
 }
 
@@ -544,7 +544,7 @@ QUESTREWD(012){
 	delete [] sayStr;
 
 	return QUEST_SUCCESS;*/
-	Log(MSG_WARNING,"A NPC TRYES TO SHOUT!!!");
+	//Log(MSG_WARNING,"A NPC TRYES TO SHOUT!!!");
 	return QUEST_FAILURE; // This is cool and all, but we lack the stuff to do it - Drakia
 }
 

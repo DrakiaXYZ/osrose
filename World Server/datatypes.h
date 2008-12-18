@@ -461,6 +461,7 @@ struct CNPCData {
   	UINT specialtab;
     float atkdistance;
     UINT aggresive;
+    UINT helpless;  //LMA: doesn't fight back when attacked.
     UINT shp;
     UINT dialogid;
     UINT eventid;

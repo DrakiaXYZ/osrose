@@ -156,7 +156,7 @@ bool CMonster::IsMonster( )
 //void CMonster::AddDamage( CCharacter* enemy, long long hitpower)
 void CMonster::AddDamage( CCharacter* enemy, long long hitpower)
 {
-    Log(MSG_INFO,"In CMonster::AddDamage");
+    //Log(MSG_INFO,"In CMonster::AddDamage");
 
     CPlayer* player = NULL;
     if(enemy->IsMonster( ))

@@ -23,11 +23,18 @@
 // called when a monster is attacked  [attack/use atk skill/use buff/run/summon]
 bool CMonster::OnBeAttacked( CCharacter* Enemy )
 {
-
     Battle->hitby = Enemy->clientid;
 
     if(!IsOnBattle( ))
     {
+
+        //LMA: yeah hurt me (used for Santa Rudolph).
+        if(thisnpc->helpless==1)
+        {
+            StartAction( Enemy, STAY_STILL_ATTACK, 0 );
+            return true;
+        }
+
         //Some monsters do not attack and stay still (mc)
         if(!stay_still)
         {
@@ -731,10 +738,13 @@ void CMonster::DoAi(int ainumber,char type)//ainumber is monster->AI type is add
     int nb_turns=0;
     //if(ainumber>=1088||ainumber<=1114)
     //if(ainumber>=1113||ainumber<=1114)
-    if(ainumber==1205||ainumber==1201)
+    //if(ainumber==1205||ainumber==1201)
+    /*
+    if(ainumber==480&&type==3)
     {
         lma_debug=true;
     }
+    */
 
 
     for(unsigned j=0; j < GServer->AipList.size(); j++)

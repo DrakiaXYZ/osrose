@@ -36,7 +36,7 @@ QUESTCONDC(000){
 	}
 	return QUEST_FAILURE;
 	*/
-    Log(MSG_WARNING,"Monster/NPC using QuestCondition 000");
+    //Log(MSG_WARNING,"Monster/NPC using QuestCondition 000");
 	return QUEST_SUCCESS;
 }
 
@@ -57,14 +57,14 @@ QUESTCONDC(001){
     }
 	return (retVal == 0)?QUEST_FAILURE:QUEST_SUCCESS;
 	*/
-    Log(MSG_WARNING,"Monster/NPC using QuestCondition 001");
+    //Log(MSG_WARNING,"Monster/NPC using QuestCondition 001");
 	return QUEST_SUCCESS;
 }
 
 //Check Quest Variable
 QUESTCONDC(002){
 	//return QUEST_CONDC_001(server, client, raw);
-    Log(MSG_WARNING,"Monster/NPC using QuestCondition 002");
+    //Log(MSG_WARNING,"Monster/NPC using QuestCondition 002");
 	return QUEST_SUCCESS;
 }
 
@@ -145,12 +145,12 @@ QUESTCONDC(003){
 					return QUEST_FAILURE;
     break;
 		default:
-			Log(MSG_WARNING, "QUESTCONDC 003: Type Unknown: '%i'", curAbil->iType);
+			//Log(MSG_WARNING, "QUESTCONDC 003: Type Unknown: '%i'", curAbil->iType);
 		}
 	}
 	return QUEST_SUCCESS;
 	*/
-    Log(MSG_WARNING,"Monster/NPC using QuestCondition 003");
+    //Log(MSG_WARNING,"Monster/NPC using QuestCondition 003");
 	return QUEST_SUCCESS;
 }
 
@@ -193,13 +193,13 @@ QUESTCONDC(004){
 	}
 	return QUEST_SUCCESS;
 	*/
-    Log(MSG_WARNING,"Monster/NPC using QuestCondition 004");
+    //Log(MSG_WARNING,"Monster/NPC using QuestCondition 004");
 	return QUEST_SUCCESS;
 }
 
 //Check Party
 QUESTCONDC(005){
-    Log(MSG_WARNING,"Monster/NPC using QuestCondition 005");
+    //Log(MSG_WARNING,"Monster/NPC using QuestCondition 005");
 	return QUEST_SUCCESS;
 }
 
@@ -220,14 +220,14 @@ QUESTCONDC(006){
 	float distance = sqrt((dx*dx) + (dy*dy));
 	return (distance < data->iRadius)?QUEST_SUCCESS:QUEST_FAILURE;
 	*/
-    Log(MSG_WARNING,"Monster/NPC using QuestCondition 006");
+    //Log(MSG_WARNING,"Monster/NPC using QuestCondition 006");
 	return QUEST_SUCCESS;
 }
 
 //World Time
 QUESTCONDC(007){
     //return QUEST_SUCCESS;
-    Log(MSG_WARNING,"Monster/NPC using QuestCondition 007");
+    //Log(MSG_WARNING,"Monster/NPC using QuestCondition 007");
 	return QUEST_SUCCESS;
 }
 
@@ -249,7 +249,7 @@ QUESTCONDC(008){
   else
     return QUEST_SUCCESS;
     */
-    Log(MSG_WARNING,"Monster/NPC using QuestCondition 008");
+    //Log(MSG_WARNING,"Monster/NPC using QuestCondition 008");
 	return QUEST_SUCCESS;
 }
 
@@ -272,13 +272,13 @@ QUESTCONDC(009){
         	return (data->btOp)?QUEST_SUCCESS:QUEST_FAILURE;
 	}
 	return (data->btOp)?QUEST_FAILURE:QUEST_SUCCESS;*/
-    Log(MSG_WARNING,"Monster/NPC using QuestCondition 009");
+    //Log(MSG_WARNING,"Monster/NPC using QuestCondition 009");
 	return QUEST_SUCCESS;
 }
 
 //Unknown
 QUESTCONDC(010){
-    Log(MSG_WARNING,"Monster/NPC using QuestCondition 010");
+    //Log(MSG_WARNING,"Monster/NPC using QuestCondition 010");
 	return QUEST_SUCCESS;
 }
 
@@ -300,11 +300,11 @@ QUESTCONDC(011){
 	// Don't think we've implemented NPC's having quests. - Drakia
 
     GETCONDDATA(011);
-	Log(MSG_DEBUG,"QSDC(011) nVarNo = %i, iValue = %i, btOp = %i",data->nVarNo, data->iValue,data->btOp);
+	//Log(MSG_DEBUG,"QSDC(011) nVarNo = %i, iValue = %i, btOp = %i",data->nVarNo, data->iValue,data->btOp);
 	CMonster* monster = reinterpret_cast<CMonster*>(client);
 	if(monster == NULL)
 	{
-	    Log(MSG_DEBUG,"QUESTCONDC(011) FAILED, monster NULL");
+	    //Log(MSG_DEBUG,"QUESTCONDC(011) FAILED, monster NULL");
 	    return QUEST_FAILURE;
 	}
 
@@ -312,7 +312,7 @@ QUESTCONDC(011){
 	int ObjvarIndex = data->nVarNo;
 
 	int tempval = GServer->ObjVar[refNPC][ObjvarIndex];
-	Log(MSG_DEBUG,"QSDC(011) Retrieved ObjVar[%i]=%i successfully NPC %i",ObjvarIndex,tempval,monster->thisnpc->refNPC);
+	//Log(MSG_DEBUG,"QSDC(011) Retrieved ObjVar[%i]=%i successfully NPC %i",ObjvarIndex,tempval,monster->thisnpc->refNPC);
 	switch(data->btOp)
 	{
         case 0:
@@ -341,19 +341,19 @@ QUESTCONDC(011){
              break;
         default:
         {
-            Log(MSG_DEBUG,"QUESTCONDC(011) FAILED, switch default");
+            //Log(MSG_DEBUG,"QUESTCONDC(011) FAILED, switch default");
              return QUEST_FAILURE;
         }
              break;
     }
 
-    Log(MSG_DEBUG,"QUESTCONDC(011) FAILED, compare false");
+    //Log(MSG_DEBUG,"QUESTCONDC(011) FAILED, compare false");
 	return QUEST_FAILURE;
 }
 
 //Execute Trigger in Zone
 QUESTCONDC(012){
-    Log(MSG_WARNING,"Monster/NPC using QuestCondition 012");
+    //Log(MSG_WARNING,"Monster/NPC using QuestCondition 012");
 	return QUEST_SUCCESS;
 }
 
@@ -362,15 +362,15 @@ QUESTCONDC(012){
 QUESTCONDC(013){
     GETCONDDATA(013);
 
-	Log(MSG_DEBUG,"Setting NPC ref number QUESTCONDC(013)");
+	//Log(MSG_DEBUG,"Setting NPC ref number QUESTCONDC(013)");
 	CMonster* monster = reinterpret_cast<CMonster*>(client);
 	if(monster == NULL)
 	{
-	    Log(MSG_WARNING,"QUESTCONDC(013) FAILED, monster NULL");
+	    //Log(MSG_WARNING,"QUESTCONDC(013) FAILED, monster NULL");
 	    return QUEST_FAILURE;
     }
 	monster->thisnpc->refNPC = data->iNpcNo; // sets the reference variable for the correct ObjVar
-    //Log(MSG_DEBUG,"Set NPC ref number %i successfully", monster->thisnpc->refNPC);
+    ////Log(MSG_DEBUG,"Set NPC ref number %i successfully", monster->thisnpc->refNPC);
 
 
     return QUEST_SUCCESS;
@@ -385,79 +385,79 @@ QUESTCONDC(014){
 	bool dataOp = (data->btOp)?true:false;
 	return (client->quest.GetFlag(data->nSN) == dataOp)?QUEST_SUCCESS:QUEST_FAILURE;
 	*/
-    Log(MSG_WARNING,"Monster/NPC using QuestCondition 014");
+    //Log(MSG_WARNING,"Monster/NPC using QuestCondition 014");
 	return QUEST_SUCCESS;
 }
 
 //Unknown
 QUESTCONDC(015){
-    Log(MSG_WARNING,"Monster/NPC using QuestCondition 015");
+    //Log(MSG_WARNING,"Monster/NPC using QuestCondition 015");
 	return QUEST_SUCCESS;
 }
 
 //Zone Time
 QUESTCONDC(016){
-    Log(MSG_WARNING,"Monster/NPC using QuestCondition 016");
+    //Log(MSG_WARNING,"Monster/NPC using QuestCondition 016");
 	return QUEST_SUCCESS;
 }
 
 //NPC & Obj Variables?
 QUESTCONDC(017){
-    Log(MSG_WARNING,"Monster/NPC using QuestCondition 017");
+    //Log(MSG_WARNING,"Monster/NPC using QuestCondition 017");
 	return QUEST_SUCCESS;
 }
 
 //Time on Date
 QUESTCONDC(018){
-    Log(MSG_WARNING,"Monster/NPC using QuestCondition 018");
+    //Log(MSG_WARNING,"Monster/NPC using QuestCondition 018");
 	return QUEST_SUCCESS;
 }
 
 //Time on Day
 QUESTCONDC(019){
-     Log(MSG_WARNING,"Monster/NPC using QuestCondition 019");
+     //Log(MSG_WARNING,"Monster/NPC using QuestCondition 019");
 	return QUEST_SUCCESS;
 }
 
 //Unknown
 QUESTCONDC(020){
-    Log(MSG_WARNING,"Monster/NPC using QuestCondition 020");
+    //Log(MSG_WARNING,"Monster/NPC using QuestCondition 020");
 	return QUEST_SUCCESS;
 }
 
 //Unknown
 QUESTCONDC(021){
-    Log(MSG_WARNING,"Monster/NPC using QuestCondition 021");
+    //Log(MSG_WARNING,"Monster/NPC using QuestCondition 021");
 	return QUEST_SUCCESS;
 }
 
 //Check Server/Channel
 QUESTCONDC(022){
-    Log(MSG_WARNING,"Monster/NPC using QuestCondition 022");
+    //Log(MSG_WARNING,"Monster/NPC using QuestCondition 022");
 	return QUEST_SUCCESS;
 }
 
 //In Clan
 QUESTCONDC(023){
-    Log(MSG_WARNING,"Monster/NPC using QuestCondition 023");
+    //Log(MSG_WARNING,"Monster/NPC using QuestCondition 023");
 	return QUEST_SUCCESS;
 }
 
 //Clan Position
 QUESTCONDC(024){
-    Log(MSG_WARNING,"Monster/NPC using QuestCondition 024");
+    //Log(MSG_WARNING,"Monster/NPC using QuestCondition 024");
     return QUEST_SUCCESS;
 }
 
 //Clan Contribution
 QUESTCONDC(025){
-    Log(MSG_WARNING,"Monster/NPC using QuestCondition 025");
+    //Log(MSG_WARNING,"Monster/NPC using QuestCondition 025");
     return QUEST_SUCCESS;
 }
 
 //Clan Grade
 QUESTCONDC(026){
-    Log(MSG_WARNING,"Monster/NPC using QuestCondition 026");
+    //Log(MSG_WARNING,"Monster/NPC using QuestCondition 026");
     return QUEST_SUCCESS;
 }
 
@@ -476,31 +476,31 @@ QUESTCONDC(027){
             ADDDWORD    ( pak, 0);  //Clan points (to be added)
             cryptPacket( (char*)&pak, GServer->cct );
             send( GServer->csock, (char*)&pak, pak.Size, 0 );
-            Log(MSG_NOTICE, "implement CP nb at __FILE__ _LINE__");
+            //Log(MSG_NOTICE, "implement CP nb at __FILE__ _LINE__");
             break;
     }
 	return QUEST_SUCCESS;
 	*/
-    Log(MSG_WARNING,"Monster/NPC using QuestCondition 027");
+    //Log(MSG_WARNING,"Monster/NPC using QuestCondition 027");
 	return QUEST_SUCCESS;
 }
 
 //Clan Funds
 QUESTCONDC(028){
-    Log(MSG_WARNING,"Monster/NPC using QuestCondition 028");
+    //Log(MSG_WARNING,"Monster/NPC using QuestCondition 028");
 	return QUEST_SUCCESS;
 }
 
 //Clan Members
 QUESTCONDC(029){
-    Log(MSG_WARNING,"Monster/NPC using QuestCondition 029");
+    //Log(MSG_WARNING,"Monster/NPC using QuestCondition 029");
 	return QUEST_SUCCESS;
 }
 
 
 //Clan Skills
 QUESTCONDC(030){
-    Log(MSG_WARNING,"Monster/NPC using QuestCondition 030");
+    //Log(MSG_WARNING,"Monster/NPC using QuestCondition 030");
 	return QUEST_SUCCESS;
 }
 

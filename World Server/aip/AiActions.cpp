@@ -50,7 +50,7 @@ AIACT(001)
 AIACT(002)
 {
 	//Client side say text
-	Log(MSG_DEBUG, "Say LTB String");
+	//Log(MSG_DEBUG, "Say LTB String");
 	return AI_SUCCESS;
 }
 
@@ -90,8 +90,8 @@ AIACT(003)
 	ADDWORD    ( pak, 0xcdcd );
 	ADDBYTE    ( pak, monster->thisnpc->stance );
 	GServer->SendToVisible(&pak, entity);
-    //Log(MSG_DEBUG, "move1 monster %i, stance %i",monster->montype,data->cSpeed);
-    //Log(MSG_DEBUG, "move(1)");
+    ////Log(MSG_DEBUG, "move1 monster %i, stance %i",monster->montype,data->cSpeed);
+    ////Log(MSG_DEBUG, "move(1)");
 	return AI_SUCCESS;
 }
 
@@ -132,7 +132,7 @@ AIACT(004)
 	ADDWORD    ( pak, 0xcdcd );
 	ADDBYTE    ( pak, monster->thisnpc->stance );
 	GServer->SendToVisible(&pak, entity);
-    //Log(MSG_DEBUG, "move2 stance %i",data->cSpeed);
+    ////Log(MSG_DEBUG, "move2 stance %i",data->cSpeed);
 
 	return AI_SUCCESS;
 }
@@ -175,8 +175,8 @@ AIACT(005)
 	ADDWORD    ( pak, 0xcdcd );
 	ADDBYTE    ( pak, monster->thisnpc->stance );
 	GServer->SendToVisible(&pak, entity);
-    //	Log(MSG_DEBUG, "move3 stance %i",data->cSpeed);
-    //	Log(MSG_DEBUG, "move (3)");
+    //	//Log(MSG_DEBUG, "move3 stance %i",data->cSpeed);
+    //	//Log(MSG_DEBUG, "move (3)");
     //    RESETPACKET(pak, 0x783);
     //    ADDWORD(pak,entity->findChar->clientid);//entity->clientid);
     //    ADDSTRING(pak,"hello there");
@@ -366,7 +366,7 @@ AIACT(006)
     //			entity->Attack(highestEntity);
     //		}
     //	}
-    Log(MSG_DEBUG, "move (?)");
+    //Log(MSG_DEBUG, "move (?)");
 	return AI_SUCCESS;
 }
 
@@ -374,7 +374,7 @@ AIACT(006)
 AIACT(007)
 {
 	//CObjCHAR::Special_ATTACK
-	Log(MSG_DEBUG, "AIACT(007)");
+	//Log(MSG_DEBUG, "AIACT(007)");
 	return AI_SUCCESS;
 }
 
@@ -385,7 +385,7 @@ AIACT(008)
 	//byte cSpeed;	//Pos: 0x04
 	//Some weird shit going on here
 	//move within some sort of distance of target (i think possibly % iDistance of distance between target)(run away?)
-	Log(MSG_DEBUG, "AIACT(008)");
+	//Log(MSG_DEBUG, "AIACT(008)");
 	return AI_SUCCESS;
 }
 
@@ -399,7 +399,7 @@ AIACT(009)
 	CMonster* monster = reinterpret_cast<CMonster*>(entity);
 	int oldmon = monster->montype;
 	map->ConverToMonster(monster,data->wMonster,1);
-	Log(MSG_DEBUG, "AIACT(009)convert monster type %i to %i",oldmon,data->wMonster);
+	//Log(MSG_DEBUG, "AIACT(009)convert monster type %i to %i",oldmon,data->wMonster);
 	return AI_SUCCESS;
 }
 
@@ -415,7 +415,7 @@ AIACT(010)
     position = GServer->RandInCircle( entity->Position->current, 1 );
     map->AddMonster( data->wMonster, position,0, NULL, NULL, 0,true );
     //	entity->thisZone->SpawnMonster(data->wMonster, entity->basic.pos, entity->basic.map);
-    Log(MSG_DEBUG, "AIACT(010)spawn %i",data->wMonster);
+    //Log(MSG_DEBUG, "AIACT(010)spawn %i",data->wMonster);
 	return AI_SUCCESS;
 }
 
@@ -427,7 +427,7 @@ AIACT(011)
 	//force iNumOfMonster of same team within iDistance to attack my target
     //CWorldEntity* target = entity->thisZone->GetEntity(entity->_TargetID);
     //if(target == NULL) return AI_FAILURE;
-    Log(MSG_DEBUG, "AIACT(011)");
+    //Log(MSG_DEBUG, "AIACT(011)");
     CCharacter* target = entity->GetCharTarget( );
     if(target == NULL) return AI_FAILURE;
 	GETAIACTDATA(011);
@@ -479,24 +479,24 @@ AIACT(011)
 //start attack
 AIACT(012)
 {
-    Log(MSG_DEBUG, "AIACT(012)");
+    //Log(MSG_DEBUG, "AIACT(012)");
 	//Run and attack "m_pNearCHAR" Nearest Character
     //	entity->Attack(entity->nearChar);
-    //    Log(MSG_DEBUG, "AIACT(012)");
+    //    //Log(MSG_DEBUG, "AIACT(012)");
     if(entity->nearChar == NULL)return AI_FAILURE;
     //entity->Battle->target=entity->nearChar->clientid;
     CMonster* monster = reinterpret_cast<CMonster*>(entity);
     monster->thisnpc->stance=1;
     monster->SetStats();
     monster->StartAction( (CCharacter*) entity->nearChar, NORMAL_ATTACK, 0 );
-    //    Log(MSG_DEBUG, "AIACT(012)%i",entity->nearChar->clientid);
+    //    //Log(MSG_DEBUG, "AIACT(012)%i",entity->nearChar->clientid);
 	return AI_SUCCESS;
 }
 
 //start attack
 AIACT(013)
 {
-    Log(MSG_DEBUG, "AIACT(013)");
+    //Log(MSG_DEBUG, "AIACT(013)");
 	//Run and attack "m_pFindCHAR" Character found from aiobj loop things
     //	entity->Attack(entity->findChar);
     if(entity->findChar == NULL)return AI_FAILURE;
@@ -506,7 +506,7 @@ AIACT(013)
     monster->SetStats();
     monster->Battle->target = entity->findChar->clientid;
     monster->StartAction( (CCharacter*) entity->findChar, NORMAL_ATTACK, 0 );
-    //    Log(MSG_DEBUG, "AIACT(013)%i",entity->findChar->clientid);
+    //    //Log(MSG_DEBUG, "AIACT(013)%i",entity->findChar->clientid);
 	return AI_SUCCESS;
 }
 
@@ -546,7 +546,7 @@ AIACT(014)
     //		other->Attack(target);
     //		return AI_SUCCESS;
     //	}
-    Log(MSG_DEBUG, "AIACT(014)");
+    //Log(MSG_DEBUG, "AIACT(014)");
 	return AI_SUCCESS;
 }
 
@@ -554,7 +554,7 @@ AIACT(014)
 AIACT(015)
 {
 	//Run and attack "m_pDestCHAR" Blah?
-    //	Log(MSG_DEBUG, "AIACT(015)");
+    //	//Log(MSG_DEBUG, "AIACT(015)");
     CMonster* monster = reinterpret_cast<CMonster*>(entity);
     //if(monster->Battle->hitby == monster->Battle->target)
     //    return AI_FAILURE; //no need to initiate combat. I am already fighting this player
@@ -575,7 +575,7 @@ AIACT(016)
 {
 	//dword iDistance;
 	//Run Away!
-    Log(MSG_DEBUG, "AIACT(016)");
+    //Log(MSG_DEBUG, "AIACT(016)");
 	GETAIACTDATA(016);
 	CMonster* monster = reinterpret_cast<CMonster*>(entity);
     monster->UpdatePosition(monster->stay_still);
@@ -621,7 +621,7 @@ AIACT(017)
 	//dword iToOwner;	//Pos: 0x0c
 	//Random drop one of item 1-5
 	GETAIACTDATA(017);
-	Log(MSG_DEBUG, "AIP DROP 017");
+	//Log(MSG_DEBUG, "AIP DROP 017");
 
 	//srand(time(NULL));
     int itemRand = rand()%(5);
@@ -655,7 +655,7 @@ AIACT(017)
 		newdrop->item.appraised = 1;
 		newdrop->item.refine = 0;
 	}
-    Log(MSG_DEBUG, "AIP DROP item type=  %i item num = %i", newdrop->item.itemtype, newdrop->item.itemnum);
+    //Log(MSG_DEBUG, "AIP DROP item type=  %i item num = %i", newdrop->item.itemtype, newdrop->item.itemnum);
 	newdrop->item.count = 1;
 
 
@@ -708,7 +708,7 @@ AIACT(018)
 
     //		if(chrCount >= data->wHowMany) return AI_SUCCESS;
     //	}
-    Log(MSG_DEBUG, "AIACT(018)");
+    //Log(MSG_DEBUG, "AIACT(018)");
 	return AI_SUCCESS;
 }
 
@@ -756,7 +756,7 @@ AIACT(020)
         position = GServer->RandInCircle( target->Position->current, data->iDistance );
         map->AddMonster( data->cMonster, position,0, NULL,NULL, monster->Status->spawnid, true );
     }
-    Log(MSG_DEBUG, "AIACT(020)option spawn %i distance %i monstertype %i",data->btPos,data->iDistance,data->cMonster);
+    //Log(MSG_DEBUG, "AIACT(020)option spawn %i distance %i monstertype %i",data->btPos,data->iDistance,data->cMonster);
 	return AI_SUCCESS;
 }
 
@@ -778,7 +778,7 @@ AIACT(022)
 AIACT(023)
 {
 	//Commit suicide
-	Log(MSG_DEBUG, "AIACT(023) Suicide");
+	//Log(MSG_DEBUG, "AIACT(023) Suicide");
     //entity->Stats->HP = 0;
 
     //LMA: we let him die later, it seems we never come back from DoAI in this case...
@@ -806,50 +806,50 @@ AIACT(024)
 	//btTarget 1 = target
 	//btTarget 2 = self skill
 	GETAIACTDATA(024);
-    //	Log(MSG_DEBUG, "Do Skill btTarget %i nSkill %i nMotion %i",data->btTarget,data->nSkill,data->nMotion);
-    //	Log(MSG_DEBUG, "entity %i",entity->clientid);
-    //	Log(MSG_DEBUG, "entity->findChar %i",entity->findChar->clientid);
-    //	Log(MSG_DEBUG, "entity->nearChar %i", entity->nearChar->clientid);
+    //	//Log(MSG_DEBUG, "Do Skill btTarget %i nSkill %i nMotion %i",data->btTarget,data->nSkill,data->nMotion);
+    //	//Log(MSG_DEBUG, "entity %i",entity->clientid);
+    //	//Log(MSG_DEBUG, "entity->findChar %i",entity->findChar->clientid);
+    //	//Log(MSG_DEBUG, "entity->nearChar %i", entity->nearChar->clientid);
 	CSkills* thisskill = GServer->GetSkillByID( data->nSkill );
 	CCharacter* monster = entity;
 	//if(monster->Battle->atktype != 0)
 	//{
-    //    Log(MSG_DEBUG,"Cannot apply battle attacktype. Monster already has one");
+    //    //Log(MSG_DEBUG,"Cannot apply battle attacktype. Monster already has one");
     //    return AI_FAILURE;
     //}
-    Log(MSG_DEBUG,"AIACT(024)skill attack id: %i target: %i type: %i btTarget: %i nMotion: %i", data->nSkill, thisskill->target, thisskill->skilltype, data->btTarget, data->nMotion);
+    //Log(MSG_DEBUG,"AIACT(024)skill attack id: %i target: %i type: %i btTarget: %i nMotion: %i", data->nSkill, thisskill->target, thisskill->skilltype, data->btTarget, data->nMotion);
 	switch (thisskill->skilltype)
 	{
         case 3: //damage action
         case 6: //magic attack
         {
             CCharacter* target = entity->GetCharTarget( );
-            Log(MSG_DEBUG,"SKILL_ATTACK or DAMAGE_ACTION selected");
+            //Log(MSG_DEBUG,"SKILL_ATTACK or DAMAGE_ACTION selected");
             if(target==NULL)
             {
-                Log(MSG_DEBUG,"No target can be found for this skill");
+                //Log(MSG_DEBUG,"No target can be found for this skill");
                 return AI_FAILURE;
             }
-            Log(MSG_DEBUG,"SKILL_ATTACK selected. target: %i",target->clientid);
+            //Log(MSG_DEBUG,"SKILL_ATTACK selected. target: %i",target->clientid);
             monster->StartAction( (CCharacter*) target, SKILL_ATTACK, data->nSkill );
         }
         break;
         case 7: //AOE magic attack
         {
             CCharacter* target = entity->GetCharTarget( );
-            Log(MSG_DEBUG,"AOE_TARGET selected");
+            //Log(MSG_DEBUG,"AOE_TARGET selected");
             if(target == NULL)
             {
-                Log(MSG_DEBUG,"No target can be found for this skill");
+                //Log(MSG_DEBUG,"No target can be found for this skill");
                 return AI_FAILURE;
             }
-            Log(MSG_DEBUG,"AOE_TARGET selected. target: %i",target->clientid);
+            //Log(MSG_DEBUG,"AOE_TARGET selected. target: %i",target->clientid);
             monster->StartAction( (CCharacter*) target, AOE_TARGET, data->nSkill );
         }
         break;
         case 8: //self buff
         {
-            Log(MSG_DEBUG,"BUFF_SELF selected.");
+            //Log(MSG_DEBUG,"BUFF_SELF selected.");
             monster->StartAction( NULL, BUFF_SELF, data->nSkill );
         }
         break;
@@ -862,35 +862,35 @@ AIACT(024)
             {
                 if(entity->nearChar == NULL) // maybe there really is no possible target.
                 {
-                    Log(MSG_DEBUG,"No target can be found for this skill");
+                    //Log(MSG_DEBUG,"No target can be found for this skill");
                     return AI_FAILURE;
                 }
                 else //so we are going to have them select a NEW target (if possible) rather than return AI_FAILURE
                 {
-                    Log(MSG_DEBUG,"SKILL_BUFF type 13 selected. NEW target: %i",entity->nearChar->clientid);
+                    //Log(MSG_DEBUG,"SKILL_BUFF type 13 selected. NEW target: %i",entity->nearChar->clientid);
                     monster->StartAction( (CCharacter*) entity->nearChar, SKILL_BUFF, data->nSkill );
                 }
             }
             else
             {
-                Log(MSG_DEBUG,"SKILL_BUFF type %i selected. target: %i",thisskill->skilltype, target->clientid);
+                //Log(MSG_DEBUG,"SKILL_BUFF type %i selected. target: %i",thisskill->skilltype, target->clientid);
                 monster->StartAction( (CCharacter*) target, SKILL_BUFF, data->nSkill );
             }
         }
         break;
         case 10: //heal AOE centered on self
-            Log(MSG_DEBUG,"BUFF_AOE selected. Skill id %i", data->nSkill);
+            //Log(MSG_DEBUG,"BUFF_AOE selected. Skill id %i", data->nSkill);
             monster->StartAction( NULL, BUFF_AOE, data->nSkill );
         break;
         case 17: //skill AOE centered on self
         {
-            Log(MSG_DEBUG,"SKILL_AOE selected. Skill id %i", data->nSkill);
+            //Log(MSG_DEBUG,"SKILL_AOE selected. Skill id %i", data->nSkill);
             monster->StartAction( NULL, SKILL_AOE, data->nSkill );
         }
         break;
         default:
         {
-            //Log(MSG_WARNING,"Skill type not recognized. type: %i",thisskill->skilltype);
+            ////Log(MSG_WARNING,"Skill type not recognized. type: %i",thisskill->skilltype);
         }
         break;
     }
@@ -900,7 +900,7 @@ AIACT(024)
         //CCharacter* target = entity->GetCharTarget();
         //if(target==NULL)return AI_FAILURE;
         //CCharacter* monster = entity;  //defined twice????
-        Log(MSG_DEBUG,"BUFF_AOE selected");
+        //Log(MSG_DEBUG,"BUFF_AOE selected");
         monster->StartAction( NULL, BUFF_AOE, data->nSkill );
     }
 	else if (data->btTarget == 1)
@@ -909,12 +909,12 @@ AIACT(024)
         if(target==NULL)return AI_FAILURE;
         if(data->nMotion == 8)
         {
-            Log(MSG_DEBUG,"SKILL_ATTACK selected");
+            //Log(MSG_DEBUG,"SKILL_ATTACK selected");
             monster->StartAction( (CCharacter*) target, SKILL_ATTACK, data->nSkill );
         }
         else
         {
-            Log(MSG_DEBUG,"SKILL_BUFF selected");
+            //Log(MSG_DEBUG,"SKILL_BUFF selected");
             monster->StartAction( (CCharacter*) target, SKILL_BUFF, data->nSkill );
         }
     }
@@ -922,12 +922,12 @@ AIACT(024)
 	{
         if(thisskill->target == tYourself)
         {
-             Log(MSG_DEBUG,"BUFF_SELF selected");
+             //Log(MSG_DEBUG,"BUFF_SELF selected");
              monster->StartAction( entity, BUFF_SELF, data->nSkill );
         }
         else if (thisskill->target == tAlly)
         {
-            Log(MSG_DEBUG,"BUFF_AOE selected");
+            //Log(MSG_DEBUG,"BUFF_AOE selected");
             monster->StartAction( NULL, BUFF_AOE, data->nSkill );
         }
         else if (thisskill->target == tHostileCharacter)
@@ -936,7 +936,7 @@ AIACT(024)
              if(target == NULL)return AI_FAILURE;
              if(data->nMotion == 8)
              {
-                 Log(MSG_DEBUG,"SKILL_ATTACK selected");
+                 //Log(MSG_DEBUG,"SKILL_ATTACK selected");
                  monster->StartAction( (CCharacter*) target, SKILL_ATTACK, data->nSkill );
              }
              else
@@ -953,14 +953,14 @@ AIACT(025)
 {
     //	if(entity->_EntityType != ENTITY_NPC) return AI_FAILURE;
 	GETAIACTDATA(025);
-	Log(MSG_DEBUG,"AIP25 BEGIN");
+	//Log(MSG_DEBUG,"AIP25 BEGIN");
 
 	CMonster* monster = reinterpret_cast<CMonster*>(entity);
 	if(monster == NULL) return AI_FAILURE;
 	if(data->btVarIDX > 19) return AI_FAILURE;
 	short tempval = GServer->ObjVar[monster->thisnpc->refNPC][data->btVarIDX];
 
-	Log(MSG_DEBUG,"AIP25 Set variable NPC %i, data->btOp=%i, data->iValue=%i, data->btVarIDX=%i",monster->thisnpc->refNPC,data->btOp,data->iValue,data->btVarIDX);
+	//Log(MSG_DEBUG,"AIP25 Set variable NPC %i, data->btOp=%i, data->iValue=%i, data->btVarIDX=%i",monster->thisnpc->refNPC,data->btOp,data->iValue,data->btVarIDX);
 
 	switch(data->btOp)
     {
@@ -986,7 +986,7 @@ AIACT(025)
     //Mainprocess will take care of it since we don't have client ID here.
     if(data->btVarIDX==0)
     {
-        Log(MSG_DEBUG,"AIACT(025) eventID has changed from %i to %i",monster->thisnpc->eventid,tempval);
+        //Log(MSG_DEBUG,"AIACT(025) eventID has changed from %i to %i",monster->thisnpc->eventid,tempval);
         monster->thisnpc->eventid=tempval;
     }
 
@@ -1024,7 +1024,7 @@ AIACT(028)
 
     if(data->iStrID>=GServer->maxltbaip)
     {
-        Log(MSG_INFO,"AIACT(028) AIP LTB index error %i>=%i",data->iStrID,GServer->maxltbaip);
+        //Log(MSG_INFO,"AIACT(028) AIP LTB index error %i>=%i",data->iStrID,GServer->maxltbaip);
         return AI_SUCCESS;
     }
 
@@ -1036,14 +1036,14 @@ AIACT(028)
         break;
         case 1: //shout to map
         {
-            Log(MSG_INFO,"AIP NPC %s (%i) shouts to map.",GServer->GetNPCNameByType(thisMonster->aip_npctype),thisMonster->aip_npctype);
+            //Log(MSG_INFO,"AIP NPC %s (%i) shouts to map.",GServer->GetNPCNameByType(thisMonster->aip_npctype),thisMonster->aip_npctype);
             //GServer->NPCShout(thisMonster,GServer->Ltbstring[data->iStrID]->LTBstring,GServer->Ltbstring[data->iStrID]->NPCname);
             GServer->NPCShout(thisMonster,GServer->LtbstringQSD[data->iStrID]->LTBstring,GServer->GetNPCNameByType(thisMonster->aip_npctype));
         }
         break;
         case 2: //announce to server.
         {
-            Log(MSG_INFO,"AIP NPC %s (%i) announces to server.",GServer->GetNPCNameByType(thisMonster->aip_npctype),thisMonster->aip_npctype);
+            //Log(MSG_INFO,"AIP NPC %s (%i) announces to server.",GServer->GetNPCNameByType(thisMonster->aip_npctype),thisMonster->aip_npctype);
             //GServer->NPCAnnounce(GServer->Ltbstring[data->iStrID]->LTBstring,GServer->Ltbstring[data->iStrID]->NPCname);
             GServer->NPCAnnounce(GServer->Ltbstring[data->iStrID]->LTBstring,GServer->GetNPCNameByType(thisMonster->aip_npctype));
         }
@@ -1083,7 +1083,7 @@ AIACT(028)
     //		server->SendPacketToZone(entity, &pakout);
     //	}
     //	delete [] sayStr;
-    Log(MSG_DEBUG, "AIACT(028)");
+    //Log(MSG_DEBUG, "AIACT(028)");
 	return AI_SUCCESS;
 }
 
@@ -1132,7 +1132,7 @@ AIACT(030)
 	GETAIACTDATA(030);
 	char* tempName = reinterpret_cast<char*>(&data->szTrigger) - 2;
 	dword hash = MakeStrHash(tempName);
-	Log(MSG_INFO, "Execute Quest Trigger %s[%d] [%08x]", tempName, data->lenszTrigger, hash);
+	//Log(MSG_INFO, "Execute Quest Trigger %s[%d] [%08x]", tempName, data->lenszTrigger, hash);
 
     //CCharacter test...
     return (entity->ExecuteQuestTrigger(hash) == QUEST_SUCCESS)?AI_SUCCESS:AI_FAILURE;
@@ -1149,9 +1149,9 @@ AIACT(030)
 
     player->CheckQuest=0;
     int result=(player->ExecuteQuestTrigger(hash) == QUEST_SUCCESS)?AI_SUCCESS:AI_FAILURE;
-    Log(MSG_INFO,"AIACT(030) after ExecuteQuestTrigger");
+    //Log(MSG_INFO,"AIACT(030) after ExecuteQuestTrigger");
     delete player;
-    Log(MSG_INFO,"After delete");
+    //Log(MSG_INFO,"After delete");
     return result;
     */
 
@@ -1166,7 +1166,7 @@ AIACT(030)
 //set monster's attack target to the same as the owner
 AIACT(031)
 {
-    Log(MSG_DEBUG, "AIACT(031)");
+    //Log(MSG_DEBUG, "AIACT(031)");
 	//Attack my "CALLER"(s target) if he is not an ally (must be caller's target...)
     //	if(entity->_EntityType != ENTITY_MONSTER) return AI_FAILURE;
     //	CMonster* thisMonster = reinterpret_cast<CMonster*>(entity);
@@ -1187,7 +1187,7 @@ AIACT(031)
 	CCharacter* target = map->GetCharInMap(caller->Battle->target);
 	if(target == NULL) return AI_FAILURE;
 	thisMonster->StartAction( (CCharacter*) target, NORMAL_ATTACK, 0 );
-    Log(MSG_DEBUG, "AIACT(031 END");
+    //Log(MSG_DEBUG, "AIACT(031 END");
 
 	return AI_SUCCESS;
 }
@@ -1199,7 +1199,7 @@ AIACT(032)
 	//byte btOnOff;	//Pos: 0x02
 	//Set PK Flag (btOnOff) in nZoneNo
 	GETAIACTDATA(032);
-	Log(MSG_DEBUG, "AIACT(032) zone (1)");
+	//Log(MSG_DEBUG, "AIACT(032) zone (1)");
 	return AI_SUCCESS;
 }
 
@@ -1211,7 +1211,7 @@ AIACT(033)
 	//if nNewValue == 2 -> toggle
 	//else set regen system nNewValue (0 = off, 1 = on)
 	GETAIACTDATA(033);
-	Log(MSG_DEBUG, "AIACT(033) zone (2)");
+	//Log(MSG_DEBUG, "AIACT(033) zone (2)");
 	return AI_SUCCESS;
 }
 
@@ -1222,7 +1222,7 @@ AIACT(034)
 	//word nCount;	//Pos: 0x02
 	//Give item to "CALLER"
 	GETAIACTDATA(034);
-	Log(MSG_DEBUG, "AIACT(034) Item (?)");
+	//Log(MSG_DEBUG, "AIACT(034) Item (?)");
 	return AI_SUCCESS;
 }
 
@@ -1270,7 +1270,7 @@ AIACT(036)
 	CMonster* monster = reinterpret_cast<CMonster*>(entity); //need this to get the spawnid of the entity
 	CMap* map = GServer->MapList.Index[entity->Position->Map];
     map->AddMonster( data->nMonster, entity->Position->current, data->btMaster, NULL,NULL,monster->Status->spawnid, 10 );
-	Log(MSG_DEBUG, "AIACT(36) monster (1) no code here");
+	//Log(MSG_DEBUG, "AIACT(36) monster (1) no code here");
 	return AI_SUCCESS;
 }
 

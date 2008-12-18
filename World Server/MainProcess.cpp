@@ -216,6 +216,7 @@ PVOID MapProcess( PVOID TS )
                     //if(!monster->PlayerInRange( )) continue;
                     if(!monster->UpdateValues( )) continue;
                         monster->UpdatePosition(monster->stay_still);
+
                     if(monster->IsOnBattle( ))
                     {
                         //monster->DoAttack( );
@@ -314,13 +315,14 @@ PVOID MapProcess( PVOID TS )
                              Log( MSG_WARNING, "Invalid montype %i", npc->npctype );
                              continue;
                          }
+
                          CMonster* monster = new (nothrow) CMonster( npc->pos, npc->npctype, map->id, 0, 0  );
                          monster->aip_npctype=npc->npctype;
                          monster->aip_clientid=npc->clientid;
                          monster->thisnpc = thisnpc;
 
                          int lma_previous_eventID=npc->thisnpc->eventid;
-                         Log(MSG_INFO,"DoAI for NPC %i",npc->npctype);
+                         //Log(MSG_INFO,"DoAI for NPC %i",npc->npctype);
                          monster->DoAi(monster->thisnpc->AI, 1);
 
                          //LMA: check if eventID changed, if we do it in AIP conditions / actions, it just fails...
