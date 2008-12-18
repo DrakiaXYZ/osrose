@@ -404,11 +404,13 @@ QUESTREWDC(008){
     for(dword i = 0; i < data->iHowMany; i++)
     {
         fPoint pos = GServer->RandInCircle( position, data->iRange );
-
-        Log(MSG_INFO, "Spawn mob[%i] @ map %i (%f,%f)", data->iMonsterSN, mapId,pos.x, pos.y);
         CMap* map = GServer->MapList.Index[mapId];
+
+        //monster
+        Log(MSG_INFO, "Spawn mob[%i] @ map %i (%f,%f)", data->iMonsterSN, mapId,pos.x, pos.y);
         CMonster* mon = map->AddMonster( data->iMonsterSN, pos, 0, NULL, NULL, 0 , true );
-        if(data->iMonsterSN > 750 && data->iMonsterSN < 755) // ghost rackies = non aggresive
+        // ghost rackies = non aggresive, same for Xmas trees.
+        if((data->iMonsterSN > 750 && data->iMonsterSN < 755) || (data->iMonsterSN >= 1474 && data->iMonsterSN <= 1489))
         {
             mon->thisnpc->aggresive = 0;
         }

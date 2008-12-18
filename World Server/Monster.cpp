@@ -95,7 +95,9 @@ void CMonster::SpawnMonster( CPlayer* player, CMonster* thismon )
 
         if(IsSummon( ) && map->allowpvp!=0) {ADDDWORD( pak, 0x00000064 );} //Hostil
         else if (IsSummon( ) && map->allowpvp==0) {ADDDWORD ( pak, 0x00000000 );}//Friendly
-        else {ADDDWORD( pak, 0x00000064 );} //Hostil
+        else if(thismon->montype>=1474&&thismon->montype<=1489) {ADDDWORD ( pak, 0x00000000 );}  //LMA: Xmas trees are friendly.
+        else{ADDDWORD( pak, 0x00000064 );}//Hostil
+
     }
     else {ADDDWORD( pak, 0x00000000 );}//Friendly
     ADDDWORD( pak, GServer->BuildBuffs( this ) );

@@ -4125,9 +4125,11 @@ bool CWorldServer::pakGMNpc(CPlayer* thisclient, int npcid,int dialogid,int even
 	thisnpc->pos = thisclient->Position->current;
 	thisnpc->posMap = thisclient->Position->Map;
 	thisnpc->thisnpc = GetNPCDataByID( npcid );
-	thisnpc->thisnpc->dialogid = dialogid;
-	thisnpc->event=eventid;
 	if( thisnpc->thisnpc==NULL ) return true;
+	thisnpc->thisnpc->dialogid = dialogid;
+	thisnpc->dialog=dialogid;
+	thisnpc->event=eventid;
+	thisnpc->thisnpc->eventid=eventid;
 	CMap* map = MapList.Index[thisclient->Position->Map];
 	thisnpc->lastAiUpdate=clock();
 	map->AddNPC( thisnpc );

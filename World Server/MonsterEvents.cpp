@@ -804,7 +804,10 @@ void CMonster::DoAi(int ainumber,char type)//ainumber is monster->AI type is add
                 {
                   if(lma_debug)
                         Log(MSG_INFO,"DoAI%i END ACT SUCCESS Turn %i",ainumber,nb_turns);
-                    return; //automatically return after performing the first successful action
+
+                    //LMA: Santa is special, he continues (Xmas Tree Spawning)
+                    if(ainumber!=1205)
+                        return; //automatically return after performing the first successful action
                 }
                 else
                 {
@@ -818,6 +821,8 @@ void CMonster::DoAi(int ainumber,char type)//ainumber is monster->AI type is add
         }
         else if(GServer->AipList.at(j)->AipID > aiindex)
         {
+            if(ainumber==1205)
+                Log(MSG_INFO,"Santa exits DoAI");
             return;
         }
 

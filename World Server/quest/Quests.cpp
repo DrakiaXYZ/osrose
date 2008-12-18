@@ -69,11 +69,14 @@ void CWorldServer::ReadQSD(strings path, dword index){
 					fh->Read(data->data, data->size - 8, 1);
 					trigger->Actions[k] = data;
 
+                    /*
 					if(data->opcode==8)
 					{
 					    STR_REWD_008 * data8 = (STR_REWD_008 *)data->data;
-					    Log(MSG_INFO,"%s has an action 8 monster %i",path,data8->iMonsterSN);
+					    //Log(MSG_INFO,"%s has an action 8 monster %i",path,data8->iMonsterSN);
+					    Log(MSG_INFO,"%s has an action 8 monster=%i,btwho=%i,many=%i,range=%i,team=%i,iwho=%i,x=%i,y=%i,zone=%i",path,data8->iMonsterSN,data8->btWho,data8->iHowMany,data8->iRange,data8->iTeamNo,data8->iWho,data8->iX,data8->iY,data8->iZoneSN);
 					}
+					*/
 
 
 				}
