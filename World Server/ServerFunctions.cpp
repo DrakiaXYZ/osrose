@@ -624,6 +624,8 @@ CDrop* CWorldServer::GetPYDrop( CMonster* thismon, UINT droptype )
 1001-1028  Prison Chests
 1110-1178  Dispensers
 1080-1090  Event Boxes
+1200-1201  Christmas Gift - Present Box - Mileage
+1202-1203  Boy and Girl Snow Suit - Mileage
 */
         }
 // Gem Drops

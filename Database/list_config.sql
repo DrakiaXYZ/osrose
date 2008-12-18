@@ -1,10 +1,10 @@
 /*
 MySQL Data Transfer
-Source Host: osrose
+Source Host: localhost
 Source Database: osrose
-Target Host: osrose
+Target Host: localhost
 Target Database: osrose
-Date: 11/30/2008 1:14:17 PM
+Date: 12/18/2008 8:32:20 AM
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -46,16 +46,6 @@ CREATE TABLE `list_config` (
   `osRoseVer` varchar(11) NOT NULL,
   `testgrid` int(11) NOT NULL,
   `jrose` int(11) NOT NULL,
-  `unionslaughter` int(11) NOT NULL,
-  `unionduration` int(11) NOT NULL,
-  `unionmin` int(11) NOT NULL,
-  `unionslaughterloop` int(11) NOT NULL,
-  `unionslaughterdelay_loop` int(11) NOT NULL,
-  `unionwar` int(11) NOT NULL,
-  `unionwarloop` int(11) NOT NULL,
-  `unionwardelay_loop` int(11) NOT NULL,
-  `unionwarduration` int(11) NOT NULL,
-  `unionwarmin` int(11) NOT NULL,
   `is_pegasus` int(11) NOT NULL,
   `monmax` int(11) NOT NULL default '10',
   PRIMARY KEY  (`id`)
@@ -64,4 +54,4 @@ CREATE TABLE `list_config` (
 -- ----------------------------
 -- Records 
 -- ----------------------------
-INSERT INTO `list_config` VALUES ('1', '8', '0', '80', '3', '5', '5', '5', '5', '0', 'default', '100', '100', '100', '100', '100', '100', '250', '2', '500', '10', '300', '0', '1', '10', '200', '700', '1', '45', '30', '0', '81.272', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '10');
+INSERT INTO `list_config` VALUES ('1', '8', '0', '80', '3', '5', '5', '5', '5', '0', 'default', '100', '100', '100', '100', '100', '100', '250', '2', '500', '10', '300', '0', '1', '10', '200', '700', '1', '45', '30', '0', '81.278', '1', '0', '0', '10');

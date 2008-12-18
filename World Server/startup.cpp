@@ -2232,11 +2232,11 @@ bool CWorldServer::LoadBreakChestBlueList()
 
                     //Patch for Xmas gift boxes...
                     newchest->chestid = itemnum;
-                    if (itemnum>=245&&itemnum<=247)
+/*                     if (itemnum>=245&&itemnum<=247)
                     {
                         newchest->chestid+=2;
                     }
-
+*/
                    //We read the 20 items.
                    int nb_rewards=0;
                    UINT rewtype=0;
