@@ -115,7 +115,18 @@ void CWorldServer::ReadAIP(strings path, dword index)
 				script->minDamage = mindamage;
 				script->minTime = mintime;
 				script->recordcount[i] = RecordCount;
-				AipList.push_back( script );
+
+				//LMA: testing maps.
+				//AipList.push_back( script );
+				if(AipListMap.find(script->AipID)!=AipListMap.end())
+				{
+				    Log(MSG_WARNING,"Script ID %u already done!",script->AipID);
+				}
+				else
+				{
+				    AipListMap[script->AipID]=script;
+				}
+
 			}
 		}
     }

@@ -747,6 +747,7 @@ void CMonster::DoAi(int ainumber,char type)//ainumber is monster->AI type is add
     */
 
 
+    /* LMA: Old way
     for(unsigned j=0; j < GServer->AipList.size(); j++)
     {
         if (GServer->AipList.at(j)->AipID == aiindex)
@@ -756,10 +757,10 @@ void CMonster::DoAi(int ainumber,char type)//ainumber is monster->AI type is add
                 Log(MSG_INFO,"BEGIN%i CDT Turn %i",ainumber,nb_turns);
 
             script = GServer->AipList.at(j);
-            /*
-            if(ainumber == AIWatch)Log(MSG_DEBUG, "Record count = %i",script->recordcount[type]);
-            if(ainumber == AIWatch)Log(MSG_DEBUG, "aiCondition type: %i AI index: %i condition count %i", type, aiindex, script->ConditionCount);
-            */
+
+            //if(ainumber == AIWatch)Log(MSG_DEBUG, "Record count = %i",script->recordcount[type]);
+            //if(ainumber == AIWatch)Log(MSG_DEBUG, "aiCondition type: %i AI index: %i condition count %i", type, aiindex, script->ConditionCount);
+
             if (lma_debug)
             {
                 Log(MSG_DEBUG, "DoAI%i script %i, Record count = %i",ainumber,script->AipID,script->recordcount[type]);
@@ -837,5 +838,90 @@ void CMonster::DoAi(int ainumber,char type)//ainumber is monster->AI type is add
         }
 
     }
+    */
+
+    //LMA: New way, faster?
+    while(GServer->AipListMap.find(aiindex)!=GServer->AipListMap.end())
+    {
+        nb_turns++;
+        if (lma_debug)
+            Log(MSG_INFO,"BEGIN%i CDT Turn %i",ainumber,nb_turns);
+
+        script = GServer->AipListMap[aiindex];
+
+        //if(ainumber == AIWatch)Log(MSG_DEBUG, "Record count = %i",script->recordcount[type]);
+        //if(ainumber == AIWatch)Log(MSG_DEBUG, "aiCondition type: %i AI index: %i condition count %i", type, aiindex, script->ConditionCount);
+
+        if (lma_debug)
+        {
+            Log(MSG_DEBUG, "DoAI%i script %i, Record count = %i",ainumber,script->AipID,script->recordcount[type]);
+            Log(MSG_DEBUG, "DoAI%i aiCondition type: %i AI index: %i condition count %i",ainumber,type, aiindex, script->ConditionCount);
+        }
+
+        int success = AI_SUCCESS; //needs to be AI_SUCCESS otherwise would not perform conditionless actions
+        int thisaction = 0;
+
+        for (dword i = 0; i < script->ConditionCount; i++)
+        {
+            int command = script->Conditions[i]->opcode;
+            if (command > 30 || command < 0) continue;
+            success = (*GServer->aiCondFunc[command])(GServer, this, script->Conditions[i]->data);
+            if(ainumber == AIWatch)Log(MSG_DEBUG, "aiCondition %03u returned %d", command, success);
+
+            if (success == AI_FAILURE)
+            {
+                if (lma_debug)
+                    Log(MSG_DEBUG, "DoAI%i aiCondition %03u, %i/%i Failure.",ainumber,command,i,script->ConditionCount-1);
+                break;
+            }
+            else
+            {
+                if (lma_debug)
+                    Log(MSG_DEBUG, "DoAI%i aiCondition %03u, %i/%i Success.",ainumber,command,i,script->ConditionCount-1);
+            }
+
+        }
+
+        if (lma_debug)
+            Log(MSG_INFO,"DoAI%i END CDT Turn %i",ainumber,nb_turns);
+
+
+        if (success == AI_SUCCESS)
+        {
+            if (lma_debug)
+                Log(MSG_INFO,"DoAI%i BEGIN ACT Turn %i",ainumber,nb_turns);
+
+            for (dword i = 0; i < script->ActionCount; i++)
+            {
+                int command = script->Actions[i]->opcode;
+                if (command > 38 || command < 0) continue;
+                success = (*GServer->aiActFunc[command])(GServer, this, script->Actions[i]->data);
+                if(ainumber == AIWatch)Log(MSG_DEBUG, "aiAction: %03u returned %d", command, success);
+
+                if(lma_debug)
+                    Log(MSG_DEBUG, "DoAI%i aiAction: %03u returned %d, %i/%i",ainumber,command, success,i,script->ActionCount-1);
+            }
+
+            if(success == AI_SUCCESS)
+            {
+              if(lma_debug)
+                    Log(MSG_INFO,"DoAI%i END ACT SUCCESS Turn %i",ainumber,nb_turns);
+
+                //LMA: Santa is special, he continues (Xmas Tree Spawning)
+                if(ainumber!=1205)
+                    return; //automatically return after performing the first successful action
+            }
+            else
+            {
+              if(lma_debug)
+                    Log(MSG_INFO,"DoAI%i END ACT FAILURE Turn %i",ainumber,nb_turns);
+            }
+
+        }
+
+        aiindex++;
+    }
+
+
     return;
 }
