@@ -62,6 +62,10 @@ AIACT(003)
 	//move randomly within iDistance (individual x and y so its within a square)
 	GETAIACTDATA(003);
 	CMonster* monster = reinterpret_cast<CMonster*>(entity);
+
+	if(entity->Position->Map==8)
+        Log(MSG_INFO,"AIACT(003) monster moves randomly");
+
     monster->UpdatePosition(monster->stay_still);
 	int iDist = data->iDistance;// * 2;//Get it to our coord system!
 
@@ -103,6 +107,10 @@ AIACT(004)
 	//move randomly within iDistance of spawn position (square)	Position->source
 	GETAIACTDATA(004);
 	CMonster* monster = reinterpret_cast<CMonster*>(entity);
+
+	if(entity->Position->Map==8)
+        Log(MSG_INFO,"AIACT(004) monster moves");
+
     monster->UpdatePosition(monster->stay_still);
 
 	int iDist = data->iDistance;//Get it to our coord system!
@@ -146,6 +154,10 @@ AIACT(005)
 	if(entity->findChar == NULL)
         return AI_FAILURE;
     CMonster* monster = reinterpret_cast<CMonster*>(entity);
+
+	if(entity->Position->Map==8)
+        Log(MSG_INFO,"AIACT(005) monster moves");
+
     monster->UpdatePosition(monster->stay_still);
 	entity->findChar->UpdatePosition(monster->stay_still);
 
@@ -209,6 +221,10 @@ AIACT(006)
     int lowestAB = 9999999;
     //	CWorldEntity* lowestEntity = NULL;
     CMonster* monster = reinterpret_cast<CMonster*>(entity);
+
+	if(entity->Position->Map==8)
+        Log(MSG_INFO,"AIACT(006) monster moves");
+
     CMap* map= GServer->MapList.Index[entity->Position->Map];
     CCharacter* Target = NULL;
     for(UINT i=0;i<map->PlayerList.size();i++)
@@ -386,6 +402,10 @@ AIACT(008)
 	//Some weird shit going on here
 	//move within some sort of distance of target (i think possibly % iDistance of distance between target)(run away?)
 	//Log(MSG_DEBUG, "AIACT(008)");
+
+	if(entity->Position->Map==8)
+        Log(MSG_INFO,"AIACT(008) monster moves");
+
 	return AI_SUCCESS;
 }
 
@@ -490,6 +510,11 @@ AIACT(012)
     monster->SetStats();
     monster->StartAction( (CCharacter*) entity->nearChar, NORMAL_ATTACK, 0 );
     //    //Log(MSG_DEBUG, "AIACT(012)%i",entity->nearChar->clientid);
+
+	if(entity->Position->Map==8)
+        Log(MSG_INFO,"AIACT(012) Start Attack");
+
+
 	return AI_SUCCESS;
 }
 
@@ -507,6 +532,10 @@ AIACT(013)
     monster->Battle->target = entity->findChar->clientid;
     monster->StartAction( (CCharacter*) entity->findChar, NORMAL_ATTACK, 0 );
     //    //Log(MSG_DEBUG, "AIACT(013)%i",entity->findChar->clientid);
+
+	if(entity->Position->Map==8)
+        Log(MSG_INFO,"AIACT(013) monster attacks");
+
 	return AI_SUCCESS;
 }
 
@@ -567,6 +596,10 @@ AIACT(015)
     monster->Battle->target = monster->Battle->hitby;
     CCharacter* target = entity->GetCharTarget( );
     monster->StartAction( target, NORMAL_ATTACK, 0 );
+
+	if(entity->Position->Map==8)
+        Log(MSG_INFO,"AIACT(015) monster retaliates");
+
 	return AI_SUCCESS;
 }
 
@@ -605,6 +638,10 @@ AIACT(016)
 	ADDWORD    ( pak, 0xcdcd );
 	ADDBYTE    ( pak, 0x01 );
 	GServer->SendToVisible(&pak, entity);
+
+
+	if(entity->Position->Map==8)
+        Log(MSG_INFO,"AIACT(016) monster runs away");
 
 
 	return AI_SUCCESS;

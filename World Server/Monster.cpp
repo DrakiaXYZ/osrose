@@ -156,6 +156,9 @@ void CMonster::Move( )
 	//ADDBYTE    ( pak, 0x01 );
 	ADDBYTE	   ( pak, thisnpc->stance );    //AIP
 	GServer->SendToVisible(&pak, this);
+
+    if(Position->Map==8)
+        Log(MSG_INFO,"Move (%.2f;%.2f) to (%.2f;%.2f)",Position->current.x,Position->current.y,Position->destiny.x,Position->destiny.y);
 }
 
 // Move a mob (specified point)
@@ -174,4 +177,7 @@ void CMonster::MoveTo( fPoint nPos, bool randcircle )
 	//ADDBYTE    ( pak, 0x01 );
 	ADDBYTE    ( pak, thisnpc->stance); //AIP
 	GServer->SendToVisible(&pak, this );
+
+    if(Position->Map==8)
+        Log(MSG_INFO,"MoveTo (%.2f;%.2f) to (%.2f;%.2f)",Position->current.x,Position->current.y,Position->destiny.x,Position->destiny.y);
 }

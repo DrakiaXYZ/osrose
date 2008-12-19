@@ -428,6 +428,12 @@ bool CWorldServer::pakMoveChar( CPlayer* thisclient, CPacket* P )
 	ADDFLOAT   ( pak, GETFLOAT((*P), 0x06 ) );	// POSITION Y
 	ADDWORD    ( pak, GETWORD((*P), 0x0a ) );		// POSITION Z (NOT USED)
 	SendToVisible( &pak, thisclient );
+
+    if(thisclient->Position->Map==8)
+    {
+        Log(MSG_INFO,"pakMoveChar %s, (%.2f;%.2f) to (%.2f;%.2f)",thisclient->CharInfo->charname,thisclient->Position->current.x,thisclient->Position->current.y,thisclient->Position->destiny.x,thisclient->Position->destiny.y);
+    }
+
 	return true;
 }
 

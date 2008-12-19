@@ -60,5 +60,6 @@ bool CCharacter::OnAlmostDie( )
 // virtual [called when character is far]
 bool CCharacter::OnFar( )
 {
+    Log(MSG_INFO,"Virtual CCharacter::OnFar");
     return true;
 }

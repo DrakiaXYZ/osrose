@@ -746,8 +746,8 @@ void CMonster::DoAi(int ainumber,char type)//ainumber is monster->AI type is add
     }
     */
 
-    if(ainumber>=821&&ainumber<=830)
-        lma_debug=true;
+    /*if(ainumber==3)
+        lma_debug=true;*/
 
 
     /* LMA: Old way

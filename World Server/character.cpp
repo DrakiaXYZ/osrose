@@ -204,6 +204,7 @@ int CCharacter::ExecuteQuestTrigger(dword hash)
 // update position
 void CCharacter::UpdatePosition( bool monster_stay_still )
 {
+    /* old version
     if(IsOnBattle( ) && Battle->target!=0)
     {
         CCharacter* Target = GetCharTarget( );
@@ -214,6 +215,9 @@ void CCharacter::UpdatePosition( bool monster_stay_still )
                 float distance = GServer->distance( Position->current, Position->source );
                 if(distance>30)
                 {
+                    if(Position->Map==8)
+                        Log(MSG_INFO,"Update Position, OnFar");
+
                     OnFar( );
                 }
                 else
@@ -222,13 +226,64 @@ void CCharacter::UpdatePosition( bool monster_stay_still )
                        Position->destiny = Target->Position->current; //MOBS ONLY
                     else
                         Log(MSG_INFO,"This one stays still");
+
+                    if(Position->Map==8)
+                        Log(MSG_INFO,"Update Position, destiny=Target->Position->current (%2.f:%.2f)",Position->destiny.x,Position->destiny.y);
+
                 }
 
             }
-            else Position->destiny = Target->Position->current; //ONLY IF NO TARGET ON BATTLE
+            else
+            {
+                if(Position->Map==8)
+                    Log(MSG_INFO,"Update Position Player, destiny=Target->Position->current (%2.f:%.2f)",Position->destiny.x,Position->destiny.y);
+
+                Position->destiny = Target->Position->current; //ONLY IF NO TARGET ON BATTLE
+            }
+
         }
-        else ClearBattle( Battle );
+        else
+        {
+            if(Position->Map==8)
+                Log(MSG_INFO,"Update Position,no target, clear battle");
+
+            ClearBattle( Battle );
+        }
+
     }
+    */
+
+    //LMA: osprose.
+    if(IsOnBattle( ) && Battle->target!=0)
+    {
+        CCharacter* Target = GetCharTarget( );
+
+        if(Target == NULL)
+        {
+            ClearBattle( Battle );
+        }
+        else
+        {
+            Position->destiny=Target->Position->current;
+        }
+
+    }
+	//osprose end.
+
+
+    if(Position->Map==8)
+    {
+        if(IsPlayer())
+        {
+            Log(MSG_INFO,"Update Position Player, (%2.f:%.2f)->(%2.f:%.2f)",Position->current.x,Position->current.y,Position->destiny.x,Position->destiny.y);
+        }
+        else
+        {
+            Log(MSG_INFO,"Update Position Monster, (%2.f:%.2f)->(%2.f:%.2f)",Position->current.x,Position->current.y,Position->destiny.x,Position->destiny.y);
+        }
+
+    }
+
 
     //LMA maps: special case (arrive in Game)
     //and he changed map (GM or scroll or teleporter or boat?)
@@ -262,7 +317,14 @@ void CCharacter::UpdatePosition( bool monster_stay_still )
    	    is_done=true;
     }
 
-    if(!IsMoving()) return;
+    if(!IsMoving())
+    {
+        //osprose
+        if(IsPlayer())Position->lastMoveTime = clock();
+        //osprose end
+        return;
+    }
+
 	float dx = Position->destiny.x - Position->current.x;
 	float dy = Position->destiny.y - Position->current.y;
 	float distance = sqrt( (dx*dx) + (dy*dy) );
