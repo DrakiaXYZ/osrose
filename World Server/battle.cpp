@@ -73,7 +73,9 @@ void CCharacter::DoAttack( )
                 if (Enemy->IsMonster()) // do monster AI script when monster is attacked.
                 {
                     CMonster* monster = GServer->GetMonsterByID(Enemy->clientid, Enemy->Position->Map);
-                    monster->DoAi(monster->thisnpc->AI, 3);
+
+                    if(monster!=NULL)
+                        monster->DoAi(monster->thisnpc->AI, 3);
                 }
 
             }
@@ -101,7 +103,9 @@ void CCharacter::DoAttack( )
                 if (Enemy->IsMonster())
                 {
                     CMonster* monster = GServer->GetMonsterByID(Enemy->clientid, Enemy->Position->Map);
-                    monster->DoAi(monster->thisnpc->AI, 3);
+
+                    if(monster!=NULL)
+                        monster->DoAi(monster->thisnpc->AI, 3);
                 }
 
             }
@@ -693,6 +697,7 @@ bool CCharacter::AoeSkill( CSkills* skill, CCharacter* Enemy )
     */
 
     //osprose
+    //2do: pvp ?
     if(IsPlayer() || IsSummon())
     {
         for(UINT i=0;i<map->MonsterList.size();i++)
@@ -704,6 +709,18 @@ bool CCharacter::AoeSkill( CSkills* skill, CCharacter* Enemy )
             {
                 Log(MSG_INFO,"AOE Attack (1) player attacks monster %i radius %.2f",monster->montype,(float)skill->aoeradius+1);
                 UseAtkSkill( (CCharacter*) monster, skill );
+
+                //LMA: TEST is there a "buff/debuff" skill with it too?
+                if (skill->status[0]!=0&&skill->buff[0]!=0&&monster->Stats->HP>0)
+                {
+                    UseBuffSkill( (CCharacter*)monster, skill );
+                    Log(MSG_INFO,"AOE Attack (1) player buffs monster %i",monster->montype);
+                }
+
+                //LMA: AIP time.
+                monster->DoAi(monster->thisnpc->AI, 3);
+                //END OF TEST.
+
             }
 
         }
@@ -1010,10 +1027,9 @@ void CCharacter::UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff )
         GServer->SendToVisible( &pak, Enemy, thisdrop );
         OnEnemyDie( Enemy );
     }
-
-    //If enemy is still alive
     else
     {
+        //If enemy is still alive
         Log(MSG_INFO,"The ennemy is still alive");
         ADDDWORD   ( pak, 4 );
         GServer->SendToVisible( &pak, Enemy );

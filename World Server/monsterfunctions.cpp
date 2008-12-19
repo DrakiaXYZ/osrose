@@ -39,6 +39,7 @@ bool CMonster::PlayerInGrid()
     UINT coords=0;
 
 
+    //Log(MSG_INFO,"position->Map %i",Position->Map);
     CMap* map = GServer->MapList.Index[Position->Map];
     grid_id=GServer->allmaps[map->id].grid_id;
     //we don't handle this map (player shouldn't be here, monster neither, non existing map).

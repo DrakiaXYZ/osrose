@@ -65,6 +65,8 @@ PVOID MapProcess( PVOID TS )
                           continue;
                      }
 
+                     //Log(MSG_INFO,"Player %s in map %i, position->map %i",player->CharInfo->charname,map->id,player->Position->Map);
+
                      player->RefreshHPMP();         //LMA HP / MP Jumping
                     if(player->UpdateValues( )) //Does nothing except for rides... equals to true if player isn't on the back seat
                         player->UpdatePosition(false);
@@ -119,6 +121,11 @@ PVOID MapProcess( PVOID TS )
                 for(UINT j=0;j<map->MonsterList.size();j++)
                 {
                     CMonster* monster = map->MonsterList.at(j);
+
+                    if(monster->Stats->HP<0)
+                    {
+                        //Log(MSG_INFO,"A monster %i is dead in map %i (position->Map %i)",monster->montype,map->id,monster->Position->Map);
+                    }
 
                     //LMA: AIP CODE
                     if(monster->hitcount == 0xFF)//this is a delay for new monster spawns this might olso fix invisible monsters(if they attack directly on spawning the client dosn't get the attack packet(its not in it's visible list yet))

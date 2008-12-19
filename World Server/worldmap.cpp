@@ -120,7 +120,7 @@ CMonster* CMap::AddMonster( UINT montype, fPoint position, UINT owner, CMDrops* 
     monster->Stats->MP = monster->Stats->MaxMP;
 
     //LMA: no agressivity in Santa's planetoid ;)
-    if(monster->Position->Map=38)
+    if(monster->Position->Map==38)
     {
         monster->thisnpc->aggresive=0;
         monster->thisnpc->helpless=1;

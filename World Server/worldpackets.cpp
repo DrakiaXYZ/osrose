@@ -2953,7 +2953,7 @@ bool CWorldServer::pakModifiedItemDone( CPlayer* thisclient, CPacket* P )
 // Aoe Skill
 bool CWorldServer::pakSkillAOE( CPlayer* thisclient, CPacket* P)
 {
-    //Log(MSG_INFO,"[pakSkillAOE]");
+    Log(MSG_INFO,"[pakSkillAOE] AOE_TARGET");
 
     if( thisclient->Shop->open || thisclient->Status->Stance==DRIVING ||
         thisclient->Status->Mute!=0xff || !thisclient->Status->CanCastSkill) return true;
