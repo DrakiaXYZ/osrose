@@ -753,6 +753,10 @@ AICOND(022)
     ////Log(MSG_DEBUG, "AICOND(022 2)");
 	CCharacter* target = map->GetCharInMap(caller->Battle->target);
 	if(target == entity) return AI_FAILURE;
+
+	//LMA: Summon won't attack his master :) would be bad ^_^
+	if (target!=NULL&&entity->IsSummon()&&(thisMonster->owner==target->clientid)) return AI_FAILURE;
+
 	if(target != NULL) return AI_SUCCESS;
     ////Log(MSG_DEBUG, "AICOND(022 3)");
 	return AI_FAILURE;

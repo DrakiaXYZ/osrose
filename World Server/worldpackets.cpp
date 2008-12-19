@@ -398,6 +398,10 @@ bool CWorldServer::pakDoID( CPlayer* thisclient, CPacket* P )
 	ADDBYTE    ( pak, thisclient->Status->Stance );
 	ADDWORD    ( pak, thisclient->Stats->Move_Speed );
 	SendToVisible( &pak, thisclient );
+
+	//Log(MSG_INFO,"Pak Player %s, stance %i move_speed %i",thisclient->CharInfo->charname,thisclient->Status->Stance,thisclient->Stats->Move_Speed);
+
+
     thisclient->CleanPlayerVector( );
 	thisclient->Session->inGame = true;
 	thisclient->firstlogin=clock();    //LMA for fairy
@@ -513,6 +517,7 @@ bool CWorldServer::pakChangeStance( CPlayer* thisclient, CPacket* P )
         return true;
 	BYTE stancenum = GETBYTE((*P),0x00);
 	BYTE previous_stance=thisclient->Status->Stance;
+	//Log(MSG_INFO,"Changing stance from %i to %i",previous_stance,stancenum);
 
 	if (stancenum == 0)
 	{

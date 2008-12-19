@@ -746,6 +746,9 @@ void CMonster::DoAi(int ainumber,char type)//ainumber is monster->AI type is add
     }
     */
 
+    if(ainumber>=821&&ainumber<=830)
+        lma_debug=true;
+
 
     /* LMA: Old way
     for(unsigned j=0; j < GServer->AipList.size(); j++)
