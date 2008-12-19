@@ -124,7 +124,7 @@ PVOID MapProcess( PVOID TS )
 
                     if(monster->Stats->HP<0)
                     {
-                        //Log(MSG_INFO,"A monster %i is dead in map %i (position->Map %i)",monster->montype,map->id,monster->Position->Map);
+                        Log(MSG_INFO,"A monster %i is dead in map %i (position->Map %i)",monster->montype,map->id,monster->Position->Map);
                     }
 
                     //LMA: AIP CODE

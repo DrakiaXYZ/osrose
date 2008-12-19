@@ -404,7 +404,9 @@ bool CWorldServer::CheckABuffs( CSkills* thisskill, CCharacter* character, int E
                                                 character->Status->Dash_up,
                                                 character->Status->Dash_down,
                                                 character->Stats->Move_Speed, true );
-                if(BuffValue.NewValue!=0)
+
+                //LMA: >=0 because some skills are really efficient...
+                if(BuffValue.NewValue>=0)
                 {
                     UINT j = BuffValue.Position;
                     character->Stats->Move_Speed = BuffValue.NewValue;

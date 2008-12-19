@@ -3147,13 +3147,15 @@ bool CWorldServer::pakGMAnn( CPlayer* thisclient, CPacket *P )
 // GM: Spawn x mobs
 bool CWorldServer::pakGMMon( CPlayer* thisclient, int montype, int moncount )
 {
+    //thisclient->Position->current->x
+    fPoint position=thisclient->Position->current;
+    CMap* map = MapList.Index[thisclient->Position->Map];
+    SendPM(thisclient,"%i monsters of type %i summoned near position %f %f Map: %i",moncount,montype,position.x,position.y,map->id);
+
 	for (int i=0; i<moncount; i++)
     {
-        fPoint position = RandInCircle( thisclient->Position->current, 10 );
-        CMap* map = MapList.Index[thisclient->Position->Map];
+        position = RandInCircle( thisclient->Position->current, 10 );
         map->AddMonster( montype, position, 0, NULL, NULL, 0 , true );
-        SendPM(thisclient,"%i monsters of type %i summoned at position %f %f Map: %i",moncount,montype,position.x, position.y,map->id);
-
 	}
 	return true;
 }

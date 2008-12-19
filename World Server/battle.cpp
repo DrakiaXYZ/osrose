@@ -708,14 +708,20 @@ bool CCharacter::AoeSkill( CSkills* skill, CCharacter* Enemy )
             if(GServer->IsMonInCircle( goodtarget,monster->Position->current,(float)skill->aoeradius+1))
             {
                 Log(MSG_INFO,"AOE Attack (1) player attacks monster %i radius %.2f",monster->montype,(float)skill->aoeradius+1);
+
+                //LMA: we have to since AOE doesn't have a specific target :(
+                Battle->skilltarget=monster->clientid;
                 UseAtkSkill( (CCharacter*) monster, skill );
+                Battle->skilltarget=0;
 
                 //LMA: TEST is there a "buff/debuff" skill with it too?
+                /*
                 if (skill->status[0]!=0&&skill->buff[0]!=0&&monster->Stats->HP>0)
                 {
                     UseBuffSkill( (CCharacter*)monster, skill );
                     Log(MSG_INFO,"AOE Attack (1) player buffs monster %i",monster->montype);
                 }
+                */
 
                 //LMA: AIP time.
                 monster->DoAi(monster->thisnpc->AI, 3);
