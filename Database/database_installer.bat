@@ -73,6 +73,8 @@ echo creating list_config table
 echo Installing new database content.
 echo updating list_npcs
 %mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < list_npcs.sql
+echo updating list_npcs_special
+%mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < list_npcs_special.sql
 echo updating list_respawnzones
 %mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < list_respawnzones.sql
 echo updating spawnareas
