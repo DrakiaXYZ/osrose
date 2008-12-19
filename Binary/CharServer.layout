@@ -4,7 +4,7 @@
 </CodeBlocks_layout_file>
 [Editors]
 Focused=-1
-Order=-1
+Order=
 [Editor_0]
 Open=0
 Top=0
@@ -45,8 +45,8 @@ Top=0
 Open=0
 Top=0
 [Editor_13]
-Open=1
-Top=1
+Open=0
+Top=0
 CursorCol=1
 CursorRow=307
 TopLine=297

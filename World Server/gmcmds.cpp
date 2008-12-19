@@ -62,20 +62,6 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
             Log( MSG_GMACTION, " %s : /ani %i" , thisclient->CharInfo->charname, anid);
             pakGMDoEmote( thisclient, anid );
     }
-    else if (strcmp(command, "gmskills")==0)
-    {
-        if(Config.Command_GMSkills > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)
-           Log( MSG_GMACTION, " %s : /gmskills NOT ALLOWED" , thisclient->CharInfo->charname);
-           /*
-           char buffer[200];
-           sprintf ( buffer, "gmskills NOT ALLOWED");
-           SendPM(thisclient, buffer);
-	        return true;
-	        */
-        if ((tmp = strtok(NULL, " "))==NULL) return true; char* name=tmp;
-        Log( MSG_GMACTION, " %s : /gmskills %s", thisclient->CharInfo->charname, name);
-        return pakGMGMSkills(thisclient, name);
-    }
     else if (strcmp(command, "ann")==0) // *** SEND A ANNOUNCEMENT ***
     {
         if(Config.Command_Ann > thisclient->Session->accesslevel)
@@ -1447,6 +1433,20 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
         Log( MSG_GMACTION, " %s : /gmlist" , thisclient->CharInfo->charname);
         SendPM(thisclient, line0 );
         return true;
+    }
+    else if (strcmp(command, "gmskills")==0)
+    {
+        if(Config.Command_GMSkills > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)
+           Log( MSG_GMACTION, " %s : /gmskills NOT ALLOWED" , thisclient->CharInfo->charname);
+           /*
+           char buffer[200];
+           sprintf ( buffer, "gmskills NOT ALLOWED");
+           SendPM(thisclient, buffer);
+	        return true;
+	        */
+        if ((tmp = strtok(NULL, " "))==NULL) return true; char* name=tmp;
+        Log( MSG_GMACTION, " %s : /gmskills %s", thisclient->CharInfo->charname, name);
+        return pakGMGMSkills(thisclient, name);
     }
    else if (strcmp(command, "go")==0) // AtCommandGo
     {
