@@ -698,6 +698,8 @@ bool CCharacter::AoeSkill( CSkills* skill, CCharacter* Enemy )
 
     //osprose
     //2do: pvp ?
+    UINT save_atktype=Battle->atktype;
+
     if(IsPlayer() || IsSummon())
     {
         for(UINT i=0;i<map->MonsterList.size();i++)
@@ -707,12 +709,13 @@ bool CCharacter::AoeSkill( CSkills* skill, CCharacter* Enemy )
             if(monster->IsSummon( ) && (map->allowpvp == 0 || monster->owner == clientid)) continue;
             if(GServer->IsMonInCircle( goodtarget,monster->Position->current,(float)skill->aoeradius+1))
             {
-                Log(MSG_INFO,"AOE Attack (1) player attacks monster %i radius %.2f",monster->montype,(float)skill->aoeradius+1);
+                Log(MSG_INFO,"AOE Attack (1) player attacks monster %i (clientID %u) radius %.2f",monster->montype,monster->clientid,(float)skill->aoeradius+1);
 
-                //LMA: we have to since AOE doesn't have a specific target :(
+                //LMA: we have to since AOE doesn't have a specific target and atkskil resets some values.
                 Battle->skilltarget=monster->clientid;
+                Battle->skillid=skill->id;
+                Battle->atktype = save_atktype;
                 UseAtkSkill( (CCharacter*) monster, skill );
-                Battle->skilltarget=0;
 
                 //LMA: TEST is there a "buff/debuff" skill with it too?
                 /*
@@ -1050,6 +1053,7 @@ void CCharacter::UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff )
         //Send (de)buff information to the whole world
         if(skill->nbuffs>0 && bflag)
         {
+            Log(MSG_INFO,"The ennemy cliendID %u is beeing buffed with %u",Battle->skilltarget,Battle->skillid);
             BEGINPACKET( pak, 0x7b5 );
             ADDWORD    ( pak, Battle->skilltarget );
             ADDWORD    ( pak, clientid );
