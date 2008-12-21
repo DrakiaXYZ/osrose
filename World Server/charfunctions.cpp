@@ -272,7 +272,8 @@ bool CCharacter::CanAttack( ) // updated by Core
 {
 
     // we cannot attack while sleeping or stunned
-    if (Status->Sleep != 0xff || Status->Stun != 0xff) {
+    if (Status->Sleep != 0xff || Status->Stun != 0xff)
+    {
         return false;
     }
 
@@ -286,17 +287,44 @@ bool CCharacter::CanAttack( ) // updated by Core
     //MZ
     //it's my fix, to protect from exception divide by zero
     //During fight, at change of the weapon it happens
-        if (0 == Stats->Attack_Speed) return false;
+    if (0 == Stats->Attack_Speed) return false;
     //MZ
 
     if ( weapontype == 231 || weapontype == 232 || weapontype == 233 )
     {
-       if( (etime < CLOCKS_PER_SEC * (GServer->ATTK_SPEED_MODIF*4/3) / Stats->Attack_Speed) || Status->Stun != 0xff ) return false;
+       if( (etime < CLOCKS_PER_SEC * (GServer->ATTK_SPEED_MODIF*4/3) / Stats->Attack_Speed) || Status->Stun != 0xff )
+       {
+            /*
+            //LMA: logs
+           if(Position->Map==8)
+           {
+               Log(MSG_INFO,"CanAttack false weapontype %i stun %i etime %u ATTK_SPEED_MODIF %u aspeed %u",weapontype,Status->Stun,etime,GServer->ATTK_SPEED_MODIF,Stats->Attack_Speed);
+           }
+           //end of logs.
+           */
+
+           return false;
+       }
+
     }
     else
     {
-       if( (etime < CLOCKS_PER_SEC * GServer->ATTK_SPEED_MODIF / Stats->Attack_Speed) || Status->Stun != 0xff ) return false;
+       if( (etime < CLOCKS_PER_SEC * GServer->ATTK_SPEED_MODIF / Stats->Attack_Speed) || Status->Stun != 0xff )
+       {
+           /*
+           //LMA: logs
+           if(Position->Map==8)
+           {
+               Log(MSG_INFO,"CanAttack false weapontype %i stun %i etime %u ATTK_SPEED_MODIF %u aspeed %u",weapontype,Status->Stun,etime,GServer->ATTK_SPEED_MODIF,Stats->Attack_Speed);
+           }
+           //end of logs.
+           */
+
+           return false;
+       }
+
     }
+
     return true;
 }
 
@@ -304,7 +332,7 @@ bool CCharacter::CanAttack( ) // updated by Core
 bool CCharacter::IsTargetReached( CCharacter* Enemy, CSkills* skill )
 {
     CMap* map = GServer->MapList.Index[Position->Map];
-    float distance = distance = GServer->distance( Position->current, Enemy->Position->current );
+    float distance = GServer->distance( Position->current, Enemy->Position->current );
     if(skill==NULL)
     {
         if(distance<=Stats->Attack_Distance)
@@ -609,7 +637,7 @@ void CCharacter::RefreshBuff( )
              MagicStatus[i].BuffTime += 1*CLOCKS_PER_SEC;
              MagicStatus[i].Duration -= 1;
              printf("did %i flame dmg to the player, still %i seconds and %i HP remain \n", MagicStatus[i].Status, MagicStatus[i].Duration, Stats->HP);
- 
+
              //A bunch of messy code to send dmg packet
              BEGINPACKET( pak, 0x7b6 );
              ADDWORD    ( pak, clientid );
@@ -617,7 +645,7 @@ void CCharacter::RefreshBuff( )
              ADDDWORD   ( pak, 0x000007f8 );
              ADDBYTE    ( pak, 0x00 );
              ADDDWORD   ( pak, MagicStatus[i].Status );
- 
+
              //If Enemy is killed
              if( IsDead())
              {
@@ -653,7 +681,7 @@ void CCharacter::RefreshBuff( )
                  }
                  GServer->SendToVisible( &pak, this, thisdrop );
              }
- 
+
              //If enemy is still alive
              else
              {
@@ -661,7 +689,7 @@ void CCharacter::RefreshBuff( )
                  GServer->SendToVisible( &pak, this );
              }
          }
-         
+
     }
     if(bflag)
     {

@@ -431,7 +431,7 @@ bool CWorldServer::pakMoveChar( CPlayer* thisclient, CPacket* P )
 
     if(thisclient->Position->Map==8)
     {
-        Log(MSG_INFO,"pakMoveChar %s, (%.2f;%.2f) to (%.2f;%.2f)",thisclient->CharInfo->charname,thisclient->Position->current.x,thisclient->Position->current.y,thisclient->Position->destiny.x,thisclient->Position->destiny.y);
+        Log(MSG_INFO,"pakMoveChar %s, (%.2f;%.2f) to (%.2f;%.2f) speed %u",thisclient->CharInfo->charname,thisclient->Position->current.x,thisclient->Position->current.y,thisclient->Position->destiny.x,thisclient->Position->destiny.y,thisclient->Stats->Move_Speed);
     }
 
 	return true;

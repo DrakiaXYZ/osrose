@@ -273,13 +273,16 @@ void CCharacter::UpdatePosition( bool monster_stay_still )
 
     if(Position->Map==8)
     {
+        float tempdist = GServer->distance(Position->current,Position->destiny);
+
         if(IsPlayer())
         {
-            Log(MSG_INFO,"Update Position Player, (%2.f:%.2f)->(%2.f:%.2f)",Position->current.x,Position->current.y,Position->destiny.x,Position->destiny.y);
+            //Log(MSG_INFO,"Player HP %I64i, (%.2f:%.2f)->(%.2f:%.2f)=%.2f speed %u",Stats->HP,Position->current.x,Position->current.y,Position->destiny.x,Position->destiny.y,tempdist,Stats->Move_Speed);
         }
         else
         {
-            Log(MSG_INFO,"Update Position Monster, (%2.f:%.2f)->(%2.f:%.2f)",Position->current.x,Position->current.y,Position->destiny.x,Position->destiny.y);
+            //Log(MSG_INFO,"Monster HP %I64i, (%.2f:%.2f)->(%.2f:%.2f)=%.2f speed %u",Stats->HP,Position->current.x,Position->current.y,Position->destiny.x,Position->destiny.y,tempdist,Stats->Move_Speed);
+            //Log(MSG_LOAD,"Monster (%.2f:%.2f)->(%.2f:%.2f)",Position->current.x,Position->current.y,Position->destiny.x,Position->destiny.y);
         }
 
     }
@@ -330,9 +333,15 @@ void CCharacter::UpdatePosition( bool monster_stay_still )
 	float distance = sqrt( (dx*dx) + (dy*dy) );
     float ntime = ( distance / Stats->Move_Speed * GServer->MOVE_SPEED_MODIF );
     clock_t etime = clock() - Position->lastMoveTime;
-	if (ntime<=etime || distance<1.0 )
+
+    //LMA: bad, that's bad...
+	//if (ntime<=etime || distance<1.0 )
+	if (ntime<=etime || distance<0.01 )
     {
         // if (IsPlayer()) printf("Arrived! X: %i, Y: %i\n", (int)Position->current.x, (int)Position->current.y);
+        if(Position->Map==8&&IsMonster())
+            Log(MSG_INFO," Monster Arrived, J (%.2f:%.2f)->(%.2f:%.2f)",Position->current.x,Position->current.y,Position->destiny.x,Position->destiny.y);
+
 		Position->current.x = Position->destiny.x;
 		Position->current.y = Position->destiny.y;
     }
@@ -341,6 +350,7 @@ void CCharacter::UpdatePosition( bool monster_stay_still )
 		Position->current.x += dx*(etime/ntime);
 		Position->current.y += dy*(etime/ntime);
 	}
+
 	Position->lastMoveTime = clock( );
 
 	//LMA: maps (for player)

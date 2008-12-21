@@ -59,6 +59,7 @@ void CCharacter::DoAttack( )
                 ClearBattle( Battle );
                 return;
             }
+
             //osptest
             if(Enemy == this)
             {
@@ -66,6 +67,46 @@ void CCharacter::DoAttack( )
                 ClearBattle( Battle );
             }
             //osptest end
+
+            //LMA: Some logs.
+            /*
+            if(map->id==8)
+            {
+                bool is_ok=false;
+                bool is_reached=false;
+                bool can_attack=false;
+
+                float distance = GServer->distance( Position->current, Enemy->Position->current );
+                is_reached=IsTargetReached( Enemy );
+                can_attack=CanAttack( );
+
+                if(is_reached&&can_attack)
+                    is_ok=true;
+
+                if(IsMonster())
+                {
+                    Log(MSG_INFO,"monster has reached? %i (%.2f/%.2f), canattack? %i, will attack? %i",is_reached,distance,Stats->Attack_Distance,can_attack,is_ok);
+
+                    if (is_ok)
+                        Log(MSG_INFO,"NORMAL_ATTACK, monster %i has reached %i (%.2f<=%.2f)",clientid,Enemy->clientid,distance,Stats->Attack_Distance);
+                    else
+                        Log(MSG_INFO,"NORMAL_ATTACK, monster %i hasn't reached? %i (%.2f>%.2f)",clientid,Enemy->clientid,distance,Stats->Attack_Distance);
+                }
+                else
+                {
+                    Log(MSG_INFO,"player has reached? %i (%.2f/%.2f), canattack? %i, will attack? %i",is_reached,distance,Stats->Attack_Distance,can_attack,is_ok);
+
+                    if (is_ok)
+                        Log(MSG_INFO,"NORMAL_ATTACK, player %i has reached %i (%.2f<=%.2f)",clientid,Enemy->clientid,distance,Stats->Attack_Distance);
+                    else
+                        Log(MSG_INFO,"NORMAL_ATTACK, player %i hasn't reached? %i (%.2f>%.2f)",clientid,Enemy->clientid,distance,Stats->Attack_Distance);
+                }
+
+            }
+            */
+            //End of logs.
+
+
             if(IsTargetReached( Enemy ) && CanAttack( ))
             {
                 NormalAttack( Enemy );
@@ -395,6 +436,17 @@ void CCharacter::NormalAttack( CCharacter* Enemy )
 
     Enemy->Stats->HP -=  (long long) hitpower;
 
+    //LMA: logs.
+    if(Position->Map==8)
+    {
+        if(Enemy->IsPlayer())
+        {
+            Log(MSG_INFO,"Player is hit %li, HP goes to %I64i",hitpower,Enemy->Stats->HP);
+        }
+
+    }
+    //End of logs.
+
     /*
     if (Enemy->IsMonster())
         Log(MSG_INFO,"Normal Attack, monster HP %I64i, hitpower %li",Enemy->Stats->HP,hitpower);
@@ -459,6 +511,9 @@ void CCharacter::NormalAttack( CCharacter* Enemy )
     }
     ReduceABC( );
     Battle->lastAtkTime = clock( );
+
+
+    return;
 }
 
 // do skill attack

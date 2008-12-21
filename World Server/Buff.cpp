@@ -409,12 +409,16 @@ bool CWorldServer::CheckABuffs( CSkills* thisskill, CCharacter* character, int E
                 if(BuffValue.NewValue>=0)
                 {
                     UINT j = BuffValue.Position;
+
+                    //LMA: for debug
+                    UINT prev_value=character->Stats->Move_Speed;
+
                     character->Stats->Move_Speed = BuffValue.NewValue;
                     if(j<15)
                         character->Status->Dash_up = j;
                     else
                         character->Status->Dash_down = j;
-                    //Log( MSG_INFO, "Move speed buff position %i. new move speed %i. buff value %i", j,BuffValue.NewValue,BuffValue.Value );
+                    Log( MSG_INFO, "Move speed buff position %i. move speed(%i->%i). buff value %i", j,prev_value,BuffValue.NewValue,BuffValue.Value );
                     character->MagicStatus[j].Buff = thisskill->buff[i];
                     character->MagicStatus[j].BuffTime = clock();
                     character->MagicStatus[j].Duration = thisskill->duration;
