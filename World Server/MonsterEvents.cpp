@@ -149,7 +149,7 @@ bool CMonster::OnEnemyOnSight( CPlayer* Enemy )
 // called when enemy die
 bool CMonster::OnEnemyDie( CCharacter* Enemy )
 {
-    Log(MSG_INFO,"An enemy died, let's stop battle");
+    Log(MSG_INFO,"An ennemy died, let's stop battle");
     Position->destiny = Position->source; //ON MOB DIE
     ClearBattle( Battle );
     MoveTo( Position->source );

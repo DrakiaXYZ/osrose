@@ -66,6 +66,7 @@ class CCharacter
         void UseBuffSkill( CCharacter* Target, CSkills* skill );
         void UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff= false );
         bool UseSkill( CSkills* skill, CCharacter *Target = NULL ); //for gm command
+        bool TakeExp( CCharacter *Target ); //taking exp from a dead player.
 
         //functions
         bool IsMonster( );

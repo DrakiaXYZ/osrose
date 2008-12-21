@@ -277,7 +277,7 @@ void CCharacter::UpdatePosition( bool monster_stay_still )
 
         if(IsPlayer())
         {
-            //Log(MSG_INFO,"Player HP %I64i, (%.2f:%.2f)->(%.2f:%.2f)=%.2f speed %u",Stats->HP,Position->current.x,Position->current.y,Position->destiny.x,Position->destiny.y,tempdist,Stats->Move_Speed);
+            Log(MSG_INFO,"Player HP %I64i, (%.2f:%.2f)->(%.2f:%.2f)=%.2f speed %u",Stats->HP,Position->current.x,Position->current.y,Position->destiny.x,Position->destiny.y,tempdist,Stats->Move_Speed);
         }
         else
         {

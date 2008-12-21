@@ -385,6 +385,9 @@ void CCharacter::DoAttack( )
 // do normal attack
 void CCharacter::NormalAttack( CCharacter* Enemy )
 {
+    //LMA: Sometimes it's fired several times, no need to kill several times ;)
+    bool is_already_dead=Enemy->IsDead();
+
     Position->destiny = Position->current;
     reduceItemsLifeSpan( false );
     Enemy->OnBeAttacked( this );
@@ -437,7 +440,7 @@ void CCharacter::NormalAttack( CCharacter* Enemy )
     Enemy->Stats->HP -=  (long long) hitpower;
 
     //LMA: logs.
-    if(Position->Map==8)
+    if(Position->Map==8||Position->Map==40)
     {
         if(Enemy->IsPlayer())
         {
@@ -468,9 +471,10 @@ void CCharacter::NormalAttack( CCharacter* Enemy )
     ADDWORD    ( pak, clientid );
     ADDWORD    ( pak, Battle->atktarget );
     ADDDWORD   ( pak, hitpower );
+
     if(Enemy->IsDead())
     {
-        Log(MSG_INFO,"Someone died.");
+        Log(MSG_INFO,"Someone died by NORMAL_ATTACK.");
 
         CDrop* thisdrop = NULL;
         ADDDWORD   ( pak, critical?28:16 );
@@ -502,13 +506,20 @@ void CCharacter::NormalAttack( CCharacter* Enemy )
             }
         }
         GServer->SendToVisible( &pak, Enemy, thisdrop );
-        OnEnemyDie( Enemy );
+
+        //LMA: test
+        //OnEnemyDie( Enemy );
+        ClearBattle(Battle);
+        if(!is_already_dead)
+            TakeExp(Enemy);
+        //end of test.
     }
     else
     {
         ADDDWORD   ( pak, (hitpower>0?(critical?12:0):0) );
         GServer->SendToVisible( &pak, Enemy );
     }
+
     ReduceABC( );
     Battle->lastAtkTime = clock( );
 
@@ -602,7 +613,8 @@ bool CCharacter::BuffSkill( CCharacter* Target, CSkills* skill )
         Battle->bufftarget = 0;
         Battle->skilltarget = 0;
         Battle->skillid = 0;
-        Battle->atktype = NORMAL_ATTACK;
+        //Battle->atktype = NORMAL_ATTACK;
+        Battle->atktype = 0;
     }
     else //Monsters need to be reset to normal attack and clear skill attacks.
     {
@@ -814,9 +826,17 @@ bool CCharacter::AoeSkill( CSkills* skill, CCharacter* Enemy )
             Battle->skilltarget = 0;
             Battle->skillid = 0;
         }
-        else ClearBattle( Battle );
+        else
+        {
+            ClearBattle( Battle );
+        }
+
     }
-    else ClearBattle( Battle );
+    else
+    {
+        ClearBattle( Battle );
+    }
+
     Stats->MP -= (skill->mp - (skill->mp * Stats->MPReduction / 100));
     if(Stats->MP<0) Stats->MP=0;
     Battle->lastAtkTime = clock( );
@@ -1008,6 +1028,9 @@ bool CCharacter::AoeDebuff( CSkills* skill, CCharacter* Enemy )
 // use skill attack
 void CCharacter::UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff )
 {
+    //LMA: Sometimes it's fired several times, no need to kill several times ;)
+    bool is_already_dead=Enemy->IsDead();
+
     reduceItemsLifeSpan( false );
     Enemy->reduceItemsLifeSpan(true);
     //Skill power calculations
@@ -1089,7 +1112,13 @@ void CCharacter::UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff )
             }
         }
         GServer->SendToVisible( &pak, Enemy, thisdrop );
-        OnEnemyDie( Enemy );
+
+        //LMA: test
+        //OnEnemyDie( Enemy );
+        ClearBattle(Battle);
+        if(!is_already_dead)
+            TakeExp(Enemy);
+        //end of test.
     }
     else
     {
@@ -1157,6 +1186,37 @@ void CCharacter::UseBuffSkill( CCharacter* Target, CSkills* skill )
     ADDWORD    ( pak, Battle->skillid);
     ADDWORD    ( pak, 1);
 	GServer->SendToVisible( &pak, (CCharacter*)this );
+
+	//LMA: Patch for Revive stuff...
+	if(skill->skilltype==20&&Target->IsPlayer())
+	{
+	    CPlayer* thisclient = GServer->GetClientByID(Target->clientid,Position->Map);
+	    if (thisclient==NULL)
+	    {
+	        CPlayer* thisclient = GServer->GetClientByID(Target->clientid,Target->Position->Map);
+	    }
+
+	    if (thisclient==NULL)
+	    {
+	        Log(MSG_WARNING,"Can't find clientID %i for revive...",Target->clientid);
+	        return;
+	    }
+
+        //not exact but should be fair enough...
+        unsigned long long new_exp=(unsigned long long) (thisclient->CharInfo->Exp*3*skill->atkpower/(100*100));
+        thisclient->CharInfo->Exp+=new_exp;
+        thisclient->Stats->HP=thisclient->Stats->MaxHP*30/100;
+	    Log(MSG_INFO,"Revive, new HP %I64i, %I64i, Xp added %I64i, new %I64i",thisclient->Stats->HP,Target->Stats->HP,new_exp,thisclient->CharInfo->Exp);
+        BEGINPACKET( pak, 0x79b );
+        ADDDWORD   ( pak, thisclient->CharInfo->Exp );
+        ADDWORD    ( pak, thisclient->CharInfo->stamina );
+        ADDWORD    ( pak, 0 );
+        thisclient->client->SendPacket( &pak );
+	}
+	//End of Patch.
+
+
+	return;
 }
 
 // use Debuff skill
@@ -1226,4 +1286,38 @@ bool CCharacter::UseSkill( CSkills* skill, CCharacter *Target )
     }
   }
   return true;
+}
+
+//LMA: We take exp from a dead player.
+bool CCharacter::TakeExp( CCharacter *Target )
+{
+    if(!Target->IsPlayer())
+    {
+        return true;
+    }
+
+    //We take 3% of his xp.
+    CPlayer* thisclient = GServer->GetClientByID(Target->clientid,Target->Position->Map);
+    if (thisclient==NULL)
+    {
+        CPlayer* thisclient = GServer->GetClientByID(Target->clientid,Position->Map);
+    }
+
+    if (thisclient==NULL)
+    {
+        Log(MSG_WARNING,"Can't find clientID %i to take his Exp...",Target->clientid);
+        return true;
+    }
+
+    unsigned long long new_exp=(unsigned long long) (thisclient->CharInfo->Exp*3/100);
+    thisclient->CharInfo->Exp-=new_exp;
+    BEGINPACKET( pak, 0x79b );
+    ADDDWORD   ( pak, thisclient->CharInfo->Exp );
+    ADDWORD    ( pak, thisclient->CharInfo->stamina );
+    ADDWORD    ( pak, 0 );
+    thisclient->client->SendPacket( &pak );
+    Log(MSG_INFO,"Player %i died, Xp taken %I64i, new %I64i",clientid,new_exp,thisclient->CharInfo->Exp);
+
+
+    return true;
 }
