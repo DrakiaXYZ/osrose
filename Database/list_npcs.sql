@@ -47,6 +47,7 @@ INSERT INTO `list_npcs` VALUES (0, '[Soldier] Odelo', 1116, 2, 0.000, 5507.31, 5
 INSERT INTO `list_npcs` VALUES (0, '[Soldier] Winters', 1117, 2, 0.000, 5522.99, 5397.75, 217,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Mayor] Darren', 1081, 2, 178.499, 5514.48, 5238.20, 181,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Event Info] Felice Fete', 1202, 2, 206.565, 5562.00, 5164.83, 306,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Traveler] Garlen', 1491, 2, 153.435, 5463.00, 5167.57, 325,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Guide] Alphonso', 1118, 2, 178.499, 5520.56, 5063.66, 218,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Historian] Jones', 1104, 2, 162.011, 5578.19, 4890.44, 204,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Vicious Captain] Ruven', 1125, 2, 270.000, 5597.76, 4918.87, 220,0,0);
