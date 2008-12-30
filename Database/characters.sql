@@ -15,7 +15,7 @@ CREATE TABLE `characters` (
   `account_name` varchar(64) NOT NULL,
   `id` int(11) NOT NULL auto_increment,
   `char_name` varchar(64) NOT NULL,
-  `zuly` decimal(11,0) NOT NULL default '10000',
+  `zuly` bigint(11) NOT NULL default '10000',
   `level` decimal(11,0) NOT NULL default '1',
   `curHp` decimal(18,0) NOT NULL default '50',
   `curMp` decimal(18,0) NOT NULL default '18',

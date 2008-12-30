@@ -54,6 +54,7 @@ CMonster::CMonster( fPoint MonsterPosition, UINT MonsterType, UINT MonsterMap, U
     clientid = GServer->GetNewClientID();
     aip_npctype=0;
     aip_clientid=0;
+    sp_aip=0;
     owner = Owner;
     thisparty = NULL;
     if(owner==0) CharType = TMONSTER;

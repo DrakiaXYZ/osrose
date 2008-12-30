@@ -533,8 +533,8 @@ AIACT(013)
     monster->StartAction( (CCharacter*) entity->findChar, NORMAL_ATTACK, 0 );
     //    //Log(MSG_DEBUG, "AIACT(013)%i",entity->findChar->clientid);
 
-	if(entity->Position->Map==8)
-        Log(MSG_INFO,"AIACT(013) monster attacks");
+	/*if(entity->Position->Map==8||entity->Position->Map==59)
+        Log(MSG_INFO,"AIACT(013) monster %i attacks %i",entity->clientid,entity->findChar->clientid);*/
 
 	return AI_SUCCESS;
 }
@@ -820,6 +820,7 @@ AIACT(023)
 
     //LMA: we let him die later, it seems we never come back from DoAI in this case...
     CMonster* thisMonster = reinterpret_cast<CMonster*>(entity);
+    //Log(MSG_DEBUG, "AIACT(023) Suicide for %i",entity->clientid);
     entity->Stats->HP = -1;
     BEGINPACKET( pak, 0x799 );
     ADDWORD    ( pak, entity->clientid );

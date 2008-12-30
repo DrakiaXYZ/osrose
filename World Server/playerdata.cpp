@@ -41,7 +41,8 @@ bool CPlayer::loaddata( )
 	CharInfo->Hair = atoi(row[2]);
 	CharInfo->Sex = atoi(row[3]);
 	CharInfo->Job = atoi(row[4]);
-	CharInfo->Zulies = atol(row[5]);
+	//CharInfo->Zulies = atol(row[5]);
+	CharInfo->Zulies = atoll(row[5]);
 	Attr->Str = atoi(row[6]);
 	Attr->Dex = atoi(row[7]);
 	Attr->Int = atoi(row[8]);
@@ -434,6 +435,14 @@ bool CPlayer::loaddata( )
 		items[itemnum].gem = atoi(row[10])>3999?0:atoi(row[10]);
 		items[itemnum].sp_value = atoi(row[11]);
 		CalculateSignature(itemnum);  //Calculate signature.
+
+        //LMA: little check, refine from 1 to 9 are not valid...
+        if(items[itemnum].refine>0&&items[itemnum].refine<=9)
+        {
+            Log(MSG_WARNING,"Invalid refine %i for item (%i:%i) for %s",items[itemnum].refine,items[itemnum].itemtype,items[itemnum].itemnum,CharInfo->charname);
+            items[itemnum].refine*=16;
+        }
+
 	}
 	GServer->DB->QFree( );
 	result = GServer->DB->QStore("SELECT itemnum,itemtype,refine,durability,lifespan,slotnum,count,stats,socketed,appraised,gem FROM storage WHERE owner=%i", Session->userid);
@@ -687,7 +696,8 @@ void CPlayer::savedata( )
         }
 
         //LMA: new save.
-        GServer->DB->QExecute("UPDATE characters SET classid=%i,level=%i,zuly=%i,curHp=%i,curMp=%i,str=%i,con=%i,dex=%i,_int=%i,cha=%i,sen=%i,exp=%i,skillp=%i,statp=%i, stamina=%i,quickbar='%s',respawnid=%i,clanid=%i,clan_rank=%i, townid=%i, rewardpoints=%i, bonusxp=%i, timerxp=%i, shoptype=%i, timershop=%i, unionid=%i, unionfame=%i, union01=%i, union02=%i, union03=%i, union04=%i, union05=%i WHERE id=%i",
+        //GServer->DB->QExecute("UPDATE characters SET classid=%i,level=%i,zuly=%i,curHp=%i,curMp=%i,str=%i,con=%i,dex=%i,_int=%i,cha=%i,sen=%i,exp=%i,skillp=%i,statp=%i, stamina=%i,quickbar='%s',respawnid=%i,clanid=%i,clan_rank=%i, townid=%i, rewardpoints=%i, bonusxp=%i, timerxp=%i, shoptype=%i, timershop=%i, unionid=%i, unionfame=%i, union01=%i, union02=%i, union03=%i, union04=%i, union05=%i WHERE id=%i",
+        GServer->DB->QExecute("UPDATE characters SET classid=%i,level=%i,zuly=%I64i,curHp=%i,curMp=%i,str=%i,con=%i,dex=%i,_int=%i,cha=%i,sen=%i,exp=%i,skillp=%i,statp=%i, stamina=%i,quickbar='%s',respawnid=%i,clanid=%i,clan_rank=%i, townid=%i, rewardpoints=%i, bonusxp=%i, timerxp=%i, shoptype=%i, timershop=%i, unionid=%i, unionfame=%i, union01=%i, union02=%i, union03=%i, union04=%i, union05=%i WHERE id=%i",
                     CharInfo->Job,Stats->Level, CharInfo->Zulies, (UINT) hp, (UINT) Stats->MP,
                     Attr->Str,Attr->Con,Attr->Dex,Attr->Int,Attr->Cha,Attr->Sen,
                     (UINT) CharInfo->Exp,CharInfo->SkillPoints,CharInfo->StatPoints,CharInfo->stamina,

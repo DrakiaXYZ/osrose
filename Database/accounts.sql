@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS accounts (
 	donation varchar(255) default '0',
 	active int(11) default 1,
 	active_key varchar(255) default NULL,
-	zulystorage int(11) default 0,
+	zulystorage bigint(11) default 0,
 	platinum tinyint(1) default 0,
 	online tinyint(1) default 0,
 	login_count int(11) default 0,

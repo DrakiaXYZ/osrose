@@ -474,7 +474,7 @@ void CCharacter::NormalAttack( CCharacter* Enemy )
 
     if(Enemy->IsDead())
     {
-        Log(MSG_INFO,"Someone died by NORMAL_ATTACK.");
+        Log(MSG_INFO,"Someone %i killed %i (NORMAL_ATTACK).",clientid,Enemy->clientid);
 
         CDrop* thisdrop = NULL;
         ADDDWORD   ( pak, critical?28:16 );

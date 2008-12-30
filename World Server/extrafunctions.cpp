@@ -1349,7 +1349,8 @@ bool CWorldServer::GetZulyStorage( CPlayer* thisclient)
 	MYSQL_RES *result = DB->QStore("SELECT zulystorage FROM accounts WHERE id=%i", thisclient->Session->userid);
     if(result==NULL) return false;
 	row = mysql_fetch_row(result);
-	thisclient->CharInfo->Storage_Zulies = atoi( row[0] );
+	//thisclient->CharInfo->Storage_Zulies = atoi( row[0] );
+	thisclient->CharInfo->Storage_Zulies = atoll( row[0] );
 	DB->QFree( );
 
 
@@ -1360,7 +1361,8 @@ bool CWorldServer::GetZulyStorage( CPlayer* thisclient)
 //LMA: Save Zuly to Storage (to MySQL)
 bool CWorldServer::SaveZulyStorage( CPlayer* thisclient)
 {
-     GServer->DB->QExecute("update accounts set zulystorage = %i where id = %i", thisclient->CharInfo->Storage_Zulies, thisclient->Session->userid);
+     //GServer->DB->QExecute("update accounts set zulystorage = %i where id = %i", thisclient->CharInfo->Storage_Zulies, thisclient->Session->userid);
+     GServer->DB->QExecute("update accounts set zulystorage = %I64i where id = %i", thisclient->CharInfo->Storage_Zulies, thisclient->Session->userid);
 
 
      return true;

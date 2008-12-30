@@ -324,6 +324,7 @@ CCharacter* CMap::GetCharInMap( unsigned int id )
         //LMA: Setting montype for CCharacter too.
         CCharacter* temp_char=(CCharacter*) monster;
         temp_char->char_montype=monster->montype;
+        temp_char->char_owner=monster->owner;
         //return (CCharacter*) monster;
         return temp_char;
     }

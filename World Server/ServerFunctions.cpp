@@ -888,6 +888,10 @@ bool CWorldServer::LearnSkill( CPlayer* thisclient, UINT skill, bool takeSP)
                 thisclient->cskills[index].level=1;
                 thisclient->cskills[index].thisskill = thisskill;
 
+                if (takeSP)
+                {
+                    thisclient->CharInfo->SkillPoints -= thisskill->sp;
+                }
                 //in the good family now.
                 //thisclient->SaveSkillInfo(family,thisclient->cur_max_skills[family],skill,1);
                 thisclient->saveskills();

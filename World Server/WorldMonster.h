@@ -38,6 +38,8 @@ class CMonster : public CCharacter
 
 		//LMA: daynight
 		int daynight;
+		//LMA: special AIP.
+		int sp_aip;
 
         MDrop* MonsterDrop;
 

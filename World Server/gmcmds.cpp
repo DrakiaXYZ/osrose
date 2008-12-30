@@ -1399,8 +1399,9 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
         if(Config.Command_GiveZuly > thisclient->Session->accesslevel)
            return true;
         if ((tmp = strtok(NULL, " "))==NULL) return true; char* name=tmp;
-		if((tmp = strtok(NULL, " "))==NULL) return true; int zuly=atoi(tmp);
-        Log( MSG_GMACTION, " %s : /givezuly %s, %i" , thisclient->CharInfo->charname, name, zuly);
+		//if((tmp = strtok(NULL, " "))==NULL) return true; int zuly=atoi(tmp);
+		if((tmp = strtok(NULL, " "))==NULL) return true; long long zuly=atoll(tmp);
+        Log( MSG_GMACTION, " %s : /givezuly %s, %I64i" , thisclient->CharInfo->charname, name, zuly);
 		  return pakGMZulygive(thisclient, name, zuly);
 	}
    else if(strcmp(command, "gmlist")==0) /* GM List {By CrAshInSiDe} */
@@ -2608,8 +2609,8 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
             refine = 0;
         else
             refine=atoi(tmp);
-        //LMA: why *=16???
-        //refine *= 16;
+        //LMA: why *=16??? (because).
+        refine *= 16;
         BEGINPACKET( pak, 0);
         if(EquipList[2].Index[id]!=NULL)
         {
@@ -2916,10 +2917,22 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
 	       return true;
         if ((tmp = strtok(NULL, " "))==NULL) return true;
         unsigned int summon = atoi(tmp);
-        Log( MSG_GMACTION, " %s : /summon %i" , thisclient->CharInfo->charname, summon);
+
+        unsigned int lma_aip=0;
+        if ((tmp = strtok(NULL, " "))!=NULL)
+            lma_aip = atoi(tmp);
+
+        Log( MSG_GMACTION, " %s : /summon %i %i" , thisclient->CharInfo->charname, summon,lma_aip);
         fPoint position = RandInCircle( thisclient->Position->current, 5 );
         CMap* map = MapList.Index[thisclient->Position->Map];
-        map->AddMonster( summon, position, thisclient->clientid );
+        CMonster* thismonster=map->AddMonster( summon, position, thisclient->clientid );
+
+        //LMA: giving a special AIP to a monster...
+        if (thismonster!=NULL&&lma_aip!=0)
+        {
+            thismonster->sp_aip=lma_aip;
+        }
+
         //Start Animation
         BEGINPACKET( pak, 0x7b2 );
         ADDWORD    ( pak, thisclient->clientid );
@@ -3973,7 +3986,7 @@ bool CWorldServer::pakGMChangeFairyTestMode(CPlayer* thisclient, int mode)
 }
 
 // Give Zuly
-bool CWorldServer::pakGMZulygive(CPlayer* thisclient, char* name, int zuly)
+bool CWorldServer::pakGMZulygive(CPlayer* thisclient, char* name, long long zuly)
 {
     CPlayer* otherclient = GetClientByCharName (name);
     if(otherclient==NULL)

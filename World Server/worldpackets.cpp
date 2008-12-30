@@ -233,7 +233,8 @@ bool CWorldServer::pakDoIdentify( CPlayer *thisclient, CPacket *P )
 	strncpy( thisclient->Session->username, row[0],16 );
 	strncpy( thisclient->CharInfo->charname, row[1],16 );
 	thisclient->Session->accesslevel = atoi(row[2]);
-	thisclient->CharInfo->Storage_Zulies = atoi( row[3] );
+	//thisclient->CharInfo->Storage_Zulies = atoi( row[3] );
+	thisclient->CharInfo->Storage_Zulies = atoll( row[3] );
 	DB->QFree( );
 	if(!thisclient->loaddata( )) return false;
 	Log( MSG_INFO, "User '%s'(#%i) logged in with character '%s'", thisclient->Session->username, thisclient->Session->userid, thisclient->CharInfo->charname);
@@ -2089,8 +2090,8 @@ bool CWorldServer::pakTradeAction ( CPlayer* thisclient, CPacket* P )
 
 				// Update the zuly
 				//LMA: anti hack...
-				long int zulythis=0;
-				long int zulyother=0;
+				long long zulythis=0;
+				long long zulyother=0;
 				zulythis=thisclient->CharInfo->Zulies;
 				zulyother=otherclient->CharInfo->Zulies;
 

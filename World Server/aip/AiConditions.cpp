@@ -317,8 +317,8 @@ AICOND(007)
     byte brand = rand()%100;
 
     //LMA: TEST.
-    //if(data->cPercent==10)
-        //Log(MSG_DEBUG, "AICOND(007) brand =  %i chance = %i (brand<chance=>success)", brand, data->cPercent);
+    /*if(entity->Position->Map==59)
+        Log(MSG_DEBUG, "AICOND(007) brand =  %i chance = %i (brand<chance=>success)", brand, data->cPercent);*/
     //END TEST
 
 	if(brand < data->cPercent) return AI_SUCCESS;
@@ -755,7 +755,13 @@ AICOND(022)
 	if(target == entity) return AI_FAILURE;
 
 	//LMA: Summon won't attack his master :) would be bad ^_^
-	if (target!=NULL&&entity->IsSummon()&&(thisMonster->owner==target->clientid)) return AI_FAILURE;
+	//LMA: monster can't attack another summon if it belongs to the same player...
+	if (target!=NULL&&entity->IsSummon())
+	{
+	    if((thisMonster->owner==target->clientid)||(thisMonster->owner==target->char_owner)) return AI_FAILURE;
+	    //LMA: pvp map...
+	    if (map->allowpvp==0&&(!target->IsMonster())) return AI_FAILURE;
+	}
 
 	if(target != NULL) return AI_SUCCESS;
     ////Log(MSG_DEBUG, "AICOND(022 3)");
@@ -821,7 +827,8 @@ AICOND(026)
 }
 
 //Check Near Character
-AICOND(027){
+AICOND(027)
+{
 	//dword iDistance;	//Pos: 0x00
 	//byte btIsAllied;	//Pos: 0x04
 	//word nLevelDiff;	//Pos: 0x06

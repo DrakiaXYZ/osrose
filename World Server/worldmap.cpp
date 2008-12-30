@@ -148,6 +148,7 @@ CMonster* CMap::AddMonster( UINT montype, fPoint position, UINT owner, CMDrops* 
 
     //LMA: daynight
     monster->daynight=0;
+    monster->sp_aip=0;
 
     if(spawnid!=0)
     {

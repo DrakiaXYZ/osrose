@@ -32,6 +32,7 @@ class CCharacter
 
         unsigned int clientid;
         unsigned int char_montype;  //LMA: montype ID for CCharacter
+        unsigned int char_owner;    //LMA: owner for CCharacter.
         BYTE CharType; // 0 = undefined | 1 = player | 2 = monster | 3 = summon
         CCharacter* nearChar;
         CCharacter* findChar;

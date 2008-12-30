@@ -306,7 +306,8 @@ class CWorldServer : public CServerSocket
         bool pakGMEventType(CPlayer* thisclient, int npctype, int dialog, long int type); //Event
     	bool pakGMTele( CPlayer* thisclient, int map, float x, float y );
     	bool pakGMMon( CPlayer* thisclient, int montype, int moncount );
-        bool pakGMZulygive(CPlayer* thisclient, char* name, int zuly);
+        //bool pakGMZulygive(CPlayer* thisclient, char* name, int zuly);
+        bool pakGMZulygive(CPlayer* thisclient, char* name, long long zuly);
         bool pakGMFairyto(CPlayer* thisclient, char* name, int mode);
         bool pakGMClanRewardPoints(CPlayer* thisclient, char* name, int points);    //reward points
         bool pakGMClanPoints(CPlayer* thisclient, char* name, int points);    //clan points

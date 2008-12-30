@@ -287,18 +287,19 @@ PVOID MapProcess( PVOID TS )
                     }
 
                     monster->RefreshBuff( );
-                    if(monster->IsDead( ))
-                    {
-                        Log(MSG_DEBUG,"DoAIP mainprocess monster is dead %i",monster->thisnpc->AI);
-                        monster->DoAi(monster->thisnpc->AI, 5);
-                        monster->OnDie( );
-                    }
 
                     //osprose
                     if (monster->IsSummon())
                     {
                         monster->SummonUpdate(monster,map, j);
                         continue;
+                    }
+
+                    if(monster->IsDead( ))
+                    {
+                        Log(MSG_DEBUG,"DoAIP mainprocess monster is dead %i",monster->thisnpc->AI);
+                        monster->DoAi(monster->thisnpc->AI, 5);
+                        monster->OnDie( );
                     }
 
                 }
