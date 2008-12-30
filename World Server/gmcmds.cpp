@@ -5283,17 +5283,29 @@ bool CWorldServer::pakGMAllSkill(CPlayer* thisclient, char* name)
         otherclient->cskills[34].level = 9;
         otherclient->cskills[35].id = 1221;//Summon Elemental
         otherclient->cskills[35].level = 5;
+        otherclient->cskills[36].id = 6001;//Wand Contol - 198
+        otherclient->cskills[36].level = 18;
+        otherclient->cskills[37].id = 6021;//Mystic Shielding - 198
+        otherclient->cskills[37].level = 9;
+        otherclient->cskills[38].id = 6031;//Improved Wand Mastery - 198
+        otherclient->cskills[38].level = 18;
+        otherclient->cskills[39].id = 6051;//Wand Focusing - 198
+        otherclient->cskills[39].level = 18;
+        otherclient->cskills[40].id = 6071;//Mystic Armor - 198
+        otherclient->cskills[40].level = 9;
+        otherclient->cskills[41].id = 6081;//Wand Combat Mastery - 198
+        otherclient->cskills[41].level = 18;
         // Mileage Items - cleric
-        otherclient->cskills[36].id = 5704; // 857
-        otherclient->cskills[36].level = 1;
-        otherclient->cskills[37].id = 5705; // 858
-        otherclient->cskills[37].level = 1;
+        otherclient->cskills[42].id = 5704; // 857
+        otherclient->cskills[42].level = 1;
+        otherclient->cskills[43].id = 5705; // 858
+        otherclient->cskills[43].level = 1;
         // Mileage Item - Soul Recall
-        otherclient->cskills[38].id = 5701; // 592
-        otherclient->cskills[38].level = 1;
+        otherclient->cskills[44].id = 5701; // 592
+        otherclient->cskills[44].level = 1;
         // Unique Item - Soul Recall
-        otherclient->cskills[39].id = 4401; // 560
-        otherclient->cskills[39].level = 3;
+        otherclient->cskills[45].id = 4401; // 560
+        otherclient->cskills[45].level = 3;
 
         SendPM (thisclient, "Relogin For Get All Skills");
     }
@@ -5600,19 +5612,19 @@ bool CWorldServer::pakGMAllSkill(CPlayer* thisclient, char* name)
         otherclient->cskills[12].id = 2156;//Weapon Craft
         otherclient->cskills[12].level = 9;
         otherclient->cskills[13].id = 2166;//Dark Blade Research
-        otherclient->cskills[13].level = 9;
+        otherclient->cskills[13].level = 1;
         otherclient->cskills[14].id = 2176;//Beam Blade Research
-        otherclient->cskills[14].level = 9;
+        otherclient->cskills[14].level = 1;
         otherclient->cskills[15].id = 2186;//Metal Blade Research
-        otherclient->cskills[15].level = 9;
+        otherclient->cskills[15].level = 1;
         otherclient->cskills[16].id = 2196;//Timber Blade Research
-        otherclient->cskills[16].level = 9;
+        otherclient->cskills[16].level = 1;
         otherclient->cskills[17].id = 2206;//Armor Craft
         otherclient->cskills[17].level = 9;
         otherclient->cskills[18].id = 2216;//Earth Blade Research
-        otherclient->cskills[18].level = 9;
+        otherclient->cskills[18].level = 1;
         otherclient->cskills[19].id = 2226;//Ocean Blade Research
-        otherclient->cskills[19].level = 9;
+        otherclient->cskills[19].level = 1;
         otherclient->cskills[20].id = 2236;//SubItem Craft
         otherclient->cskills[20].level = 9;
         otherclient->cskills[21].id = 2246;//Alchemy Craft
@@ -5649,19 +5661,19 @@ bool CWorldServer::pakGMAllSkill(CPlayer* thisclient, char* name)
         otherclient->cskills[36].id = 2526;//Advanced Weapon Craft
         otherclient->cskills[36].level = 9;
         otherclient->cskills[37].id = 2536;//Advanced Dark Blade Research
-        otherclient->cskills[37].level = 9;
+        otherclient->cskills[37].level = 1;
         otherclient->cskills[38].id = 2546;//Advanced Beam Blade Research
-        otherclient->cskills[38].level = 9;
+        otherclient->cskills[38].level = 1;
         otherclient->cskills[39].id = 2556;//Advanced Metal Blade Research
-        otherclient->cskills[39].level = 9;
+        otherclient->cskills[39].level = 1;
         otherclient->cskills[40].id = 2566;//Advanced Timber Blade Research
-        otherclient->cskills[40].level = 9;
+        otherclient->cskills[40].level = 1;
         otherclient->cskills[41].id = 2576;//Advanced Armor Craft
         otherclient->cskills[41].level = 9;
         otherclient->cskills[42].id = 2586;//Advanced Earth Blade Research
-        otherclient->cskills[42].level = 9;
+        otherclient->cskills[42].level = 1;
         otherclient->cskills[43].id = 2596;//Advanced Ocean Blade Research
-        otherclient->cskills[43].level = 9;
+        otherclient->cskills[43].level = 1;
         otherclient->cskills[44].id = 2606;//Advanced SubItem Craft
         otherclient->cskills[44].level = 9;
         otherclient->cskills[45].id = 2616;//Advanced Alchemy Craft
@@ -5692,9 +5704,9 @@ bool CWorldServer::pakGMAllSkill(CPlayer* thisclient, char* name)
         otherclient->cskills[57].id = 5903; // 866
         otherclient->cskills[57].level = 1;
         // Unique Items - artisan
-        otherclient->cskills[58].id = 4801; // 561
+        otherclient->cskills[58].id = 4801; // Face Item Craft
         otherclient->cskills[58].level = 9;
-        otherclient->cskills[59].id = 4811; // 562
+        otherclient->cskills[59].id = 4811; // Accessory Craft
         otherclient->cskills[59].level = 9;
 
         SendPM (thisclient, "Relogin For Get All Skills");
