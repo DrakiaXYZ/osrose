@@ -72,7 +72,7 @@ void CCharacter::StartAction( CCharacter* Target, BYTE action, UINT skillid, boo
     }
 
     //LMA: don't attack a dead... It's stupid...
-    if(Target->IsDead())
+    if(Target!=NULL&&Target->IsDead())
     {
         ClearBattle(Battle);
         return;
