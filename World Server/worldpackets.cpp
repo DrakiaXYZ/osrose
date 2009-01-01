@@ -274,6 +274,7 @@ bool CWorldServer::pakDoID( CPlayer* thisclient, CPacket* P )
 		Log( MSG_WARNING, "User '%s'(#%i) denied access. Server is full.", thisclient->Session->username, thisclient->Session->userid );
 		return false;
 	}
+
 	Log( MSG_INFO, "User '%s'(#%i) assigned id #%i", thisclient->Session->username, thisclient->Session->userid, thisclient->clientid );
     if( thisclient->Party->party )
     {

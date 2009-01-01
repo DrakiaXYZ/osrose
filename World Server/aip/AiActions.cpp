@@ -1018,6 +1018,12 @@ AIACT(025)
             break;
     }
     if(tempval < 0)tempval = 0;
+
+    if(monster->thisnpc->refNPC==1201)
+    {
+        Log(MSG_INFO,"Judy changes [%i] to %i",data->btVarIDX,tempval);
+    }
+
     GServer->ObjVar[monster->thisnpc->refNPC][data->btVarIDX] = tempval;
 
     //LMA: EventID changed?
@@ -1173,7 +1179,34 @@ AIACT(030)
 	//Log(MSG_INFO, "Execute Quest Trigger %s[%d] [%08x]", tempName, data->lenszTrigger, hash);
 
     //CCharacter test...
-    return (entity->ExecuteQuestTrigger(hash) == QUEST_SUCCESS)?AI_SUCCESS:AI_FAILURE;
+    //LMA: Sometimes the QSD changes the refNPC for its own purpose, we have to take it back to the previous value.
+    CMonster* monster = reinterpret_cast<CMonster*>(entity);
+    UINT savelma = monster->thisnpc->refNPC;
+    bool is_ok=false;
+    if(entity->ExecuteQuestTrigger(hash) == QUEST_SUCCESS)
+    {
+        is_ok=true;
+    }
+
+    /*
+    if (savelma!=monster->thisnpc->refNPC)
+    {
+        Log(MSG_WARNING,"AIACT(030) RefNPC has changed, we swap it back from %u to %u",monster->thisnpc->refNPC,savelma);
+    }
+    */
+
+    monster->thisnpc->refNPC=savelma;
+
+    if(!is_ok)
+    {
+        return AI_FAILURE;
+    }
+    else
+    {
+        return AI_SUCCESS;
+    }
+
+
     /*
     //LMA: cast to Player...
     CPlayer* player =new CPlayer(NULL);

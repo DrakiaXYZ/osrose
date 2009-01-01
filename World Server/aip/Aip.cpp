@@ -89,21 +89,34 @@ void CWorldServer::ReadAIP(strings path, dword index)
 						/*
 						if (data->opcode==28)
                             Log(MSG_INFO,"%s has an action %i",path,data->opcode);
+                        */
+                        /*
+						if (data->opcode==30)
+						{
+						    //STR_AI_ACT_036 data36=(STR_AI_ACT_036) data;
+						    STR_AI_ACT_030 * data30 = (STR_AI_ACT_030 *)data->data;
+						    char* tempName = reinterpret_cast<char*>(&data30->szTrigger) - 2;
+                            Log(MSG_INFO,"%s has an action 30 trigger %s",path,tempName);
+						}
+
 
 						if (data->opcode==36)
 						{
 						    //STR_AI_ACT_036 data36=(STR_AI_ACT_036) data;
 						    STR_AI_ACT_036 * data36 = (STR_AI_ACT_036 *)data->data;
-                            Log(MSG_INFO,"%s has an action 36 monster %i",path,data36->nMonster);
+						    if(data36->nMonster>=3040&&data36->nMonster<=3041)
+                                Log(MSG_INFO,"%s has an action 36 monster %i",path,data36->nMonster);
 						}
 
 						if (data->opcode==37)
 						{
 						    //STR_AI_ACT_036 data36=(STR_AI_ACT_036) data;
 						    STR_AI_ACT_037 * data37 = (STR_AI_ACT_037 *)data->data;
-                            Log(MSG_INFO,"%s has an action 37 monster %i",path,data37->nMonster);
+						    if(data37->nMonster>=3040&&data37->nMonster<=3041)
+                                Log(MSG_INFO,"%s has an action 37 monster %i",path,data37->nMonster);
 						}
 						*/
+
 
 					}
 				}

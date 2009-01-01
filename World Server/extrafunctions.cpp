@@ -267,17 +267,70 @@ unsigned CWorldServer::GetNewClientID( )
 		if (ClientIDList[i]!=0 && time(NULL)-ClientIDList[i]>10)
         {
 			ClientIDList[i] = 0;
+			//Log(MSG_INFO,"XCID NEW %u",i);
 			return i;
 		}
 	}
 
+    Log(MSG_INFO,"XCID ERR");
 	return 0;
 }
+
+/*
+//LMATESTCID: test function for CID's
+void CWorldServer::CheckClientID(unsigned type, unsigned index)
+{
+    UINT nb_free=0;
+
+    //0: nb free Cid's
+    if (type==0)
+    {
+        for (unsigned i=1; i<0xffff; i++)
+        {
+            if (ClientIDList[i]!=0 && time(NULL)-ClientIDList[i]>10)
+            {
+                nb_free++;
+            }
+        }
+
+        Log(MSG_WARNING,"CID: Free %u / %u",nb_free,0xFFFFFF-2);
+        return;
+    }
+
+    //check if a CID's is free or not(simple check).
+    if (type==1||type==2)
+    {
+        if(index<1||index>=0xFFFFFF)
+            return;
+
+        if (ClientIDList[index]!=0 && time(NULL)-ClientIDList[index]>10)
+        {
+            Log(MSG_WARNING,"CID 1/2 %u is available",index);
+        }
+        else
+        {
+            Log(MSG_WARNING,"CID 1/2 %u isn't available",index);
+        }
+
+    }
+
+
+	return;
+}
+*/
+
 
 // This function will free our clientID
 void CWorldServer::ClearClientID( unsigned int id )
 {
+    if(id<0||id>0xffffff)
+        return;
+
 	ClientIDList[id] = (unsigned)time(NULL);
+	//Log(MSG_INFO,"XCID, clearing CID %u",id);
+
+
+	return;
 }
 
 // Search a drop by ID

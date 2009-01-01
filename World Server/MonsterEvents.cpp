@@ -753,11 +753,12 @@ void CMonster::DoAi(int ainumberorg,char type)//ainumber is monster->AI type is 
     {
         lma_debug=true;
     }
+
+    if(ainumber==2048||ainumber==2049)
+    {
+        lma_debug=true;
+    }
     */
-
-    /*if(ainumber==3)
-        lma_debug=true;*/
-
 
     //LMA: New way, faster?
     while(GServer->AipListMap.find(aiindex)!=GServer->AipListMap.end())
@@ -814,6 +815,7 @@ void CMonster::DoAi(int ainumberorg,char type)//ainumber is monster->AI type is 
             {
                 int command = script->Actions[i]->opcode;
                 if (command > 38 || command < 0) continue;
+
                 success = (*GServer->aiActFunc[command])(GServer, this, script->Actions[i]->data);
                 if(ainumber == AIWatch)Log(MSG_DEBUG, "aiAction: %03u returned %d", command, success);
 
@@ -823,12 +825,17 @@ void CMonster::DoAi(int ainumberorg,char type)//ainumber is monster->AI type is 
 
             if(success == AI_SUCCESS)
             {
-              if(lma_debug)
+                if(lma_debug)
+                {
                     Log(MSG_INFO,"DoAI%i END ACT SUCCESS Turn %i",ainumber,nb_turns);
+                }
 
-                //LMA: Santa is special, he continues (Xmas Tree Spawning)
-                if(ainumber!=1205)
+                //LMA: Santa is special, he continues (Xmas Tree Spawning), same for some special others (gifts summoning)
+                if(ainumber!=1205&&ainumber!=2048&&ainumber!=2049)
+                {
                     return; //automatically return after performing the first successful action
+                }
+
             }
             else
             {

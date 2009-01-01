@@ -593,7 +593,7 @@ bool CWorldServer::LoadSkillData( )
             {
                 newskill->buff[0]=newskill->status[0];
                 newskill->value1[0]=newskill->atkpower;
-                Log(MSG_INFO,"Skill (%i) status0=%i, buff0=%i, value=%i",i,newskill->status[0],newskill->buff[0],newskill->value1[0]);
+                //Log(MSG_INFO,"Skill (%i) status0=%i, buff0=%i, value=%i",i,newskill->status[0],newskill->buff[0],newskill->value1[0]);
             }
 
         }

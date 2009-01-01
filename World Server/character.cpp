@@ -156,7 +156,11 @@ int CCharacter::ExecuteQuestTrigger(dword hash)
       }
     }
 
-    if (trigger == NULL) return QUEST_FAILURE;
+    if (trigger == NULL)
+    {
+        Log(MSG_DEBUG, "Trigger not found hash %u", hash);
+        return QUEST_FAILURE;
+    }
 
     int success = QUEST_SUCCESS;
     Log(MSG_DEBUG, "Trigger Executed: %s[%i]", trigger->TriggerName, trigger->CheckNext);

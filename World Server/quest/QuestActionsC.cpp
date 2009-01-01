@@ -420,6 +420,19 @@ QUESTREWDC(008){
         }
 
         mon->lastSighCheck = 0; // Force sight check instantly.
+
+        /*
+        if((data->iMonsterSN >= 1474 && data->iMonsterSN <= 1489))
+        {
+            Log(MSG_DEBUG,"GETREWDDATA(008) Xmas tree[%i] @ map %i (%f,%f)", data->iMonsterSN, mapId,pos.x, pos.y);
+        }
+
+        if((data->iMonsterSN >= 3050 && data->iMonsterSN <= 3090))
+        {
+            Log(MSG_INFO, "GETREWDDATA(008) Xmas Box[%i] @ map %i (%f,%f)", data->iMonsterSN, mapId,pos.x, pos.y);
+        }
+        */
+
     }
 
     //Log(MSG_DEBUG,"END QUESTREWDC(008)");
@@ -510,6 +523,12 @@ QUESTREWDC(011)
         }
 
         if(tempval < 0)tempval = 0;
+
+        if(monster->thisnpc->refNPC==1201)
+        {
+            Log(MSG_INFO,"Judy changes [%i] to %i",data->nVarNo,tempval);
+        }
+
         GServer->ObjVar[monster->thisnpc->refNPC][data->nVarNo] = tempval;
 
 		if(data->nVarNo==0)

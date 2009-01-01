@@ -330,8 +330,9 @@ PVOID MapProcess( PVOID TS )
                          monster->thisnpc = thisnpc;
 
                          int lma_previous_eventID=npc->thisnpc->eventid;
-                         //Log(MSG_INFO,"DoAI for NPC %i",npc->npctype);
+                         //Log(MSG_INFO,"XCIDAIBEGIN NPC %i map %i cid %i",npc->npctype,map->id,npc->clientid);
                          monster->DoAi(monster->thisnpc->AI, 1);
+                         //Log(MSG_INFO,"XCIDAIEND NPC %i map %i cid %i",npc->npctype,map->id,npc->clientid);
 
                          //LMA: check if eventID changed, if we do it in AIP conditions / actions, it just fails...
                          if (lma_previous_eventID!=monster->thisnpc->eventid)
@@ -346,6 +347,7 @@ PVOID MapProcess( PVOID TS )
                             GServer->SendToAllInMap(&pak,map->id);
                          }
 
+                        GServer->ClearClientID(monster->clientid);
                          delete monster;
                          npc->lastAiUpdate = clock();
                      }

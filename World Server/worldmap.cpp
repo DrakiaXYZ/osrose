@@ -238,6 +238,8 @@ CMonster* CMap::AddMonster( UINT montype, fPoint position, UINT owner, CMDrops* 
     monster->range=0;
     monster->buffid=0;
 
+    //Log(MSG_INFO,"XCID, Addmonster %i in map %i",montype,monster->Position->Map);
+
 
     return monster;
 }
