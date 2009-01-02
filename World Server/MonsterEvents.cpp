@@ -785,6 +785,7 @@ void CMonster::DoAi(int ainumberorg,char type)//ainumber is monster->AI type is 
         {
             int command = script->Conditions[i]->opcode;
             if (command > 30 || command < 0) continue;
+
             success = (*GServer->aiCondFunc[command])(GServer, this, script->Conditions[i]->data);
             if(ainumber == AIWatch)Log(MSG_DEBUG, "aiCondition %03u returned %d", command, success);
 

@@ -1019,10 +1019,12 @@ AIACT(025)
     }
     if(tempval < 0)tempval = 0;
 
+    /*
     if(monster->thisnpc->refNPC==1201)
     {
         Log(MSG_INFO,"Judy changes [%i] to %i",data->btVarIDX,tempval);
     }
+    */
 
     GServer->ObjVar[monster->thisnpc->refNPC][data->btVarIDX] = tempval;
 

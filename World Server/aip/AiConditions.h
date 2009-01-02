@@ -132,6 +132,20 @@ struct STR_AI_COND_014 {
 	byte btOp;	//Pos: 0x08
 };
 
+//LMATEST:
+struct STR_AI_COND_0141 {
+	//Check Variable (1) (0x0c bytes)
+	union
+	{
+        byte btVarIDX;	//Pos: 0x00
+        dword nVarIDX;  //Pos: 0x00
+	};
+
+	dword iValue;	//Pos: 0x04
+	byte btOp;	//Pos: 0x08
+};
+
+
 struct STR_AI_COND_015 {
 	//Check Variable (2) (0x0c bytes)
 	word nVarIDX;	//Pos: 0x00

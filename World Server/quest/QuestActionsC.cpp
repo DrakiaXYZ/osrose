@@ -524,10 +524,12 @@ QUESTREWDC(011)
 
         if(tempval < 0)tempval = 0;
 
+        /*
         if(monster->thisnpc->refNPC==1201)
         {
             Log(MSG_INFO,"Judy changes [%i] to %i",data->nVarNo,tempval);
         }
+        */
 
         GServer->ObjVar[monster->thisnpc->refNPC][data->nVarNo] = tempval;
 

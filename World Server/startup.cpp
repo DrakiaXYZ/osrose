@@ -1811,6 +1811,7 @@ bool CWorldServer::LoadConsItem( )
         newuse->pricerate = STB_ITEM[9].rows[i][6];
         newuse->weight = STB_ITEM[9].rows[i][7];
         newuse->quality = STB_ITEM[9].rows[i][8];
+        newuse->material= STB_ITEM[9].rows[i][14];
         newuse->pricevalue = STB_ITEM[9].rows[i][16];
         newuse->usecondition[0]= STB_ITEM[9].rows[i][17];
         newuse->usecondition[1]= STB_ITEM[9].rows[i][18];

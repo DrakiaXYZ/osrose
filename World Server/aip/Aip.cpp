@@ -54,16 +54,24 @@ void CWorldServer::ReadAIP(strings path, dword index)
 						CAip::SAipDatum* data = new CAip::SAipDatum();
 						data->size = fh->Get<dword>();
 						data->opcode = fh->Get<dword>() - 0x04000001;
-
-						//LMA test.
-						/*
-						if (data->opcode==24)
-                            Log(MSG_INFO,"%s has a cdt %i",path,data->opcode);
-                        */
-
 						data->data = new byte[data->size - 8];
 						fh->Read(data->data, data->size - 8, 1);
 						script->Conditions[k] = data;
+
+						//LMA test.
+						/*
+						if (data->opcode==14)
+                        {
+                            STR_AI_COND_0141 * data141 = (STR_AI_COND_0141 *)data->data;
+                            Log(MSG_INFO,"%s has cdt 141 [%i/%u] ?%i? %i",path,data141->btVarIDX,data141->nVarIDX,data141->btOp,data141->iValue);
+                            STR_AI_COND_014 * data14 = (STR_AI_COND_014 *)data->data;
+                            Log(MSG_INFO,"%s has cdt 14 [%i] ?%i? %i",path,data14->btVarIDX,data14->btOp,data14->iValue);
+                            if((data141->btVarIDX!=data14->btVarIDX)||(data141->btOp!=data14->btOp)||(data141->iValue!=data14->iValue))
+                                Log(MSG_WARNING,"Difference!");
+
+                        }
+                        */
+
 					}
 				}
 	            else

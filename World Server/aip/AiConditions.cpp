@@ -562,6 +562,9 @@ AICOND(014)
 	GETAICONDDATA(014);
 	////Log(MSG_DEBUG,"Checking Object Variable using NPC ref number AICOND(014)");
 	//Log(MSG_DEBUG,"AIC14, btVarIDX = %i, iValue = %i, btOp = %i",data->btVarIDX, data->iValue,data->btOp);
+
+	//Log(MSG_INFO,"AIC14 [%i] ?%i? %i",data->btVarIDX,data->btOp,data->iValue);
+
 	CMonster* monster = reinterpret_cast<CMonster*>(entity);
 	if(monster == NULL) return AI_FAILURE;
 	if(data->btVarIDX > 19) return AI_FAILURE;
