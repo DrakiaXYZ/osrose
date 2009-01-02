@@ -74,8 +74,13 @@ void CCharacter::StartAction( CCharacter* Target, BYTE action, UINT skillid, boo
     //LMA: don't attack a dead... It's stupid...
     if(Target!=NULL&&Target->IsDead())
     {
-        ClearBattle(Battle);
-        return;
+        //but we can if it's a friendly (restore...).
+        if(action!=SKILL_BUFF)
+        {
+            ClearBattle(Battle);
+            return;
+        }
+
     }
 
 
