@@ -1728,6 +1728,7 @@ bool CWorldServer::LoadPatItem( )
         //newpat->modifier[1] = STB_ITEM[13].rows[i][25];       // extra field added rev 70
         //newpat->condition[2] = STB_ITEM[13].rows[i][27];      // extra field added rev 70
         //newpat->modifier[2] = STB_ITEM[13].rows[i][28];       // extra field added rev 70
+        newpat->modifier = STB_ITEM[13].rows[i][25];       // extra field added rev 70
         newpat->maxfuel = STB_ITEM[13].rows[i][31];
         newpat->fuelcons = STB_ITEM[13].rows[i][32];
         newpat->speed = STB_ITEM[13].rows[i][33];

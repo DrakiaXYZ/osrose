@@ -525,7 +525,7 @@ bool CWorldServer::pakChangeStance( CPlayer* thisclient, CPacket* P )
         return true;
 	BYTE stancenum = GETBYTE((*P),0x00);
 	BYTE previous_stance=thisclient->Status->Stance;
-	//Log(MSG_INFO,"Changing stance from %i to %i",previous_stance,stancenum);
+	Log(MSG_INFO,"Changing stance from %i to %i",previous_stance,stancenum);
 
 	if (stancenum == 0)
 	{
@@ -1016,21 +1016,29 @@ bool CWorldServer::pakChangeCart( CPlayer* thisclient, CPacket* P )
     //LMA: Getting good mspeed value for packet.
     thisclient->UpdateInventory( srcslot, destslot );
     unsigned int lma_speed=thisclient->GetCartSpeed();
+    thisclient->Stats->Move_Speed = thisclient->GetMoveSpeed( );
 
 	BEGINPACKET( pak, 0x7ca );
 	ADDWORD    ( pak, thisclient->clientid );
 	ADDWORD    ( pak, cartslot);
 	ADDWORD    ( pak, thisclient->items[srcslot].itemnum);
-	ADDWORD    ( pak, BuildItemRefine( thisclient->items[srcslot] ) );
+	//ADDWORD    ( pak, BuildItemRefine( thisclient->items[srcslot] ) );
 	//ADDWORD    ( pak, thisclient->Stats->Move_Speed );
 
 	//ADDWORD    ( pak, tmpitm.itemnum);
 	//ADDWORD    ( pak, BuildItemRefine( tmpitm ) );
 	ADDWORD    ( pak, lma_speed );
+
+	//LMA: change?
+	if(thisclient->Status->Stance==DRIVING)
+	{
+	    ADDWORD    ( pak, thisclient->Stats->Move_Speed );
+	}
+
 	SendToVisible( &pak, thisclient );
 
     //thisclient->UpdateInventory( srcslot, destslot );
-	thisclient->Stats->Move_Speed = thisclient->GetMoveSpeed( );
+	//thisclient->Stats->Move_Speed = thisclient->GetMoveSpeed( );
 	return true;
 }
 

@@ -1481,7 +1481,7 @@ unsigned int CPlayer::GetCartSpeed( )
         float lma_speed;
 
 
-        //returns a value only id cart is complete.
+        //returns a value only if cart is complete.
         if (items[135].itemnum==0||items[136].itemnum==0||items[137].itemnum==0)
            return 0;
 
@@ -1628,6 +1628,7 @@ unsigned int CPlayer::GetMoveSpeed( )
             }
 
             //add ons (ability)
+            /*
             switch (items[138].itemnum)
             {
                    case 401:
@@ -1648,8 +1649,19 @@ unsigned int CPlayer::GetMoveSpeed( )
                    default:
                         break;
             }
+            */
+            //LMA: new way:
+            if(items[138].itemnum!=0)
+            {
+                lma_speed+=GServer->PatList.Index[items[138].itemnum]->modifier;
+            }
 
             mspeed= (UINT) lma_speed;
+            if(Fairy)  mspeed = (unsigned int)floor(mspeed*1.2);
+            if(Status->Dash_up!=0xff)
+                mspeed += MagicStatus[Status->Dash_up].Value;
+            if(Status->Dash_down!=0xff)
+                mspeed -= MagicStatus[Status->Dash_down].Value;
 
         }
         break;
