@@ -1346,23 +1346,29 @@ bool CWorldServer::pakUserDied ( CPlayer* thisclient, CPacket* P )
     {
         thisrespawn = GetRespawnByID( thisclient->Position->saved );
     }
+
     thisclient->Stats->HP = thisclient->Stats->MaxHP * 10 / 100;
+    Log(MSG_INFO,"Player %s died, we give him %I64i Hp",thisclient->CharInfo->charname,thisclient->Stats->HP);
     if(thisrespawn!=NULL)
     {
-             /// geo edit for saved town warp // 29 sep 07
+        // geo edit for saved town warp // 29 sep 07
         map = MapList.Index[thisrespawn->destMap];
         map->TeleportPlayer( thisclient, thisrespawn->dest, false );
-    }    else
+    }
+    else
     {
         fPoint coord;
         coord.x = 5200;
         coord.y = 5200;
         MapList.Index[2]->TeleportPlayer( thisclient, coord, false );
     }
+
 	for(unsigned int i=0;i<30;i++)
 	{	// Clean Buffs
         thisclient->MagicStatus[i].Duration = 0;
     }
+
+
 	return true;
 }
 

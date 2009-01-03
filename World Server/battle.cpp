@@ -1203,6 +1203,7 @@ void CCharacter::UseBuffSkill( CCharacter* Target, CSkills* skill )
 	    }
 
         //not exact but should be fair enough...
+        Log(MSG_INFO,"before Revive, HP %I64i, Xp %I64i, skill %i",thisclient->Stats->HP,thisclient->CharInfo->Exp,skill->atkpower);
         unsigned long long new_exp=(unsigned long long) (thisclient->CharInfo->Exp*3*skill->atkpower/(100*100));
         thisclient->CharInfo->Exp+=new_exp;
         thisclient->Stats->HP=thisclient->Stats->MaxHP*30/100;
@@ -1309,6 +1310,7 @@ bool CCharacter::TakeExp( CCharacter *Target )
         return true;
     }
 
+    Log(MSG_INFO,"Player %i died, Xp before %I64i",Target->clientid,thisclient->CharInfo->Exp);
     unsigned long long new_exp=(unsigned long long) (thisclient->CharInfo->Exp*3/100);
     thisclient->CharInfo->Exp-=new_exp;
     BEGINPACKET( pak, 0x79b );
@@ -1316,7 +1318,7 @@ bool CCharacter::TakeExp( CCharacter *Target )
     ADDWORD    ( pak, thisclient->CharInfo->stamina );
     ADDWORD    ( pak, 0 );
     thisclient->client->SendPacket( &pak );
-    Log(MSG_INFO,"Player %i died, Xp taken %I64i, new %I64i",clientid,new_exp,thisclient->CharInfo->Exp);
+    Log(MSG_INFO,"Player %i died, Xp taken %I64i, new %I64i",Target->clientid,new_exp,thisclient->CharInfo->Exp);
 
 
     return true;

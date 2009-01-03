@@ -71,14 +71,29 @@ void CCharacter::StartAction( CCharacter* Target, BYTE action, UINT skillid, boo
        skillid=Battle->skillid;
     }
 
-    //LMA: don't attack a dead... It's stupid...
-    if(Target!=NULL&&Target->IsDead())
+    //LMA: don't attack a dead or an offline player... It's stupid...
+    if(Target!=NULL)
     {
-        //but we can if it's a friendly (restore...).
-        if(action!=SKILL_BUFF)
+        if(Target->IsPlayer())
         {
-            ClearBattle(Battle);
-            return;
+            CPlayer* thisplayer=reinterpret_cast<CPlayer*>(Target);
+            if(!thisplayer->Session->inGame)
+            {
+                //Log(MSG_INFO,"We don't attack a player not in game yet...");
+                return;
+            }
+
+        }
+
+        if(Target->IsDead())
+        {
+            //but we can if it's a friendly (restore...).
+            if(action!=SKILL_BUFF)
+            {
+                ClearBattle(Battle);
+                return;
+            }
+
         }
 
     }
