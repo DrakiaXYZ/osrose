@@ -1,22 +1,22 @@
 /*
     Rose Online Server Emulator
     Copyright (C) 2006,2007 OSRose Team http://www.dev-osrose.com
-    
+
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
     as published by the Free Software Foundation; either version 2
     of the License, or (at your option) any later version.
-    
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-    
+
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-    depeloped with Main erose/hrose source server + some change from the original eich source        
+    depeloped with Main erose/hrose source server + some change from the original eich source
 */
 #include "charserver.h"
 
@@ -28,14 +28,14 @@ bool CCharServer::ChangeMessengerStatus (CCharClient* thisclient, CCharClient* o
         ADDWORD    ( pak, thisclient->charid );
         ADDWORD    ( pak, 0x0000 );
         ADDBYTE    ( pak, status );
-        otherclient->SendPacket(&pak);      
+        otherclient->SendPacket(&pak);
         return true;
 }
 
 // Messenger actions (add/remove/invite)
 bool CCharServer::pakMessengerManager ( CCharClient* thisclient, CPacket* P )
-{    
-    BYTE action = GETBYTE((*P),0); 
+{
+    BYTE action = GETBYTE((*P),0);
     switch (action)
     {
         case 0x01://wanna be my friend?
@@ -47,6 +47,8 @@ bool CCharServer::pakMessengerManager ( CCharClient* thisclient, CPacket* P )
                 return false;
             }
             memcpy( nick, &P->Buffer[1], P->Size-7 );
+            Log(MSG_INFO,"Trying to invite %s",nick);
+
             CCharClient* otherclient = (CCharClient*) GetClientByName (nick);
             if(otherclient!=NULL)
             {//Send friend invitation  (check this one)
@@ -56,6 +58,7 @@ bool CCharServer::pakMessengerManager ( CCharClient* thisclient, CPacket* P )
                 ADDSTRING  ( pak, thisclient->charname );
                 ADDBYTE    ( pak, 0x00 );
                 otherclient->SendPacket(&pak);
+                Log(MSG_INFO,"%s exists, invite sent",nick);
             }
             else
             {//This charname doesnt exist
@@ -64,12 +67,13 @@ bool CCharServer::pakMessengerManager ( CCharClient* thisclient, CPacket* P )
                ADDSTRING  ( pak, nick );
                ADDBYTE    ( pak, 0x00 );
                thisclient->SendPacket(&pak);
-            }         
-            delete []nick;         
-        }   
+               Log(MSG_INFO,"invite: %s doesn't exist",nick);
+            }
+            delete []nick;
+        }
         break;
         case 0x02://yes i want
-        {                  
+        {
             char* nick = new (nothrow) char[P->Size-9];
             if(nick==NULL)
             {
@@ -91,13 +95,13 @@ bool CCharServer::pakMessengerManager ( CCharClient* thisclient, CPacket* P )
                 //Add friend to my friend list(sql)
                 if(!DB->QExecute("INSERT INTO list_friend (id,idfriend,namefriend) VALUES (%i,%i,'%s')",
                        otherclient->charid,thisclient->charid,thisclient->charname))
-                    return false;                
+                    return false;
                 CFriendList * newfriend1 = new (nothrow) CFriendList;
                 if(newfriend1==NULL)
                     return false;
                 newfriend1->id = otherclient->charid; //friendid
                 strcpy(newfriend1->name, otherclient->charname); //friend name
-                thisclient->FriendList.push_back( newfriend1 ); 
+                thisclient->FriendList.push_back( newfriend1 );
                 RESETPACKET( pak, 0x7e1 );
                 ADDBYTE    ( pak, 0x02 );
                 ADDWORD    ( pak, otherclient->charid );
@@ -105,17 +109,18 @@ bool CCharServer::pakMessengerManager ( CCharClient* thisclient, CPacket* P )
                 ADDWORD    ( pak, 0x0000 );
                 ADDSTRING  ( pak, otherclient->charname );
                 ADDBYTE    ( pak, 0x00);
-                thisclient->SendPacket(&pak);       
+                thisclient->SendPacket(&pak);
                 //Add me to his friend list (sql)
                 if(!DB->QExecute("INSERT INTO list_friend (id,idfriend,namefriend) VALUES (%i,%i,'%s')",
                        thisclient->charid,otherclient->charid,otherclient->charname))
-                    return false;             
+                    return false;
                 CFriendList * newfriend2 = new (nothrow) CFriendList;
                 if(newfriend2==NULL)
                     return false;
                 newfriend2->id = thisclient->charid; //friendid
                 strcpy(newfriend2->name, thisclient->charname); //friend name
-                otherclient->FriendList.push_back( newfriend2 );    
+                otherclient->FriendList.push_back( newfriend2 );
+                Log(MSG_INFO,"accept %s ok",nick);
             }
             else//not founded
             {
@@ -124,7 +129,8 @@ bool CCharServer::pakMessengerManager ( CCharClient* thisclient, CPacket* P )
                ADDSTRING  ( pak, nick );
                ADDBYTE    ( pak, 0x00 );
                thisclient->SendPacket(&pak);
-            }       
+               Log(MSG_INFO,"accept: %s doesn't exist",nick);
+            }
             delete []nick;
         }
         break;
@@ -145,7 +151,8 @@ bool CCharServer::pakMessengerManager ( CCharClient* thisclient, CPacket* P )
                 ADDSTRING  ( pak, thisclient->charname );
                 ADDBYTE    ( pak, 0x00);
                 otherclient->SendPacket(&pak);
-            }   
+                Log(MSG_INFO,"refuse: %s ok",nick);
+            }
             else
             {
                BEGINPACKET( pak, 0x7e1 );
@@ -154,67 +161,68 @@ bool CCharServer::pakMessengerManager ( CCharClient* thisclient, CPacket* P )
                ADDSTRING  ( pak, nick );
                ADDBYTE    ( pak, 0x00 );
                thisclient->SendPacket(&pak);
-            }                   
-        }                    
+               Log(MSG_INFO,"refuse: %s doesn't exist",nick);
+            }
+        }
         break;
-        case 0x05://freakin later     
+        case 0x05://freakin later
         {
-            WORD id = GETWORD ((*P),1);            
+            WORD id = GETWORD ((*P),1);
             if(!DB->QExecute("DELETE FROM list_friend WHERE id=%i and idfriend=%i",
                        thisclient->charid,id))
                 return false;
             CCharClient* otherclient = (CCharClient*) GetClientByID(id);
             if(otherclient!=NULL)
             {
-                    ChangeMessengerStatus ( thisclient, otherclient, 0x08);                
+                    ChangeMessengerStatus ( thisclient, otherclient, 0x08);
             }
-        }                 
-        break;      
-        case 0xfa://messenger logout    
+        }
+        break;
+        case 0xfa://messenger logout
         {
             WORD id = GETWORD ((*P),1);
             CCharClient* ctherclient = (CCharClient*) GetClientByID(id);
             if(ctherclient==NULL)
                 return true;
-            ctherclient->logout = true;   
+            ctherclient->logout = true;
             for(UINT i=0;i<ctherclient->FriendList.size();i++)
-            {             
+            {
                 CFriendList* thisfriend = ctherclient->FriendList.at( i );
                 CCharClient* otherclient = (CCharClient*) GetClientByID( thisfriend->id );
                 if(otherclient!=NULL)
                 {
                     ChangeMessengerStatus ( ctherclient, otherclient, 0x08);
                 }
-            }    
-           //Logout in clan 
-           ClanLogout ( ctherclient );                                            
-        }                 
-        break;          
+            }
+           //Logout in clan
+           ClanLogout ( ctherclient );
+        }
+        break;
         default:
             Log( MSG_INFO, "Friend action unknown: %i", action );
         break;
-    } 
+    }
     return true;
 }
 
 // Messenger Chat
 bool CCharServer::pakMessengerChat ( CCharClient* thisclient, CPacket* P )
-{    
-    WORD id = GETWORD((*P),0); 
+{
+    WORD id = GETWORD((*P),0);
     char* message = new char[P->Size-41];
     if(message==NULL)
     {
         Log(MSG_ERROR, "Error allocing memory: pakMessengerChat" );
         return false;
-    }    
+    }
     memcpy( message, &P->Buffer[35], P->Size-41 );
     CCharClient* otherclient = (CCharClient*) GetClientByID(id);
     if(otherclient!=NULL)
     {
-        BEGINPACKET( pak, 0x7e2 );  
+        BEGINPACKET( pak, 0x7e2 );
         ADDWORD    ( pak, thisclient->charid );
         ADDWORD    ( pak, 0x0000 );
-        ADDSTRING  ( pak, thisclient->charname );  
+        ADDSTRING  ( pak, thisclient->charname );
         UINT namesize = strlen(thisclient->charname);
         for (int i=0;i<30-namesize;i++)
             ADDBYTE    ( pak, 0x00 );
@@ -222,7 +230,7 @@ bool CCharServer::pakMessengerChat ( CCharClient* thisclient, CPacket* P )
         ADDSTRING  ( pak, message );
         ADDBYTE    ( pak, 0x00 );
         otherclient->SendPacket(&pak);
-    }       
+    }
     delete []message;
     return true;
 }
