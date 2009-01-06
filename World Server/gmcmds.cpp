@@ -1572,6 +1572,36 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
              }
         }
 */
+/*        else if (loc == 13) // Union Wars - Attack
+        {
+             if (thisclient->Stats->Level<100)
+             {
+                 SendPM(thisclient, "You need to be a least Level 100 to visit Union Wars!");
+                 return true;
+             }
+             else
+             {
+                map = 9;
+                x = 5199.91;
+                y = 4784.5;
+             }
+        }
+*/
+/*        else if (loc == 14) // Union Wars - Defense
+        {
+             if (thisclient->Stats->Level<100)
+             {
+                 SendPM(thisclient, "You need to be a least Level 100 to visit Union Wars!");
+                 return true;
+             }
+             else
+             {
+                map = 9;
+                x = 5199.91;
+                y = 5365.37;
+             }
+        }
+*/
         else
         {
             SendPM(thisclient, "Please input a number after the go command, below is a list of places and their appropriate number");
@@ -1587,6 +1617,8 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
 //            SendPM(thisclient, "10 = Pyramid Tombs - ElVerloon");
             SendPM(thisclient, "11 = Sikuku Underground Prison");
 //            SendPM(thisclient, "12 = Oro");
+//            SendPM(thisclient, "13 = Union Wars-Atk");
+//            SendPM(thisclient, "14 = Union Wars-Def");
             SendPM(thisclient, "Example; /go 3");
         }
         if ( thisclient->Stats->HP < (thisclient->Stats->MaxHP / 2) || thisclient->Stats->HP < 1 || thisclient->Session->inGame == false )
