@@ -18,7 +18,7 @@ CREATE TABLE `list_npcs` (
 INSERT INTO `list_npcs` VALUES (0, '[Livestock Farmer] Lampa', 1016, 1, 173.934, 5109.42, 5363.68, 116,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Ferrell Guild Staff] Crow', 1004, 1, 6.067, 5094.38, 5259.90, 104,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Ferrell Guild Staff] Ulysses', 1012, 1, 84.014, 5071.26, 5206.92, 112,0,0);
-INSERT INTO `list_npcs` VALUES (0, '[Co-Founder of the Junon Order] Francis', 1003, 1, 157.957, 5080.30, 5066.28, 103,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Junon Order Co-Founder] Francis', 1003, 1, 157.957, 5080.30, 5066.28, 103,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Righteous Crusader] Leonard', 1005, 1, 16.102, 5261.08, 5166.96, 105,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Designer] Keenu', 1010, 1, 343.898, 5273.50, 5256.83, 110,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Eccentric Inventor] Spero', 1011, 1, 14.293, 5212.36, 5254.66, 111,0,0);
@@ -49,6 +49,7 @@ INSERT INTO `list_npcs` VALUES (0, '[Soldier] Odelo', 1116, 2, 0.000, 5507.31, 5
 INSERT INTO `list_npcs` VALUES (0, '[Soldier] Winters', 1117, 2, 0.000, 5522.99, 5397.75, 217,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Mayor] Darren', 1081, 2, 178.499, 5514.48, 5238.20, 181,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Event Info] Felice Fete', 1202, 2, 206.565, 5562.00, 5164.83, 306,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Akram Ambassador] Adalric', 1108, 2, 150.956, 5461.70, 5167.42, 226,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Guide] Alphonso', 1118, 2, 178.499, 5520.56, 5063.66, 218,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Historian] Jones', 1104, 2, 162.011, 5578.19, 4890.44, 204,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Vicious Captain] Ruven', 1125, 2, 270.000, 5597.76, 4918.87, 220,0,0);
@@ -127,7 +128,7 @@ INSERT INTO `list_npcs` VALUES (0, '[Ferrell Guild Merchant] Lina', 1071, 24, 29
 INSERT INTO `list_npcs` VALUES (0, '[Gypsy Merchant] Methio', 1072, 24, 192.550, 5563.13, 4895.45, 172,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Ikaness Staff] Orias', 1073, 24, 95.984, 5515.26, 4925.14, 173,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Ikaness Staff] Shroon', 1121, 25, 9.228, 5375.78, 5188.33, 221,0,0);
-INSERT INTO `list_npcs` VALUES (0, '[Guide of Plain] Pein', 1122, 25, 307.514, 5503.22, 5350.93, 222,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Mountain Guide] Pein', 1122, 25, 307.514, 5503.22, 5350.93, 222,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Gypsy Merchant] Edone', 1123, 25, 187.631, 5448.14, 4976.37, 223,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Mountain Guide] Kay', 1131, 26, 22.043, 5669.16, 5105.24, 231,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Ferrell Guild Merchant ] Bith', 1143, 27, 197.989, 5259.72, 5147.64, 243,0,0);
