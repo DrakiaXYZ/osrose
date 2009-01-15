@@ -737,10 +737,12 @@ void CMonster::DoAi(int ainumberorg,char type)//ainumber is monster->AI type is 
     CAip* script = NULL;
     int AIWatch = GServer->Config.AIWatch;
     int aiindex = (ainumber*0x10000)+(type*0x100);
+    /*
     if(type == 5)
     {
         Log(MSG_INFO,"Monster died. Activating AI type 5");
     }
+    */
 
     //LMA: halloween debug (Odelo).
     bool lma_debug=false;
@@ -754,11 +756,12 @@ void CMonster::DoAi(int ainumberorg,char type)//ainumber is monster->AI type is 
         lma_debug=true;
     }
 
-    if(ainumber==2048||ainumber==2049)
+    if(ainumber>=151&&ainumber<=154)
     {
         lma_debug=true;
     }
     */
+
 
     //LMA: New way, faster?
     while(GServer->AipListMap.find(aiindex)!=GServer->AipListMap.end())
@@ -772,11 +775,13 @@ void CMonster::DoAi(int ainumberorg,char type)//ainumber is monster->AI type is 
         //if(ainumber == AIWatch)Log(MSG_DEBUG, "Record count = %i",script->recordcount[type]);
         //if(ainumber == AIWatch)Log(MSG_DEBUG, "aiCondition type: %i AI index: %i condition count %i", type, aiindex, script->ConditionCount);
 
+        /*
         if (lma_debug)
         {
             Log(MSG_DEBUG, "DoAI%i script %i, Record count = %i",ainumber,script->AipID,script->recordcount[type]);
             Log(MSG_DEBUG, "DoAI%i aiCondition type: %i AI index: %i condition count %i",ainumber,type, aiindex, script->ConditionCount);
         }
+        */
 
         int success = AI_SUCCESS; //needs to be AI_SUCCESS otherwise would not perform conditionless actions
         int thisaction = 0;

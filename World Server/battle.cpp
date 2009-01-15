@@ -875,7 +875,9 @@ bool CCharacter::AoeBuff( CSkills* skill )
         return true;
     }
 
-    if(IsMonster())
+    //LMA: Summon don't go there...
+    //if(IsMonster())
+    if(IsMonster()&&!IsSummon())
     {
         Log(MSG_INFO,"Monster in AOE Buff");
         for(UINT i=0;i<map->MonsterList.size();i++)

@@ -999,9 +999,16 @@ bool CWorldServer::pakChangeCart( CPlayer* thisclient, CPacket* P )
 {
     if(thisclient->Shop->open)
         return true;
+
 	WORD cartslot = GETWORD((*P), 0);
 	WORD srcslot = GETWORD((*P), 0) + 135;
 	WORD destslot = GETWORD((*P), 2);
+
+    //LMA: no part change if already riding, except for weapons?
+    //2do: check if parts are compatible? To avoid cart frame with CG part?
+    if(thisclient->Status->Stance==DRIVING&&destslot!=139&&srcslot!=139)
+        return true;
+
 	if(!CheckInventorySlot( thisclient, srcslot ))
 	   return false;
 	if(!CheckInventorySlot( thisclient, destslot ))
@@ -1118,11 +1125,11 @@ bool CWorldServer::pakGate( CPlayer* thisclient, CPacket* P )
     UINT map = 0;
     // I'm setting this at 50 distance from the point of teleport. Increase if you run into
     // broken telegates. We might need to dump the scale and work from that - Drakia
-    if( thisgate == NULL ||thisclient->Position->Map != thisgate->srcMap ||distance(thisclient->Position->current, thisgate->src) > 80 )
+    if( thisgate == NULL ||thisclient->Position->Map != thisgate->srcMap ||distance(thisclient->Position->current, thisgate->src) > 100 )
     {
-      Log( MSG_HACK, "Player %s[Map: %i X: %f Y: %f] - Gate Hacking[ID: %i]",
+      Log( MSG_HACK, "Player %s[Map: %i X: %f Y: %f] - Gate Hacking[ID: %i], distance %.2f",
                      thisclient->CharInfo->charname, thisclient->Position->Map,
-                     thisclient->Position->current.x, thisclient->Position->current.y, GateID );
+                     thisclient->Position->current.x, thisclient->Position->current.y, GateID,distance(thisclient->Position->current, thisgate->src) );
         return true;
 	}
 	map = thisgate->destMap;
@@ -1344,7 +1351,62 @@ bool CWorldServer::pakUserDied ( CPlayer* thisclient, CPacket* P )
     }
     else
     {
-        thisrespawn = GetRespawnByID( thisclient->Position->saved );
+        //LMA: special case for dungeons... STB[4]==1
+        thisrespawn->destMap=map->id;
+        thisrespawn->id=1;
+        thisrespawn->dest.z=0;
+        switch(map->id)
+        {
+            case 31: //Goblin Cave B1
+            {
+                thisrespawn->dest.x=5516;
+                thisrespawn->dest.y=5437;
+            }
+            break;
+            case 32: //Goblin Cave B2
+            {
+                thisrespawn->dest.x=5435;
+                thisrespawn->dest.y=5259;
+            }
+            break;
+            case 33: //Goblin Cave B3
+            {
+                thisrespawn->dest.x=5605;
+                thisrespawn->dest.y=5488;
+            }
+            break;
+            case 40: //Grand Ballroom
+            {
+                thisrespawn->dest.x=5184;
+                thisrespawn->dest.y=5211;
+            }
+            break;
+            case 56: //Forgotten temple B1
+            {
+                thisrespawn->dest.x=5035;
+                thisrespawn->dest.y=5200;
+            }
+            break;
+            case 57: //Forgotten temple B1
+            {
+                thisrespawn->dest.x=5540;
+                thisrespawn->dest.y=5145;
+            }
+            break;
+            case 65: //Prison
+            {
+                thisrespawn->dest.x=5395;
+                thisrespawn->dest.y=5205;
+            }
+            break;
+
+            default:
+            {
+                thisrespawn = GetRespawnByID( thisclient->Position->saved );
+            }
+            break;
+        }
+
     }
 
     thisclient->Stats->HP = thisclient->Stats->MaxHP * 10 / 100;
@@ -1357,6 +1419,7 @@ bool CWorldServer::pakUserDied ( CPlayer* thisclient, CPacket* P )
     }
     else
     {
+        Log(MSG_WARNING,"Player died, respawn not found for map %i, respawn %i",map->id,respawn);
         fPoint coord;
         coord.x = 5200;
         coord.y = 5200;
@@ -3822,13 +3885,13 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
             ADDBYTE    ( pak, destslot );
             ADDDWORD   ( pak, BuildItemHead( thisclient->items[destslot] ) );
             ADDDWORD   ( pak, BuildItemData( thisclient->items[destslot] ) );
-        ADDDWORD( pak, 0x00000000 );
-        ADDWORD ( pak, 0x0000 );
+            ADDDWORD( pak, 0x00000000 );
+            ADDWORD ( pak, 0x0000 );
             ADDBYTE    ( pak, srcslot );
             ADDDWORD   ( pak, BuildItemHead( thisclient->items[srcslot] ) );
             ADDDWORD   ( pak, BuildItemData( thisclient->items[srcslot] ) );
-        ADDDWORD( pak, 0x00000000 );
-        ADDWORD ( pak, 0x0000 );
+            ADDDWORD( pak, 0x00000000 );
+            ADDWORD ( pak, 0x0000 );
             thisclient->client->SendPacket( &pak );
             thisclient->SetStats( );
         }

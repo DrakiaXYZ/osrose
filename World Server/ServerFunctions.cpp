@@ -411,6 +411,11 @@ CDrop* CWorldServer::GetPYDrop( CMonster* thismon, UINT droptype )
     ClearItem(newdrop->item);
 
     CPlayer* thisclient = GServer->GetClientByCID(thismon->MonsterDrop->firsthit);
+    if(thisclient == NULL)
+    {
+        Log(MSG_WARNING,"GetPYDrop:: Failed to create player");
+        return NULL;
+    }
 
     // code to modify drop chance for different levels
     //float charm = 0;

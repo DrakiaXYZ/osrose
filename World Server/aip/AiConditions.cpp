@@ -656,7 +656,7 @@ AICOND(018)
 	//Distance to "CALLER" ??Possibly the one who summoned the monster??
 	GETAICONDDATA(018);
 		if(!entity->IsMonster( )) return AI_FAILURE;
-    ////Log(MSG_DEBUG, "AICOND(018 1)");
+    //Log(MSG_DEBUG, "AICOND(018 1)");
 	CMonster* thisMonster = reinterpret_cast<CMonster*>(entity);
 	CMap* map = GServer->MapList.Index[thisMonster->Position->Map];
 	CCharacter* caller = map->GetCharInMap( thisMonster->owner );
@@ -671,9 +671,9 @@ AICOND(018)
 	thisMonster->UpdatePosition(thisMonster->stay_still);
 	int distance = (int)GServer->distance( caller->Position->current, thisMonster->Position->current );
     //int distance = thisMonster->basic.pos.distance(caller->basic.pos);
-    ////Log(MSG_DEBUG, "AICOND(018 3)");
+    //Log(MSG_DEBUG, "AICOND(018 3)");
 	if(OperateValues<int>(data->btOp, &distance, data->iDistance)) return AI_SUCCESS;
-    ////Log(MSG_DEBUG, "AICOND(018 4)");
+    //Log(MSG_DEBUG, "AICOND(018 4)");
 	return AI_FAILURE;
 }
 

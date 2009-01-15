@@ -128,6 +128,7 @@ PVOID MapProcess( PVOID TS )
                     }
 
                     //LMA: AIP CODE
+
                     if(monster->hitcount == 0xFF)//this is a delay for new monster spawns this might olso fix invisible monsters(if they attack directly on spawning the client dosn't get the attack packet(its not in it's visible list yet))
                     {
                         if(1000 < (UINT)GServer->round((clock( ) - monster->lastAiUpdate)))
@@ -230,35 +231,34 @@ PVOID MapProcess( PVOID TS )
                         if(2000<(UINT)GServer->round((clock( ) - monster->lastAiUpdate)))
                         {
                             //Log(MSG_DEBUG,"DoAIP mainprocess monster on battle %i,2",monster->thisnpc->AI);
-                             monster->DoAi(monster->thisnpc->AI, 2);
-                             monster->lastAiUpdate = clock();
-                             //Log(MSG_INFO,"Monster type: %i current HP: %i",monster->montype, monster->Stats->HP);
+
+                            if(!monster->IsBonfire())
+                            {
+                                 monster->DoAi(monster->thisnpc->AI, 2);
+                            }
+                            else
+                            {
+                                //LMA: Bonfires are never on battle, peace and love ^_^
+                                 monster->DoAi(monster->thisnpc->AI, 1);
+                            }
+
+                            monster->lastAiUpdate = clock();
+                            //Log(MSG_INFO,"Monster type: %i current HP: %i",monster->montype, monster->Stats->HP);
+
                         }
                         else
                         {
                              //Log(MSG_INFO,"Monster doing attack");
                              monster->DoAttack( );
+
+                             //LMA: We clear battle for bonfires.
+                             if(monster->IsBonfire())
+                             {
+                                 ClearBattle(monster->Battle);
+                             }
+
                         }
 
-
-                        /*LMA: should be done by AIP now.
-                        if(monster->montype==208)
-                            monster->Guardiantree(monster,map);      //LMA: guardiantree 208 (Arnold)
-                        if((monster->montype==659)&&(monster->hitcount<monster->maxhitcount))
-                            monster->MoonChild(monster,map);      //LMA: Moonchild under attack
-                        if((monster->montype==201)&&(monster->hitcount<monster->maxhitcount))
-                            monster->WormDragon(monster,map);      //LMA: Worm Dragon under attack
-                        if((monster->montype==1572)&&(monster->hitcount<monster->maxhitcount))
-                            monster->AntVagabond(monster,map);      //rl2171: Cursed Ant Vagabond under attack (LMA)
-                        if((monster->montype==662)&&(monster->hitcount<monster->maxhitcount))
-                            monster->DragonEgg(monster,map);      //rl2171: Dragon Egg under attack (LMA)
-                        if((monster->montype==558)&&(monster->hitcount<monster->maxhitcount))
-                            monster->Turak1(monster,map);      //rl2171: 1st Turak under attack (LMA)
-                        if((monster->montype==559)&&(monster->hitcount<monster->maxhitcount))
-                            monster->Turak2(monster,map);      //rl2171: 2nd Turak under attack (LMA)
-                        //if((monster->montype==560)&&(monster->hitcount<monster->maxhitcount))
-                           // monster->Turak3(monster,map);      //rl2171: 3rd Turak under attack (LMA)
-                        */
                     }
                     else if(!monster->IsOnBattle() && !monster->IsDead( ))
                     {
@@ -268,6 +268,7 @@ PVOID MapProcess( PVOID TS )
                             monster->DoAi(monster->thisnpc->AI, 1);
                             monster->lastAiUpdate = clock();
                         }
+
                     }
                     else
                     {
@@ -277,13 +278,17 @@ PVOID MapProcess( PVOID TS )
                             if(elapsedTime>=5) // every 5 seconds
                             {
                                 monster->Stats->HP -= (long int)ceil(monster->GetMaxHP( )/100);
+                                Log(MSG_WARNING,"Bye bye life summon :) %I64i",monster->Stats->HP);
                                 monster->lastLifeUpdate = time(NULL);
                                 if(monster->Stats->HP<=0)
                                 {
                                     map->DeleteMonster( monster, true, j ); continue;
                                 }
+
                             }
+
                         }
+
                     }
 
                     monster->RefreshBuff( );

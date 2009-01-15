@@ -245,6 +245,7 @@ void CCharacter::StartAction( CCharacter* Target, BYTE action, UINT skillid, boo
 
 bool CCharacter::IsOnBattle( )
 {
+    //Bonfire don't attack...
     if(Battle->atktype==0) return false;
     switch(Battle->atktype)
     {

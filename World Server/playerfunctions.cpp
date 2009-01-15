@@ -275,7 +275,8 @@ bool CPlayer::VisiblityList( )
             }
 		}
 
-		//LMA: bonfire, salamender handle...
+		//LMA: bonfire, salamender handle (all done by AIP now)
+		/*
 		if((monster_seen)&&(thismon->IsBonfire())&&(distance<=thismon->range))
 		{
             if(thismon->bonusmp>0)
@@ -285,6 +286,7 @@ bool CPlayer::VisiblityList( )
             bon_nb_mp+=thismon->bonusmp;
             bon_nb_hp+=thismon->bonushp;
         }
+        */
 
 	}
 

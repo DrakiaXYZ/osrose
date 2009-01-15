@@ -506,6 +506,15 @@ AIACT(012)
     if(entity->nearChar == NULL)return AI_FAILURE;
     //entity->Battle->target=entity->nearChar->clientid;
     CMonster* monster = reinterpret_cast<CMonster*>(entity);
+
+    /*LMA: ospRose test, agressiveness */
+    if(monster->thisnpc->aggresive == 0)
+            return AI_FAILURE; //monster has no agression value so cannot attack a player
+        int aggro = GServer->RandNumber(1,20);
+        if(aggro > monster->thisnpc->aggresive)
+            return AI_FAILURE; // failed aggressiveness check
+    /*LMA: ospRose test, agressiveness END */
+
     monster->thisnpc->stance=1;
     monster->SetStats();
     monster->StartAction( (CCharacter*) entity->nearChar, NORMAL_ATTACK, 0 );
@@ -527,6 +536,15 @@ AIACT(013)
     if(entity->findChar == NULL)return AI_FAILURE;
     //entity->Battle->target=entity->findChar->clientid;
     CMonster* monster = reinterpret_cast<CMonster*>(entity);
+
+    /*LMA: ospRose test, agressiveness */
+    if(monster->thisnpc->aggresive == 0)
+            return AI_FAILURE; //monster has no agression value so cannot attack a player
+        int aggro = GServer->RandNumber(1,20);
+        if(aggro > monster->thisnpc->aggresive)
+            return AI_FAILURE; // failed aggressiveness check
+    /*LMA: ospRose test, agressiveness END */
+
     monster->thisnpc->stance = 1;
     monster->SetStats();
     monster->Battle->target = entity->findChar->clientid;
@@ -538,6 +556,7 @@ AIACT(013)
 
 	return AI_SUCCESS;
 }
+
 
 //Unknown
 AIACT(014)
@@ -580,6 +599,7 @@ AIACT(014)
 }
 
 //Retaliate against the last character that hit me
+/*
 AIACT(015)
 {
 	//Run and attack "m_pDestCHAR" Blah?
@@ -602,6 +622,55 @@ AIACT(015)
 
 	return AI_SUCCESS;
 }
+*/
+
+/* PurpleYouko version */
+//Retaliate against the last character that hit me
+AIACT(015)
+{
+    //Run and attack "m_pDestCHAR" Blah?
+        Log(MSG_DEBUG, "AIACT(015)");
+    CMonster* monster = reinterpret_cast<CMonster*>(entity);
+    if(monster->thisnpc->aggresive == 0)
+    {
+        Log(MSG_DEBUG, "AIACT(015) returned false as monster has no aggression");
+        return AI_FAILURE; //monster has no agression value so cannot attack a player
+    }
+    if(monster->IsOnBattle())
+    {
+        //already in battle so we don't want it switching all the time. maybe 75% of the time it will do nothing?
+        if(GServer->RandNumber(0,100) > 25)
+        {
+            Log(MSG_DEBUG, "AIACT(015) returned false as we got a really bad random number %i");
+            return AI_FAILURE; //denied!!!
+        }
+        if(monster->Battle->hitby == monster->Battle->target)
+        {
+            Log(MSG_DEBUG, "AIACT(015) returned false as monster is already in combat with this player %i",monster->Battle->target);
+            return AI_FAILURE; //no need to initiate combat. I am already fighting this player
+        }
+    }
+    // otherwise change target to the person who just hit me
+    monster->thisnpc->stance = 1;
+    monster->SetStats();
+    monster->Battle->target = monster->Battle->hitby;
+    CCharacter* target = entity->GetCharTarget( );
+    if(target == NULL)
+    {
+        Log(MSG_DEBUG, "I seem to have lost my target so I can't attack any more");
+        return AI_FAILURE;
+    }
+    Log(MSG_DEBUG, "Starting normal attack against opponent %i",target->clientid);
+    monster->StartAction( target, NORMAL_ATTACK, 0 );
+
+	if(entity->Position->Map==8)
+        Log(MSG_INFO,"AIACT(015) monster retaliates");
+
+
+    return AI_SUCCESS;
+}
+/* PurpleYouko version */
+
 
 //Run away
 AIACT(016)
@@ -923,7 +992,9 @@ AIACT(024)
         case 17: //skill AOE centered on self
         {
             //Log(MSG_DEBUG,"SKILL_AOE selected. Skill id %i", data->nSkill);
-            monster->StartAction( NULL, SKILL_AOE, data->nSkill );
+            //LMA: no need to do the same AOE buff all over again if not already done...
+            if(monster->Battle->atktype!=SKILL_AOE&&monster->Battle->skillid!=data->nSkill)
+                monster->StartAction( NULL, SKILL_AOE, data->nSkill );
         }
         break;
         default:
