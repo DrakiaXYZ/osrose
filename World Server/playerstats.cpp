@@ -1657,7 +1657,9 @@ unsigned int CPlayer::GetMoveSpeed( )
             }
 
             mspeed= (UINT) lma_speed;
-            if(Fairy)  mspeed = (unsigned int)floor(mspeed*1.2);
+            /*if(Fairy)  mspeed = (unsigned int)floor(mspeed*1.2);*/
+            //LMA: new way :)
+            if(Fairy)  mspeed+=148;
             if(Status->Dash_up!=0xff)
                 mspeed += MagicStatus[Status->Dash_up].Value;
             if(Status->Dash_down!=0xff)

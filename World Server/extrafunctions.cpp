@@ -771,6 +771,15 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
     useitem->itemtype = thisclient->items[slot].itemtype;
     type = UseList.Index[useitem->itemnum]->type;
 
+    //LMA TEST
+    //forcing some values...
+    /*
+    useitem->itemnum = 894;
+    useitem->itemtype = 10;
+    type = 314;
+    */
+    //END LMA TEST
+
     Log(MSG_INFO,"Using item %i:%i, type %i",useitem->itemtype,useitem->itemnum,type);
 
     switch(type)

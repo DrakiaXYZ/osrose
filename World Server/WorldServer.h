@@ -283,6 +283,7 @@ class CWorldServer : public CServerSocket
     	void pakClearUser( CPlayer* thisclient );
 //        bool LearnSkill( CPlayer* thisclient, UINT skill );
         bool LearnSkill( CPlayer* thisclient, UINT skill, bool takeSP = true );
+        bool CheckCompatibleClass(UINT rclass, UINT player_job);
    		bool pakAddWishList( CPlayer* , CPacket* );
 
         //-------------------------- Clan functions

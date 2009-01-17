@@ -758,6 +758,69 @@ bool CWorldServer::TeleportTo ( CPlayer* thisclient, int map, fPoint position )
     return true;
 }
 
+//LMA: checking compatible class (for skills)
+bool CWorldServer::CheckCompatibleClass(UINT rclass, UINT player_job)
+{
+    if(rclass==player_job)
+        return true;
+
+    if(player_job>=121&&player_job<=122)
+    {
+        if(rclass==111)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+
+    }
+
+    if(player_job>=221&&player_job<=222)
+    {
+        if(rclass==211)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+
+    }
+
+    if(player_job>=321&&player_job<=322)
+    {
+        if(rclass==311)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+
+    }
+
+    if(player_job>=421&&player_job<=422)
+    {
+        if(rclass==411)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+
+    }
+
+    Log(MSG_INFO,"Class %i/%i not found?",rclass,player_job);
+
+
+    return false;
+}
 
 // Learn Skill
 //bool CWorldServer::LearnSkill( CPlayer* thisclient, UINT skill )
@@ -778,6 +841,14 @@ bool CWorldServer::LearnSkill( CPlayer* thisclient, UINT skill, bool takeSP)
     CSkills* thisskill = GetSkillByID( skill );
     if( thisskill==NULL )
         return false;
+
+    //LMA: Is it an empty skill?
+    if(GServer->SkillList[skill]->skill_tab==0)
+    {
+        Log(MSG_WARNING,"Incorrect or empty skill %i",skill);
+        b=6;
+    }
+
     if( thisclient->CharInfo->SkillPoints<thisskill->sp )
     {
         b=7;
@@ -842,7 +913,10 @@ bool CWorldServer::LearnSkill( CPlayer* thisclient, UINT skill, bool takeSP)
             {
                 rclass = 422;
             }
-            if(rclass == thisclient->CharInfo->Job)
+
+            //LMA: new way, so "old" job skill can be learned...
+            //if(rclass == thisclient->CharInfo->Job)
+            if(CheckCompatibleClass(rclass,thisclient->CharInfo->Job))
             {
                 b=1;
                 break;
@@ -879,6 +953,7 @@ bool CWorldServer::LearnSkill( CPlayer* thisclient, UINT skill, bool takeSP)
         if(family==-1)
         {
             Log(MSG_WARNING,"Can't find family for skill %i",skill);
+            b=6;
         }
         else
         {
@@ -886,6 +961,7 @@ bool CWorldServer::LearnSkill( CPlayer* thisclient, UINT skill, bool takeSP)
             if(index==-1)
             {
                 Log(MSG_WARNING,"Can't find index in family for skill %i",family,skill);
+                b=6;
             }
             else
             {
