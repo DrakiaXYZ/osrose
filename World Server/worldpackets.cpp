@@ -2748,6 +2748,69 @@ bool CWorldServer::pakUseItem ( CPlayer* thisclient, CPacket* P )
             flag = true;
         }
         break;
+        case 17:
+        {
+            //LMA: Skill resets...
+            int l_b=0;
+            int l_e=0;
+            switch(thisuse->itemnum)
+            {
+                case 95:
+                case 898:
+                case 900:
+                {
+                    //Job skill.
+                    l_b=0;
+                    l_e=60;
+                }
+                break;
+                case 96:
+                case 901:
+                {
+                    //unique
+                    l_b=90;
+                    l_e=120;
+                }
+                break;
+                case 97:
+                case 902:
+                {
+                    //mileage
+                    l_b=120;
+                    l_e=320;
+                }
+                break;
+                case 98:
+                case 903:
+                {
+                    //all skills
+                    l_b=0;
+                    l_e=320;
+                }
+                break;
+                default:
+                {
+                    Log(MSG_WARNING,"Unknown 323 case for %i",thisuse->itemnum);
+                }
+                break;
+
+            }
+
+            if(l_b==0&&l_e==0)
+                return true;
+
+            //let's delete some skills...
+            for (int k=l_b;k<l_e;k++)
+            {
+                thisclient->cskills[k].id=0;
+                thisclient->cskills[k].level=1;
+                thisclient->cskills[k].thisskill=NULL;
+            }
+
+            //thisclient->saveskills();
+            flag=true;
+        }
+        break;
     }
     if(flag == true)
     {

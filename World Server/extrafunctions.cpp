@@ -379,7 +379,10 @@ CPlayer* CWorldServer::GetClientByUserName( char *username )
     for(UINT i=0;i<ClientList.size();i++)
     {
         CPlayer* thisclient = (CPlayer*) ClientList.at(i)->player;
-		if (strcmp(thisclient->Session->username,username)==0)
+
+        //LMA: no case
+		//if (strcmp(thisclient->Session->username,username)==0)
+		if (stricmp(thisclient->Session->username,username)==0)
             return thisclient;
 	}
 	return NULL;
@@ -1002,14 +1005,14 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
             useitem->usetype = UseList.Index[useitem->itemnum]->useeffect[0];
             useitem->usevalue = UseList.Index[useitem->itemnum]->useeffect[1];
 
-                if(useitem->itemnum==609)
-                {
-                     // Summon Metal Moldie  -  not working yet
-                     useitem->usevalue = 2047;
-                     useitem->usescript = 5;
-                     useitem->usetype = UseList.Index[useitem->itemnum]->useeffect[1];
-                     useitem->use_buff = UseList.Index[useitem->itemnum]->useeffect[1];
-                }
+            if(useitem->itemnum==609)
+            {
+                 // Summon Metal Moldie  -  not working yet
+                 useitem->usevalue = 2047;
+                 useitem->usescript = 5;
+                 useitem->usetype = UseList.Index[useitem->itemnum]->useeffect[1];
+                 useitem->use_buff = UseList.Index[useitem->itemnum]->useeffect[1];
+            }
             //LMA: Anti hack protection, those skills (plastic surgeon, reset skills) will be
             //deleted in the quest itself, it'll avoid packets injections ;) .
 //            if (useitem->itemnum>=451&&useitem->itemnum<=453)
@@ -1112,9 +1115,11 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
         }
         break;
         case 323://Job Skill, Unique Kill, Mileage Skill and All Skill Reset Books
-
-            delete useitem;
-            return NULL;
+        {
+            useitem->usescript = 17;
+            useitem->usetype = 0;
+            useitem->usevalue = 0;
+        }
         break;
         default:
             Log( MSG_WARNING, "Unknown use item type: %i",type);
@@ -1122,7 +1127,10 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
         break;
 
     }
+
     useitem->itemtype -= 1;
+
+
     return useitem;
 }
 

@@ -446,7 +446,10 @@ bool CCharServer::pakDeleteChar( CCharClient* thisclient, CPacket* P )
 	result = DB->QStore("SELECT account_name FROM characters WHERE char_name='%s' LIMIT 1", name);
 	if(result==NULL) return false;
 	row = mysql_fetch_row(result);
-	if (strcmp(row[0], thisclient->username)!=0)
+
+	//LMA: no case.
+	//if (strcmp(row[0], thisclient->username)!=0)
+	if (stricmp(row[0], thisclient->username)!=0)
 	{
 	    Log(MSG_HACK, "User %s tried deleting another users (%s) character.", thisclient->username, name);
 	    DB->QFree( );

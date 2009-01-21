@@ -1592,6 +1592,7 @@ bool CWorldServer::LoadEquip( )
             newequip->defense = STB_ITEM[j].rows[i][31];
             newequip->magicresistence = STB_ITEM[j].rows[i][32];
             newequip->attackdistance = STB_ITEM[j].rows[i][33];//Speed of travel/Range
+
             if(newequip->equiptype==SHOE)
             {
                 newequip->movespeed = newequip->attackdistance;

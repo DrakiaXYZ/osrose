@@ -335,6 +335,7 @@ struct CPartyExp
 struct CEquip
 {
     UINT id;
+    UINT is_mileage;
     UINT equiptype;
     UINT type;
     UINT price;
