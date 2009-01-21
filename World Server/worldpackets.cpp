@@ -2807,8 +2807,18 @@ bool CWorldServer::pakUseItem ( CPlayer* thisclient, CPacket* P )
                 thisclient->cskills[k].thisskill=NULL;
             }
 
+            //LMA: for tests.
             //thisclient->saveskills();
-            flag=true;
+            BEGINPACKET( pak,0x7a3 );
+            ADDWORD    ( pak, thisclient->clientid );
+            ADDWORD    ( pak, thisuse->itemnum );
+            SendToVisible( &pak, thisclient );
+
+            thisclient->items[slot].count -= 1;
+            if( thisclient->items[slot].count <= 0 )
+                ClearItem( thisclient->items[slot] );
+            thisclient->UpdateInventory(slot,0xffff);
+            flag=false;
         }
         break;
     }
