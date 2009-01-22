@@ -1344,7 +1344,8 @@ bool CWorldServer::pakUserDied ( CPlayer* thisclient, CPacket* P )
     BYTE respawn = GETBYTE((*P),0);
     //1 - Current / 2 - save point
     CMap* map = MapList.Index[thisclient->Position->Map];
-    CRespawnPoint* thisrespawn = NULL;
+    //CRespawnPoint* thisrespawn = NULL;
+    CRespawnPoint* thisrespawn;
     if(respawn==1)
     {
         thisrespawn = map->GetNearRespawn( thisclient );

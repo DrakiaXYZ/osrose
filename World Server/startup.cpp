@@ -1786,6 +1786,12 @@ bool CWorldServer::LoadSellData( )
 
         for(unsigned int j=2;j<STB_SELL.fieldcount;j++)
         {
+            if (j>=50)
+            {
+                Log(MSG_WARNING,"Loading SELL DATA, Too much Items for %i! %i>48",i,STB_SELL.fieldcount);
+                break;
+            }
+
             newsell->item[j-2] = STB_SELL.rows[i][j];
         }
         //SellList.Data.push_back( newsell );
@@ -2002,6 +2008,12 @@ bool CWorldServer::LoadItemStats( )
     Log( MSG_LOAD, "Item Stats - STB   " );
     for(unsigned int i=0;i<STB_ITEM[10].rowcount;i++)
     {
+        if(i>=500)
+        {
+            Log(MSG_WARNING,"Item Stats error, %i is too much",STB_ITEM[10].rowcount);
+            break;
+        }
+
         StatsList[i].stat[0] = STB_ITEM[10].rows[i][16];
         StatsList[i].value[0] = STB_ITEM[10].rows[i][17];
         StatsList[i].stat[1] = STB_ITEM[10].rows[i][18];
