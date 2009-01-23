@@ -1726,6 +1726,7 @@ bool CWorldServer::LoadPatItem( )
         newpat->weight = STB_ITEM[13].rows[i][7];
         newpat->quality = STB_ITEM[13].rows[i][8];
         newpat->material = STB_ITEM[13].rows[i][14];
+        newpat->parttype = STB_ITEM[13].rows[i][16];
         newpat->partversion = STB_ITEM[13].rows[i][17];
         //newpat->level = STB_ITEM[13].rows[i][22];             // extra field added rev 70
         //newpat->condition[1] = STB_ITEM[13].rows[i][24];      // extra field added rev 70
@@ -1739,6 +1740,7 @@ bool CWorldServer::LoadPatItem( )
         newpat->attackdistance = STB_ITEM[13].rows[i][35];
         newpat->attackpower = STB_ITEM[13].rows[i][36];
         newpat->attackspeed = STB_ITEM[13].rows[i][37];
+        newpat->jauge = STB_ITEM[13].rows[i][67];
         //PatList.Data.push_back( newpat );
         PatList.Index[newpat->id] = newpat;
     }

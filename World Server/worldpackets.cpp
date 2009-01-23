@@ -1016,6 +1016,40 @@ bool CWorldServer::pakChangeCart( CPlayer* thisclient, CPacket* P )
 	if( destslot == 0 ) destslot=thisclient->GetNewItemSlot( thisclient->items[srcslot] );
 	if( destslot == 0xffff ) return true;
 
+	//LMA: we need to check if all items have the same PatType...
+    //LMA: test only if equip.
+	if (destslot>=135&&destslot<140&&thisclient->items[srcslot].itemnum>0)
+	{
+        int good_type=0;
+        for (int k=135;k<140;k++)
+        {
+            if(thisclient->items[k].itemnum==0)
+                continue;
+            if(good_type==0)
+            {
+                good_type=PatList.Index[thisclient->items[k].itemnum]->parttype;
+            }
+            else
+            {
+                if(good_type!=PatList.Index[thisclient->items[k].itemnum]->parttype)
+                {
+                    Log(MSG_WARNING,"%s has mixed type pieces on his cart...",thisclient->CharInfo->charname);
+                    return true;
+                }
+
+            }
+
+        }
+
+        if(good_type>0&&(good_type!=PatList.Index[thisclient->items[srcslot].itemnum]->parttype))
+        {
+            GServer->SendPM(thisclient,"You can't use mixed part");
+            Log(MSG_WARNING,"%s tries to use mix pieces for his cart...",thisclient->CharInfo->charname);
+            return true;
+        }
+
+	}
+
 	CItem tmpitm = thisclient->items[srcslot];
 	thisclient->items[srcslot] = thisclient->items[destslot];
 	thisclient->items[destslot] = tmpitm;

@@ -394,7 +394,9 @@ struct CPatData
     UINT weight;
     UINT quality;
     UINT material;
+    UINT parttype;
     UINT partversion;
+    UINT jauge;
     UINT modifier;
     UINT maxfuel;
     UINT fuelcons;

@@ -972,6 +972,7 @@ void CPlayer::TakeFuel(int add_fuel)
     }
 
     //Total fuel
+    /*
     float total_fuel=(float) GServer->PatList.Index[items[135].itemnum]->maxfuel+ (float) GServer->PatList.Index[items[136].itemnum]->maxfuel;   //maximum fuel.
     if (total_fuel==0)
     {
@@ -987,6 +988,7 @@ void CPlayer::TakeFuel(int add_fuel)
       }
 
     }
+
 
     //consumption factor
     conso_fuel=(float) GServer->PatList.Index[items[135].itemnum]->fuelcons + (float) GServer->PatList.Index[items[136].itemnum]->fuelcons;
@@ -1004,6 +1006,19 @@ void CPlayer::TakeFuel(int add_fuel)
         }
 
     }
+    */
+
+    //LMA: new way (STB)
+    float total_fuel=(float) GServer->PatList.Index[items[135].itemnum]->jauge+ (float) GServer->PatList.Index[items[136].itemnum]->jauge;   //maximum fuel.
+
+    for (int k=135;k<140;k++)
+    {
+        if(items[k].itemnum==0)
+            continue;
+
+        conso_fuel+=(float) GServer->PatList.Index[items[k].itemnum]->fuelcons;
+    }
+
 
     //How much taken in the meantime?
     float current_fuel=((float) save_fuel)*total_fuel/(10*100);
