@@ -479,7 +479,9 @@ class CWorldServer : public CServerSocket
         vector<CFairy*>         FairyList;              // Fairy List
         vector<CChest*>         ChestList;              // Chest List
 
-        CItemStas               StatsList[500];
+        //CItemStas               StatsList[500];
+        CItemStas               **StatsList;            //LMA: without limits...
+        int                     maxStats;               //Nb Stats.
         CExtraStats             StatLookup[301];        //PY: Item Stats
 
         UINT                    upgrade[2][10];

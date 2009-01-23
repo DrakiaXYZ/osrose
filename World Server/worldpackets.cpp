@@ -1345,7 +1345,7 @@ bool CWorldServer::pakUserDied ( CPlayer* thisclient, CPacket* P )
     //1 - Current / 2 - save point
     CMap* map = MapList.Index[thisclient->Position->Map];
     //CRespawnPoint* thisrespawn = NULL;
-    CRespawnPoint* thisrespawn;
+    CRespawnPoint* thisrespawn=new CRespawnPoint;
     if(respawn==1)
     {
         thisrespawn = map->GetNearRespawn( thisclient );
@@ -1396,8 +1396,8 @@ bool CWorldServer::pakUserDied ( CPlayer* thisclient, CPacket* P )
             break;
             case 65: //Prison
             {
-                thisrespawn->dest.x=5395;
-                thisrespawn->dest.y=5205;
+                thisrespawn->dest.x=5485;
+                thisrespawn->dest.y=5304;
             }
             break;
 
@@ -1431,6 +1431,8 @@ bool CWorldServer::pakUserDied ( CPlayer* thisclient, CPacket* P )
 	{	// Clean Buffs
         thisclient->MagicStatus[i].Duration = 0;
     }
+
+    delete thisrespawn;
 
 
 	return true;

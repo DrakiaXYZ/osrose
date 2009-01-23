@@ -174,6 +174,9 @@ bool CWorldServer::InitDefaultValues()
     NPCData=new CNPCData*[STB_NPC.rowcount];
     maxNPC=STB_NPC.rowcount;
 
+    //Item stats.
+    StatsList=new CItemStas*[STB_ITEM[10].rowcount];
+    maxStats=STB_ITEM[10].rowcount;
 
     //Equip null init
     CEquip* nullequip = new CEquip;
@@ -2008,16 +2011,12 @@ bool CWorldServer::LoadItemStats( )
     Log( MSG_LOAD, "Item Stats - STB   " );
     for(unsigned int i=0;i<STB_ITEM[10].rowcount;i++)
     {
-        if(i>=500)
-        {
-            Log(MSG_WARNING,"Item Stats error, %i is too much",STB_ITEM[10].rowcount);
-            break;
-        }
-
-        StatsList[i].stat[0] = STB_ITEM[10].rows[i][16];
-        StatsList[i].value[0] = STB_ITEM[10].rows[i][17];
-        StatsList[i].stat[1] = STB_ITEM[10].rows[i][18];
-        StatsList[i].value[1] = STB_ITEM[10].rows[i][19];
+        CItemStas* tempstats=new (nothrow) CItemStas;
+        StatsList[i]=tempstats;
+        StatsList[i]->stat[0] = STB_ITEM[10].rows[i][16];
+        StatsList[i]->value[0] = STB_ITEM[10].rows[i][17];
+        StatsList[i]->stat[1] = STB_ITEM[10].rows[i][18];
+        StatsList[i]->value[1] = STB_ITEM[10].rows[i][19];
     }
 
     Log( MSG_LOAD, "Item Stats Loaded" );

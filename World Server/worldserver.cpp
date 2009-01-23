@@ -34,15 +34,6 @@ CWorldServer::CWorldServer( string fn )
     FairyList.clear();
     TeleGateList.clear();
 
-    //Stats null init
-    for(UINT i=0;i<500;i++)
-    {
-        StatsList[i].stat[0] = 0;
-        StatsList[i].stat[1] = 0;
-        StatsList[i].value[0] = 0;
-        StatsList[i].value[1] = 0;
-    }
-
     MapMutex = PTHREAD_MUTEX_INITIALIZER; //fast mutex
     SQLMutex = PTHREAD_MUTEX_INITIALIZER;
     PlayerMutex = PTHREAD_MUTEX_INITIALIZER;
