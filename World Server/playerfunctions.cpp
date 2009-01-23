@@ -691,42 +691,73 @@ void CPlayer::ReduceABC( )
 {
     unsigned int weapontype = 0;
     weapontype = GServer->EquipList[WEAPON].Index[items[7].itemnum]->type;
+    int slot=0;
     //printf("Reducing ABC item count /n");
     switch(weapontype)
     {
         case 231:
+            if (items[132].count==0)
+                return;
             items[132].count--;
+            slot=132;
+            //Log(MSG_INFO,"%u Arrows remain.",items[132].count);
+
             if(items[132].count<=0)
             {
-                ClearBattle( Battle );
+                //ClearBattle( Battle );
                 ClearItem( items[132] );
             }
+
         break;
         case 232:
+            if (items[133].count==0)
+                return;
             items[133].count--;
+            slot=133;
             if(items[133].count<=0)
             {
-                ClearBattle( Battle );
+                //ClearBattle( Battle );
                 ClearItem( items[133] );
             }
         break;
         case 233:
+            if (items[134].count==0)
+                return;
             items[134].count--;
+            slot=134;
             if(items[134].count<=0)
             {
-                ClearBattle( Battle );
+                //ClearBattle( Battle );
                 ClearItem( items[134] );
             }
         break;
         case 271:
-            items[132].count--;
-            if(items[132].count<=0)
+            if (items[135].count==0)
+                return;
+            items[135].count--;
+            slot=135;
+            if(items[135].count<=0)
             {
-                ClearBattle( Battle );
+                //ClearBattle( Battle );
                 ClearItem( items[135] );
             }
         break;
     }
+
+    if(slot>0)
+    {
+        BEGINPACKET( pak, 0x718 );
+        ADDBYTE( pak, 1 );
+        ADDBYTE    ( pak, slot);
+        ADDDWORD   ( pak, GServer->BuildItemHead( items[slot] ) );
+        ADDDWORD   ( pak, GServer->BuildItemData( items[slot] ) );
+        ADDDWORD( pak, 0x00000000 );
+        ADDWORD ( pak, 0x0000 );
+        client->SendPacket( &pak );
+    }
+
+
+    return;
 }
 
 // return party pointer

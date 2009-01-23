@@ -269,11 +269,14 @@ bool CWorldServer::pakDoID( CPlayer* thisclient, CPacket* P )
 {
 	// Assign a new id to this person
    	thisclient->clientid = GetNewClientID();
-	if (thisclient->clientid <= 0)
+	if (thisclient->clientid <=1)
     {
 		Log( MSG_WARNING, "User '%s'(#%i) denied access. Server is full.", thisclient->Session->username, thisclient->Session->userid );
 		return false;
 	}
+
+	if(thisclient->Stats->HP<=0)
+        thisclient->Stats->HP=10*thisclient->GetMaxHP( )/100;
 
 	Log( MSG_INFO, "User '%s'(#%i) assigned id #%i", thisclient->Session->username, thisclient->Session->userid, thisclient->clientid );
     if( thisclient->Party->party )
@@ -3029,16 +3032,21 @@ bool CWorldServer::pakCraft( CPlayer* thisclient, CPacket* P )
 	int changeofstatslow = thisclient->Attr->Sen / 13 + 10;
 	int changeofstatshigh = thisclient->Attr->Sen / 13 + 50;
 	int changeofstatsrange = (changeofstatshigh-changeofstatslow)+1;
-	if (changeofstatslow+int(changeofstatsrange*rand()/(RAND_MAX + 1.0)) > 50){
-	int statslowget = 1;
-	int statshighget = 256;
-	int setstatrange=(statshighget-statslowget)+1;
-  	item.stats = statslowget+int(setstatrange*rand()/(RAND_MAX + 1.0));
-	item.appraised = 1;
-	}else {
-          item.stats = 0;
-          item.appraised = 0;
+	if (changeofstatslow+int(changeofstatsrange*rand()/(RAND_MAX + 1.0)) > 50)
+	{
+        int statslowget = 1;
+        int statshighget = 256;
+        int setstatrange=(statshighget-statslowget)+1;
+        item.stats = statslowget+int(setstatrange*rand()/(RAND_MAX + 1.0));
+        Log(MSG_INFO,"Craft item has a stat %i",item.stats);
+        item.appraised = 1;
 	}
+	else
+	{
+      item.stats = 0;
+      item.appraised = 0;
+	}
+
 	// stats set
 	item.socketed = 0;
 	item.gem = 0;

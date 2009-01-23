@@ -48,6 +48,13 @@ void CCharacter::DoAttack( )
     }
     //osptest end
 
+    //LMA: If we're dead, why are we still fighting?
+    if(IsDead())
+    {
+        ClearBattle(Battle);
+        return;
+    }
+
     CMap* map = GServer->MapList.Index[Position->Map];
     switch(Battle->atktype)
     {
@@ -520,8 +527,8 @@ void CCharacter::NormalAttack( CCharacter* Enemy )
         GServer->SendToVisible( &pak, Enemy );
     }
 
-    ReduceABC( );
     Battle->lastAtkTime = clock( );
+    ReduceABC( );
 
 
     return;
