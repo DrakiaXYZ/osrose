@@ -1378,8 +1378,9 @@ bool CWorldServer::pakUserDied ( CPlayer* thisclient, CPacket* P )
     BYTE respawn = GETBYTE((*P),0);
     //1 - Current / 2 - save point
     CMap* map = MapList.Index[thisclient->Position->Map];
-    //CRespawnPoint* thisrespawn = NULL;
-    CRespawnPoint* thisrespawn=new CRespawnPoint;
+    CRespawnPoint* thisrespawn = NULL;
+    CRespawnPoint dungeonSpawn;
+
     if(respawn==1)
     {
         thisrespawn = map->GetNearRespawn( thisclient );
@@ -1387,6 +1388,7 @@ bool CWorldServer::pakUserDied ( CPlayer* thisclient, CPacket* P )
     else
     {
         //LMA: special case for dungeons... STB[4]==1
+        thisrespawn = &dungeonSpawn;
         thisrespawn->destMap=map->id;
         thisrespawn->id=1;
         thisrespawn->dest.z=0;
@@ -1465,8 +1467,6 @@ bool CWorldServer::pakUserDied ( CPlayer* thisclient, CPacket* P )
 	{	// Clean Buffs
         thisclient->MagicStatus[i].Duration = 0;
     }
-
-    delete thisrespawn;
 
 
 	return true;
