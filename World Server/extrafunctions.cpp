@@ -667,7 +667,7 @@ char* CWorldServer::GetSTLItemPrefix(int family,UINT idorg)
         return "";
     }
 
-    UINT idu=16*100000+idorg;
+    UINT idu=16*100000+id;
 
     if(STLNameList.find(idu)==STLNameList.end())
     {
