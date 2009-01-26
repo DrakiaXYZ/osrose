@@ -40,6 +40,7 @@ CCharacter::CCharacter( )
     Stats->Accury = 0;
     Stats->Magic_Defense = 0;
     Stats->Move_Speed = 0;
+    Stats->Base_Speed=0;
     Stats->Attack_Speed = 0;
     Stats->Attack_Distance = 0;
     Stats->MaxWeight = 0;

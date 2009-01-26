@@ -205,14 +205,16 @@ void CWorldServer::pakInventory( CPlayer *thisclient )
 	//ADDWORD( pak, 0 );
 	for(unsigned j=0; j<140; j++)
     {
-        //Log(MSG_INFO,"Sending item slot %i, %i::%i; head %i, data %i",j,thisclient->items[j].itemtype,thisclient->items[j].itemnum,BuildItemHead( thisclient->items[j]) ,BuildItemData( thisclient->items[j]));
-       	ADDDWORD( pak, BuildItemHead( thisclient->items[j] ) );
+        ADDDWORD( pak, BuildItemHead( thisclient->items[j] ) );
        	ADDDWORD( pak, BuildItemData( thisclient->items[j] ) );
         ADDDWORD( pak, 0x00000000 );
         ADDWORD ( pak, 0x0000 );
-
 	}
+
     thisclient->client->SendPacket( &pak );
+
+
+    return;
 }
 
 // Get this user set up with the encryption and stuff
@@ -401,10 +403,14 @@ bool CWorldServer::pakDoID( CPlayer* thisclient, CPacket* P )
 	RESETPACKET(pak, 0x782 );
 	ADDWORD    ( pak, thisclient->clientid );
 	ADDBYTE    ( pak, thisclient->Status->Stance );
-	ADDWORD    ( pak, thisclient->Stats->Move_Speed );
+
+	//LMA: Base Speed.
+	//ADDWORD    ( pak, thisclient->Stats->Move_Speed );
+	ADDWORD    ( pak, thisclient->Stats->Base_Speed);
+
 	SendToVisible( &pak, thisclient );
 
-	//Log(MSG_INFO,"Pak Player %s, stance %i move_speed %i",thisclient->CharInfo->charname,thisclient->Status->Stance,thisclient->Stats->Move_Speed);
+	//Log(MSG_INFO,"Pak Player %s, stance %i base move_speed %i",thisclient->CharInfo->charname,thisclient->Status->Stance,thisclient->Stats->Base_Speed);
 
 
     thisclient->CleanPlayerVector( );
@@ -425,10 +431,17 @@ bool CWorldServer::pakMoveChar( CPlayer* thisclient, CPacket* P )
 	thisclient->Position->destiny.x = GETFLOAT((*P), 0x02 )/100;
     thisclient->Position->destiny.y = GETFLOAT((*P), 0x06 )/100;
     thisclient->Position->lastMoveTime = clock();
+
+
+
 	BEGINPACKET( pak, 0x79a );
 	ADDWORD    ( pak, thisclient->clientid );		// USER ID
 	ADDWORD    ( pak, thisclient->Battle->target );		// TARGET
-	ADDWORD    ( pak, thisclient->Stats->Move_Speed );	// MSPEED
+
+	//LMA: Base Speed
+	//ADDWORD    ( pak, thisclient->Stats->Move_Speed );	// MSPEED
+	ADDWORD    ( pak, thisclient->Stats->Base_Speed );	// MSPEED
+
 	ADDFLOAT   ( pak, GETFLOAT((*P), 0x02 ) );	// POSITION X
 	ADDFLOAT   ( pak, GETFLOAT((*P), 0x06 ) );	// POSITION Y
 	ADDWORD    ( pak, GETWORD((*P), 0x0a ) );		// POSITION Z (NOT USED)
@@ -436,7 +449,7 @@ bool CWorldServer::pakMoveChar( CPlayer* thisclient, CPacket* P )
 
     if(thisclient->Position->Map==8)
     {
-        Log(MSG_INFO,"pakMoveChar %s, (%.2f;%.2f) to (%.2f;%.2f) speed %u",thisclient->CharInfo->charname,thisclient->Position->current.x,thisclient->Position->current.y,thisclient->Position->destiny.x,thisclient->Position->destiny.y,thisclient->Stats->Move_Speed);
+        Log(MSG_INFO,"pakMoveChar %s, (%.2f;%.2f) to (%.2f;%.2f) speed %u/%u",thisclient->CharInfo->charname,thisclient->Position->current.x,thisclient->Position->current.y,thisclient->Position->destiny.x,thisclient->Position->destiny.y,thisclient->Stats->Base_Speed,thisclient->Stats->Move_Speed);
     }
 
 	return true;
@@ -528,7 +541,7 @@ bool CWorldServer::pakChangeStance( CPlayer* thisclient, CPacket* P )
         return true;
 	BYTE stancenum = GETBYTE((*P),0x00);
 	BYTE previous_stance=thisclient->Status->Stance;
-	Log(MSG_INFO,"Changing stance from %i to %i",previous_stance,stancenum);
+	//Log(MSG_INFO,"Changing stance from %i to %i",previous_stance,stancenum);
 
 	if (stancenum == 0)
 	{
@@ -580,10 +593,12 @@ bool CWorldServer::pakChangeStance( CPlayer* thisclient, CPacket* P )
 	if(!thisclient->Status->CanMove)
 	   thisclient->Status->Stance = RUNNING;
 	thisclient->Stats->Move_Speed = thisclient->GetMoveSpeed( );
+
 	BEGINPACKET( pak, 0x782 );
 	ADDWORD( pak, thisclient->clientid );
 	ADDBYTE( pak, thisclient->Status->Stance );
-	ADDWORD( pak, thisclient->Stats->Move_Speed );
+
+    //ADDWORD( pak, thisclient->Stats->Move_Speed );
 	SendToVisible( &pak, thisclient );
 
     //Fuel.
@@ -599,6 +614,62 @@ bool CWorldServer::pakChangeStance( CPlayer* thisclient, CPacket* P )
        thisclient->TakeFuel();
        thisclient->last_fuel=0;
     }
+
+   //LMA: eh eh ^_^
+   //We force the refresh of the engine so the mspeed client side is done again.
+   if(thisclient->Fairy&&(previous_stance==DRIVING||thisclient->Status->Stance==DRIVING))
+   {
+       int cartslot=1;
+       int srcslot=136;
+       int slot1=srcslot;
+       int slot2=slot1;
+
+       if(thisclient->items[slot1].itemnum==0)
+       {
+           return true;
+       }
+
+        RESETPACKET( pak, 0x718 );
+        //if(slot2!=0xffff && slot2!=0xffff) {ADDBYTE( pak, 2 );}
+        if(slot1!=0xffff && slot2!=0xffff) {ADDBYTE( pak, 2 );}
+        else {ADDBYTE( pak, 1 );}
+        if(slot1!=0xffff)
+        {
+            ADDBYTE    ( pak, slot1);
+            ADDDWORD   ( pak, GServer->BuildItemHead( thisclient->items[slot1] ) );
+            ADDDWORD   ( pak, GServer->BuildItemData( thisclient->items[slot1] ) );
+            ADDDWORD( pak, 0x00000000 );
+            ADDWORD ( pak, 0x0000 );
+        }
+        if(slot2!=0xffff)
+        {
+            ADDBYTE    ( pak, slot2 );
+            ADDDWORD   ( pak, GServer->BuildItemHead( thisclient->items[slot2] ) );
+            ADDDWORD   ( pak, GServer->BuildItemData( thisclient->items[slot2] ) );
+            ADDDWORD( pak, 0x00000000 );
+            ADDWORD ( pak, 0x0000 );
+        }
+        thisclient->client->SendPacket( &pak );
+
+    /*
+        RESETPACKET( pak, 0x7ca );
+        ADDWORD    ( pak, thisclient->clientid );
+        ADDWORD    ( pak, cartslot);
+        ADDWORD    ( pak, thisclient->items[srcslot].itemnum);
+        //LMA TEST:
+        //ADDWORD    ( pak, lma_speed );
+        ADDWORD    ( pak,0);
+
+        //LMA: change?
+        if(thisclient->Status->Stance==DRIVING)
+        {
+            //ADDWORD    ( pak, thisclient->Stats->Move_Speed );
+            //ADDWORD    ( pak, thisclient->Stats->Base_Speed );
+        }
+
+        SendToVisible( &pak, thisclient );
+        */
+   }
 
 
 	return true;
@@ -1071,12 +1142,16 @@ bool CWorldServer::pakChangeCart( CPlayer* thisclient, CPacket* P )
 
 	//ADDWORD    ( pak, tmpitm.itemnum);
 	//ADDWORD    ( pak, BuildItemRefine( tmpitm ) );
-	ADDWORD    ( pak, lma_speed );
+
+	//LMA TEST:
+	//ADDWORD    ( pak, lma_speed );
+	ADDWORD    ( pak,0);
 
 	//LMA: change?
 	if(thisclient->Status->Stance==DRIVING)
 	{
 	    ADDWORD    ( pak, thisclient->Stats->Move_Speed );
+	    //ADDWORD    ( pak, thisclient->Stats->Base_Speed );
 	}
 
 	SendToVisible( &pak, thisclient );
@@ -3043,9 +3118,56 @@ bool CWorldServer::pakCraft( CPlayer* thisclient, CPacket* P )
 	}
 	else
 	{
-      item.stats = 0;
-      item.appraised = 0;
+        item.stats = 0;
+        item.appraised = 0;
+        Log(MSG_INFO,"Craft item has NO stat");
 	}
+
+
+    //LMA: Craft success or failure?
+    int failure=0;
+    switch(item.itemtype)
+    {
+        case 10:
+        {
+            //Use
+            failure=UseList.Index[item.itemnum]->craft_difficult;
+        }
+        break;
+        case 11:
+        {
+            //JEM
+            failure=JemList.Index[item.itemnum]->craft_difficult;
+        }
+        break;
+        case 14:
+        {
+            //PAT
+            failure=PatList.Index[item.itemnum]->craft_difficult;
+        }
+        break;
+        default:
+        {
+            //Equiplist.
+            failure=EquipList[item.itemtype].Index[item.itemnum]->craft_difficult;
+        }
+        break;
+    }
+
+    failure-=(int) (thisclient->Attr->Con/40);
+    if (failure<=0)
+        failure=1;
+    if (failure>=100)
+        failure=99;
+
+    //real one :)
+    /*
+    if(GServer->RandNumber(0,100)<=failure)
+    {
+        Log(MSG_INFO,"Craft has failed");
+        return true;
+    }
+    */
 
 	// stats set
 	item.socketed = 0;
@@ -3070,6 +3192,7 @@ bool CWorldServer::pakCraft( CPlayer* thisclient, CPacket* P )
                 case 14:materialnumber = PatList.Index[item.itemnum]->material;break;
             }
         }
+
 		int	m = 0;
 		for(char used=5; used != 11; used +=2)
         {
@@ -3105,6 +3228,7 @@ bool CWorldServer::pakCraft( CPlayer* thisclient, CPacket* P )
             }
 
         }
+
 		thisclient->items[newslot] = item;
         BEGINPACKET( pak, 0x07d8);
         ADDWORD( pak, thisclient->clientid );
@@ -3128,18 +3252,21 @@ bool CWorldServer::pakCraft( CPlayer* thisclient, CPacket* P )
         if ((GETWORD((*P), 11))==0){ ADDWORD( pak, 0x99a0);}else{ ADDWORD( pak, bar4);}//progress bar4 0 is empty 0x0400 is full bar
         ADDDWORD(pak, BuildItemHead(item));
 
-     if (item.itemtype == 11){
-	     ADDWORD( pak, 0x0001);// amount
-	     ADDWORD( pak, 0x0000);
-     }
-     else{
-	     ADDDWORD(pak, BuildItemData(item));
-     }
+         if (item.itemtype == 11)
+         {
+             ADDWORD( pak, 0x0001);// amount
+             ADDWORD( pak, 0x0000);
+         }
+         else
+         {
+             ADDDWORD(pak, BuildItemData(item));
+         }
+
         ADDDWORD( pak, 0x00000000 );
         ADDWORD ( pak, 0x0000 );
         int crafting_exp = item.durability + changeofstatsrange * (thisclient->Stats->Level/ 15);
-		thisclient->CharInfo->Exp += crafting_exp;//  add exp
-		thisclient->client->SendPacket(&pak);
+        thisclient->CharInfo->Exp += crafting_exp;//  add exp
+        thisclient->client->SendPacket(&pak);
         RESETPACKET( pak, 0x79b );
         ADDDWORD   ( pak, thisclient->CharInfo->Exp );
         ADDWORD    ( pak, thisclient->CharInfo->stamina );
@@ -3153,6 +3280,8 @@ bool CWorldServer::pakCraft( CPlayer* thisclient, CPacket* P )
          ADDBYTE(pak, 0);
          thisclient->client->SendPacket(&pak);
      }
+
+
      return true;
 }
 

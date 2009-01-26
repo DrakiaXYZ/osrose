@@ -1598,6 +1598,10 @@ unsigned int CPlayer::GetMoveSpeed( )
                     }
                 }
             }
+
+            //LMA: Base Speed.
+            Stats->Base_Speed=mspeed;
+
             if(Fairy)  mspeed = (unsigned int)floor(mspeed*1.2);
             if(Status->Dash_up!=0xff)
                 mspeed += MagicStatus[Status->Dash_up].Value;
@@ -1627,36 +1631,33 @@ unsigned int CPlayer::GetMoveSpeed( )
                lma_speed=floor(porc*1000/(pow(100,nb_parts)));
             }
 
-            //add ons (ability)
-            /*
-            switch (items[138].itemnum)
-            {
-                   case 401:
-                        lma_speed+=100;
-                        break;
-                   case 402:
-                        lma_speed+=120;
-                        break;
-                   case 403:
-                        lma_speed+=130;
-                        break;
-                   case 404:
-                        lma_speed+=150;
-                        break;
-                   case 601:
-                        lma_speed+=100;
-                        break;
-                   default:
-                        break;
-            }
-            */
             //LMA: new way:
+            /*
             if(items[138].itemnum!=0)
             {
                 lma_speed+=GServer->PatList.Index[items[138].itemnum]->modifier;
             }
+            */
+
+            //LMA: adding DASH if needed.
+            for (int k=135;k<140;k++)
+            {
+                 if(items[k].itemnum==0)
+                    continue;
+
+                for (int j=0;j<2;j++)
+                {
+                    if(GServer->PatList.Index[items[k].itemnum]->options[j]!=A_DASH)
+                        continue;
+                    lma_speed+=GServer->PatList.Index[items[k].itemnum]->val_options[j];
+                }
+
+            }
 
             mspeed= (UINT) lma_speed;
+
+            //LMA: Base Speed.
+            Stats->Base_Speed=mspeed;
             /*if(Fairy)  mspeed = (unsigned int)floor(mspeed*1.2);*/
 
             //LMA: new way :)
@@ -1665,12 +1666,14 @@ unsigned int CPlayer::GetMoveSpeed( )
                 if(GServer->PatList.Index[items[135].itemnum]->parttype!=31)
                 {
                     //cart
-                    mspeed+=148;
+                    //mspeed+=148;
+                    mspeed = (unsigned int)floor(mspeed*1.2);
                 }
                 else
                 {
                     //CG
-                    mspeed+=101;
+                    //mspeed+=101;
+                    mspeed = (unsigned int)floor(mspeed*1.2);
                 }
 
             }

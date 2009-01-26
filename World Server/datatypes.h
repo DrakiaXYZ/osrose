@@ -344,6 +344,7 @@ struct CEquip
     UINT quality;
     UINT level;
     UINT material;
+    UINT craft_difficult;
     UINT occupation[3];
     UINT condition1[3];
     UINT condition2[3];
@@ -370,6 +371,7 @@ struct CJemData
     UINT weight;
     UINT quality;
     UINT material;
+    UINT craft_difficult;
     UINT stat1[2];/**/
     UINT stat2[2];/**/
     UINT STLId;
@@ -398,10 +400,13 @@ struct CPatData
     UINT weight;
     UINT quality;
     UINT material;
+    UINT craft_difficult;
     UINT parttype;
     UINT partversion;
     UINT jauge;
     UINT modifier;
+    UINT options[2];
+    UINT val_options[2];
     UINT maxfuel;
     UINT fuelcons;
     UINT speed;
@@ -435,6 +440,7 @@ struct CUseData
     UINT weight;
     UINT quality;
     UINT material; //core
+    UINT craft_difficult; //LMA
     UINT usecondition[2];
     UINT useeffect[2];
     UINT pricevalue;

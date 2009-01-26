@@ -253,6 +253,7 @@ bool CWorldServer::InitDefaultValues()
     nullequip->quality = 0;
     nullequip->level = 0;
     nullequip->material = 0;
+    nullequip->craft_difficult=0;
     nullequip->defense = 0;
     nullequip->magicresistence = 0;
     nullequip->attackdistance = 0;
@@ -303,6 +304,7 @@ bool CWorldServer::InitDefaultValues()
     nullpat->weight = 0;
     nullpat->quality = 0;
     nullpat->material = 0;
+    nullpat->craft_difficult=0;
     nullpat->partversion = 0;
     nullpat->maxfuel = 0;
     nullpat->fuelcons = 0;
@@ -392,6 +394,7 @@ bool CWorldServer::InitDefaultValues()
     nulljem->weight = 0;
     nulljem->quality = 0;
     nulljem->material = 0;
+    nulljem->craft_difficult=0;
     for(int i=0;i<2;i++)
     {
         nulljem->stat1[i] = 0;
@@ -1696,6 +1699,7 @@ bool CWorldServer::LoadEquip( )
             newequip->quality = STB_ITEM[j].rows[i][8];
             newequip->level = STB_ITEM[j].rows[i][13];
             newequip->material = STB_ITEM[j].rows[i][14];
+            newequip->craft_difficult= STB_ITEM[j].rows[i][15];
             newequip->defense = STB_ITEM[j].rows[i][31];
             newequip->magicresistence = STB_ITEM[j].rows[i][32];
             newequip->attackdistance = STB_ITEM[j].rows[i][33];//Speed of travel/Range
@@ -1784,6 +1788,7 @@ bool CWorldServer::LoadJemItem( )
         thisjem->weight = STB_ITEM[10].rows[i][7];
         thisjem->quality = STB_ITEM[10].rows[i][8];
         thisjem->material = STB_ITEM[10].rows[i][14];
+        thisjem->craft_difficult= STB_ITEM[10].rows[i][15];
         thisjem->stat1[0] = STB_ITEM[10].rows[i][16];
         thisjem->stat1[1] = STB_ITEM[10].rows[i][17];
         thisjem->stat2[0] = STB_ITEM[10].rows[i][18];
@@ -1850,6 +1855,7 @@ bool CWorldServer::LoadPatItem( )
         newpat->weight = STB_ITEM[13].rows[i][7];
         newpat->quality = STB_ITEM[13].rows[i][8];
         newpat->material = STB_ITEM[13].rows[i][14];
+        newpat->craft_difficult= STB_ITEM[13].rows[i][15];
         newpat->parttype = STB_ITEM[13].rows[i][16];
         newpat->partversion = STB_ITEM[13].rows[i][17];
         //newpat->level = STB_ITEM[13].rows[i][22];             // extra field added rev 70
@@ -1858,6 +1864,13 @@ bool CWorldServer::LoadPatItem( )
         //newpat->condition[2] = STB_ITEM[13].rows[i][27];      // extra field added rev 70
         //newpat->modifier[2] = STB_ITEM[13].rows[i][28];       // extra field added rev 70
         newpat->modifier = STB_ITEM[13].rows[i][25];       // extra field added rev 70
+
+        //LMA: Getting all stats...
+        newpat->options[0]=STB_ITEM[13].rows[i][24];
+        newpat->val_options[0]=STB_ITEM[13].rows[i][25];
+        newpat->options[1]=STB_ITEM[13].rows[i][27];
+        newpat->val_options[1]=STB_ITEM[13].rows[i][28];
+
         newpat->maxfuel = STB_ITEM[13].rows[i][31];
         newpat->fuelcons = STB_ITEM[13].rows[i][32];
         newpat->speed = STB_ITEM[13].rows[i][33];
@@ -1950,6 +1963,7 @@ bool CWorldServer::LoadConsItem( )
         newuse->weight = STB_ITEM[9].rows[i][7];
         newuse->quality = STB_ITEM[9].rows[i][8];
         newuse->material= STB_ITEM[9].rows[i][14];
+        newuse->craft_difficult= STB_ITEM[9].rows[i][15];
         newuse->pricevalue = STB_ITEM[9].rows[i][16];
         newuse->usecondition[0]= STB_ITEM[9].rows[i][17];
         newuse->usecondition[1]= STB_ITEM[9].rows[i][18];

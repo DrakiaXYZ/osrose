@@ -70,6 +70,7 @@ struct STATS
     unsigned int Accury;
     unsigned int Magic_Defense;
     unsigned int Move_Speed;
+    unsigned int Base_Speed;
     unsigned int Attack_Speed;
     float Attack_Distance;
     unsigned int MaxWeight;
