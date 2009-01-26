@@ -737,7 +737,9 @@ void CWorldServer::ExportQSDData(byte* dataorg,int size,int opcode)
     //Object variable
     if(opcode==11)
     {
-        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Object variable (NOT CODED)",opcode);
+        STR_COND_011 * data = (STR_COND_011 *)dataorg;
+        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Object variable (NOT CODED for Client) (CODED for Monsters / NPC)",opcode);
+        LogSp(MSG_INFO,"\t\t\t\t\t\t |-> Check ObjVar[%i] %s %i",data->nVarNo,Operators(data->btOp,buffero),data->iValue);
         return;
     }
 
@@ -1153,14 +1155,32 @@ void CWorldServer::ExportQSDDataA(byte* dataorg,int size,int opcode)
     //Update Object Var..
     if(opcode==11)
     {
-        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Update Object Var (NOT CODED)",opcode);
+        STR_REWD_011 * data = (STR_REWD_011 *)dataorg;
+        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Update variable (NOT CODED for Client) (CODED for Monsters / NPC)",opcode);
+        LogSp(MSG_INFO,"\t\t\t\t\t\t |-> Update ObjVar[%i] %s %i",data->nVarNo,Operators(data->btOp,buffero),data->iValue);
         return;
     }
 
     //NPC Speak...
     if(opcode==12)
     {
-        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: NPC Speak (NOT CODED)",opcode);
+        STR_REWD_012 * data = (STR_REWD_012 *)dataorg;
+        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: NPC Speak (NOT CODED for Client) (CODED for Monsters / NPC)",opcode);
+
+        if(data->btMsgType == 1)
+        {
+            LogSp(MSG_INFO,"\t\t\t\t\t\t |-> NPC Shouts LTB string %i, %s",data->iStrID,GServer->LtbstringQSD[data->iStrID]->LTBstring);
+        }
+        else if(data->btMsgType == 2)
+        {
+            LogSp(MSG_INFO,"\t\t\t\t\t\t |-> NPC Announces LTB string %i, %s",data->iStrID,GServer->LtbstringQSD[data->iStrID]->LTBstring);
+        }
+        else
+        {
+            LogSp(MSG_INFO,"\t\t\t\t\t\t |-> NPC ?(%i)? LTB string %i, %s",data->btMsgType,data->iStrID,GServer->LtbstringQSD[data->iStrID]->LTBstring);
+        }
+
+
         return;
     }
 
