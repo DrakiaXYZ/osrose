@@ -22,78 +22,249 @@
 // Props to ExJam for this code :D
 #include "../worldserver.h"
 
-void CWorldServer::ReadQSD(strings path, dword index){
+void CWorldServer::ReadQSD(strings path, dword index)
+{
+    //LMA: export:
+    bool lma_export=false;
+    //bool lma_export=true;
+
 	CRoseFile* fh = new CRoseFile(path, FM_READ | FM_BINARY);
-	if(fh->IsOpen()) { // goto done;
+	if(fh->IsOpen())
+	{ // goto done;
 
-	Log(MSG_LOAD, "Loading %s", path);
+        Log(MSG_LOAD, "Loading %s", path);
 
-	fh->Seek(4, SEEK_CUR);
-	dword BlockCount = fh->Get<dword>();
-	fh->Seek(fh->Get<word>(), SEEK_CUR);
-	for(dword i = 0; i < BlockCount; i++){
-		dword RecordCount = fh->Get<dword>();
-		fh->Seek(fh->Get<word>(), SEEK_CUR);
-		for(dword j = 0; j < RecordCount; j++){
-			CQuestTrigger* trigger = new CQuestTrigger();
-			trigger->id=((index*0x10000)+(i*0x100)+j);
-			trigger->CheckNext = fh->Get<byte>();
-			trigger->ConditionCount = fh->Get<dword>();
-			trigger->ActionCount = fh->Get<dword>();
-			dword len = fh->Get<word>();
-			trigger->TriggerName = new char[len+1];
-			fh->Read(trigger->TriggerName, len, 1);
-			trigger->TriggerName[len] = 0;
+        fh->Seek(4, SEEK_CUR);
+        dword BlockCount = fh->Get<dword>();
 
-			if(trigger->ConditionCount > 0){
-				trigger->Conditions = new CQuestTrigger::SQuestDatum*[trigger->ConditionCount];
-				for(dword k = 0; k < trigger->ConditionCount; k++){
-					CQuestTrigger::SQuestDatum* data = new CQuestTrigger::SQuestDatum();
-					data->size = fh->Get<int>();
-					data->opcode = fh->Get<int>();
-					data->data = new byte[data->size - 8];
-					fh->Read(data->data, data->size - 8, 1);
-					trigger->Conditions[k] = data;
-				}
-			}else{
-				trigger->Conditions = NULL;
-			}
+        if(lma_export)
+        {
+            LogSp(MSG_INFO, " ");
+            LogSp(MSG_INFO, " ");
 
-			if(trigger->ActionCount > 0){
-				trigger->Actions = new CQuestTrigger::SQuestDatum*[trigger->ActionCount];
-				for(dword k = 0; k < trigger->ActionCount; k++){
-					CQuestTrigger::SQuestDatum* data = new CQuestTrigger::SQuestDatum();
-					data->size = fh->Get<int>();
-					data->opcode = fh->Get<int>() - 0x01000000;
-					data->data = new byte[data->size - 8];
-					fh->Read(data->data, data->size - 8, 1);
-					trigger->Actions[k] = data;
+            if(BlockCount==0)
+            {
+                LogSp(MSG_INFO, "Exporting %s :: 0 block", path);
+            }
+            else if (BlockCount==1)
+            {
+                LogSp(MSG_INFO, "Exporting %s :: 1 block", path);
+            }
+            else
+            {
+                LogSp(MSG_INFO, "Exporting %s :: %i blocks", path,BlockCount);
+            }
 
-                    /*
-					if(data->opcode==8)
-					{
-					    STR_REWD_008 * data8 = (STR_REWD_008 *)data->data;
-					    //Log(MSG_INFO,"%s has an action 8 monster %i",path,data8->iMonsterSN);
+            LogSp(MSG_INFO, "{");
 
-					    //if(data8->iMonsterSN>=3050&&data8->iMonsterSN<=3090)
-					    if(data8->iMonsterSN>=3040&&data8->iMonsterSN<=3041)
-                            Log(MSG_INFO,"%s has an action 8 monster=%i,btwho=%i,many=%i,range=%i,team=%i,iwho=%i,x=%i,y=%i,zone=%i",path,data8->iMonsterSN,data8->btWho,data8->iHowMany,data8->iRange,data8->iTeamNo,data8->iWho,data8->iX,data8->iY,data8->iZoneSN);
-					}
-					*/
+        }
 
+        fh->Seek(fh->Get<word>(), SEEK_CUR);
+        for(dword i = 0; i < BlockCount; i++)
+        {
+            dword RecordCount = fh->Get<dword>();
 
+            if(lma_export)
+            {
+                if(i>0)
+                    LogSp(MSG_INFO, "\t ");
 
-				}
-			}else{
-				trigger->Actions = NULL;
-			}
+                if(RecordCount==0)
+                {
+                    LogSp(MSG_INFO, "\t Block %i / %i :: 0 Function",i+1,BlockCount);
+                }
+                else if (RecordCount==1)
+                {
+                    LogSp(MSG_INFO, "\t Block %i / %i :: 1 Function",i+1,BlockCount);
+                }
+                else
+                {
+                    LogSp(MSG_INFO, "\t Block %i / %i :: %i Functions",i+1,BlockCount,RecordCount);
+                }
 
-			trigger->TriggerHash = MakeStrHash(trigger->TriggerName);
-			TriggerList.push_back( trigger );
-		}
-	}
-}else
-     Log( MSG_ERROR, "QSD File: '%s'", path );
+                LogSp(MSG_INFO, "\t {");
+
+            }
+
+            fh->Seek(fh->Get<word>(), SEEK_CUR);
+            for(dword j = 0; j < RecordCount; j++)
+            {
+                CQuestTrigger* trigger = new CQuestTrigger();
+                trigger->id=((index*0x10000)+(i*0x100)+j);
+                trigger->CheckNext = fh->Get<byte>();
+                trigger->ConditionCount = fh->Get<dword>();
+                trigger->ActionCount = fh->Get<dword>();
+
+                dword len = fh->Get<word>();
+                trigger->TriggerName = new char[len+1];
+                fh->Read(trigger->TriggerName, len, 1);
+                trigger->TriggerName[len] = 0;
+
+                if(lma_export)
+                {
+                    char bactions[20];
+                    char bconditions[20];
+
+                    if(trigger->ConditionCount==0)
+                    {
+                        sprintf(bconditions,"0 condition");
+                    }
+                    else if(trigger->ConditionCount==1)
+                    {
+                        sprintf(bconditions,"1 condition");
+                    }
+                    else
+                    {
+                        sprintf(bconditions,"%i conditions",trigger->ConditionCount);
+                    }
+
+                    if(trigger->ActionCount==0)
+                    {
+                        sprintf(bactions,"0 action");
+                    }
+                    else if(trigger->ActionCount==1)
+                    {
+                        sprintf(bactions,"1 action");
+                    }
+                    else
+                    {
+                        sprintf(bactions,"%i actions",trigger->ActionCount);
+                    }
+
+                    if(j>0)
+                        LogSp(MSG_INFO, "\t\t ");
+
+                    LogSp(MSG_INFO, "\t\t Function %i / %i (%s / %u) :: %s, %s",j+1,RecordCount,trigger->TriggerName,MakeStrHash(trigger->TriggerName),bconditions,bactions);
+                    LogSp(MSG_INFO, "\t\t {");
+                }
+
+                if(trigger->ConditionCount > 0)
+                {
+                    if(lma_export)
+                    {
+                        LogSp(MSG_INFO, "\t\t\t Conditions (%i)",trigger->ConditionCount);
+                        LogSp(MSG_INFO, "\t\t\t {");
+                    }
+
+                    trigger->Conditions = new CQuestTrigger::SQuestDatum*[trigger->ConditionCount];
+                    for(dword k = 0; k < trigger->ConditionCount; k++)
+                    {
+                        CQuestTrigger::SQuestDatum* data = new CQuestTrigger::SQuestDatum();
+                        data->size = fh->Get<int>();
+                        data->opcode = fh->Get<int>();
+                        data->data = new byte[data->size - 8];
+                        fh->Read(data->data, data->size - 8, 1);
+                        trigger->Conditions[k] = data;
+
+                        //LMA: Export
+                        if (lma_export)
+                        {
+                            //ExportQSDData(data->data,data->opcode,data->size,data);
+                            ExportQSDData(data->data,data->size,data->opcode);
+                        }
+
+                    }
+
+                    if(lma_export)
+                    {
+                        LogSp(MSG_INFO, "\t\t\t }");
+                    }
+
+                }
+                else
+                {
+                    if(lma_export)
+                    {
+                        LogSp(MSG_INFO, "\t\t\t 0 Condition");
+                    }
+
+                    trigger->Conditions = NULL;
+                }
+
+                if(trigger->ActionCount > 0)
+                {
+                    trigger->Actions = new CQuestTrigger::SQuestDatum*[trigger->ActionCount];
+                    if(lma_export)
+                    {
+                        LogSp(MSG_INFO, "\t\t\t Actions (%i)",trigger->ActionCount);
+                        LogSp(MSG_INFO, "\t\t\t {");
+                    }
+
+                    for(dword k = 0; k < trigger->ActionCount; k++)
+                    {
+                        CQuestTrigger::SQuestDatum* data = new CQuestTrigger::SQuestDatum();
+                        data->size = fh->Get<int>();
+                        data->opcode = fh->Get<int>() - 0x01000000;
+                        data->data = new byte[data->size - 8];
+                        fh->Read(data->data, data->size - 8, 1);
+                        trigger->Actions[k] = data;
+
+                        /*
+                        if(data->opcode==8)
+                        {
+                            STR_REWD_008 * data8 = (STR_REWD_008 *)data->data;
+                            //Log(MSG_INFO,"%s has an action 8 monster %i",path,data8->iMonsterSN);
+
+                            //if(data8->iMonsterSN>=3050&&data8->iMonsterSN<=3090)
+                            if(data8->iMonsterSN>=3040&&data8->iMonsterSN<=3041)
+                                Log(MSG_INFO,"%s has an action 8 monster=%i,btwho=%i,many=%i,range=%i,team=%i,iwho=%i,x=%i,y=%i,zone=%i",path,data8->iMonsterSN,data8->btWho,data8->iHowMany,data8->iRange,data8->iTeamNo,data8->iWho,data8->iX,data8->iY,data8->iZoneSN);
+                        }
+                        */
+
+                        //LMA: Export
+                        if (lma_export)
+                        {
+                            ExportQSDDataA(data->data,data->size,data->opcode);
+                        }
+
+                    }
+
+                    if(lma_export)
+                    {
+                        LogSp(MSG_INFO, "\t\t\t }");
+                    }
+
+                }
+                else
+                {
+                    if(lma_export)
+                    {
+                        LogSp(MSG_INFO, "\t\t\t 0 Action");
+                    }
+
+                    trigger->Actions = NULL;
+                }
+
+                trigger->TriggerHash = MakeStrHash(trigger->TriggerName);
+                TriggerList.push_back( trigger );
+
+                if(lma_export)
+                {
+                    LogSp(MSG_INFO, "\t\t ");
+                    LogSp(MSG_INFO, "\t\t }");
+                }
+
+            }
+
+            if(lma_export)
+            {
+                LogSp(MSG_INFO, "\t ");
+                LogSp(MSG_INFO, "\t }");
+            }
+
+        }
+
+        if(lma_export)
+        {
+            LogSp(MSG_INFO, " ");
+            LogSp(MSG_INFO, "}");
+        }
+
+    }
+    else
+    {
+         Log( MSG_ERROR, "QSD File: '%s'", path );
+    }
 
     fh->Close();
 	delete fh;
@@ -284,3 +455,842 @@ void CWorldServer::LoadQuestData()
 
 	delete stbQuest;
 }
+
+
+//LMA: Abilities
+char* CWorldServer::Abilities(int btOp,char* buffer)
+{
+    switch( btOp )
+    {
+        case sGender:
+            sprintf(buffer,"gender");
+            break;
+        case sFace:
+            sprintf(buffer,"face (NOT CODED)");
+            break;
+        case sJob:
+            sprintf(buffer,"job");
+            break;
+        case sUnion:
+            sprintf(buffer,"union");
+            break;
+        case 81:    //LMA: Union Points (no break, it's NOT a mistake)...
+            sprintf(buffer,"union points01");
+            break;
+        case 82:
+            sprintf(buffer,"union points02");
+            break;
+        case 83:
+            sprintf(buffer,"union points03");
+            break;
+        case 84:
+            sprintf(buffer,"union points04");
+            break;
+        case 85:
+            sprintf(buffer,"union points05");
+            break;
+        case sStrength:
+            sprintf(buffer,"strength");
+            break;
+        case sDexterity:
+            sprintf(buffer,"dexterity");
+            break;
+        case sIntelligence:
+            sprintf(buffer,"intelligence");
+            break;
+        case sConcentration:
+            sprintf(buffer,"concentration");
+            break;
+        case sCharm:
+            sprintf(buffer,"charm");
+            break;
+        case sSensibility:
+            sprintf(buffer,"sensibility");
+            break;
+        case sLevel:
+            sprintf(buffer,"level");
+            break;
+        case sStatPoints:
+            sprintf(buffer,"stat points");
+            break;
+        case sMoney:
+            sprintf(buffer,"money");
+            break;
+    case sEXPRate:
+            sprintf(buffer,"exp rate");
+            break;
+        default:
+            sprintf(buffer,"?%i?",btOp);
+            break;
+    }
+
+
+	return buffer;
+}
+
+//LMA: Operators
+char* CWorldServer::Operators(byte btOp,char* buffer)
+{
+	switch(btOp)
+	{
+		case 0:
+			sprintf(buffer,"==");
+			break;
+		case 1:
+			sprintf(buffer,">");
+			break;
+		case 2:
+			sprintf(buffer,">=");
+			break;
+		case 3:
+			sprintf(buffer,"<");
+			break;
+		case 4:
+			sprintf(buffer,"<=");
+			break;
+		case 5:
+			sprintf(buffer,"=");
+			break;
+		case 6:
+			sprintf(buffer,"+=");
+			break;
+		case 7:
+			sprintf(buffer,"-=");
+			break;
+		case 9:
+			sprintf(buffer,"++");
+			break;
+		case 10:
+			sprintf(buffer,"!=");
+			break;
+		default:
+			sprintf(buffer,"?%i?",btOp);
+			break;
+	}
+
+
+	return buffer;
+}
+
+
+//LMA: We export QSD Conditions here
+//void CWorldServer::ExportQSDData(byte* dataorg,int opcode,int size,CQuestTrigger::SQuestDatum* dataraw)
+void CWorldServer::ExportQSDData(byte* dataorg,int size,int opcode)
+{
+    char buffero[20];
+    char buffera[20];
+    UINT itemtype=0;
+    UINT itemnum=0;
+
+
+    //check Quest.
+    if(opcode==0)
+    {
+        STR_COND_000 * data = (STR_COND_000 *)dataorg;
+        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Check if Quest %i (%s) exists",opcode,data->iQuestSN,GServer->GetSTLQuestByID(data->iQuestSN));
+        return;
+    }
+
+    //check Quest Variable.
+    if(opcode==1)
+    {
+        STR_COND_001 * data = (STR_COND_001 *)dataorg;
+
+        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Check %i Player's quest vars",opcode,data->iDataCnt);
+        for (int i=0;i<data->iDataCnt;i++)
+        {
+            dword address = i * sizeof(STR_QUEST_DATA);
+            address += (dword)dataorg;
+            address += 4;
+            STR_QUEST_DATA* curQst = (STR_QUEST_DATA*)address;
+            LogSp(MSG_INFO,"\t\t\t\t\t\t |-> Var[0x%04x (%u)][%i] %s %i",curQst->m_wVarTYPE,curQst->m_wVarTYPE,curQst->m_wVarNO,Operators(curQst->btOp,buffero),curQst->nValue);
+        }
+
+        return;
+    }
+
+    //check Quest Variable (same as opcode 1)
+    if(opcode==2)
+    {
+        STR_COND_002 * data = (STR_COND_002 *)dataorg;
+
+        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Check %i Player's quest vars",opcode,data->iDataCnt);
+        for (int i=0;i<data->iDataCnt;i++)
+        {
+            dword address = i * sizeof(STR_QUEST_DATA);
+            address += (dword)dataorg;
+            address += 4;
+            STR_QUEST_DATA* curQst = (STR_QUEST_DATA*)address;
+            LogSp(MSG_INFO,"\t\t\t\t\t\t |-> Var[0x%04x (%u)][%i] %s %i",curQst->m_wVarTYPE,curQst->m_wVarTYPE,curQst->m_wVarNO,Operators(curQst->btOp,buffero),curQst->nValue);
+        }
+
+
+        return;
+    }
+
+    //check Stats
+    if(opcode==3)
+    {
+        STR_COND_003 * data = (STR_COND_003 *)dataorg;
+        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Check %i Player's stats",opcode,data->iDataCnt);
+
+        for(int i = 0; i < data->iDataCnt; i++)
+        {
+            dword address = i * 0x0C;
+            address += (dword)dataorg;
+            address += 4;
+            STR_ABIL_DATA* curAbil = (STR_ABIL_DATA*)address;
+            LogSp(MSG_INFO,"\t\t\t\t\t\t |-> Check Stat %s  %s %i",Abilities(curAbil->iType,buffera),Operators(curAbil->btOp,buffero),curAbil->iValue);
+        }
+
+
+        return;
+    }
+
+    //check items.
+    if(opcode==4)
+    {
+        STR_COND_004 * data = (STR_COND_004 *)dataorg;
+        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Check %i Player's items",opcode,data->iDataCnt);
+
+        for(int i = 0; i < data->iDataCnt; i++)
+        {
+            dword address = i * 0x10;
+            address += (dword)dataorg;
+            address += 4;
+            STR_ITEM_DATA* curItem = (STR_ITEM_DATA*)address;
+
+            itemtype=gi(curItem->uiItemSN,0);
+            itemnum=gi(curItem->uiItemSN,1);
+
+            if(curItem->iWhere!=13)
+            {
+                LogSp(MSG_INFO,"\t\t\t\t\t\t |-> Check Item %i (%i:%i, %s %s) %s %i",curItem->uiItemSN,itemtype,itemnum,GServer->GetSTLItemPrefix(itemtype,itemnum),GServer->GetSTLObjNameByID(itemtype,itemnum),Operators(curItem->btOp,buffero),curItem->iRequestCnt);
+            }
+            else
+            {
+                LogSp(MSG_INFO,"\t\t\t\t\t\t |-> Check Quest Item %i (%i:%i, %s %s) %s %i",curItem->uiItemSN,itemtype,itemnum,GServer->GetSTLItemPrefix(itemtype,itemnum),GServer->GetSTLObjNameByID(itemtype,itemnum),Operators(curItem->btOp,buffero),curItem->iRequestCnt);
+            }
+
+        }
+
+
+        return;
+    }
+
+    //check party
+    if(opcode==5)
+    {
+        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Check Party (NOT CODED)",opcode);
+        return;
+    }
+
+    //Near point
+    if(opcode==6)
+    {
+        STR_COND_006 * data = (STR_COND_006 *)dataorg;
+        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Player near point (%.2f,%.2f), map %i, distance < %i",opcode,(float)(data->iX / 100),(float)(data->iY / 100),data->iZoneSN,data->iRadius);
+        return;
+    }
+
+    //world time
+    if(opcode==7)
+    {
+        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: World time (NOT CODED)",opcode);
+        return;
+    }
+
+    //Quest Time
+    if(opcode==8)
+    {
+        STR_COND_008 * data = (STR_COND_008 *)dataorg;
+        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Check Player's quest time %s %u",opcode,Operators(data->btOp,buffero),data->ulTime);
+        return;
+    }
+
+    //Check Skill
+    if(opcode==9)
+    {
+        STR_COND_009 * data = (STR_COND_009 *)dataorg;
+
+
+        if(data->btOp)
+        {
+            LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Check if skill %i DOES exist",opcode,GServer->GetSTLSkillByID(data->iSkillSN1));
+        }
+        else
+        {
+            LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Check if skill %i  does NOT exist",opcode,GServer->GetSTLSkillByID(data->iSkillSN1));
+        }
+
+
+        return;
+    }
+
+    //Unknow
+    if(opcode==10)
+    {
+        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Unknown (NOT CODED)",opcode);
+        return;
+    }
+
+    //Object variable
+    if(opcode==11)
+    {
+        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Object variable (NOT CODED)",opcode);
+        return;
+    }
+
+    //execute trigger in zone
+    if(opcode==12)
+    {
+        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Execute trigger in zone (NOT CODED)",opcode);
+        return;
+    }
+
+    //Select NPC
+    if(opcode==13)
+    {
+        STR_COND_013 * data = (STR_COND_013 *)dataorg;
+        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Select NPC %i (%s)",opcode,data->iNpcNo,GServer->GetSTLMonsterNameByID(data->iNpcNo));
+        return;
+    }
+
+    //Check Quest Flag
+    if(opcode==14)
+    {
+        STR_COND_014 * data = (STR_COND_014 *)dataorg;
+        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Check Quest Flag[%i] == %i",opcode,data->nSN,data->btOp);
+        return;
+    }
+
+    //Unknow
+    if(opcode==15)
+    {
+        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Unknown (NOT CODED)",opcode);
+        return;
+    }
+
+    //Zone Time
+    if(opcode==16)
+    {
+        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Zone Time (NOT CODED)",opcode);
+        return;
+    }
+
+    //NPC & Obj Variables?
+    if(opcode==17)
+    {
+        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: NPC & Obj Variables? (NOT CODED)",opcode);
+        return;
+    }
+
+    //Time on Date
+    if(opcode==18)
+    {
+        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Time on Date (NOT CODED)",opcode);
+        return;
+    }
+
+    //Time on Day
+    if(opcode==19)
+    {
+        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Time on Day (NOT CODED)",opcode);
+        return;
+    }
+
+    //Unknow
+    if(opcode==20)
+    {
+        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Unknown (NOT CODED)",opcode);
+        return;
+    }
+
+    //Unknow
+    if(opcode==21)
+    {
+        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Unknown (NOT CODED)",opcode);
+        return;
+    }
+
+    //Check Server/Channel
+    if(opcode==22)
+    {
+        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Check Server/Channel (NOT CODED)",opcode);
+        return;
+    }
+
+    //In Clan
+    if(opcode==23)
+    {
+        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: In Clan (NOT CODED)",opcode);
+        return;
+    }
+
+    //Clan Position
+    if(opcode==24)
+    {
+        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Clan Position (NOT CODED)",opcode);
+        return;
+    }
+
+    //Clan Contribution
+    if(opcode==25)
+    {
+        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Clan Contribution (NOT CODED)",opcode);
+        return;
+    }
+
+    //Clan Funds
+    if(opcode==26)
+    {
+        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Clan Funds (NOT CODED)",opcode);
+        return;
+    }
+
+    //Clan Points
+    if(opcode==27)
+    {
+        STR_COND_027 * data = (STR_COND_027 *)dataorg;
+        switch(data->btOP)
+        {
+            case 0x01:
+            {
+                LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Updates Clan points on charserver (%u)",opcode,data->nPOINT);
+            }
+            break;
+            default:
+            {
+                LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: ?%i? Clan points?? (%u) (NOT CODED)",opcode,data->btOP,data->nPOINT);
+            }
+            break;
+        }
+
+
+        return;
+    }
+
+    //Clan Grade
+    if(opcode==28)
+    {
+        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Clan Grade (NOT CODED)",opcode);
+        return;
+    }
+
+    //Clan Members
+    if(opcode==29)
+    {
+        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Clan Members (NOT CODED)",opcode);
+        return;
+    }
+
+    //Clan Skills
+    if(opcode==30)
+    {
+        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Clan Skills (NOT CODED)",opcode);
+        return;
+    }
+
+    //Really unknown :)
+    LogSp(MSG_WARNING,"\t\t\t\t\t CDT %.3i: Impossible to export QSD opcode, size %u",opcode,size-8);
+
+
+    return;
+}
+
+
+
+//LMA: exporting QSD Actions
+void CWorldServer::ExportQSDDataA(byte* dataorg,int size,int opcode)
+{
+    char buffero[20];
+    char buffera[20];
+    char buffer[100];
+    UINT itemtype=0;
+    UINT itemnum=0;
+
+
+    //Update quest
+    if(opcode==0)
+    {
+        STR_REWD_000 * data = (STR_REWD_000 *)dataorg;
+
+        //0 remove, 1 start, 2 replace quest keep items, 3 replace quest delete items, 4 select
+        switch(data->btOp)
+        {
+            case 0:
+            {
+                sprintf(buffer,"delete");
+            }
+            break;
+            case 1:
+            {
+                sprintf(buffer,"start");
+            }
+            break;
+            case 2:
+            {
+                sprintf(buffer,"replace (keep items)");
+            }
+            break;
+            case 3:
+            {
+                sprintf(buffer,"replace (delete items)");
+            }
+            break;
+            case 4:
+            {
+                sprintf(buffer,"select");
+            }
+            break;
+            default:
+            {
+                sprintf(buffer,"?%i?",data->btOp);
+            }
+            break;
+        }
+
+        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: %s quest %i (%s)",opcode,buffer,data->iQuestSN,GServer->GetSTLQuestByID(data->iQuestSN));
+
+
+        return;
+    }
+
+    //Update quest items
+    if(opcode==1)
+    {
+        STR_REWD_001 * data = (STR_REWD_001 *)dataorg;
+
+        //0 remove, 1 start, 2 replace quest keep items, 3 replace quest delete items, 4 select
+        switch(data->btOp)
+        {
+            case 0:
+            {
+                sprintf(buffer,"delete");
+            }
+            break;
+            case 1:
+            {
+                sprintf(buffer,"add");
+            }
+            break;
+            default:
+            {
+                sprintf(buffer,"?%i?",data->btOp);
+            }
+            break;
+        }
+
+        itemtype=gi(data->uiItemSN,0);
+        itemnum=gi(data->uiItemSN,1);
+
+        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: current quest: %s %i items %u (%i:%i, %s %s)",opcode,buffer,data->nDupCNT,data->uiItemSN,itemtype,itemnum,GServer->GetSTLItemPrefix(itemtype,itemnum),GServer->GetSTLObjNameByID(itemtype,itemnum));
+
+
+        return;
+    }
+
+    //Set quest variable
+    if(opcode==2)
+    {
+        STR_REWD_002 * data = (STR_REWD_002 *)dataorg;
+
+        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: set %i Quest Variables",opcode,data->iDataCnt);
+
+        for(dword i = 0; i < data->iDataCnt; i++)
+        {
+            dword address = i * sizeof(STR_QUEST_DATA);
+            address += (dword)dataorg;
+            address += 4;
+            STR_QUEST_DATA* curQst = (STR_QUEST_DATA*)address;
+            LogSp(MSG_INFO,"\t\t\t\t\t\t |-> Set Quest Var[0x%04x (%u)][%i] %s %i",curQst->m_wVarTYPE,curQst->m_wVarTYPE,curQst->m_wVarNO,Operators(curQst->btOp,buffero),curQst->nValue);
+        }
+
+
+        return;
+    }
+
+
+    //Udapte Stats
+    if(opcode==3)
+    {
+        STR_REWD_003 * data = (STR_REWD_003 *)dataorg;
+        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Update %i Stats",opcode,data->iDataCnt);
+
+        for(dword i = 0; i < data->iDataCnt; i++)
+        {
+            dword address = i * 0x0C;
+            address += (dword)dataorg;
+            address += 4;
+            STR_ABIL_DATA* curAbil = (STR_ABIL_DATA*)address;
+            LogSp(MSG_INFO,"\t\t\t\t\t\t |-> Set Stat %s  %s %i",Abilities(curAbil->iType,buffera),Operators(curAbil->btOp,buffero),curAbil->iValue);
+        }
+
+
+        return;
+    }
+
+    //Set quest variable
+    if(opcode==4)
+    {
+        STR_REWD_004 * data = (STR_REWD_004 *)dataorg;
+
+        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: set %i Quest Variables",opcode,data->iDataCnt);
+
+        for(dword i = 0; i < data->iDataCnt; i++)
+        {
+            dword address = i * sizeof(STR_QUEST_DATA);
+            address += (dword)dataorg;
+            address += 4;
+            STR_QUEST_DATA* curQst = (STR_QUEST_DATA*)address;
+            LogSp(MSG_INFO,"\t\t\t\t\t\t |-> Set Quest Var[0x%04x (%u)][%i] %s %i",curQst->m_wVarTYPE,curQst->m_wVarTYPE,curQst->m_wVarNO,Operators(curQst->btOp,buffero),curQst->nValue);
+        }
+
+
+        return;
+    }
+
+    //Give reward
+    if(opcode==5)
+    {
+        STR_REWD_005 * data = (STR_REWD_005 *)dataorg;
+
+        switch(data->btTarget)
+        {
+            case 0://EXP
+                {
+                    LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Give %u Exp",opcode,data->iValue);
+                }
+                break;
+            case 1://Zuly
+                {
+                    LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Give %u Zuly",opcode,data->iValue);
+                }
+                break;
+            case 2://Item
+                {
+                    CItem nItem;
+                    itemtype=gi(data->iItemSN,0);
+                    itemnum=gi(data->iItemSN,1);
+
+                    nItem.itemtype = itemtype;
+                    nItem.itemnum = itemnum;
+
+                    if(nItem.IsStackable())
+                    {
+                        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Give %i (+formula()) item %u (%i:%i, %s %s)",opcode,data->iValue,data->iItemSN,nItem.itemtype,nItem.itemnum,GServer->GetSTLItemPrefix(itemtype,itemnum),GServer->GetSTLObjNameByID(nItem.itemtype,nItem.itemnum));
+                    }
+                    else
+                    {
+                        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Give 1 item %u (%i:%i, %s %s)",opcode,data->iItemSN,nItem.itemtype,nItem.itemnum,GServer->GetSTLItemPrefix(itemtype,itemnum),GServer->GetSTLObjNameByID(nItem.itemtype,nItem.itemnum));
+                    }
+
+                }
+                break;
+            default:
+            {
+                LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Give Unknown reward %i, item %u, count / value %u",opcode,data->btTarget,data->iItemSN,data->iValue);
+            }
+            break;
+
+        }
+
+
+        return;
+    }
+
+    //restore HP / MP
+    if(opcode==6)
+    {
+        STR_REWD_006 * data = (STR_REWD_006 *)dataorg;
+        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Restore %i%% HP, %i%% MP",opcode,data->iPercentOfHP, data->iPercentOfMP);
+        return;
+    }
+
+    //teleport
+    if(opcode==7)
+    {
+        STR_REWD_007 * data = (STR_REWD_007 *)dataorg;
+        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Teleport to map %i at (%.2f,%.2f)",opcode,data->iZoneSN,(float)(data->iX/100),(float)(data->iY/100));
+        return;
+    }
+
+    //Spawn monster
+    if(opcode==8)
+    {
+        STR_REWD_008 * data = (STR_REWD_008 *)dataorg;
+
+        if(data->iX==0||data->iY==0||data->iZoneSN==0)
+        {
+            LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Spawn %i monsters %i (%s) near me",opcode,data->iHowMany,data->iMonsterSN,GServer->GetSTLMonsterNameByID(data->iMonsterSN));
+        }
+        else
+        {
+            LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Spawn %i monsters %i (%s) to map %i at (%.2f,%.2f)",opcode,data->iHowMany,data->iMonsterSN,GServer->GetSTLMonsterNameByID(data->iMonsterSN),data->iZoneSN,(float)(data->iX/100),(float)(data->iY/100));
+        }
+
+        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Teleport to map %i at (%.2f,%.2f)",opcode,data->iZoneSN,(float)(data->iX/100),(float)(data->iY/100));
+        return;
+    }
+
+    //Execute Quest Trigger
+    if(opcode==9)
+    {
+        STR_REWD_009 * data = (STR_REWD_009 *)dataorg;
+        char* tempName = reinterpret_cast<char*>(&data->szNextTriggerSN) - 2;
+        dword hash = MakeStrHash(tempName);
+        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Execute Quest Trigger %s (%u)",opcode,tempName,hash);
+        return;
+    }
+
+    //Reset Stats.
+    if(opcode==10)
+    {
+        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Reset Stats to default values",opcode);
+        return;
+    }
+
+    //Update Object Var..
+    if(opcode==11)
+    {
+        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Update Object Var (NOT CODED)",opcode);
+        return;
+    }
+
+    //NPC Speak...
+    if(opcode==12)
+    {
+        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: NPC Speak (NOT CODED)",opcode);
+        return;
+    }
+
+    //Unknown...
+    if(opcode==13)
+    {
+        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Unknown (NOT CODED)",opcode);
+        return;
+    }
+
+    //Learn Skill
+    if(opcode==14)
+    {
+        STR_REWD_014 * data = (STR_REWD_014 *)dataorg;
+        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Learn Skill %i (%s)",opcode,data->iSkillNo,GServer->GetSTLSkillByID(data->iSkillNo));
+        return;
+    }
+
+    //Set Quest Flag
+    if(opcode==15)
+    {
+        STR_REWD_015 * data = (STR_REWD_015 *)dataorg;
+        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Set Quest Flag[%u]=%i",opcode,data->nSN,data->btOp);
+        return;
+    }
+
+    //Unknown...
+    if(opcode==16)
+    {
+        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Unknown (NOT CODED)",opcode);
+        return;
+    }
+
+    //reset all quest flags...
+    if(opcode==17)
+    {
+        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Reset All Quest Flags",opcode);
+        return;
+    }
+
+    //Send Announcment...
+    if(opcode==18)
+    {
+        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Send Announcment (NOT CODED)",opcode);
+        return;
+    }
+
+    //Execute Quest Trigger in Other Map...
+    if(opcode==19)
+    {
+        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Execute Quest Trigger in Other Map (NOT CODED)",opcode);
+        return;
+    }
+
+    //PvP Status...
+    if(opcode==20)
+    {
+        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: PvP Status (NOT CODED)",opcode);
+        return;
+    }
+
+    //Set Respawn Position...
+    if(opcode==21)
+    {
+        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Set Respawn Position (NOT CODED)",opcode);
+        return;
+    }
+
+    //Unknown...
+    if(opcode==22)
+    {
+        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Unknown (NOT CODED)",opcode);
+        return;
+    }
+
+    //Raise Clan Grade
+    if(opcode==23)
+    {
+        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Raise clan grade (+1) (NOT FULLY CODED) ",opcode);
+        return;
+    }
+
+    //Clan Money...
+    if(opcode==24)
+    {
+        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Clan Money (NOT CODED)",opcode);
+        return;
+    }
+
+    //Clan Points...
+    if(opcode==25)
+    {
+        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Clan Points (NOT CODED)",opcode);
+        return;
+    }
+
+    //Clan Skill...
+    if(opcode==26)
+    {
+        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Clan Skill (NOT CODED)",opcode);
+        return;
+    }
+
+    //Clan Contribution...
+    if(opcode==27)
+    {
+        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Clan Contribution (NOT CODED)",opcode);
+        return;
+    }
+
+    //Clan teleport
+    if(opcode==28)
+    {
+        STR_REWD_028 * data = (STR_REWD_028 *)dataorg;
+
+        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Teleport all me and my clan members to map %i at (%.2f,%.2f) random range %i ",opcode,data->nZoneNo,(float)(data->iX/100),(float)(data->iY/100),data->iRange);
+        return;
+    }
+
+    //Unspawn a NPC
+    if(opcode==34)
+    {
+        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Removing previously selected NPC.",opcode);
+        return;
+    }
+
+    //Really unknown :)
+    LogSp(MSG_WARNING,"\t\t\t\t\t ACT %.3i: Impossible to export QSD opcode, size %u",opcode,size-8);
+
+
+    return;
+}
+

@@ -629,7 +629,7 @@ AIACT(015)
 AIACT(015)
 {
     //Run and attack "m_pDestCHAR" Blah?
-        Log(MSG_DEBUG, "AIACT(015)");
+    Log(MSG_DEBUG, "AIACT(015)");
     CMonster* monster = reinterpret_cast<CMonster*>(entity);
     if(monster->thisnpc->aggresive == 0)
     {
@@ -1155,7 +1155,7 @@ AIACT(028)
         {
             //Log(MSG_INFO,"AIP NPC %s (%i) shouts to map.",GServer->GetNPCNameByType(thisMonster->aip_npctype),thisMonster->aip_npctype);
             //GServer->NPCShout(thisMonster,GServer->Ltbstring[data->iStrID]->LTBstring,GServer->Ltbstring[data->iStrID]->NPCname);
-            GServer->NPCShout(thisMonster,GServer->LtbstringQSD[data->iStrID]->LTBstring,GServer->GetNPCNameByType(thisMonster->aip_npctype));
+            GServer->NPCShout(thisMonster,GServer->Ltbstring[data->iStrID]->LTBstring,GServer->GetNPCNameByType(thisMonster->aip_npctype));
         }
         break;
         case 2: //announce to server.

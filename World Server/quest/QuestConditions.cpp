@@ -44,7 +44,8 @@ QUESTCOND(000){
 QUESTCOND(001){
     GETCONDDATA(001);
 	int retVal = 1;
-	for(int i = 0; i < data->iDataCnt; i++) {
+	for(int i = 0; i < data->iDataCnt; i++)
+	{
 		dword address = i * sizeof(STR_QUEST_DATA);
 		address += (dword)data;
 		address += 4;

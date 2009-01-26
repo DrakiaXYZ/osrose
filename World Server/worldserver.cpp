@@ -372,12 +372,12 @@ bool CWorldServer::OnServerReady( )
     // end of new drops data
 
     //LoadChestData( ); //LMA: loaded now by STB in LoadBreakChestBlueList.
-    LoadQuestData( );
     // PY custom events start
     LoadCustomTeleGate( );
     LoadCustomEvents( );
     // PY custom events end
     LoadNPCData( );
+    LoadQuestItemData( );
     LoadTeleGateData( );
     LoadRespawnData( );
     LoadMobGroups( );
@@ -387,6 +387,7 @@ bool CWorldServer::OnServerReady( )
     LoadMonsters( );
     LoadUpgrade( );
     LoadLTB();  //LMA: Loading LTB for AIP.
+    LoadQuestData( );
     LoadAipData();  //LMA: loading AIP.
     CleanConnectedList( );
 

@@ -523,7 +523,8 @@ CNPC* CWorldServer::GetNPCByID( UINT id, UINT map )
 	return NULL;
 }
 
-//LMA: getting the npc name.
+//LMA: getting the npc name (MySQL).
+//This one is npctype!
 char* CWorldServer::GetNPCNameByType(UINT id)
 {
     if(NpcNameList.find(id)==NpcNameList.end())
@@ -532,10 +533,248 @@ char* CWorldServer::GetNPCNameByType(UINT id)
         return "";
     }
 
-    Log(MSG_INFO,"npc %i found %s",id,NpcNameList[id]);
+    //Log(MSG_INFO,"npc %i found %s",id,NpcNameList[id]);
 
 
     return NpcNameList[id];
+}
+
+//LMA: getting the npc name or monster name by STL.
+//We get an ID here, NOT the STL value !
+char* CWorldServer::GetSTLMonsterNameByID(UINT idorg)
+{
+    if (idorg>maxNPC)
+    {
+        Log(MSG_WARNING,"STLNPCMONSTER, incorrect id %u>%u",idorg,maxNPC);
+        return STLNameList[1];
+    }
+
+    UINT id=NPCData[idorg]->STLId;
+
+    if(id==0)
+    {
+        return STLNameList[0];
+    }
+
+    UINT idu=15*100000+id;
+
+    if(STLNameList.find(idu)==STLNameList.end())
+    {
+        Log(MSG_INFO,"[STL] npc or monster STLID %i (Id %i) not found",id,idorg);
+        return STLNameList[0];
+    }
+
+    //Log(MSG_INFO,"[STL] npc or monster %i found %s",id,STLNameList[idu]);
+
+
+    return STLNameList[idu];
+}
+
+
+//LMA: getting a skill name by STL :).
+//We get an ID here, NOT the STL value !
+char* CWorldServer::GetSTLSkillByID(UINT idorg)
+{
+
+    if (idorg>maxSkills)
+    {
+        Log(MSG_WARNING,"STLSkill, incorrect id %i",idorg);
+        return STLNameList[1];
+    }
+
+    UINT id=SkillList[idorg]->STLId;
+    if(id==0)
+    {
+        return STLNameList[0];
+    }
+
+    UINT idu=17*100000+id;
+
+    if(STLNameList.find(idu)==STLNameList.end())
+    {
+        Log(MSG_INFO,"[STL] Skill %i not found",id);
+        return STLNameList[0];
+    }
+
+    //Log(MSG_INFO,"[STL] Skill %i found %s",id,STLNameList[idu]);
+
+
+    return STLNameList[idu];
+}
+
+//LMA: getting a quest name by STL :).
+//We get an ID here, NOT the STL value !
+char* CWorldServer::GetSTLQuestByID(UINT idorg)
+{
+
+    if (idorg>STB_QUEST.rowcount)
+    {
+        Log(MSG_WARNING,"STLQuest, incorrect id %u>%u",idorg,STB_QUEST.rowcount);
+        return STLNameList[1];
+    }
+
+    UINT id=STB_QUEST.rows[idorg][4];
+    if(id==0)
+    {
+        return STLNameList[0];
+    }
+
+    UINT idu=18*100000+id;
+
+    if(STLNameList.find(idu)==STLNameList.end())
+    {
+        Log(MSG_INFO,"[STL] Quest %i not found",id);
+        return STLNameList[0];
+    }
+
+    //Log(MSG_INFO,"[STL] Quest %i found %s",id,STLNameList[idu]);
+
+
+    return STLNameList[idu];
+}
+
+
+//LMA: We get an item prefix (STL)
+char* CWorldServer::GetSTLItemPrefix(int family,UINT idorg)
+{
+    UINT id=0;
+
+
+    if(family<=0||family>=15)
+    {
+        return STLNameList[1];
+    }
+
+    //no prefix for them.
+    if(family>=10||family==7)
+    {
+        return "";
+    }
+
+    if(family>=1&&family<=9)
+    {
+        if(idorg>EquipList[family].max)
+        {
+            Log(MSG_WARNING,"STLObject, incorrect object %i:%i",family,idorg);
+            return STLNameList[1];
+        }
+
+        id=EquipList[family].Index[idorg]->STLPrefix;
+    }
+
+    if(id==0)
+    {
+        return "";
+    }
+
+    UINT idu=16*100000+idorg;
+
+    if(STLNameList.find(idu)==STLNameList.end())
+    {
+        Log(MSG_INFO,"[STL] itemprefix %i not found",id);
+        return STLNameList[0];
+    }
+
+    //Log(MSG_INFO,"[STL] itemprefix %i found %s",id,STLNameList[idu]);
+
+
+    return STLNameList[idu];
+}
+
+//LMA: getting an object name by STL.
+//We get an ID here, NOT the STL value !
+char* CWorldServer::GetSTLObjNameByID(UINT family, UINT idorg)
+{
+    UINT id=0;
+
+    if(family<=0||family>=15)
+    {
+        return STLNameList[1];
+    }
+
+    if(family>=1&&family<=9)
+    {
+        if(idorg>EquipList[family].max)
+        {
+            Log(MSG_WARNING,"STLObject, incorrect object %i:%i",family,idorg);
+            return STLNameList[1];
+        }
+
+        id=EquipList[family].Index[idorg]->STLId;
+    }
+
+    if(family==10)
+    {
+        if(idorg>UseList.max)
+        {
+            Log(MSG_WARNING,"STLObject, incorrect object %i:%i",family,idorg);
+            return STLNameList[1];
+        }
+
+        id=UseList.Index[idorg]->STLId;
+    }
+
+    if(family==11)
+    {
+        if(idorg>JemList.max)
+        {
+            Log(MSG_WARNING,"STLObject, incorrect object %i:%i",family,idorg);
+            return STLNameList[1];
+        }
+
+        id=JemList.Index[idorg]->STLId;
+    }
+
+    if(family==12)
+    {
+        if(idorg>NaturalList.max)
+        {
+            Log(MSG_WARNING,"STLObject, incorrect object %i:%i",family,idorg);
+            return STLNameList[1];
+        }
+
+        id=NaturalList.Index[idorg]->STLId;
+    }
+
+    if(family==13)
+    {
+        if(idorg>maxQuestItems)
+        {
+            Log(MSG_WARNING,"STLObject, incorrect object %i:%i",family,idorg);
+            return STLNameList[1];
+        }
+
+        id=QuestItemData[idorg]->STLId;
+    }
+
+    if(family==14)
+    {
+        if(idorg>PatList.max)
+        {
+            Log(MSG_WARNING,"STLObject, incorrect object %i:%i",family,idorg);
+            return STLNameList[1];
+        }
+
+        id=PatList.Index[idorg]->STLId;
+    }
+
+    if(id==0)
+    {
+        return STLNameList[0];
+    }
+
+    UINT idu=family*100000+id;
+
+    if(STLNameList.find(idu)==STLNameList.end())
+    {
+        Log(MSG_INFO,"[STL] object %i:%i not found",family,id);
+        return STLNameList[0];
+    }
+
+    //Log(MSG_INFO,"[STL] object %i:%i found, %s",family,id,STLNameList[idu]);
+
+
+    return STLNameList[idu];
 }
 
 // Get Telegate by ID
@@ -1822,4 +2061,93 @@ void CWorldServer::SendToAllInMap( CPacket* pak, int mapid)
             otherclient->client->SendPacket( pak );
     }
 
+}
+
+//return itemtype or itemnum
+UINT CWorldServer::gi(UINT itemvalue, short type)
+{
+    UINT itemtype=0;
+    UINT itemnum=0;
+
+
+    itemtype= itemvalue/1000;
+    if (itemtype>=1&&itemtype<=14)
+    {
+        itemnum=itemvalue % 1000;
+        if(type==0)
+        {
+            return itemtype;
+        }
+
+        return itemnum;
+    }
+
+    if(itemtype==0)
+    {
+        itemtype=itemvalue/100;
+        if (itemtype>=1&&itemtype<=14)
+        {
+            itemnum=itemvalue % 100;
+            if(type==0)
+            {
+                return itemtype;
+            }
+
+            return itemnum;
+        }
+
+        if(itemtype==0)
+        {
+            itemtype=itemvalue/10;
+            if (itemtype>=1&&itemtype<=14)
+            {
+                itemnum=itemvalue % 10;
+                if(type==0)
+                {
+                    return itemtype;
+                }
+
+                return itemnum;
+            }
+
+        }
+
+        if(itemtype==0)
+        {
+            Log(MSG_WARNING,"Impossible to get an item from %u",itemvalue);
+            return 0;
+        }
+
+    }
+
+    itemtype= itemvalue/100000;
+    if (itemtype>=1&&itemtype<=14)
+    {
+        itemnum=itemvalue % 100000;
+        if(type==0)
+        {
+            return itemtype;
+        }
+
+        return itemnum;
+    }
+
+
+    //LMA: who wants to be a milionnaire? ^_^
+    itemtype= itemvalue/1000000;
+    if (itemtype>=1&&itemtype<=14)
+    {
+        itemnum=itemvalue % 1000000;
+        if(type==0)
+        {
+            return itemtype;
+        }
+
+        return itemnum;
+    }
+
+    Log(MSG_WARNING,"Impossible to get an item from %u",itemvalue);
+
+
+    return 0;
 }

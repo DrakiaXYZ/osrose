@@ -34,6 +34,9 @@ UINT fskill=0;
 // Main server function
 int main(int argc, char *argv[])
 {
+	//LMA: Opening log.
+	LogHandleSp(1);
+
     srand( (unsigned)time(NULL) );
     srand( rand()*time(NULL) );
 
@@ -85,6 +88,10 @@ int main(int argc, char *argv[])
 	Log(MSG_INFO, "Cleaning memory, please wait..." );
 	delete server;
 	server = NULL;
+
+	//LMA: closing log.
+	LogHandleSp(0);
+
 	return EXIT_SUCCESS;
 }
 

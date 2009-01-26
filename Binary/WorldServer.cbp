@@ -95,6 +95,8 @@
 		<Unit filename="..\World Server\startup.cpp" />
 		<Unit filename="..\World Server\stbhandler.cpp" />
 		<Unit filename="..\World Server\stbhandler.h" />
+		<Unit filename="..\World Server\stlhandler.cpp" />
+		<Unit filename="..\World Server\stlhandler.h" />
 		<Unit filename="..\World Server\worldmap.cpp" />
 		<Unit filename="..\World Server\worldmap.h" />
 		<Unit filename="..\World Server\worldpackets.cpp" />

@@ -226,14 +226,24 @@ bool CWorldServer::CheckABuffs( CSkills* thisskill, CCharacter* character, int E
             case 54: //A_GMExtra_Damage:    // this isn't going to work at all the way it is written. the buff is in skill power, not buffs
             case 83: //Valkyrie Charm:
             {
+                /*
                  CBValue BuffValue = GetBuffValue( thisskill, character, Evalue, i,
                                                 character->Status->ExtraDamage_up,
                                                 character->Status->ExtraDamage_down,
                                                 character->Stats->ExtraDamage, true );
-                 if(BuffValue.NewValue!=0)
+                */
+                //LMA: fix by sickb0y
+                 CBValue BuffValue = GetBuffValue( thisskill, character, Evalue, i,
+                                                character->Status->ExtraDamage_up,
+                                                character->Status->ExtraDamage_down,true);
+
+                if(BuffValue.NewValue!=0)
                 {
                     UINT j = BuffValue.Position;
-                    character->Stats->ExtraDamage = thisskill->atkpower;
+
+                    //LMA: fix by sickb0y
+                    //character->Stats->ExtraDamage = thisskill->atkpower;
+
                     if(j<15)
                         character->Status->ExtraDamage_up = j;
                     else

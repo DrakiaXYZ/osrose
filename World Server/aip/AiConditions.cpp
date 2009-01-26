@@ -967,3 +967,9 @@ AICOND(030)
 {
 	return AI_FAILURE;
 }
+
+//LMA: Unknown and emtpy...
+AICOND(031)
+{
+	return AI_SUCCESS;
+}

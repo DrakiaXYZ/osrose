@@ -75,4 +75,10 @@ enum msg_type {
 // Logging function
 void Log( msg_type flag, char* Format, ... );
 
+
+extern FILE *fhSp1;
+void LogSp( enum msg_type flag, char *Format, ... );
+void LogHandleSp(int type);
+
+
 #endif

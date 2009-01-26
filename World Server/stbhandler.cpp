@@ -1,3 +1,24 @@
+/*
+    Rose Online Server Emulator
+    Copyright (C) 2006,2007,2008 OSRose Team http://www.dev-osrose.com
+
+    This program is free software; you can redistribute it and/or
+    modify it under the terms of the GNU General Public License
+    as published by the Free Software Foundation; either version 2
+    of the License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+    depeloped with Main erose/hrose source server + some change from the original eich source
+*/
+
 // Written by Brett19
 #include "worldserver.h"
 
@@ -27,10 +48,26 @@ int STBStoreData( char* filename, CSTBData* data )
 		int* tmp = new int[data->rowcount*data->fieldcount];
 		data->rows = new int*[data->rowcount];
 		for( unsigned i = 0; i < data->rowcount; i++ ) data->rows[i] = &tmp[i*data->fieldcount];
-		for( unsigned j = 0; j < data->rowcount*data->fieldcount; j++ ) {
+		for( unsigned j = 0; j < data->rowcount*data->fieldcount; j++ )
+		{
 			fread( &fieldlen, 2, 1, fh );
 			fread( tmpfield, 1, fieldlen, fh );
 			tmpfield[fieldlen]=0;
+
+			//LMA: to get STL Id's as well.
+			if (fieldlen>3&&tmpfield[0]==76)
+			{
+
+                for(int w=0;w<fieldlen;w++)
+                {
+                    if(tmpfield[w]>=48&&tmpfield[w]<=57)
+                        break;
+                    tmpfield[w]=48;
+                }
+
+			}
+			//LMA: end.
+
 			tmp[j] = atoi( tmpfield );
 		}
 		fclose( fh );

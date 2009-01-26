@@ -1080,12 +1080,36 @@ void CCharacter::UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff )
         Enemy->MagicStatus[Enemy->Status->Sleep].Duration = 0;
     }
 
+    //LMA: patch by sickb0y
+    //Problems with some mage skills.
+    /*
     BEGINPACKET( pak, 0x7b6 );
     ADDWORD    ( pak, Enemy->clientid );
     ADDWORD    ( pak, clientid );
     ADDDWORD   ( pak, 0x000007f8 );
     ADDBYTE    ( pak, 0x00 );
     ADDDWORD   ( pak, skillpower );
+    */
+
+    unsigned short command = (skill->skilltype == 6 || skill->skilltype == 9) ? 0x799 : 0x7b6;
+    BEGINPACKET( pak, command );
+
+    if(command == 0x799)
+    {
+        ADDWORD    ( pak, clientid );
+        ADDWORD    ( pak, Enemy->clientid );
+        ADDDWORD   ( pak, skillpower );
+    }
+    else
+    {
+        ADDWORD    ( pak, Enemy->clientid );
+        ADDWORD    ( pak, clientid );
+        ADDDWORD   ( pak, 0x000007f8 );
+        ADDBYTE    ( pak, 0x00 );
+        ADDDWORD   ( pak, skillpower );
+    }
+
+    //end of patch
 
     //If Enemy is killed
     if(Enemy->IsDead())

@@ -34,9 +34,9 @@ AICOND(018);AICOND(019);AICOND(020);
 AICOND(021);AICOND(022);AICOND(023);
 AICOND(024);AICOND(025);AICOND(026);
 AICOND(027);AICOND(028);AICOND(029);
-AICOND(030);
+AICOND(030);AICOND(031);
 
-#define AI_COND_COUNT 31
+#define AI_COND_COUNT 32
 
 struct STR_AI_COND_000 {
 	//Hold or Attack (0x04 bytes)
@@ -248,4 +248,8 @@ struct STR_AI_COND_029 {
 struct STR_AI_COND_030 {
 	//Unknown (0x04 bytes)
 	dword Unknown;	//Pos: 0x00
+};
+
+//LMA: Unknown and empty :)
+struct STR_AI_COND_031 {
 };

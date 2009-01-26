@@ -77,7 +77,67 @@ bool CWorldServer::LoadSTBData( )
         STBStoreData("3DData\\STB\\LIST_BREAK.STB", &BreakData);    //LMA: for break and chest and blue break.
     }
 
+    //LMA: Loading STL too :)
+    Log( MSG_LOAD, "STL Data             " );
+    if(Config.is_pegasus==1)
+    {
+        STLStoreData( "3DDataPeg\\STB\\LIST_FACEITEM_S.STL", 1 );
+        STLStoreData( "3DDataPeg\\STB\\LIST_CAP_S.STL", 2 );
+        STLStoreData( "3DDataPeg\\STB\\LIST_BODY_S.STL", 3 );
+        STLStoreData( "3DDataPeg\\STB\\LIST_ARMS_S.STL", 4 );
+        STLStoreData( "3DDataPeg\\STB\\LIST_FOOT_S.STL", 5 );
+        STLStoreData( "3DDataPeg\\STB\\LIST_BACK_S.STL", 6 );
+        STLStoreData( "3DDataPeg\\STB\\LIST_JEWEL_S.STL", 7 );
+        STLStoreData( "3DDataPeg\\STB\\LIST_WEAPON_S.STL", 8 );
+        STLStoreData( "3DDataPeg\\STB\\LIST_SUBWPN_S.STL", 9 );
+        STLStoreData( "3DDataPeg\\STB\\LIST_USEITEM_S.STL", 10 );
+        STLStoreData( "3DDataPeg\\STB\\LIST_JEMITEM_S.STL", 11 );
+        STLStoreData( "3DDataPeg\\STB\\LIST_NATURAL_S.STL", 12 );
+        STLStoreData( "3DDataPeg\\STB\\LIST_QUESTITEM_S.STL", 13 );
+        STLStoreData( "3DDataPeg\\STB\\LIST_PAT_S.STL", 14 );
+        STLStoreData( "3DDataPeg\\STB\\LIST_NPC_S.STL", 15 );
+        STLStoreData( "3DDataPeg\\STB\\STR_ITEMPREFIX.STL", 16 );
+        STLStoreData( "3DDataPeg\\STB\\LIST_SKILL_S.STL", 17 ); //Skills take a lot
+        STLStoreData( "3DDataPeg\\STB\\LIST_QUEST_S.STL",19);
+    }
+    else
+    {
+        STLStoreData( "3DData\\STB\\LIST_FACEITEM_S.STL", 1 );
+        STLStoreData( "3DData\\STB\\LIST_CAP_S.STL", 2 );
+        STLStoreData( "3DData\\STB\\LIST_BODY_S.STL", 3 );
+        STLStoreData( "3DData\\STB\\LIST_ARMS_S.STL", 4 );
+        STLStoreData( "3DData\\STB\\LIST_FOOT_S.STL", 5 );
+        STLStoreData( "3DData\\STB\\LIST_BACK_S.STL", 6 );
+        STLStoreData( "3DData\\STB\\LIST_JEWEL_S.STL", 7 );
+        STLStoreData( "3DData\\STB\\LIST_WEAPON_S.STL", 8 );
+        STLStoreData( "3DData\\STB\\LIST_SUBWPN_S.STL", 9 );
+        STLStoreData( "3DData\\STB\\LIST_USEITEM_S.STL", 10 );
+        STLStoreData( "3DData\\STB\\LIST_JEMITEM_S.STL", 11 );
+        STLStoreData( "3DData\\STB\\LIST_NATURAL_S.STL", 12 );
+        STLStoreData( "3DData\\STB\\LIST_QUESTITEM_S.STL", 13 );
+        STLStoreData( "3DData\\STB\\LIST_PAT_S.STL", 14 );
+        STLStoreData( "3DData\\STB\\LIST_NPC_S.STL", 15 );
+        STLStoreData( "3DData\\STB\\STR_ITEMPREFIX.STL", 16 );
+        STLStoreData( "3DData\\STB\\LIST_SKILL_S.STL", 17 );
+        STLStoreData( "3DData\\STB\\LIST_QUEST_S.STL",18);
+    }
 
+    //adding some special values :)
+    STLNameList[0]="No STL";
+    STLNameList[1]="STL Error";
+
+    //LMA: exporting to test ;)
+    /*
+    map <UINT, char*>::iterator itr;
+    for(itr = STLNameList.begin(); itr != STLNameList.end(); ++itr)
+    {
+        //cout << "Key: " << (*itr).first << " Value: " << (*itr).second;
+        Log(MSG_INFO,"STL Id %u, text: %s",itr->first,itr->second);
+    }
+    */
+
+
+    return true;
 }
 
 //LMA: loading LTB (for AIP)
@@ -163,6 +223,10 @@ bool CWorldServer::InitDefaultValues()
     //LMA: hard for now...
     MapList.Index = new CMap*[300];
     MapList.max=300;
+
+    //LMA: adding questItems too
+    QuestItemData=new CQuestItemData*[STB_ITEM[12].rowcount];
+    maxQuestItems=STB_ITEM[12].rowcount;
 
     //stats.
     StatusList=new CStatus*[STB_STATUS.rowcount];
@@ -339,6 +403,42 @@ bool CWorldServer::InitDefaultValues()
         JemList.Index[i] = nulljem;
     }
 
+    //LMA: Quest Items.
+    CQuestItemData* nullQuestItem=new CQuestItemData;
+    nullQuestItem->id=0;
+    nullQuestItem->STLId=0;
+
+    for (int k=0;k<maxQuestItems;k++)
+    {
+        QuestItemData[k]=nullQuestItem;
+    }
+
+
+    return true;
+}
+
+//LMA: loading Quest item Data.
+bool CWorldServer::LoadQuestItemData( )
+{
+	Log( MSG_LOAD, "Quest Item Data - STB" );
+    for (UINT i = 0; i<STB_ITEM[12].rowcount; i++)
+    {
+
+        CQuestItemData* newQuestItem = new (nothrow) CQuestItemData;
+        if(newQuestItem==NULL)
+        {
+            Log( MSG_ERROR, "Error allocing memory" );
+            continue;
+        }
+
+        newQuestItem->id=i;
+        newQuestItem->STLId=STB_ITEM[12].rows[i][32];
+        QuestItemData[newQuestItem->id]=newQuestItem;
+    }
+
+    STBFreeData(&STB_ITEM[12]);
+    Log( MSG_LOAD, "Quest Item Data Loaded - STB" );
+
 
     return true;
 }
@@ -391,6 +491,7 @@ bool CWorldServer::LoadNPCData( )
         newnpc->eventid = 0;   //handled in list_npc now
         newnpc->side=0; //hidden
         newnpc->sidechance=0;   //hidden
+        newnpc->STLId=STB_NPC.rows[i][40];
 
         //LMA: Various skills for monsters (won't be used anymore, will be done by AIP, for now left for compatibility).
         for(int i=0;i<4;i++)
@@ -567,6 +668,9 @@ bool CWorldServer::LoadSkillData( )
         newskill->req[1] = STB_SKILL.rows[i][47];    //the requirement type (in most cases blank)
         newskill->reqam[1] = STB_SKILL.rows[i][48];  //requirement amount
         newskill->zuly = (STB_SKILL.rows[i][85] * 100);    // Required zuly
+
+        //LMA: STL:
+        newskill->STLId=STB_SKILL.rows[i][113];
 
         if ((STB_SKILL.rows[i][8])>0)
         {
@@ -1596,6 +1700,18 @@ bool CWorldServer::LoadEquip( )
             newequip->magicresistence = STB_ITEM[j].rows[i][32];
             newequip->attackdistance = STB_ITEM[j].rows[i][33];//Speed of travel/Range
 
+            //LMA: STL.
+            if(j!=6)
+            {
+                newequip->STLId=STB_ITEM[j].rows[i][51];
+                newequip->STLPrefix=STB_ITEM[j].rows[i][50];
+            }
+            else
+            {
+                newequip->STLId=STB_ITEM[j].rows[i][34];
+                newequip->STLPrefix=0;
+            }
+
             if(newequip->equiptype==SHOE)
             {
                 newequip->movespeed = newequip->attackdistance;
@@ -1672,6 +1788,10 @@ bool CWorldServer::LoadJemItem( )
         thisjem->stat1[1] = STB_ITEM[10].rows[i][17];
         thisjem->stat2[0] = STB_ITEM[10].rows[i][18];
         thisjem->stat2[1] = STB_ITEM[10].rows[i][19];
+
+        //LMA: STL
+        thisjem->STLId=STB_ITEM[10].rows[i][48];
+
         //JemList.Data.push_back( thisjem );
         JemList.Index[thisjem->id] = thisjem;
 
@@ -1700,6 +1820,10 @@ bool CWorldServer::LoadNaturalItem( )
         thisnatural->weight = STB_ITEM[11].rows[i][7];
         thisnatural->quality = STB_ITEM[11].rows[i][8];
         thisnatural->pricevalue = STB_ITEM[11].rows[i][16];
+
+        //LMA: STL:
+        thisnatural->STLId= STB_ITEM[11].rows[i][20];
+
         //NaturalList.Data.push_back( thisnatural );
         NaturalList.Index[thisnatural->id] = thisnatural;
     }
@@ -1742,6 +1866,7 @@ bool CWorldServer::LoadPatItem( )
         newpat->attackspeed = STB_ITEM[13].rows[i][37];
         newpat->jauge = STB_ITEM[13].rows[i][67];
         //PatList.Data.push_back( newpat );
+        newpat->STLId= STB_ITEM[13].rows[i][75];
         PatList.Index[newpat->id] = newpat;
     }
     Log( MSG_LOAD, "PAT Data loaded" );
@@ -1831,6 +1956,9 @@ bool CWorldServer::LoadConsItem( )
         newuse->useeffect[0]= STB_ITEM[9].rows[i][19];
         newuse->useeffect[1]= STB_ITEM[9].rows[i][20];
         newuse->is_mileage=0;
+
+        //STL
+        newuse->STLId= STB_ITEM[9].rows[i][29];
 
         //LMA: mileage box?
         if(newuse->restriction==6&&newuse->quality==100)

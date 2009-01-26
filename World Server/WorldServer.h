@@ -29,6 +29,10 @@
 #include "party.h"
 
 #include "stbhandler.h"
+
+//STL handler.
+#include "stlhandler.h"
+
 #include "quest/strhashing.h"
 #include "quest/CRoseArray.hpp"
 #include "quest/CRoseFile.hpp"
@@ -64,6 +68,15 @@ extern UINT lma_loop;
 extern UINT fmmonstertype;
 extern UINT ftypeskill;
 extern UINT fskill;
+
+//LMA: test
+	struct SQuestDatum1 {
+		int size;
+		int opcode;
+		byte* data;
+	};
+//LMA: test.
+
 
 // Main loginserver server class
 class CWorldServer : public CServerSocket
@@ -174,11 +187,17 @@ class CWorldServer : public CServerSocket
         CChest* GetChestByID( UINT id );
     	CNPC* GetNPCByID( UINT id, UINT map=0 );
     	char* GetNPCNameByType(UINT id);    //LMA: getting the npc name.
+    	char* GetSTLObjNameByID(UINT family, UINT idorg);   //LMA: getting the STL name for objects (1-14)
+    	char* GetSTLMonsterNameByID(UINT idorg); //LMA: getting the STL name of a monster / NPC by ID.
+        char* GetSTLItemPrefix(int family, UINT idorg);  //LMA: to get an item prefix.
+        char* GetSTLQuestByID(UINT idorg);  //LMA: getting quest name by STL.
+        char* GetSTLSkillByID(UINT idorg);  //LMA: to get a skill name :)
         CNPC* GetNPCByType( UINT npctype );
         CDrop* GetDrop( CMonster* thismon );
         CDrop* GetPYDrop( CMonster* thismon, UINT droptype );   //hidden
     	void SendToAll( CPacket* pak );
     	void SendToAllInMap( CPacket* pak, int mapid);     //LMA: Send a message to all people in a given map
+        UINT gi(UINT itemvalue, short type);    //LMA: to get a clean itemtype and itemnum.
 
     	UINT GetNewClientID( );
     	void DisconnectAll();
@@ -382,6 +401,11 @@ class CWorldServer : public CServerSocket
 
         // QSD Fuctions
         void ReadQSD(strings path, dword index);
+        //void ExportQSDData(byte* dataorg,int opcode,int size,CQuestTrigger::SQuestDatum* dataraw);
+        void ExportQSDData(byte* dataorg,int size,int opcode);  //LMA: exporting QSD conditions.
+        void ExportQSDDataA(byte* dataorg,int size,int opcode);  //LMA: exporting QSD actions.
+        char* Operators(byte btOp,char* buffer); //LMA: operators.
+        char* Abilities(int btOp,char* buffer); //LMA: abilities.
         void LoadQuestData( );
         bool LoadQuestSTB();
         bool LoadBreakChestBlueList( );
@@ -401,12 +425,17 @@ class CWorldServer : public CServerSocket
         inline int round(double x) {return int(x > 0.0 ? x + 0.5 : x - 0.5);};
         //vector<CAip*> AipList;
         map<dword,CAip*> AipListMap;    //LMA: testing maps...
-        fpAiCond aiCondFunc[31];
+        fpAiCond aiCondFunc[32];
         fpAiAct aiActFunc[38];
         int ObjVar[2000][20];  //NPC variables used in AI
         // AIP Functions
         void ReadAIP(strings path, dword index);
         void LoadAipData();
+
+        //LMA: exporting.
+        void ExportAipData(byte* dataorg,int size,int opcode);  //LMA: exporting AIP condition data
+        void ExportAipDataA(byte* dataorg,int size,int opcode);  //LMA: exporting AIP actions data
+        //LMA: END exporting.
 
         bool LoadDropsData( );
         bool LoadPYDropsData( );    //hidden
@@ -421,6 +450,7 @@ class CWorldServer : public CServerSocket
         bool LoadSkillData( );
         bool LoadMonsters( );
         bool LoadNPCData( );
+        bool LoadQuestItemData( );
         bool LoadUpgrade( );
         bool LoadNPCs( );
         bool LoadNPCsSpecial( );
@@ -460,6 +490,7 @@ class CWorldServer : public CServerSocket
         CStatus                 **StatusList;
         int                     maxStatus;
     	map<int,char*>          NpcNameList;            //LMA: npc name map.
+    	map<UINT,char*>         STLNameList;            //LMA: Name for all things taken from STL.
         vector<CCustomGate*>    CustomGateList;         // Custom Telegate list
         vector<CCustomEvent*>   CustomEventList;        //Custom events list
 
@@ -473,7 +504,9 @@ class CWorldServer : public CServerSocket
         vector<CMDrops*>        SkillbookList;          // Skillbook drop list (hidden)
 
         CNPCData                **NPCData;
+        CQuestItemData          **QuestItemData;
         int                     maxNPC;                 //Nb NPC/Mobs
+        int                     maxQuestItems;          //Nb quest Items.
 
         vector<CParty*>         PartyList;              // Party List
         vector<CFairy*>         FairyList;              // Fairy List

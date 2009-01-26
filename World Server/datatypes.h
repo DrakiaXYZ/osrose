@@ -356,6 +356,8 @@ struct CEquip
     UINT attackspeed;
     UINT itemgrade;
     UINT movespeed;
+    UINT STLId;
+    UINT STLPrefix;
 };
 
 // Jem Data
@@ -370,6 +372,7 @@ struct CJemData
     UINT material;
     UINT stat1[2];/**/
     UINT stat2[2];/**/
+    UINT STLId;
 };
 
 // natural data
@@ -382,6 +385,7 @@ struct CNaturalData
     UINT weight;
     UINT quality;
     UINT pricevalue;
+    UINT STLId;
 };
 
 // pat data
@@ -404,6 +408,7 @@ struct CPatData
     UINT attackdistance;
     UINT attackpower;
     UINT attackspeed;
+    UINT STLId;
 };
 
 struct CProductData
@@ -433,6 +438,13 @@ struct CUseData
     UINT usecondition[2];
     UINT useeffect[2];
     UINT pricevalue;
+    UINT STLId;
+};
+
+//LMA: QuestItemData
+struct CQuestItemData {
+    UINT id;
+    UINT STLId; //LMA: STL ID
 };
 
 // List Mob Data
@@ -479,6 +491,7 @@ struct CNPCData {
     UINT side;  //hidden
     UINT sidechance;  //hidden
     UINT refNPC;    //LMA: AIP?
+    UINT STLId; //LMA: STL ID
 };
 
 // Store the damage for monster to give exp
@@ -726,6 +739,7 @@ struct CSkills {
     UINT script;
     UINT svalue1;
     UINT gm_aoe;
+    UINT STLId;
 };
 
 // -----------------------------------------------------------------------------------------

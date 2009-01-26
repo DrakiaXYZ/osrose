@@ -250,7 +250,10 @@ struct STR_AI_ACT_036 {
 struct STR_AI_ACT_037 {
 	//Monster (2) (0x0c bytes)
 	word nMonster;	//Pos: 0x00
-	word nPos;	//Pos: 0x02
+	//word nPos;	//Pos: 0x02
+	byte nPos;	//Pos: 0x02
 	dword iDistance;	//Pos: 0x04
 	byte btMaster;	//Pos: 0x08
 };
+
+

@@ -54,6 +54,9 @@ typedef enum
 static int __BACKGROUND = BLACK;
 static int __FOREGROUND = LIGHTGRAY;
 
+//LMA: extra log.
+FILE *fhSp1=NULL;
+
 // Change console text color
 void textcolor(int color)
 {
@@ -189,3 +192,43 @@ void Log( enum msg_type flag, char *Format, ... )
     va_end  ( ap );
     fflush( stdout );
 }
+
+
+//LMA: (used for export only).
+void LogSp( enum msg_type flag, char *Format, ... )
+{
+	va_list ap;	      // For arguments
+    va_start( ap, Format );
+
+
+    if ( fhSp1 != NULL )
+    {
+        vfprintf( fhSp1, Format, ap );
+        fputc( '\n', fhSp1 );
+    }
+
+    va_end  ( ap );
+    fflush( fhSp1 );
+
+
+    return;
+}
+
+//LMA: (used for handling export only).
+void LogHandleSp(int type)
+{
+    if (type==1)
+    {
+        if(fhSp1==NULL)
+            fhSp1 = fopen(LOG_DIRECTORY "export.log", "w+" );
+    }
+    else
+    {
+        if(fhSp1!=NULL)
+            fclose(fhSp1);
+    }
+
+
+    return;
+}
+
