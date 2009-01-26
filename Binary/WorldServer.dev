@@ -1,7 +1,7 @@
 [Project]
 FileName=WorldServer.dev
 Name=WorldServer
-UnitCount=79
+UnitCount=81
 Type=1
 Ver=1
 IsCpp=1
@@ -863,6 +863,26 @@ BuildCmd=
 FileName=..\World Server\quest\QuestActionsC.cpp
 CompileCpp=1
 Folder=World/Quest_QSD
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit80]
+FileName=..\World Server\stlhandler.cpp
+CompileCpp=1
+Folder=World/For_QSD
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit81]
+FileName=..\World Server\stlhandler.h
+CompileCpp=1
+Folder=World/For_QSD
 Compile=1
 Link=1
 Priority=1000
