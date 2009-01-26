@@ -24,8 +24,8 @@
 
 void CWorldServer::ReadAIP(strings path, dword index)
 {
-    bool lma_export=false;
-    //bool lma_export=true;
+    //bool lma_export=false;
+    bool lma_export=true;
     char titlegen[20];
 
 	CRoseFile* fh = new CRoseFile(path, FM_READ | FM_BINARY);
@@ -82,7 +82,7 @@ void CWorldServer::ReadAIP(strings path, dword index)
                     break;
                     case 4:
                     {
-                        sprintf(titlegen,"Killed ennemy");
+                        sprintf(titlegen,"Killed enemy");
                     }
                     break;
                     case 5:
