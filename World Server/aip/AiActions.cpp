@@ -335,6 +335,12 @@ AIACT(006)
         }
     }
     // OK we found the new Target player. now attack him.
+    if (Target==NULL)
+    {
+        Log(MSG_INFO,"No suitable target found for type %i dist %i",data->cAbType,data->iDistance);
+        return AI_FAILURE;
+    }
+
     monster->thisnpc->stance = 1;
     monster->SetStats();
     monster->StartAction( Target, NORMAL_ATTACK, 0 );

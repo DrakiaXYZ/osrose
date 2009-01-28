@@ -71,6 +71,13 @@ void CCharacter::StartAction( CCharacter* Target, BYTE action, UINT skillid, boo
        skillid=Battle->skillid;
     }
 
+    //Drakia: If the target is NULL, we should only do something that doesn't require a target.
+    if (Target == NULL && (action != SKILL_AOE &&action != BUFF_SELF &&action != BUFF_AOE &&action != MONSTER_BUFF_SELF &&action != AOE_TARGET))
+    {
+        Log(MSG_WARNING,"We tried to start attack %i without a target",action);
+        return;
+    }
+
     //LMA: don't attack a dead or an offline player... It's stupid...
     if(Target!=NULL)
     {
