@@ -24,8 +24,8 @@
 
 void CWorldServer::ReadAIP(strings path, dword index)
 {
-    //bool lma_export=false;
-    bool lma_export=true;
+    bool lma_export=false;
+    //bool lma_export=true;
     char titlegen[20];
 
 	CRoseFile* fh = new CRoseFile(path, FM_READ | FM_BINARY);
@@ -305,7 +305,8 @@ void CWorldServer::ReadAIP(strings path, dword index)
 				}
 				else
 				{
-				    AipListMap[script->AipID]=script;
+				    //AipListMap[script->AipID]=script;
+				    AipListMap.insert ( pair<dword,CAip*>(script->AipID,script) );
 				}
 
                 if(lma_export)
@@ -1264,6 +1265,8 @@ void CWorldServer::ExportAipDataA(byte* dataorg,int size,int opcode)
         {
             int nItem = data17->items[k];
             if (nItem==0)
+                continue;
+            if(k==5&&nItem==0xCDCD)
                 continue;
 
             itemtype=gi(nItem,0);

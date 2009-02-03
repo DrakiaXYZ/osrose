@@ -2087,7 +2087,7 @@ bool CWorldServer::LoadGrids( )
     for(k=0;k<NB_MAPS;k++)
     {
         allmaps[k].grid_id=-1;
-        allmaps[j].always_on=false;
+        allmaps[k].always_on=false;
     }
     k=0;
     //LMA END
@@ -2106,6 +2106,12 @@ bool CWorldServer::LoadGrids( )
         j = GetUIntValue(",", &line);
         if (j==0)
            continue;
+
+        if(k>=NB_GRIDS)
+        {
+            Log(MSG_WARNING,"We try to load more active maps that we can handle (%i>=%u), change NB_GRIDS",k,NB_GRIDS);
+            continue;
+        }
 
         lx = GetUIntValue(",");
         ly = GetUIntValue(",");
@@ -2143,6 +2149,7 @@ bool CWorldServer::LoadGrids( )
 
        k++;
     }
+
     fclose(fh);
 
 
