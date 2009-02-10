@@ -1,3 +1,12 @@
+/*
+MySQL Data Transfer
+Source Host: localhost
+Source Database: osrose
+Target Host: localhost
+Target Database: osrose
+Date: 2/10/2009 1:05:20 PM
+*/
+
 SET FOREIGN_KEY_CHECKS=0;
 -- ----------------------------
 -- Table structure for list_npcs_special
@@ -16,7 +25,7 @@ CREATE TABLE `list_npcs_special` (
   `isactive` int(11) NOT NULL,
   `whatisit` varchar(20) default NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=18 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=20 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records 
@@ -34,7 +43,9 @@ INSERT INTO `list_npcs_special` VALUES ('10', '[Mysterious Traveler] Edeline', '
 INSERT INTO `list_npcs_special` VALUES ('11', 'Banner - Happy Halloween', '1198', '22', '148.307', '5280.66', '5160.09', '0', '0', '0', '0', 'Halloween-2008');
 INSERT INTO `list_npcs_special` VALUES ('12', 'Banner - Beware!', '1199', '25', '337.957', '5714.99', '5405.6', '0', '0', '0', '0', 'Halloween-2008');
 INSERT INTO `list_npcs_special` VALUES ('13', '[Ghost] Harry', '1157', '25', '342.011', '5506.64', '5554.8', '257', '0', '0', '0', 'Halloween-2008');
-INSERT INTO `list_npcs_special` VALUES ('14', '[Teleporter] Selladin', '1017', '1', '162.011', '5247.24', '5222.58', '0', '0', '0', '1', 'Pre-Evo-Teleporter');
-INSERT INTO `list_npcs_special` VALUES ('15', '[Teleporter] Idiosel', '1119', '2', '270', '5343.67', '5177.36', '0', '0', '0', '1', 'Pre-Evo-Teleporter');
+INSERT INTO `list_npcs_special` VALUES ('14', '[Teleporter] Selladin', '1017', '1', '162.011', '5247.24', '5222.58', '0', '0', '0', '0', 'Pre-Evo-Teleporter');
+INSERT INTO `list_npcs_special` VALUES ('15', '[Teleporter] Idiosel', '1119', '2', '270', '5343.67', '5177.36', '0', '0', '0', '0', 'Pre-Evo-Teleporter');
 INSERT INTO `list_npcs_special` VALUES ('16', '[Evil Reindeer] Bob', '1490', '38', '97.961', '5065.61', '5206.88', '318', '0', '0', '0', 'Christmas-2008');
 INSERT INTO `list_npcs_special` VALUES ('17', '[Traveler] Garlen', '1491', '2', '153.435', '5463', '5167.57', '325', '0', '0', '0', 'Special Skill Reset ');
+INSERT INTO `list_npcs_special` VALUES ('18', 'NPC1', '3040', '2', '0', '4829.88', '4645.83', '306', '0', '0', '0', 'Christmas-2008-Bob-P');
+INSERT INTO `list_npcs_special` VALUES ('19', 'NPC2', '3041', '2', '0', '4833.84', '4645.52', '325', '0', '0', '0', 'Christmas-2008-Bob-P');

@@ -26,6 +26,7 @@ INSERT INTO `list_npcs` VALUES (0, '[Tavern Owner] Sharlin', 1013, 1, 333.435, 5
 INSERT INTO `list_npcs` VALUES (0, '[Resident] Luth', 1015, 1, 270.003, 5130.61, 5154.58, 115,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Guide] Lena', 1014, 1, 169.135, 5240.40, 5124.57, 114,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Event Info] Judy', 1201, 1, 162.011, 5261.88, 5212.97, 305,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Teleporter] Idiosel', 1119, 1, 167.450, 5244.93, 5220.95, 219,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Akram Kingdom Minister] Warren', 1002, 1, 178.499, 5208.78, 5112.94, 102,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Village Chief] Cornell', 1001, 1, 183.008, 5217.51, 5113.18, 101,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Cornell''s Grandson] Cheney', 1018, 1, 22.043, 5435.30, 5492.26, 118,0,0);
@@ -42,6 +43,7 @@ INSERT INTO `list_npcs` VALUES (0, '[Righteous Crusader] Huffe', 1111, 2, 90.000
 INSERT INTO `list_npcs` VALUES (0, '[Clan Owner] Burtland', 1115, 2, 90.000, 5289.10, 5264.10, 215,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Clan War Manager] Regina', 1751, 2, 90.000, 5290.17, 5244.25, 751,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Clan Merchant] Aliche Patt', 1752, 2, 90.000, 5288.35, 5260.53, 224,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Teleporter] Idiosel', 1119, 2, 283.797, 5344.59, 5176.35, 219,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Founder of Junon Order] Raw', 1088, 2, 181.501, 5319.27, 5095.36, 188,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Elder of Junon Order] Gorthein', 1109, 2, 181.501, 5325.54, 5095.31, 209,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Guide] Eva', 1082, 2, 153.435, 5505.78, 5346.09, 182,0,0);
@@ -151,6 +153,7 @@ INSERT INTO `list_npcs` VALUES (0, '[Tavern Owner] Anzhelika', 1186, 51, 139.107
 INSERT INTO `list_npcs` VALUES (0, '[Ferrell Guild Banker] Andre', 1180, 51, 0.000, 5414.86, 5114.41, 280,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Arumic Merchant] Pabel', 1185, 51, 3.008, 5298.98, 5105.03, 285,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Arumic Prophet] Olleck Basilasi', 1173, 51, 178.499, 5359.62, 5085.72, 273,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Teleporter] Idiosel', 1119, 51, 345.707, 5363.40, 5000.41, 219,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Akram Ambassador] Eliot', 1172, 51, 157.957, 5285.69, 4940.95, 272,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Eucar Judge] Ishtal', 1171, 51, 206.565, 5430.09, 4937.96, 271,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Smith] Pavrick', 1181, 51, 335.763, 5440.45, 5103.41, 281,0,0);
@@ -165,6 +168,7 @@ INSERT INTO `list_npcs` VALUES (0, '[Smith] Nel Eldora', 1223, 61, 14.293, 5395.
 INSERT INTO `list_npcs` VALUES (0, '[Akram Ambassador] Jacklyn Cooper', 1215, 61, 180.000, 5430.00, 4483.79, 315,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Patrol Dog] Stephen', 1244, 61, 180.000, 5427.52, 4482.43, 317,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Raknu Warrior] Jeffrey Lloyd', 1221, 61, 180.000, 5434.01, 4595.87, 321,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Teleporter] Idiosel', 1119, 61, 0.000, 5436.17, 4544.15, 219,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Arumic Researcher] Catherine Clara', 1212, 61, 330.956, 5473.37, 4618.79, 312,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Ferrell Guild Staff] Gilbert', 1213, 61, 217.594, 5474.35, 4513.74, 313,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Storage Keeper] Dustin Leta', 1222, 61, 197.989, 5489.63, 4553.05, 322,0,0);
