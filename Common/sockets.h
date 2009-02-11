@@ -207,6 +207,9 @@ struct CROSEServerConfig
     //LMA: Pegasus
     int is_pegasus; //LMA: if we use Pegasus client.
 
+    //LMA: Mass Exporter
+    int massexport;
+
     // COMMAND LEVELS
     int Command_Addquest; // by Drakia
     int Command_AllSkill; // by crashinside

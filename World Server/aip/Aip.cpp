@@ -24,8 +24,11 @@
 
 void CWorldServer::ReadAIP(strings path, dword index)
 {
+    //LMA: mass exporter.
     bool lma_export=false;
-    //bool lma_export=true;
+    if(Config.massexport)
+        lma_export=true;
+
     char titlegen[20];
 
 	CRoseFile* fh = new CRoseFile(path, FM_READ | FM_BINARY);
@@ -799,7 +802,14 @@ void CWorldServer::ExportAipData(byte* dataorg,int size,int opcode)
                  break;
         }
 
-        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Check Objvar[%i] %s %i",opcode,data->btVarIDX,buffer,data->iValue);
+        if(data->btVarIDX==0)
+        {
+            LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Check Objvar[%i] (EventID) %s %i",opcode,data->btVarIDX,buffer,data->iValue);
+        }
+        else
+        {
+            LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Check Objvar[%i] %s %i",opcode,data->btVarIDX,buffer,data->iValue);
+        }
 
         return;
     }
@@ -1370,7 +1380,16 @@ void CWorldServer::ExportAipDataA(byte* dataorg,int size,int opcode)
                 break;
         }
 
-        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Set ObjVar[%i] %s %i ",opcode,data->btVarIDX,buffer,data->iValue);
+        if(data->btVarIDX==0)
+        {
+            LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Set ObjVar[%i] (eventID) %s %i ",opcode,data->btVarIDX,buffer,data->iValue);
+        }
+        else
+        {
+            LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Set ObjVar[%i] %s %i ",opcode,data->btVarIDX,buffer,data->iValue);
+        }
+
+
         return;
     }
 

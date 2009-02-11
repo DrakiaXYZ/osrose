@@ -48,10 +48,11 @@ CREATE TABLE `list_config` (
   `jrose` int(11) NOT NULL,
   `is_pegasus` int(11) NOT NULL,
   `monmax` int(11) NOT NULL default '10',
+  `massexport` int(11) NOT NULL default '0',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records 
 -- ----------------------------
-INSERT INTO `list_config` VALUES ('1', '8', '0', '80', '3', '5', '5', '5', '5', '0', 'default', '100', '100', '100', '100', '100', '100', '250', '2', '500', '10', '300', '0', '1', '10', '200', '700', '1', '45', '30', '0', '81.324', '1', '0', '0', '10');
+INSERT INTO `list_config` VALUES ('1', '8', '0', '80', '3', '5', '5', '5', '5', '0', 'default', '100', '100', '100', '100', '100', '100', '250', '2', '500', '10', '300', '0', '1', '10', '200', '700', '1', '45', '30', '0', '81.325', '1', '0', '0', '10','0');

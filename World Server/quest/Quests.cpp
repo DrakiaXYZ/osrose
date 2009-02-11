@@ -24,9 +24,10 @@
 
 void CWorldServer::ReadQSD(strings path, dword index)
 {
-    //LMA: export:
+    //LMA: mass exporter.
     bool lma_export=false;
-    //bool lma_export=true;
+    if(Config.massexport)
+        lma_export=true;
 
 	CRoseFile* fh = new CRoseFile(path, FM_READ | FM_BINARY);
 	if(fh->IsOpen())
