@@ -1132,7 +1132,7 @@ void CWorldServer::ExportQSDDataA(byte* dataorg,int size,int opcode)
             LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Spawn %i monsters %i (%s) to map %i at (%.2f,%.2f)",opcode,data->iHowMany,data->iMonsterSN,GServer->GetSTLMonsterNameByID(data->iMonsterSN),data->iZoneSN,(float)(data->iX/100),(float)(data->iY/100));
         }
 
-        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Teleport to map %i at (%.2f,%.2f)",opcode,data->iZoneSN,(float)(data->iX/100),(float)(data->iY/100));
+        
         return;
     }
 

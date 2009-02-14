@@ -449,6 +449,12 @@ bool CWorldServer::LoadQuestItemData( )
 //LMA: npc_data, STB version.
 bool CWorldServer::LoadNPCData( )
 {
+    //LMA: Mass Exporter.
+    if (Config.massexport==1)
+    {
+        NPC_AIP.clear();
+    }
+
 	Log( MSG_LOAD, "NPC Data - STB               " );
     for (UINT i = 0; i<STB_NPC.rowcount; i++)
     {
@@ -509,6 +515,17 @@ bool CWorldServer::LoadNPCData( )
         newnpc->delayskill=0;
 
         NPCData[newnpc->id]=newnpc;
+
+        //LMA: Mass Exporter.
+        if (Config.massexport==1)
+        {
+            if(NPC_AIP.find(newnpc->AI)==NPC_AIP.end())
+            {
+                NPC_AIP[newnpc->AI]=newnpc->id;
+            }
+
+        }
+
     }
 
     STBFreeData(&STB_NPC);

@@ -425,6 +425,7 @@ class CWorldServer : public CServerSocket
         inline int round(double x) {return int(x > 0.0 ? x + 0.5 : x - 0.5);};
         //vector<CAip*> AipList;
         map<dword,CAip*> AipListMap;    //LMA: testing maps...
+        map<UINT,UINT> NPC_AIP;       //LMA: NPC AIP.
         fpAiCond aiCondFunc[32];
         fpAiAct aiActFunc[38];
         int ObjVar[2000][20];  //NPC variables used in AI

@@ -40,7 +40,15 @@ void CWorldServer::ReadAIP(strings path, dword index)
         {
             LogSp(MSG_INFO, " ");
             LogSp(MSG_INFO, " ");
-            LogSp(MSG_INFO, "Exporting %s", path);
+            if(NPC_AIP.find(index)!=NPC_AIP.end())
+            {
+                LogSp(MSG_INFO, "Exporting %s (AIP index %i, NPC %i (%s))",path,index,NPC_AIP[index],GetSTLMonsterNameByID(NPC_AIP[index]));
+            }
+            else
+            {
+                LogSp(MSG_INFO, "Exporting %s (AIP index %i, not used?)",path,index);
+            }
+
         }
 
 		dword BlockCount = fh->Get<dword>();
