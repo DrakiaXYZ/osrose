@@ -217,6 +217,11 @@ void CWorldServer::ReadQSD(strings path, dword index)
                         //LMA: Export
                         if (lma_export)
                         {
+                            if (data->opcode==19)
+                            {
+                                Log(MSG_INFO,"debug");
+                            }
+
                             ExportQSDDataA(data->data,data->size,data->opcode);
                         }
 
@@ -1241,7 +1246,10 @@ void CWorldServer::ExportQSDDataA(byte* dataorg,int size,int opcode)
     //Execute Quest Trigger in Other Map...
     if(opcode==19)
     {
-        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Execute Quest Trigger in Other Map (NOT CODED)",opcode);
+        STR_REWD_019 * data = (STR_REWD_019 *)dataorg;
+        char* tempName = reinterpret_cast<char*>(&data->TriggerName) - 2;
+        dword hash = MakeStrHash(tempName);
+        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Execute Quest %s (hash %u) in Other Map (%i) for team %i (NOT CODED for Client) (CODED for Monsters / NPC)",opcode,tempName,hash,data->nZoneNo,data->nTeamNo);
         return;
     }
 

@@ -703,9 +703,56 @@ QUESTREWDC(018){
 }
 
 //Execute Quest Trigger in Other Map
+/*
 QUESTREWDC(019){
     //Log(MSG_WARNING,"Monster/NPC using QuestAction 019");
 	return QUEST_SUCCESS;
+}
+*/
+
+//Execute Quest Trigger in Other Map (credits PY).
+//LMA: It seems it's not really the same way in osRose after all...
+QUESTREWDC(019)
+{
+	//this is going to be a pain
+	//it runs a quest trigger that would appear to be sent to every player in the designated zone
+
+	//word nZoneNo;           //pos 0x00
+	//word nTeamNo;           //pos 0x02
+	//word nTriggerLength;    //pos 0x04 This is definitely NOT the length of the following name. PY
+	//string TriggerName;     //pos 0x06 + nTriggerlength more bytes. Name always appears to be 17 bytes long
+	//dword m_HashTrigger;
+    //word m_HashTrigger;     //pos 0x17 only has 2 bytes not 4. PY
+
+    // let's check the values first
+    GETREWDDATA(019);
+    //Log(MSG_DEBUG,"Execute Quest trigger: %s for zone %i. Hash: %i",data->TriggerName, data->nZoneNo, data->m_HashTrigger);
+
+    //osprose
+    /*
+	CMap* map = GServer->MapList.Index[data->nZoneNo];
+	if(map == NULL) return QUEST_SUCCESS;
+	if( map->PlayerList.size()<1 ) return QUEST_SUCCESS;
+	for(UINT j=0;j<map->PlayerList.size();j++)
+    {
+        CPlayer* player = map->PlayerList.at(j);
+        player->ExecuteQuestTrigger(data->m_HashTrigger);
+    }
+    */
+
+    char* tempName = reinterpret_cast<char*>(&data->TriggerName) - 2;
+    dword hash = MakeStrHash(tempName);
+    CMap* map = GServer->MapList.Index[data->nZoneNo];
+	if(map == NULL) return QUEST_SUCCESS;
+	if( map->PlayerList.size()<1 ) return QUEST_SUCCESS;
+	for(UINT j=0;j<map->PlayerList.size();j++)
+    {
+        CPlayer* player = map->PlayerList.at(j);
+        player->ExecuteQuestTrigger(hash);
+    }
+
+
+    return QUEST_SUCCESS;
 }
 
 //PvP Status

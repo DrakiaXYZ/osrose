@@ -194,7 +194,7 @@ struct STR_REWD_019 {
 	word nTeamNo;
 	word nTriggerLength;
 	string TriggerName;
-	dword m_HashTrigger;
+	//word m_HashTrigger;
 };
 
 struct STR_REWD_020 {
