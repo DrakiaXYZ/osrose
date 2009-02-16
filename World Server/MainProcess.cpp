@@ -318,6 +318,13 @@ PVOID MapProcess( PVOID TS )
             for(UINT j=0;j<map->NPCList.size();j++)
             {
                 CNPC* npc = map->NPCList.at(j);
+
+                //LMA: We don't worry about IFO Objects...
+                if(npc->npctype>10000)
+                {
+                    continue;
+                }
+
                 if(npc->thisnpc->AI != 0)
                 {
                      if(60000<(UINT)GServer->round((clock( ) - npc->lastAiUpdate))) //check every minute. Conditions seem to be based on 6 minute segments

@@ -346,7 +346,17 @@ bool CPlayer::VisiblityList( )
 			if ( distance < MINVISUALRANGE )
             {
 				newVisibleNPCs.push_back( thisnpc );
-				GServer->pakSpawnNPC( this, thisnpc );
+
+				//LMA: WarpGate.
+				if(thisnpc->npctype>10000&&(thisnpc->npctype==GServer->WarpGate.virtualNpctypeID))
+				{
+				    GServer->pakSpawnIfoObject( this, GServer->WarpGate.virtualNpctypeID );
+				}
+				else
+				{
+				    GServer->pakSpawnNPC( this, thisnpc );
+				}
+
 			}
 		}
 	}

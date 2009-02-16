@@ -332,6 +332,7 @@ bool CWorldServer::OnServerReady( )
     LoadConfig( );
     //LoadLTB( );
     LoadSTBData( );
+    LoadIfoObjects();
     //LMA: init default values.
     InitDefaultValues();
     LoadZoneData( );
@@ -595,6 +596,7 @@ void CWorldServer::LoadCommandLevels( void )
     Config.Command_DSpawn = ConfigGetInt    ( "commands.ini", "dspawn", 299 );
     Config.Command_ESpawn = ConfigGetInt    ( "commands.ini", "espawn", 299 );
     Config.Command_Event = ConfigGetInt    ( "commands.ini", "event", 299 );     //Event
+    Config.Command_Event = ConfigGetInt    ( "commands.ini", "eventifo", 299 );     //LMA: Events for IFO Objects
     Config.Command_Exp = ConfigGetInt    ( "commands.ini", "exp", 299 );
     Config.Command_Face = ConfigGetInt    ( "commands.ini", "face", 299 );
     Config.Command_fskill = ConfigGetInt    ( "commands.ini", "fskill", 299 );     //LMA: Force a skill for a monster.

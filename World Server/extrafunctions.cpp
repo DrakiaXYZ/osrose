@@ -972,6 +972,16 @@ CMDrops* CWorldServer::GetDropData( unsigned int id )
 //LMA: new version since we load all NPC from STB (even empty ones).
 CNPCData* CWorldServer::GetNPCDataByID( unsigned int id )
 {
+    //LMA: Special for "VirtualNPC"
+    if (id>10000)
+    {
+        //For now we only got one :)
+        if (id!=WarpGate.virtualNpctypeID)
+            return NULL;
+        CNPCData* thisnpc = WarpGate.NPCData;
+        return thisnpc;
+    }
+
     if (id>=maxNPC)
     {
         Log( MSG_WARNING,"NPC NOT FOUND! %i>=%i", id,maxNPC);

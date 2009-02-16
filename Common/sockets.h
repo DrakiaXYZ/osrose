@@ -240,6 +240,7 @@ struct CROSEServerConfig
     int Command_DSpawn;
     int Command_ESpawn;
     int Command_Event;    //event
+    int Command_EventIfo;   //LMA: Event for IFO.
     int Command_Exp;
     int Command_Face;
     int Command_fskill;    //LMA: force a skill for a monster

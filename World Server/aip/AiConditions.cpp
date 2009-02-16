@@ -396,7 +396,7 @@ AICOND(008)
 	return AI_FAILURE;
 }
 
-//Unknown
+//Do I have a target?
 AICOND(009)
 {
 	//Do i have a target?
@@ -721,7 +721,7 @@ AICOND(020)
 	return AI_FAILURE;
 }
 
-//Unknown
+//Do I have a caller
 AICOND(021)
 {
 	//Do i have a "CALLER" ??Possibly the one who summoned the monster??
@@ -740,7 +740,7 @@ AICOND(021)
 	return AI_FAILURE;
 }
 
-//Unknown
+//Does my caller have a target
 AICOND(022)
 {
 	//Does my "CALLER" have a target?

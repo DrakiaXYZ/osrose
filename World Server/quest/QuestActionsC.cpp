@@ -473,24 +473,6 @@ QUESTREWDC(010){
 QUESTREWDC(011)
 {
 	GETREWDDATA(011);
-	/*if(entity->_EntityType != ENTITY_NPC) return QUEST_FAILURE;
-
-	if(data->btWho == 0){//Npc
-		CNpc* thisNpc = reinterpret_cast<CNpc*>(entity);
-		thisNpc = thisNpc->SelectedNpc;
-		if(thisNpc == NULL) return QUEST_FAILURE;
-
-		short VarValue = thisNpc->ObjVar.GetVar(data->nVarNo);
-		OperateValues(data->btOp, &VarValue, (short)data->iValue);
-		thisNpc->ObjVar.SetVar(data->nVarNo, VarValue);
-	}else if(data->btWho == 1){//Event
-		short VarValue = server->EventVar.GetVar(data->nVarNo);
-		OperateValues(data->btOp, &VarValue, (short)data->iValue);
-		server->EventVar.SetVar(data->nVarNo, VarValue);
-	}
-
-	return QUEST_SUCCESS;*/
-
 	if(data->btWho == 0)
 	{
 	    //Npc
@@ -501,7 +483,25 @@ QUESTREWDC(011)
             return QUEST_FAILURE;
         }
 
-        short tempval = GServer->ObjVar[monster->thisnpc->refNPC][data->nVarNo];
+
+        short tempval = 0;
+
+        //LMA: WarpGate or standard NPC?
+        bool is_gate=false;
+
+        if(monster->thisnpc->refNPC>1000&&monster->thisnpc->refNPC==GServer->WarpGate.virtualNpctypeID)
+        {
+            //WarpGate.
+            if(data->nVarNo>19)
+                return QUEST_FAILURE;
+            tempval = GServer->WarpGate.IfoObjVar[data->nVarNo];
+            is_gate=true;
+        }
+        else
+        {
+            tempval = GServer->ObjVar[monster->thisnpc->refNPC][data->nVarNo];
+        }
+
         //Log(MSG_DEBUG,"QSD Set variable NPC %i, data->btOp=%i, data->iValue=%i, data->nVarNo=%i",monster->thisnpc->refNPC,data->btOp,data->iValue,data->nVarNo);
 
         switch(data->btOp)
@@ -531,7 +531,36 @@ QUESTREWDC(011)
         }
         */
 
-        GServer->ObjVar[monster->thisnpc->refNPC][data->nVarNo] = tempval;
+        //WarpGate?
+        if(is_gate)
+        {
+            short previous_val=GServer->WarpGate.IfoObjVar[data->nVarNo];
+            GServer->WarpGate.IfoObjVar[data->nVarNo]=tempval;
+            if(data->nVarNo==0&&previous_val!=tempval)
+            {
+                if(tempval==0)
+                {
+                    GServer->WarpGate.hidden=true;
+                }
+                else
+                {
+                    GServer->WarpGate.hidden=false;
+                }
+
+                //LMA: 2 do, check if really needed....
+                //Forcing refresh.
+                //GServer->pakSpawnIfoObject(NULL,GServer->WarpGate.virtualNpctypeID,true);
+                BEGINPACKET( pak, 0x790 );
+                ADDWORD    ( pak, GServer->WarpGate.clientID);
+                ADDWORD    ( pak, tempval);
+                GServer->SendToAllInMap(&pak,GServer->WarpGate.mapid);
+            }
+
+        }
+        else
+        {
+            GServer->ObjVar[monster->thisnpc->refNPC][data->nVarNo] = tempval;
+        }
 
 		if(data->nVarNo==0)
 		{

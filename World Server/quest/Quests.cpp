@@ -136,6 +136,8 @@ void CWorldServer::ReadQSD(strings path, dword index)
                         LogSp(MSG_INFO, "\t\t ");
 
                     LogSp(MSG_INFO, "\t\t Function %i / %i (%s / %u) :: %s, %s",j+1,RecordCount,trigger->TriggerName,MakeStrHash(trigger->TriggerName),bconditions,bactions);
+                    if(trigger->CheckNext)
+                        LogSp(MSG_INFO, "\t\t\t <If Function %s returns False, we'll check the next Function (check_next activated)>",trigger->TriggerName);
                     LogSp(MSG_INFO, "\t\t {");
                 }
 
@@ -463,11 +465,17 @@ char* CWorldServer::Abilities(int btOp,char* buffer)
 {
     switch( btOp )
     {
+        case sPvp:
+            sprintf(buffer,"PvP (NOT CODED)");
+            break;
         case sGender:
             sprintf(buffer,"gender");
             break;
         case sFace:
             sprintf(buffer,"face (NOT CODED)");
+            break;
+        case sHair:
+            sprintf(buffer,"hair (NOT CODED)");
             break;
         case sJob:
             sprintf(buffer,"job");
@@ -717,11 +725,11 @@ void CWorldServer::ExportQSDData(byte* dataorg,int size,int opcode)
 
         if(data->btOp)
         {
-            LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Check if skill %i DOES exist",opcode,GServer->GetSTLSkillByID(data->iSkillSN1));
+            LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Check if skill %i (%s) DOES exist",opcode,data->iSkillSN1,GServer->GetSTLSkillByID(data->iSkillSN1));
         }
         else
         {
-            LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Check if skill %i  does NOT exist",opcode,GServer->GetSTLSkillByID(data->iSkillSN1));
+            LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Check if skill %i (%s) does NOT exist",opcode,data->iSkillSN1,GServer->GetSTLSkillByID(data->iSkillSN1));
         }
 
 
@@ -744,10 +752,11 @@ void CWorldServer::ExportQSDData(byte* dataorg,int size,int opcode)
         return;
     }
 
-    //execute trigger in zone
+    //Select Object in zone.
     if(opcode==12)
     {
-        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Execute trigger in zone (NOT CODED)",opcode);
+        STR_COND_012 * data = (STR_COND_012 *)dataorg;
+        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Select Object %i in map %i, IFO %i_%i.IFO",opcode,data->iEventID,data->iZone,data->iX,data->iY);
         return;
     }
 
@@ -1132,7 +1141,7 @@ void CWorldServer::ExportQSDDataA(byte* dataorg,int size,int opcode)
             LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Spawn %i monsters %i (%s) to map %i at (%.2f,%.2f)",opcode,data->iHowMany,data->iMonsterSN,GServer->GetSTLMonsterNameByID(data->iMonsterSN),data->iZoneSN,(float)(data->iX/100),(float)(data->iY/100));
         }
 
-        
+
         return;
     }
 
@@ -1158,7 +1167,7 @@ void CWorldServer::ExportQSDDataA(byte* dataorg,int size,int opcode)
     {
         STR_REWD_011 * data = (STR_REWD_011 *)dataorg;
         LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Update variable (NOT CODED for Client) (CODED for Monsters / NPC)",opcode);
-        LogSp(MSG_INFO,"\t\t\t\t\t\t |-> Update ObjVar[%i] %s %i",data->nVarNo,Operators(data->btOp,buffero),data->iValue);
+        LogSp(MSG_INFO,"\t\t\t\t\t\t |-> Update ObjVar[%i] %s %i, who=%i",data->nVarNo,Operators(data->btOp,buffero),data->iValue,data->btWho);
         return;
     }
 

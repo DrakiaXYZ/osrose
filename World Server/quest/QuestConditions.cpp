@@ -319,11 +319,36 @@ QUESTCOND(011){
 
 	return QUEST_FAILURE;*/
 	// Don't think we've implemented NPC's having quests. - Drakia
+	Log(MSG_WARNING,"QSD CDT011 NOT CODED");
 	return QUEST_SUCCESS;
 }
 
-//Execute Trigger in Zone
-QUESTCOND(012){
+//Select an IFO Object.
+QUESTCOND(012)
+{
+    /*
+    GETCONDDATA(012);
+
+    //LMA: For now we do only this stuff for the warp gate :)
+    bool is_ok=false;
+    LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Select Object %i in map %i, IFO %i_%i.IFO (NOT CODED)",opcode,data->iEventID,data->iZone,data->iX,data->iY);
+    if(GServer->WarpGate.id!=data->iEventID||GServer->WarpGate.IfoX!=data->iX||GServer->WarpGate.IfoY!=data->iY||GServer->WarpGate.mapid!=data->iZone)
+    {
+        return QUEST_FAILURE;
+    }
+
+    //We select as refNPC the WarpGate ^_^
+    if(GServer->WarpGate.Npc==NULL)
+    {
+        return QUEST_FAILURE;
+    }
+
+    client->quest.selectedNpc = GServer->WarpGate.Npc;
+    Log(MSG_INFO,"CDTQ 012 Warp Gate Selected");
+    */
+    Log(MSG_WARNING,"QSD CDT012 NOT CODED");
+
+
 	return QUEST_SUCCESS;
 }
 

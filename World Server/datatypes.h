@@ -748,6 +748,23 @@ struct CSkills {
     UINT STLId;
 };
 
+//LMA: IFO Objects
+struct IfoObject
+{
+    UINT id;
+    UINT virtualNpctypeID;
+    fPoint IfoPosition;
+    UINT direction;
+    UINT mapid;
+    bool hidden;
+    int IfoObjVar[20];
+    int IfoX;
+    int IfoY;
+    UINT clientID;
+    CNPCData* NPCData;
+    CNPC* Npc;
+};
+
 // -----------------------------------------------------------------------------------------
 // Status Object
 // -----------------------------------------------------------------------------------------

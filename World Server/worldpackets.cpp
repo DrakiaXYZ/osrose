@@ -470,6 +470,40 @@ bool CWorldServer::pakStopChar( CPlayer* thisclient, CPacket* P )
 	return true;
 }
 
+//LMA: Spawn Ifo Objects
+bool CWorldServer::pakSpawnIfoObject( CPlayer* thisclient, UINT npctype,bool forcerefresh)
+{
+    if(npctype!=GServer->WarpGate.virtualNpctypeID)
+        return true;
+
+    //Credits to Maxxon for this one ;)
+    BEGINPACKET(pak, 0x7d6);
+    ADDWORD(pak, GServer->WarpGate.clientID);
+    //ADDWORD(pak, 0x2022); // unused
+    ADDBYTE(pak,GServer->WarpGate.IfoX);
+    ADDBYTE(pak,GServer->WarpGate.IfoY);
+    ADDWORD(pak, GServer->WarpGate.id); // object number
+    ADDWORD(pak, GServer->WarpGate.IfoObjVar[0]); // event id. 0x0000 closed, 0x01 open
+
+    //This can happen (see qsd Actions.
+    if(thisclient!=NULL)
+    {
+        thisclient->client->SendPacket( &pak );
+    }
+
+    if (forcerefresh)
+    {
+        //we send to all people in map, just to be sure ^_^
+        SendToAllInMap(&pak,WarpGate.mapid);
+    }
+
+    Log(MSG_INFO,"Spawning WarpGate, does it appear? %i",GServer->WarpGate.IfoObjVar[0]);
+
+
+	return true;
+}
+
+
 // Spawn NPC
 bool CWorldServer::pakSpawnNPC( CPlayer* thisclient, CNPC* thisnpc )
 {

@@ -284,21 +284,6 @@ QUESTCONDC(010){
 
 //Object Variable
 QUESTCONDC(011){
-/*	if(entity->_EntityType != ENTITY_NPC) return QUEST_FAILURE;
-	GETCONDDATA(011);
-
-	if(data->btWho == 0){
-		CNpc* thisNpc = reinterpret_cast<CNpc*>(entity);
-		thisNpc = thisNpc->SelectedNpc;
-		if(thisNpc == NULL) return QUEST_FAILURE;
-
-		short VarValue = thisNpc->ObjVar.GetVar(data->nVarNo);
-		if(OperateValues(data->btOp, &VarValue, (short)data->iValue)) return QUEST_SUCCESS;
-	}
-
-	return QUEST_FAILURE;*/
-	// Don't think we've implemented NPC's having quests. - Drakia
-
     GETCONDDATA(011);
 	//Log(MSG_DEBUG,"QSDC(011) nVarNo = %i, iValue = %i, btOp = %i",data->nVarNo, data->iValue,data->btOp);
 	CMonster* monster = reinterpret_cast<CMonster*>(client);
@@ -310,8 +295,21 @@ QUESTCONDC(011){
 
 	int refNPC = monster->thisnpc->refNPC;
 	int ObjvarIndex = data->nVarNo;
+	int tempval = 0;
 
-	int tempval = GServer->ObjVar[refNPC][ObjvarIndex];
+    //LMA: WarpGate or standard NPC?
+    if(monster->thisnpc->refNPC>1000&&monster->thisnpc->refNPC==GServer->WarpGate.virtualNpctypeID)
+    {
+        //WarpGate.
+        if(ObjvarIndex>19)
+            return QUEST_FAILURE;
+        tempval = GServer->WarpGate.IfoObjVar[ObjvarIndex];
+    }
+    else
+    {
+        tempval = GServer->ObjVar[refNPC][ObjvarIndex];
+    }
+
 	//Log(MSG_DEBUG,"QSDC(011) Retrieved ObjVar[%i]=%i successfully NPC %i",ObjvarIndex,tempval,monster->thisnpc->refNPC);
 	switch(data->btOp)
 	{
@@ -351,9 +349,28 @@ QUESTCONDC(011){
 	return QUEST_FAILURE;
 }
 
-//Execute Trigger in Zone
+//Select Ifo Object
 QUESTCONDC(012){
     //Log(MSG_WARNING,"Monster/NPC using QuestCondition 012");
+    GETCONDDATA(012);
+
+    //LMA: For now we do only this stuff for the warp gate :)
+    if(GServer->WarpGate.id!=data->iEventID||GServer->WarpGate.IfoX!=data->iX||GServer->WarpGate.IfoY!=data->iY||GServer->WarpGate.mapid!=data->iZone)
+    {
+        return QUEST_FAILURE;
+    }
+
+    CMonster* monster = reinterpret_cast<CMonster*>(client);
+	if(monster == NULL)
+	{
+	    //Log(MSG_WARNING,"QUESTCONDC(013) FAILED, monster NULL");
+	    return QUEST_FAILURE;
+    }
+
+	monster->thisnpc->refNPC = GServer->WarpGate.virtualNpctypeID; // sets the reference variable for the correct ObjVar
+    Log(MSG_INFO,"CDTCQ 012 Warp Gate Selected");
+
+
 	return QUEST_SUCCESS;
 }
 

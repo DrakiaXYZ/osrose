@@ -1246,6 +1246,19 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
         Log( MSG_GMACTION, " %s : /event %i %i %i" ,thisclient->CharInfo->charname, npctype,dialog,type);
         return pakGMEventType(thisclient,npctype,dialog,type);
     }
+   else if (strcmp(command, "eventifo")==0) //LMA: For IFO Objects
+    {
+        if(Config.Command_EventIfo > thisclient->Session->accesslevel)
+	       return true;
+        if ((tmp = strtok(NULL, " "))==NULL)
+                return true;
+        int npctype=atoi(tmp);
+        if ((tmp = strtok(NULL, " "))==NULL)
+                return true;
+        int eventID=atoi(tmp);
+        Log( MSG_GMACTION, " %s : /eventifo %i %i" ,thisclient->CharInfo->charname, npctype,eventID);
+        return pakGMEventIFO(thisclient, npctype,eventID);
+    }
    else if (strcmp(command, "exp")==0)
     {
         if(Config.Command_Exp > thisclient->Session->accesslevel)
@@ -3431,6 +3444,52 @@ bool CWorldServer::pakGMReborn(CPlayer* thisclient)
      return true;
 }
 
+//LMA: To change Ifo stuff, for now only for the warpgate.
+bool CWorldServer::pakGMEventIFO(CPlayer* thisclient, int ifoType,int eventID)
+{
+    if (ifoType!=GServer->WarpGate.id)
+        return true;
+
+    if (eventID<0||eventID>1||eventID==GServer->WarpGate.IfoObjVar[0])
+    {
+        return true;
+    }
+
+    char buffer[200];
+    sprintf( buffer, "Event %i for IFO: %i", eventID, ifoType);
+
+    GServer->WarpGate.IfoObjVar[0]=eventID;
+    if(eventID==0)
+    {
+        GServer->WarpGate.hidden=true;
+    }
+    else
+    {
+        GServer->WarpGate.hidden=false;
+    }
+
+    BEGINPACKET( pak, 0x784 );
+    ADDSTRING  ( pak, "[Server]" );
+    ADDBYTE    ( pak, 0 );
+    ADDSTRING  ( pak, buffer );
+	ADDBYTE    ( pak, 0 );
+    thisclient->client->SendPacket(&pak);
+
+    RESETPACKET( pak, 0x790 );
+    ADDWORD    ( pak, GServer->WarpGate.clientID);
+    ADDWORD    ( pak, eventID);
+    //thisclient->client->SendPacket(&pak);
+    GServer->SendToAllInMap(&pak,GServer->WarpGate.mapid);
+
+    //We have to refresh the stuff.
+    //Is that really needed?
+    //pakSpawnIfoObject(thisclient,GServer->WarpGate.virtualNpctypeID,true);
+
+
+
+	return true;
+}
+
 //Event function credits Welson
 bool CWorldServer::pakGMEventType(CPlayer* thisclient, int npctype, int dialog, long int type)
 {
@@ -3457,7 +3516,8 @@ bool CWorldServer::pakGMEventType(CPlayer* thisclient, int npctype, int dialog, 
     RESETPACKET( pak, 0x790 );
     ADDWORD    ( pak, thisnpc->clientid );
     ADDWORD    ( pak, thisnpc->event );	  //LMA: Welcome in the real Word ^_^
-    thisclient->client->SendPacket(&pak);
+    //thisclient->client->SendPacket(&pak);
+    GServer->SendToAllInMap(&pak,thisnpc->posMap);
 
     //changing objvar as well.
     GServer->ObjVar[npctype][0]=thisnpc->event;

@@ -249,6 +249,7 @@ class CWorldServer : public CServerSocket
     	bool pakChangeEquip( CPlayer* thisclient, CPacket* P );
     	bool pakStartAttack( CPlayer* thisclient, CPacket* P );
        	bool pakSpawnNPC( CPlayer* thisclient, CNPC* thisnpc );
+        bool pakSpawnIfoObject( CPlayer* thisclient, UINT npctype,bool forcerefresh=false);    //LMA: Spawning IfoObjects.
         bool pakRideRequest( CPlayer* thisclient, CPacket* P );
         bool pakPartyActions( CPlayer* thisclient, CPacket* P );
         bool pakPartyOption( CPlayer* thisclient, CPacket* P );
@@ -324,6 +325,7 @@ class CWorldServer : public CServerSocket
         bool pakGMTeleOtherPlayer( CPlayer *thisclient, char* name, int map, float x, float y );
         bool pakGMZuly( CPlayer* thisclient, int mode, int amount, char* charname );
         bool pakGMEventType(CPlayer* thisclient, int npctype, int dialog, long int type); //Event
+        bool pakGMEventIFO(CPlayer* thisclient, int ifoType,int eventID);   //LMA: for Ifo Objects
     	bool pakGMTele( CPlayer* thisclient, int map, float x, float y );
     	bool pakGMMon( CPlayer* thisclient, int montype, int moncount );
         //bool pakGMZulygive(CPlayer* thisclient, char* name, int zuly);
@@ -375,6 +377,8 @@ class CWorldServer : public CServerSocket
 
     	//----------------- Server StartUp Functions (startup.cpp)
     	bool LoadSTBData( );
+
+        bool LoadIfoObjects( ); //LMA: Loading Objects ID.
 
         //lma: initializing arrays default values...
         bool InitDefaultValues();
@@ -492,6 +496,7 @@ class CWorldServer : public CServerSocket
         int                     maxStatus;
     	map<int,char*>          NpcNameList;            //LMA: npc name map.
     	map<UINT,char*>         STLNameList;            //LMA: Name for all things taken from STL.
+    	IfoObject               WarpGate;               //LMA: Warp Gate for Union.
         vector<CCustomGate*>    CustomGateList;         // Custom Telegate list
         vector<CCustomEvent*>   CustomEventList;        //Custom events list
 

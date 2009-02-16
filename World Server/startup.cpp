@@ -140,6 +140,87 @@ bool CWorldServer::LoadSTBData( )
     return true;
 }
 
+//LMA: loading IFO Objects (so far only the warp gate)
+bool CWorldServer::LoadIfoObjects( )
+{
+    //LMA: Warp Gate Union :)
+    WarpGate.hidden=true;
+    WarpGate.id=1;
+    WarpGate.virtualNpctypeID=10001;
+    for (int k=0;k<20;k++)
+        WarpGate.IfoObjVar[k]=0;
+    WarpGate.IfoPosition.x=5470.72;
+    WarpGate.IfoPosition.y=5248.40;
+    WarpGate.IfoPosition.z=0;
+    WarpGate.direction=0;
+    WarpGate.mapid=2;
+    WarpGate.IfoX=34;
+    WarpGate.IfoX=32;
+    WarpGate.clientID=0;
+    WarpGate.Npc=NULL;
+
+   CNPCData* newnpc = new (nothrow) CNPCData;
+    if(newnpc==NULL)
+    {
+        Log( MSG_ERROR, "Error allocing memory" );
+        WarpGate.NPCData=NULL;
+        return true;
+    }
+
+    newnpc->id = 1;
+    newnpc->life = 0;
+    newnpc->stance =0;
+    newnpc->wspeed =0;
+    newnpc->rspeed =0;
+    newnpc->dspeed =0;
+    newnpc->weapon =0;
+    newnpc->subweapon =0;
+    newnpc->level =0;
+    newnpc->hp =100;
+    newnpc->atkpower =0;
+    newnpc->hitrate =0;
+    newnpc->defense =100;
+    newnpc->magicdefense =0;
+    newnpc->dodge =0;
+    newnpc->atkspeed =0;
+    newnpc->AI =0;
+    newnpc->exp =0;
+    newnpc->dropid =0;
+    newnpc->money =0;
+    newnpc->item =0;
+    newnpc->tab1 =0;
+    newnpc->tab2 =0;
+    newnpc->tab3 =0;
+    newnpc->specialtab =0;
+    newnpc->atkdistance =0;
+    newnpc->aggresive =0;
+    newnpc->helpless=0;
+    newnpc->shp =0;
+    newnpc->dialogid = 0;
+    newnpc->eventid = 0;
+    newnpc->side=0;
+    newnpc->sidechance=0;
+    newnpc->STLId=0;
+
+    //LMA: Various skills for monsters (won't be used anymore, will be done by AIP, for now left for compatibility).
+    for(int i=0;i<4;i++)
+    {
+      newnpc->askills[i]=0;
+      newnpc->bskills[i]=0;
+      newnpc->dskills[i]=0;
+    }
+
+    newnpc->lastskill=0;
+    newnpc->sigskill=0;
+    newnpc->delayskill=0;
+
+    WarpGate.NPCData=newnpc;
+
+
+    return true;
+}
+
+
 //LMA: loading LTB (for AIP)
 bool CWorldServer::LoadLTB( )
 {
@@ -1394,7 +1475,37 @@ bool CWorldServer::LoadNPCs( )
 		MapList.Index[thisnpc->posMap]->AddNPC( thisnpc );
 	}
 	DB->QFree( );
+
+	//LMA: Adding WarpGate as "Virtual NPC" :)
+	CNPC* thisnpc = new (nothrow) CNPC;
+    thisnpc->clientid = GetNewClientID();
+    thisnpc->npctype = WarpGate.virtualNpctypeID;
+    thisnpc->posMap = 2;
+    thisnpc->dir = 0;
+    thisnpc->pos.x = WarpGate.IfoPosition.x;
+    thisnpc->pos.y = WarpGate.IfoPosition.y;
+    thisnpc->dialog=0;
+    thisnpc->event=0;
+    thisnpc->thisnpc = GetNPCDataByID( thisnpc->npctype );
+    thisnpc->thisnpc->eventid=0;
+
+    //LMA: check if out of memory.
+    if (thisnpc->posMap>=MapList.max)
+    {
+       Log(MSG_WARNING,"NPC, index overflow trapped %i>%i (increase MAX_MAP_DATA) WarpGate",thisnpc->posMap,MapList.max);
+       delete thisnpc;
+    }
+    else
+    {
+        MapList.Index[thisnpc->posMap]->AddNPC( thisnpc );
+    }
+
+	WarpGate.clientID=thisnpc->clientid;
+	WarpGate.Npc=thisnpc;
+	//End WarpGate.
 	Log( MSG_LOAD, "NPC spawn Data loaded" );
+
+
 	return true;
 }
 
