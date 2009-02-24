@@ -45,7 +45,7 @@ INSERT INTO `list_npcs` VALUES (0, '[Clan War Manager] Regina', 1751, 2, 90.000,
 INSERT INTO `list_npcs` VALUES (0, '[Clan Merchant] Aliche Patt', 1752, 2, 90.000, 5288.35, 5260.53, 224,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Teleporter] Idiosel', 1119, 2, 283.797, 5344.59, 5176.35, 219,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Founder of Junon Order] Raw', 1088, 2, 181.501, 5319.27, 5095.36, 188,0,0);
-INSERT INTO `list_npcs` VALUES (0, '[Elder of Junon Order] Gorthein', 1109, 2, 181.501, 5325.54, 5095.31, 209,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Junon Order Elder] Gorthein', 1109, 2, 181.501, 5325.54, 5095.31, 209,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Guide] Eva', 1082, 2, 153.435, 5505.78, 5346.09, 182,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Soldier] Odelo', 1116, 2, 0.000, 5507.31, 5397.40, 216,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Soldier] Winters', 1117, 2, 0.000, 5522.99, 5397.75, 217,0,0);
@@ -162,7 +162,7 @@ INSERT INTO `list_npcs` VALUES (0, '[Shamanist] Est', 1191, 54, 84.016, 5088.26,
 INSERT INTO `list_npcs` VALUES (0, '[Station Guide] Chacha', 1219, 61, 12.550, 5226.60, 4452.72, 319,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Raknu Warrior] Toanu', 1229, 61, 180.000, 5434.62, 4671.50, 329,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Raknu Warrior] Guanu', 1230, 61, 181.501, 5424.42, 4671.62, 330,0,0);
-INSERT INTO `list_npcs` VALUES (0, '[Elder of Junon Order] Oscar Patrick', 1214, 61, 157.957, 5371.18, 4546.51, 314,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Junon Order Elder] Oscar Patrick', 1214, 61, 157.957, 5371.18, 4546.51, 314,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Righteous Crusader] Harold Evan', 1211, 61, 14.293, 5369.75, 4575.29, 311,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Smith] Nel Eldora', 1223, 61, 14.293, 5395.55, 4614.05, 323,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Akram Ambassador] Jacklyn Cooper', 1215, 61, 180.000, 5430.00, 4483.79, 315,0,0);
