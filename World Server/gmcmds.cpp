@@ -5082,16 +5082,21 @@ bool CWorldServer::pakGMAllSkill(CPlayer* thisclient, char* name)
         otherclient->cskills[28].id = 731;//Sword Force
         otherclient->cskills[28].level = 9;
         // Mileage Items - knight - 1 handed
-        otherclient->cskills[29].id = 5601; // 847
+        otherclient->cskills[29].id = 5601; // 847 - One-Handed Weapon Iron Blessing
         otherclient->cskills[29].level = 1;
-        otherclient->cskills[30].id = 5602; // 848
+        otherclient->cskills[30].id = 5602; // 848 - One-Handed Weapon Wind Blessing
         otherclient->cskills[30].level = 1;
+        // Mileage - All jobs
+        otherclient->cskills[31].id = 5505; // 1091 - Swift Blessing
+        otherclient->cskills[31].level = 1;
+        otherclient->cskills[32].id = 5506; // 1092 - Nimble Blessing
+        otherclient->cskills[32].level = 1;
         // Unique Items - knight - 1 handed
-        otherclient->cskills[31].id = 4211; // 569
-        otherclient->cskills[31].level = 4;
+        otherclient->cskills[33].id = 4211; // 569 - Sacrifice
+        otherclient->cskills[33].level = 4;
         //Immortal Form
-        //otherclient->cskills[32].id = 426;
-        //otherclient->cskills[32].level = 1;
+        //otherclient->cskills[34].id = 426; // Immortal Form
+        //otherclient->cskills[34].level = 1;
         SendPM (thisclient, "Relogin For Get All Skills");
     }
     else if ( classid == 122 ) //Champion
@@ -5190,27 +5195,32 @@ bool CWorldServer::pakGMAllSkill(CPlayer* thisclient, char* name)
         otherclient->cskills[45].level = 5;
         otherclient->cskills[46].id = 716;//beserk
         otherclient->cskills[46].level = 5;
-        // Mileage Items - 2 hand swor6
-        otherclient->cskills[47].id = 5603; // 849
+        // Mileage Items - 2 hand sword
+        otherclient->cskills[47].id = 5603; // 849 - Two-Handed Sword Iron Blessing
         otherclient->cskills[47].level = 1;
-        otherclient->cskills[48].id = 5604; // 850
+        otherclient->cskills[48].id = 5604; // 850 - Two-Handed Sword Wind Blessing
         otherclient->cskills[48].level = 1;
         // Mileage Items - spear
-        otherclient->cskills[49].id = 5605; // 851
+        otherclient->cskills[49].id = 5605; // 851 - Two-Handed Spear Iron Blessing
         otherclient->cskills[49].level = 1;
-        otherclient->cskills[50].id = 5606; // 852
+        otherclient->cskills[50].id = 5606; // 852 - Two-Handed Spear Wind Blessing
         otherclient->cskills[50].level = 1;
         // Mileage Items - axe
-        otherclient->cskills[51].id = 5607; // 853
+        otherclient->cskills[51].id = 5607; // 853 - Two-Handed Axe Iron Blessing
         otherclient->cskills[51].level = 1;
-        otherclient->cskills[52].id = 5608; // 854
+        otherclient->cskills[52].id = 5608; // 854 - Two-Handed Axe Wind Blessing
         otherclient->cskills[52].level = 1;
+        // Mileage - All jobs
+        otherclient->cskills[53].id = 5505; // 1091 - Swift Blessing
+        otherclient->cskills[53].level = 1;
+        otherclient->cskills[54].id = 5506; // 1092 - Nimble Blessing
+        otherclient->cskills[54].level = 1;
         // Unique Items -
-        otherclient->cskills[53].id = 4211; // 569
-        otherclient->cskills[53].level = 4;
+        otherclient->cskills[55].id = 4211; // 569 - Sacrifice
+        otherclient->cskills[55].level = 4;
         //Sword Master Form
-        //otherclient->cskills[54].id = 526;
-        //otherclient->cskills[54].level = 1;
+        //otherclient->cskills[56].id = 526; // Sword Master Form
+        //otherclient->cskills[56].level = 1;
 
         SendPM (thisclient, "Relogin For Get All Skills");
     }
@@ -5290,16 +5300,20 @@ bool CWorldServer::pakGMAllSkill(CPlayer* thisclient, char* name)
         otherclient->cskills[35].id = 921;//Cure
         otherclient->cskills[35].level = 5;
         // Mileage Items - mage
-        otherclient->cskills[36].id = 5702; // 855
+        otherclient->cskills[36].id = 5702; // 855 - Staff Iron Blessing
         otherclient->cskills[36].level = 1;
-        otherclient->cskills[37].id = 5703; // 856
+        otherclient->cskills[37].id = 5703; // 856 - Staff Wind Blessing
         otherclient->cskills[37].level = 1;
-        // Mileage Item - Soul Recall
-        otherclient->cskills[38].id = 5701; // 592
+        otherclient->cskills[38].id = 5701; // 592 - Soul Restore
         otherclient->cskills[38].level = 1;
-        // Unique Item - Soul Recall
-        //otherclient->cskills[39].id = 4401; // 560
-        //otherclient->cskills[39].level = 3;
+        // Mileage - All jobs
+        otherclient->cskills[39].id = 5505; // 1091 - Swift Blessing
+        otherclient->cskills[39].level = 1;
+        otherclient->cskills[40].id = 5506; // 1092 - Nimble Blessing
+        otherclient->cskills[40].level = 1;
+        // Unique Item
+        //otherclient->cskills[41].id = 4401; // 560 - Soul Recall
+        //otherclient->cskills[41].level = 3;
 
         SendPM (thisclient, "Relogin For Get All Skills");
     }
@@ -5388,16 +5402,20 @@ bool CWorldServer::pakGMAllSkill(CPlayer* thisclient, char* name)
         otherclient->cskills[41].id = 6081;//Wand Combat Mastery - 198
         otherclient->cskills[41].level = 18;
         // Mileage Items - cleric
-        otherclient->cskills[42].id = 5704; // 857
+        otherclient->cskills[42].id = 5704; // 857 - Wand Iron Blessing
         otherclient->cskills[42].level = 1;
-        otherclient->cskills[43].id = 5705; // 858
+        otherclient->cskills[43].id = 5705; // 858 - Wand Wind Blessing
         otherclient->cskills[43].level = 1;
-        // Mileage Item - Soul Recall
-        otherclient->cskills[44].id = 5701; // 592
+        otherclient->cskills[44].id = 5701; // 592 - Soul Restore
         otherclient->cskills[44].level = 1;
-        // Unique Item - Soul Recall
-        otherclient->cskills[45].id = 4401; // 560
-        otherclient->cskills[45].level = 3;
+        // Mileage - All jobs
+        otherclient->cskills[45].id = 5505; // 1091 - Swift Blessing
+        otherclient->cskills[45].level = 1;
+        otherclient->cskills[46].id = 5506; // 1092 - Nimble Blessing
+        otherclient->cskills[46].level = 1;
+        // Unique Item
+        otherclient->cskills[47].id = 4401; // 560 - Soul Recall
+        otherclient->cskills[47].level = 3;
 
         SendPM (thisclient, "Relogin For Get All Skills");
     }
@@ -5455,7 +5473,7 @@ bool CWorldServer::pakGMAllSkill(CPlayer* thisclient, char* name)
         otherclient->cskills[24].level = 4;
         otherclient->cskills[25].id = 1836;//screw slash
         otherclient->cskills[25].level = 4;
-        otherclient->cskills[26].id = 1841;//
+        otherclient->cskills[26].id = 1841;//Advanced Katar Mastery
         otherclient->cskills[26].level = 9;
         otherclient->cskills[27].id = 1851;//cloaking
         otherclient->cskills[27].level = 4;
@@ -5498,15 +5516,21 @@ bool CWorldServer::pakGMAllSkill(CPlayer* thisclient, char* name)
         otherclient->cskills[46].id = 1771;//requiem
         otherclient->cskills[46].level = 4;
         // Mileage Items - raider - katar
-        otherclient->cskills[47].id = 5803; // 861
+        otherclient->cskills[47].id = 5803; // 861 - Katar Iron Blessing
         otherclient->cskills[47].level = 1;
-        otherclient->cskills[48].id = 5804; // 862
+        otherclient->cskills[48].id = 5804; // 862 - Katar Wind Blessing
         otherclient->cskills[48].level = 1;
         // Mileage Items - raider - dual
-        otherclient->cskills[49].id = 5805; // 863
+        otherclient->cskills[49].id = 5805; // 863 - Duel Wield Iron Blessing
         otherclient->cskills[49].level = 1;
-        otherclient->cskills[50].id = 5806; // 864
+        otherclient->cskills[50].id = 5806; // 864 - Duel Wield Wind Blessing
         otherclient->cskills[50].level = 1;
+        // Mileage - All jobs
+        otherclient->cskills[51].id = 5505; // 1091 - Swift Blessing
+        otherclient->cskills[51].level = 1;
+        otherclient->cskills[52].id = 5506; // 1092 - Nimble Blessing
+        otherclient->cskills[52].level = 1;
+
 
         SendPM (thisclient, "Relogin For Get All Skills");
     }
@@ -5573,13 +5597,18 @@ bool CWorldServer::pakGMAllSkill(CPlayer* thisclient, char* name)
         otherclient->cskills[29].id = 1956;//impact arrow
         otherclient->cskills[29].level = 6;
         // Mileage Items - scout
-        otherclient->cskills[30].id = 5801; // 859
+        otherclient->cskills[30].id = 5801; // 859 - Bow Iron Blessing
         otherclient->cskills[30].level = 1;
-        otherclient->cskills[31].id = 5802; // 860
+        otherclient->cskills[31].id = 5802; // 860 - Bow Wind Blessing
         otherclient->cskills[31].level = 1;
+        // Mileage - All jobs
+        otherclient->cskills[32].id = 5505; // 1091 - Swift Blessing
+        otherclient->cskills[32].level = 1;
+        otherclient->cskills[33].id = 5506; // 1092 - Nimble Blessing
+        otherclient->cskills[33].level = 1;
         // Unique Items - hawker
-        otherclient->cskills[32].id = 4601; // call beast // 565
-        otherclient->cskills[32].level = 9;
+        otherclient->cskills[34].id = 4601; // 565 - Call Beast
+        otherclient->cskills[34].level = 9;
 
         SendPM (thisclient, "Relogin For Get All Skills");
     }
@@ -5663,13 +5692,18 @@ bool CWorldServer::pakGMAllSkill(CPlayer* thisclient, char* name)
         otherclient->cskills[37].id = 2431;//dual layer
         otherclient->cskills[37].level = 5;
         // Mileage Items - Borg - Launcher
-        otherclient->cskills[38].id = 5904; // 867
+        otherclient->cskills[38].id = 5904; // 867 - Launcher Iron Blessing
         otherclient->cskills[38].level = 1;
-        otherclient->cskills[39].id = 5905; // 868
+        otherclient->cskills[39].id = 5905; // 868 - Launcher Wind Blessing
         otherclient->cskills[39].level = 1;
+        // Mileage - All jobs
+        otherclient->cskills[40].id = 5505; // 1091 - Swift Blessing
+        otherclient->cskills[40].level = 1;
+        otherclient->cskills[41].id = 5506; // 1092 - Nimble Blessing
+        otherclient->cskills[41].level = 1;
         //added for ver 144
-        otherclient->cskills[40].id = 2461;//aimed triple shot
-        otherclient->cskills[40].level = 5;
+        otherclient->cskills[42].id = 2461; // Aimed Triple Shot
+        otherclient->cskills[42].level = 5;
         SendPM (thisclient, "Relogin For Get All Skills");
     }
 
@@ -5733,7 +5767,7 @@ bool CWorldServer::pakGMAllSkill(CPlayer* thisclient, char* name)
         otherclient->cskills[26].level = 9;
         otherclient->cskills[27].id = 2716;//Armor Endowment
         otherclient->cskills[27].level = 9;
-        //Artizan Tab
+        //Artisan Tab
         otherclient->cskills[28].id = 2441;//Top Gunner
         otherclient->cskills[28].level = 18;
         otherclient->cskills[29].id = 2466;//Poison Shot
@@ -5791,15 +5825,20 @@ bool CWorldServer::pakGMAllSkill(CPlayer* thisclient, char* name)
         otherclient->cskills[55].id = 2776;//Advanced Armor Endowment
         otherclient->cskills[55].level = 9;
         // Mileage Items - artisan
-        otherclient->cskills[56].id = 5902; // 865
+        otherclient->cskills[56].id = 5902; // 865 - Gun Iron Blessing
         otherclient->cskills[56].level = 1;
-        otherclient->cskills[57].id = 5903; // 866
+        otherclient->cskills[57].id = 5903; // 866 - Gun Wind Blessing
         otherclient->cskills[57].level = 1;
+        // Mileage - All jobs
+        otherclient->cskills[58].id = 5505; // 1091 - Swift Blessing
+        otherclient->cskills[58].level = 1;
+        otherclient->cskills[59].id = 5506; // 1092 - Nimble Blessing
+        otherclient->cskills[59].level = 1;
         // Unique Items - artisan
-        otherclient->cskills[58].id = 4801; // Face Item Craft
-        otherclient->cskills[58].level = 9;
-        otherclient->cskills[59].id = 4811; // Accessory Craft
-        otherclient->cskills[59].level = 9;
+        otherclient->cskills[60].id = 4801; // 561 - Face Item Craft
+        otherclient->cskills[60].level = 9;
+        otherclient->cskills[61].id = 4811; // 562 - Accessory Craft
+        otherclient->cskills[61].level = 9;
 
         SendPM (thisclient, "Relogin For Get All Skills");
     }
@@ -5807,23 +5846,26 @@ bool CWorldServer::pakGMAllSkill(CPlayer* thisclient, char* name)
     {
         /*
         // Mileage Items - For which jobs?
-        otherclient->cskills[xx].id = 5501; // 590 - all
+        otherclient->cskills[xx].id = 5501; // 590 - Mana Corrosion - all
         otherclient->cskills[xx].level = 1;
-        otherclient->cskills[xx].id = 5502; // 591 - all
+        otherclient->cskills[xx].id = 5502; // 591 - Dispel - all
         otherclient->cskills[xx].level = 1;
-        otherclient->cskills[xx].id = 5901; // 593  (can learn, but not showing)
+        otherclient->cskills[xx].id = 5901; // 593 - Virtuoso Crafting - (can learn, but not showing)
         otherclient->cskills[xx].level = 1;
         // Unique Items - For which jobs?
-        otherclient->cskills[xx].id = 4401; // 567 - all
+        otherclient->cskills[xx].id = 4001; // 567 - ManaBrake - all
         otherclient->cskills[xx].level = 1;
-        otherclient->cskills[xx].id = 4402; // 568 - all
+        otherclient->cskills[xx].id = 4002; // 568 - Anti Magic Shell - all
         otherclient->cskills[xx].level = 1;
         otherclient->cskills[xx].id = xxxx; // 563 - all
         otherclient->cskills[xx].level = x;
-        otherclient->cskills[xx].id = xxxx; // 564 - all
+        otherclient->cskills[xx].id = 4406; // 564 - Mana Shield - all - 4407, 4408
         otherclient->cskills[xx].level = x;
-        otherclient->cskills[xx].id = xxxx; // 566 - dealer
+        otherclient->cskills[xx].id = 4821; // 566 - Expert Crafting - dealer - 4822, 4823
         otherclient->cskills[xx].level = x;
+        otherclient->cskills[xx].id = 4201; //     - Adamantine Fist - 
+        otherclient->cskills[xx].level = x;
+        // 5580-5595 other skills....basic?
         */
         is_ok=false;
         SendPM(thisclient, "Can't add skills for this class");
