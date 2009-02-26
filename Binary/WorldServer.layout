@@ -3,7 +3,7 @@
 	<ActiveTarget name="default" />
 </CodeBlocks_layout_file>
 [Editors]
-Order=
+Order=-1
 Focused=-1
 [Editor_0]
 Open=0
@@ -118,8 +118,12 @@ Top=0
 Open=0
 Top=0
 [Editor_36]
-Open=0
-Top=0
+Open=1
+Top=1
+CursorCol=10
+CursorRow=671
+TopLine=638
+LeftChar=1
 [Editor_37]
 Open=0
 Top=0

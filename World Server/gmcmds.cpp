@@ -613,182 +613,78 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
         thisclient->SetStats( );
               return true;
     }
+	 //Example for CG.
    else if (strcmp(command, "cg")==0)     // get all castlegear parts
     {
         if(Config.Command_cg > thisclient->Session->accesslevel)
            return true;
-        int refine;
-        if ((tmp = strtok(NULL, " "))==NULL) refine = 0;
-        else
-            refine=atoi(tmp);
-        refine *= 16;
+        Log( MSG_GMACTION, " %s : /cg", thisclient->CharInfo->charname);   
         BEGINPACKET( pak, 0);
         {
-            //Wodden Stock Core
-            thisclient->items[124].itemnum = 31;
-            thisclient->items[124].itemtype = 14;
-            thisclient->items[124].refine = 0;
-            thisclient->items[124].durability = 40;
-            thisclient->items[124].lifespan = 100;
-            thisclient->items[124].count = 1;
-            thisclient->items[124].stats = 0;
-            thisclient->items[124].socketed = false;
-            thisclient->items[124].appraised = true;
-            thisclient->items[124].gem = 0;
-            thisclient->UpdateInventory( 124 );
-            RESETPACKET( pak, 0x7a5);
-            ADDWORD( pak, thisclient->clientid );
-            ADDWORD( pak, 124);
-            ADDWORD( pak, 31);  // ITEM NUM
-            ADDWORD( pak, BuildItemRefine( thisclient->items[124] ));   // REFINE
-            ADDWORD( pak, thisclient->Stats->Move_Speed );  // REFINE 2602
-            SendToVisible( &pak,thisclient );
-
-            //Fornef Engine
-            thisclient->items[125].itemnum = 131;
-            thisclient->items[125].itemtype = 14;
-            thisclient->items[125].refine = 0;
-            thisclient->items[125].durability = 40;
-            thisclient->items[125].lifespan = 100;
-            thisclient->items[125].count = 1;
-            thisclient->items[125].stats = 0;
-            thisclient->items[125].socketed = false;
-            thisclient->items[125].appraised = true;
-            thisclient->items[125].gem = 0;
-            thisclient->UpdateInventory( 125 );
-            RESETPACKET( pak, 0x7a5);
-            ADDWORD( pak, thisclient->clientid );
-            ADDWORD( pak, 125);
-            ADDWORD( pak, 131); // ITEM NUM
-            ADDWORD( pak, BuildItemRefine( thisclient->items[125] ));   // REFINE
-            ADDWORD( pak, thisclient->Stats->Move_Speed );  // REFINE 2602
-            SendToVisible( &pak,thisclient );
-
-            //Stand Leg
-            thisclient->items[126].itemnum = 231;
-            thisclient->items[126].itemtype = 14;
-            thisclient->items[126].refine = 0;
-            thisclient->items[126].durability = 40;
-            thisclient->items[126].lifespan = 100;
-            thisclient->items[126].count = 1;
-            thisclient->items[126].stats = 0;
-            thisclient->items[126].socketed = false;
-            thisclient->items[126].appraised = true;
-            thisclient->items[126].gem = 0;
-            thisclient->UpdateInventory( 126 );
-            RESETPACKET( pak, 0x7a5);
-            ADDWORD( pak, thisclient->clientid );
-            ADDWORD( pak, 126);
-            ADDWORD( pak, 231); // ITEM NUM
-            ADDWORD( pak, BuildItemRefine( thisclient->items[126] ));   // REFINE
-            ADDWORD( pak, thisclient->Stats->Move_Speed );  // REFINE 2602
-            SendToVisible( &pak,thisclient );
-
-            // Punch Arms
-            thisclient->items[127].itemnum = 331;
-            thisclient->items[127].itemtype = 14;
-            thisclient->items[127].refine = 0;
-            thisclient->items[127].durability = 40;
-            thisclient->items[127].lifespan = 100;
-            thisclient->items[127].count = 1;
-            thisclient->items[127].stats = 0;
-            thisclient->items[127].socketed = false;
-            thisclient->items[127].appraised = true;
-            thisclient->items[127].gem = 0;
-            thisclient->UpdateInventory( 127 );
-            RESETPACKET( pak, 0x7a5);
-            ADDWORD( pak, thisclient->clientid );
-            ADDWORD( pak, 127);
-            ADDWORD( pak, 331); // ITEM NUM
-            ADDWORD( pak, BuildItemRefine( thisclient->items[127] ));   // REFINE
-            ADDWORD( pak, thisclient->Stats->Move_Speed );  // REFINE 2602
-            SendToVisible( &pak,thisclient );
-
-            //Drill Arms
-            thisclient->items[128].itemnum = 332;
-            thisclient->items[128].itemtype = 14;
-            thisclient->items[128].refine = 0;
-            thisclient->items[128].durability = 40;
-            thisclient->items[128].lifespan = 100;
-            thisclient->items[128].count = 1;
-            thisclient->items[128].stats = 0;
-            thisclient->items[128].socketed = false;
-            thisclient->items[128].appraised = true;
-            thisclient->items[128].gem = 0;
-            thisclient->UpdateInventory( 128 );
-            RESETPACKET( pak, 0x7a5);
-            ADDWORD( pak, thisclient->clientid );
-            ADDWORD( pak, 128);
-            ADDWORD( pak, 332); // ITEM NUM
-            ADDWORD( pak, BuildItemRefine( thisclient->items[128] ));   // REFINE
-            ADDWORD( pak, thisclient->Stats->Move_Speed );  // REFINE 2602
-            SendToVisible( &pak,thisclient );
-
-            //Sword Wheel Arms
-            thisclient->items[129].itemnum = 333;
-            thisclient->items[129].itemtype = 14;
-            thisclient->items[129].refine = 0;
-            thisclient->items[129].durability = 40;
-            thisclient->items[129].lifespan = 100;
-            thisclient->items[129].count = 1;
-            thisclient->items[129].stats = 0;
-            thisclient->items[129].socketed = false;
-            thisclient->items[129].appraised = true;
-            thisclient->items[129].gem = 0;
-            thisclient->UpdateInventory( 129 );
-            RESETPACKET( pak, 0x7a5);
-            ADDWORD( pak, thisclient->clientid );
-            ADDWORD( pak, 129);
-            ADDWORD( pak, 333); // ITEM NUM
-            ADDWORD( pak, BuildItemRefine( thisclient->items[129] ));   // REFINE
-            ADDWORD( pak, thisclient->Stats->Move_Speed );  // REFINE 2602
-            SendToVisible( &pak,thisclient );
-
-            //Cannon Arms
-            thisclient->items[130].itemnum = 334;
-            thisclient->items[130].itemtype = 14;
-            thisclient->items[130].refine = 0;
-            thisclient->items[130].durability = 40;
-            thisclient->items[130].lifespan = 100;
-            thisclient->items[130].count = 1;
-            thisclient->items[130].stats = 0;
-            thisclient->items[130].socketed = false;
-            thisclient->items[130].appraised = true;
-            thisclient->items[130].gem = 0;
-            thisclient->UpdateInventory( 130 );
-            RESETPACKET( pak, 0x7a5);
-            ADDWORD( pak, thisclient->clientid );
-            ADDWORD( pak, 130); // SLOT NUM
-            ADDWORD( pak, 334); // ITEM NUM
-            ADDWORD( pak, BuildItemRefine( thisclient->items[131] ));   // REFINE
-            ADDWORD( pak, thisclient->Stats->Move_Speed );  // REFINE 2602
-            SendToVisible( &pak,thisclient );
-
-            //Spear Arms
-            thisclient->items[131].itemnum = 335;
-            thisclient->items[131].itemtype = 14;
-            thisclient->items[131].refine = 0;
-            thisclient->items[131].durability = 40;
-            thisclient->items[131].lifespan = 100;
-            thisclient->items[131].count = 1;
-            thisclient->items[131].stats = 0;
-            thisclient->items[131].socketed = false;
-            thisclient->items[131].appraised = true;
-            thisclient->items[131].gem = 0;
-            thisclient->UpdateInventory( 131 );
-            RESETPACKET( pak, 0x7a5);
-            ADDWORD( pak, thisclient->clientid );
-            ADDWORD( pak, 131);
-            ADDWORD( pak, 335); // ITEM NUM
-            ADDWORD( pak, BuildItemRefine( thisclient->items[131] ));   // REFINE
-            ADDWORD( pak, thisclient->Stats->Move_Speed );  // REFINE 2602
-            SendToVisible( &pak,thisclient );
+						MYSQL_ROW row;
+						MYSQL_RES *result=NULL;
+						result = DB->QStore("SELECT itemnumber, itemtype FROM list_cart_cg WHERE Cart_CG='CG' AND isactive=1");
+						if(result==NULL) return true;
+						
+						int good_slot=121;						
+						while( row = mysql_fetch_row(result) )
+						{
+							UINT itemtype=atoi(row[1]);
+                            UINT itemnum=atoi(row[0]);
+                            if(itemtype!=14||itemnum<=0)
+                                   continue;
+														
+							bool is_ok=false;
+							for(int k=good_slot;k<=131;k++)
+							{
+								if (thisclient->items[good_slot].itemnum!=0)
+								{
+									continue;
+								}
+								else
+								{
+									good_slot=k;
+									is_ok=true;
+									break;
+								}
+								
+							}
+							
+							if(!is_ok)
+							{
+								SendPM(thisclient,"Not enough place in PAT inventory!");
+								return true;
+							}
+							
+							
+							thisclient->items[good_slot].itemnum = itemnum;
+							thisclient->items[good_slot].itemtype = itemtype;
+							thisclient->items[good_slot].refine = 0;
+							thisclient->items[good_slot].durability = 40;
+							thisclient->items[good_slot].lifespan = 100;
+							thisclient->items[good_slot].count = 1;
+							thisclient->items[good_slot].stats = 0;
+							thisclient->items[good_slot].socketed = false;
+							thisclient->items[good_slot].appraised = true;
+							thisclient->items[good_slot].gem = 0;
+							thisclient->UpdateInventory( good_slot );
+							//Log(MSG_INFO,"Adding in slot %i item %i::%i",good_slot,itemtype,itemnum);
+							RESETPACKET( pak, 0x7a5);
+							ADDWORD( pak, thisclient->clientid );
+							ADDWORD( pak, good_slot);
+							ADDWORD( pak, itemnum);  // ITEM NUM
+							ADDWORD( pak, BuildItemRefine( thisclient->items[good_slot] ));   // REFINE
+							ADDWORD( pak, thisclient->Stats->Move_Speed );  // REFINE 2602
+							SendToVisible( &pak,thisclient );								
+						}
+						
+						DB->QFree( );
             SendPM(thisclient, "get all CastleGear Parts!");
         }
         thisclient->SetStats( );
               return true;
-    }
-/*    else if (strcmp(command, "buff")==0) 	// buff - debuff by Drakia -buff commented out for now
+    }    
+    /*    else if (strcmp(command, "buff")==0) 	// buff - debuff by Drakia -buff commented out for now
     {
         if(Config.Command_Buff > thisclient->Session->accesslevel)
            return true;
