@@ -618,72 +618,84 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
     {
         if(Config.Command_cg > thisclient->Session->accesslevel)
            return true;
-        Log( MSG_GMACTION, " %s : /cg", thisclient->CharInfo->charname);   
+        Log( MSG_GMACTION, " %s : /cg", thisclient->CharInfo->charname);
         BEGINPACKET( pak, 0);
         {
-						MYSQL_ROW row;
-						MYSQL_RES *result=NULL;
-						result = DB->QStore("SELECT itemnumber, itemtype FROM list_cart_cg WHERE Cart_CG='CG' AND isactive=1");
-						if(result==NULL) return true;
-						
-						int good_slot=121;						
-						while( row = mysql_fetch_row(result) )
-						{
-							UINT itemtype=atoi(row[1]);
-                            UINT itemnum=atoi(row[0]);
-                            if(itemtype!=14||itemnum<=0)
-                                   continue;
-														
-							bool is_ok=false;
-							for(int k=good_slot;k<=131;k++)
-							{
-								if (thisclient->items[good_slot].itemnum!=0)
-								{
-									continue;
-								}
-								else
-								{
-									good_slot=k;
-									is_ok=true;
-									break;
-								}
-								
-							}
-							
-							if(!is_ok)
-							{
-								SendPM(thisclient,"Not enough place in PAT inventory!");
-								return true;
-							}
-							
-							
-							thisclient->items[good_slot].itemnum = itemnum;
-							thisclient->items[good_slot].itemtype = itemtype;
-							thisclient->items[good_slot].refine = 0;
-							thisclient->items[good_slot].durability = 40;
-							thisclient->items[good_slot].lifespan = 100;
-							thisclient->items[good_slot].count = 1;
-							thisclient->items[good_slot].stats = 0;
-							thisclient->items[good_slot].socketed = false;
-							thisclient->items[good_slot].appraised = true;
-							thisclient->items[good_slot].gem = 0;
-							thisclient->UpdateInventory( good_slot );
-							//Log(MSG_INFO,"Adding in slot %i item %i::%i",good_slot,itemtype,itemnum);
-							RESETPACKET( pak, 0x7a5);
-							ADDWORD( pak, thisclient->clientid );
-							ADDWORD( pak, good_slot);
-							ADDWORD( pak, itemnum);  // ITEM NUM
-							ADDWORD( pak, BuildItemRefine( thisclient->items[good_slot] ));   // REFINE
-							ADDWORD( pak, thisclient->Stats->Move_Speed );  // REFINE 2602
-							SendToVisible( &pak,thisclient );								
-						}
-						
-						DB->QFree( );
+            MYSQL_ROW row;
+            MYSQL_RES *result=NULL;
+            result = DB->QStore("SELECT itemnumber, itemtype FROM list_cart_cg WHERE Cart_CG='CG' AND isactive=1");
+            if(result==NULL) return true;
+
+            int good_slot=102;
+            vector<int> slot_list;
+
+            while( row = mysql_fetch_row(result) )
+            {
+                UINT itemtype=atoi(row[1]);
+                UINT itemnum=atoi(row[0]);
+                if(itemtype!=14||itemnum<=0)
+                       continue;
+
+                bool is_ok=false;
+                for(int k=good_slot;k<=131;k++)
+                {
+                    if (thisclient->items[k].itemnum!=0)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        good_slot=k;
+                        slot_list.push_back(k);
+                        is_ok=true;
+                        break;
+                    }
+
+                }
+
+                if(!is_ok)
+                {
+                    SendPM(thisclient,"Not enough place in PAT inventory!");
+                    break;
+                }
+
+                thisclient->items[good_slot].itemnum = itemnum;
+                thisclient->items[good_slot].itemtype = itemtype;
+                thisclient->items[good_slot].refine = 0;
+                thisclient->items[good_slot].durability = 40;
+                thisclient->items[good_slot].lifespan = 100;
+                thisclient->items[good_slot].count = 1;
+                thisclient->items[good_slot].stats = 0;
+                thisclient->items[good_slot].socketed = false;
+                thisclient->items[good_slot].appraised = true;
+                thisclient->items[good_slot].gem = 0;
+                thisclient->UpdateInventory( good_slot,0xffff,false);   //We don't want to save now, mysql mutex...
+                //Log(MSG_INFO,"Adding in slot %i item %i::%i",good_slot,itemtype,itemnum);
+                RESETPACKET( pak, 0x7a5);
+                ADDWORD( pak, thisclient->clientid );
+                ADDWORD( pak, good_slot);
+                ADDWORD( pak, itemnum);  // ITEM NUM
+                ADDWORD( pak, BuildItemRefine( thisclient->items[good_slot] ));   // REFINE
+                ADDWORD( pak, thisclient->Stats->Move_Speed );  // REFINE 2602
+                SendToVisible( &pak,thisclient );
+            }
+
+            DB->QFree( );
+
+            //LMA: we save the slots afterwards...
+            for(int k=0;k<slot_list.size();k++)
+            {
+                thisclient->SaveSlot41(slot_list.at(k));
+            }
+
+            slot_list.clear();
+
             SendPM(thisclient, "get all CastleGear Parts!");
         }
+
         thisclient->SetStats( );
-              return true;
-    }    
+        return true;
+    }
     /*    else if (strcmp(command, "buff")==0) 	// buff - debuff by Drakia -buff commented out for now
     {
         if(Config.Command_Buff > thisclient->Session->accesslevel)
@@ -5759,7 +5771,7 @@ bool CWorldServer::pakGMAllSkill(CPlayer* thisclient, char* name)
         otherclient->cskills[xx].level = x;
         otherclient->cskills[xx].id = 4821; // 566 - Expert Crafting - dealer - 4822, 4823
         otherclient->cskills[xx].level = x;
-        otherclient->cskills[xx].id = 4201; //     - Adamantine Fist - 
+        otherclient->cskills[xx].id = 4201; //     - Adamantine Fist -
         otherclient->cskills[xx].level = x;
         // 5580-5595 other skills....basic?
         */

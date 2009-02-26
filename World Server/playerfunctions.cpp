@@ -1099,7 +1099,7 @@ void CPlayer::TakeFuel(int add_fuel)
 }
 
 
-void CPlayer::UpdateInventory( unsigned int slot1, unsigned int slot2 )
+void CPlayer::UpdateInventory( unsigned int slot1, unsigned int slot2, bool save)
 {
      //Log(MSG_INFO,"In Update Inventory");
     if(slot1==0xffff && slot2==0xffff) return;
@@ -1129,10 +1129,16 @@ void CPlayer::UpdateInventory( unsigned int slot1, unsigned int slot2 )
     //Log(MSG_INFO,"Slot %i, H%i, D%i, Slot %i, H%i, D%i",slot1,GServer->BuildItemHead( items[slot1] ),GServer->BuildItemData( items[slot1] ),slot2,GServer->BuildItemHead( items[slot2] ),GServer->BuildItemData( items[slot2] ));
 
     //LMA: MySQL Save slot
+    if(!save)
+        return;
+
     if(slot1!=0xffff)
          SaveSlot41(slot1);
     if(slot2!=0xffff)
          SaveSlot41(slot2);
+
+
+    return;
 }
 
 //LMA: We don't save this one in database.
