@@ -4,7 +4,7 @@ Source Host: localhost
 Source Database: osrose
 Target Host: localhost
 Target Database: osrose
-Date: 2/25/2009 3:29:58 PM
+Date: 2/25/2009 8:11:45 PM
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -71,7 +71,7 @@ INSERT INTO `list_cart_cg` VALUES ('44', '102', '14', 'Cart', '0', 'Second Engin
 INSERT INTO `list_cart_cg` VALUES ('45', '103', '14', 'Cart', '1', 'Dural Engine');
 INSERT INTO `list_cart_cg` VALUES ('46', '104', '14', 'Cart', '0', 'Chase Engine');
 INSERT INTO `list_cart_cg` VALUES ('47', '105', '14', 'Cart', '0', 'Tricky Engine');
-INSERT INTO `list_cart_cg` VALUES ('48', '106', '14', 'Cart', '1', 'Jet Engine');
+INSERT INTO `list_cart_cg` VALUES ('48', '106', '14', 'Cart', '0', 'Jet Engine');
 INSERT INTO `list_cart_cg` VALUES ('49', '121', '14', 'Cart', '0', 'P.I.G. Engine');
 INSERT INTO `list_cart_cg` VALUES ('50', '131', '14', 'CG', '0', 'Fornef Engine');
 INSERT INTO `list_cart_cg` VALUES ('51', '132', '14', 'CG', '1', 'Sheft Engine');
@@ -99,7 +99,7 @@ INSERT INTO `list_cart_cg` VALUES ('72', '303', '14', 'Cart', '0', 'Add On Chair
 INSERT INTO `list_cart_cg` VALUES ('73', '311', '14', 'Cart', '0', 'Battle Machine Gun');
 INSERT INTO `list_cart_cg` VALUES ('74', '312', '14', 'Cart', '0', 'Battle Launcher');
 INSERT INTO `list_cart_cg` VALUES ('75', '321', '14', 'Cart', '0', 'P.I.G Balloon');
-INSERT INTO `list_cart_cg` VALUES ('76', '331', '14', 'CG', '1', 'Punch Arms');
+INSERT INTO `list_cart_cg` VALUES ('76', '331', '14', 'CG', '0', 'Punch Arms');
 INSERT INTO `list_cart_cg` VALUES ('77', '332', '14', 'CG', '0', 'Drill Arms');
 INSERT INTO `list_cart_cg` VALUES ('78', '333', '14', 'CG', '0', 'Sword Wheel Arms');
 INSERT INTO `list_cart_cg` VALUES ('79', '334', '14', 'CG', '1', 'Cannon Arms');
