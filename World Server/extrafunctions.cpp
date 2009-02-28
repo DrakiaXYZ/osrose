@@ -1183,7 +1183,7 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
             }
             else // Firecrackers
             if( useitem->itemnum==913 ||
-                (useitem->itemnum>920 && useitem->itemnum<935) ||
+                (useitem->itemnum>919 && useitem->itemnum<935) ||
                 (useitem->itemnum>990 && useitem->itemnum<996) )
             {
                 useitem->usescript = 4;
