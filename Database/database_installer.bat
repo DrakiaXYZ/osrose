@@ -101,6 +101,8 @@ echo skillbooks
 %mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < list_skillbooks.sql
 echo wishlist
 %mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < wishlist.sql
+echo GM Cart, CG list
+%mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < list_cart_cg.sql
 
 
 :end
