@@ -42,11 +42,35 @@ void CWorldServer::ReadAIP(strings path, dword index)
             LogSp(MSG_INFO, " ");
             if(NPC_AIP.find(index)!=NPC_AIP.end())
             {
-                LogSp(MSG_INFO, "Exporting %s (AIP index %i, NPC %i (%s))",path,index,NPC_AIP[index],GetSTLMonsterNameByID(NPC_AIP[index]));
+                //LogSp(MSG_INFO, "Exporting %s (AIP index %i, NPC %i (%s))",path,index,NPC_AIP[index],GetSTLMonsterNameByID(NPC_AIP[index]));
+
+                if(NPC_AIP[index].size()==1)
+                {
+                    LogSp(MSG_INFO, "Exporting %s (AIP index %i for NPC/monster %i (%s) )",path,index,NPC_AIP[index].at(0),GetSTLMonsterNameByID(NPC_AIP[index].at(0)));
+                }
+                else
+                {
+                    LogSp(MSG_INFO, "Exporting %s (AIP index %i for %i monsters:",path,index,NPC_AIP[index].size());
+
+                    for(int k=0;k<NPC_AIP[index].size();k++)
+                    {
+                        if(k!=(NPC_AIP[index].size()-1))
+                        {
+                            LogSp(MSG_INFO, "\t-> NPC/monster %i (%s),",NPC_AIP[index].at(k),GetSTLMonsterNameByID(NPC_AIP[index].at(k)));
+                        }
+                        else
+                        {
+                            LogSp(MSG_INFO, "\t-> NPC/monster %i (%s))",NPC_AIP[index].at(k),GetSTLMonsterNameByID(NPC_AIP[index].at(k)));
+                        }
+
+                    }
+
+                }
+
             }
             else
             {
-                LogSp(MSG_INFO, "Exporting %s (AIP index %i, not used?)",path,index);
+                LogSp(MSG_INFO, "Exporting %s (AIP index %i, not used by NPC/monsters?)",path,index);
             }
 
         }
@@ -160,32 +184,12 @@ void CWorldServer::ReadAIP(strings path, dword index)
 					script->Conditions = new CAip::SAipDatum*[script->ConditionCount];
 					for(dword k = 0; k < script->ConditionCount; k++)
 	                {
-                        /*if(lma_export)
-                        {
-                            LogSp(MSG_INFO, "---- condition %i / %i",k+1,script->ConditionCount);
-                        }
-                        */
-
 						CAip::SAipDatum* data = new CAip::SAipDatum();
 						data->size = fh->Get<dword>();
 						data->opcode = fh->Get<dword>() - 0x04000001;
 						data->data = new byte[data->size - 8];
 						fh->Read(data->data, data->size - 8, 1);
 						script->Conditions[k] = data;
-
-						//LMA test.
-						/*
-						if (data->opcode==14)
-                        {
-                            STR_AI_COND_0141 * data141 = (STR_AI_COND_0141 *)data->data;
-                            Log(MSG_INFO,"%s has cdt 141 [%i/%u] ?%i? %i",path,data141->btVarIDX,data141->nVarIDX,data141->btOp,data141->iValue);
-                            STR_AI_COND_014 * data14 = (STR_AI_COND_014 *)data->data;
-                            Log(MSG_INFO,"%s has cdt 14 [%i] ?%i? %i",path,data14->btVarIDX,data14->btOp,data14->iValue);
-                            if((data141->btVarIDX!=data14->btVarIDX)||(data141->btOp!=data14->btOp)||(data141->iValue!=data14->iValue))
-                                Log(MSG_WARNING,"Difference!");
-
-                        }
-                        */
 
                         //LMA: exporting...
                         if(lma_export)
@@ -229,14 +233,14 @@ void CWorldServer::ReadAIP(strings path, dword index)
                         LogSp(MSG_INFO, "\t\t\t {");
                     }
 
+
+                    //LMA: In some special cases, we "invert" the LTB (28) and the executeqsdtrigger (30)
+                    script->offset_ltb=-1;
+                    script->offset_qsd_trigger=-1;
+
 					script->Actions = new CAip::SAipDatum*[script->ActionCount];
 					for(dword k = 0; k < script->ActionCount; k++)
 	                {
-                        /*if(lma_export)
-                        {
-                            LogSp(MSG_INFO, "---- action %i / %i",k+1,script->ActionCount);
-                        }*/
-
 						CAip::SAipDatum* data = new CAip::SAipDatum();
 						data->size = fh->Get<dword>();
 						data->opcode = fh->Get<dword>() - 0x0B000001;
@@ -245,44 +249,21 @@ void CWorldServer::ReadAIP(strings path, dword index)
 						fh->Read(data->data, data->size - 8, 1);
 						script->Actions[k] = data;
 
+						if (data->opcode==28)
+						{
+						    script->offset_ltb=k;
+						}
+
+						if(data->opcode==30)
+						{
+						    script->offset_qsd_trigger=k;
+						}
+
 						//LMA: export.
 						if(lma_export)
 						{
 						    ExportAipDataA(data->data,data->size,data->opcode);
 						}
-
-						//LMA test.
-						/*
-						if (data->opcode==28)
-                            Log(MSG_INFO,"%s has an action %i",path,data->opcode);
-                        */
-                        /*
-						if (data->opcode==30)
-						{
-						    //STR_AI_ACT_036 data36=(STR_AI_ACT_036) data;
-						    STR_AI_ACT_030 * data30 = (STR_AI_ACT_030 *)data->data;
-						    char* tempName = reinterpret_cast<char*>(&data30->szTrigger) - 2;
-                            Log(MSG_INFO,"%s has an action 30 trigger %s",path,tempName);
-						}
-
-
-						if (data->opcode==36)
-						{
-						    //STR_AI_ACT_036 data36=(STR_AI_ACT_036) data;
-						    STR_AI_ACT_036 * data36 = (STR_AI_ACT_036 *)data->data;
-						    if(data36->nMonster>=3040&&data36->nMonster<=3041)
-                                Log(MSG_INFO,"%s has an action 36 monster %i",path,data36->nMonster);
-						}
-
-						if (data->opcode==37)
-						{
-						    //STR_AI_ACT_036 data36=(STR_AI_ACT_036) data;
-						    STR_AI_ACT_037 * data37 = (STR_AI_ACT_037 *)data->data;
-						    if(data37->nMonster>=3040&&data37->nMonster<=3041)
-                                Log(MSG_INFO,"%s has an action 37 monster %i",path,data37->nMonster);
-						}
-						*/
-
 
 					}
 
@@ -840,7 +821,7 @@ void CWorldServer::ExportAipData(byte* dataorg,int size,int opcode)
     if(opcode==17)
     {
         STR_AI_COND_017 * data = (STR_AI_COND_017 *)dataorg;
-        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Select NPC %i (%s) for Objvar",opcode,data->iNpcNo,GServer->GetNPCNameByType(data->iNpcNo));
+        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Select NPC %i (%s) for Objvar",opcode,data->iNpcNo,GServer->GetSTLMonsterNameByID(data->iNpcNo));
         return;
     }
 
@@ -949,7 +930,7 @@ void CWorldServer::ExportAipData(byte* dataorg,int size,int opcode)
         return;
     }
 
-    //does my master has a "real" target?
+    //does my master have a "real" target?
     if(opcode==22)
     {
         LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Check if my master has a real target",opcode);
@@ -991,7 +972,8 @@ void CWorldServer::ExportAipData(byte* dataorg,int size,int opcode)
     //check server channel
     if(opcode==26)
     {
-        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Check server channel (NOT CODED)",opcode);
+        STR_AI_COND_026 * data = (STR_AI_COND_026 *)dataorg;
+        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Check server channel %u, %u (NOT CODED)",opcode,data->nMin,data->nMax);
         return;
     }
 
@@ -1081,9 +1063,11 @@ void CWorldServer::ExportAipData(byte* dataorg,int size,int opcode)
     }
 
     //Unknown
+    //LMA: Timer?
     if(opcode==30)
     {
-        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Unknown",opcode);
+        STR_AI_COND_030 * data = (STR_AI_COND_030 *)dataorg;
+        LogSp(MSG_INFO,"\t\t\t\t\t CDT %.3i: Timer since spawn %u",opcode,data->Timer);
         return;
     }
 
@@ -1128,7 +1112,7 @@ void CWorldServer::ExportAipDataA(byte* dataorg,int size,int opcode)
     if(opcode==2)
     {
         STR_AI_ACT_002 * data = (STR_AI_ACT_002 *)dataorg;
-        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Say LTB String %i (%s) (NOT CODED)",opcode,data->iStrID,GServer->Ltbstring[data->iStrID]->LTBstring);
+        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Say LTB String %i (%s) (NOT CODED but OK since client Side)",opcode,data->iStrID,GServer->Ltbstring[data->iStrID]->LTBstring);
         return;
     }
 
@@ -1174,26 +1158,26 @@ void CWorldServer::ExportAipDataA(byte* dataorg,int size,int opcode)
         switch(data->cAbType)
             {
             case 0: //level
-                sprintf(buffer,"level");
+                sprintf(buffer1,"level");
             break;
             case 1: //Attack power
-                sprintf(buffer,"attack power");
+                sprintf(buffer1,"attack power");
             break;
             case 2: //defense
-                sprintf(buffer,"defense");
+                sprintf(buffer1,"defense");
             break;
             case 3: //Magic Def
-                sprintf(buffer,"MDEF");
+                sprintf(buffer1,"MDEF");
             break;
             case 4: // HP
-                sprintf(buffer,"HP");
+                sprintf(buffer1,"HP");
             break;
             case 5: // Charm
-                sprintf(buffer,"charm");
+                sprintf(buffer1,"charm");
             break;
         }
 
-        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Attacks a player within distance %i if player has %s %s",opcode,data->iDistance,buffer,buffer1);
+        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Attacks a player within distance %i if player has %s %s",opcode,data->iDistance,buffer, buffer1);
         return;
     }
 
@@ -1207,7 +1191,8 @@ void CWorldServer::ExportAipDataA(byte* dataorg,int size,int opcode)
     //Move 4
     if(opcode==8)
     {
-        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Monster moves (NOT CODED)",opcode);
+        STR_AI_ACT_008 * data = (STR_AI_ACT_008 *)dataorg;
+        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Monster moves to %i %% between source and current position at stance %i ",opcode,data->iDistance,data->cSpeed);
         return;
     }
 
@@ -1422,7 +1407,7 @@ void CWorldServer::ExportAipDataA(byte* dataorg,int size,int opcode)
         switch(data->btMsgType)
         {
             case 0: //whisper to client
-                LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Whisper??? LTB string %i: %s (NOT CODED)",opcode,data->iStrID,GServer->Ltbstring[data->iStrID]->LTBstring);
+                LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Whisper LTB string %i: %s",opcode,data->iStrID,GServer->Ltbstring[data->iStrID]->LTBstring);
             break;
             case 1: //shout to map
             {
@@ -1473,7 +1458,8 @@ void CWorldServer::ExportAipDataA(byte* dataorg,int size,int opcode)
     //Set Zone ?
     if(opcode==32)
     {
-        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Set Zone ? (NOT CODED)",opcode);
+        STR_AI_ACT_032 * data = (STR_AI_ACT_032 *)dataorg;
+        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Set Pvp to %i in Zone %i",opcode,data->btOnOff,data->nZoneNo);
         return;
     }
 
@@ -1484,10 +1470,30 @@ void CWorldServer::ExportAipDataA(byte* dataorg,int size,int opcode)
         return;
     }
 
-    //Item?
+    //Gives Item to caller.
     if(opcode==34)
     {
-        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Item ? (NOT CODED)",opcode);
+        STR_AI_ACT_034 * data = (STR_AI_ACT_034 *)dataorg;
+        char itemtypes[15] = {4,0,0,0,0,0,0,0,0,0,1,2,2,4,3};
+
+        //LMA: exact way.
+        itemtype = GServer->gi(data->nItemNum,0);
+        itemnum = GServer->gi(data->nItemNum,1);
+
+        int count = data->nCount;
+        int durability=100;
+
+        if( itemtypes[itemtype] == 0 )
+        {
+            durability = GServer->STB_ITEM[itemtype-1].rows[itemnum][29];
+        }
+
+        if (durability==0)
+        {
+            durability=100;
+        }
+
+        LogSp(MSG_INFO,"\t\t\t\t\t ACT %.3i: Gives %i item %i::%i (%s %s), durability %i to master",opcode,count,itemtype,itemnum,GServer->GetSTLItemPrefix(itemtype,itemnum),GServer->GetSTLObjNameByID(itemtype,itemnum),durability);
         return;
     }
 

@@ -47,8 +47,9 @@ bool CWorldServer::LoadSTBData( )
         STBStoreData( "3DDataPeg\\STB\\LIST_SELL.STB", &STB_SELL );
         STBStoreData( "3DDataPeg\\STB\\LIST_ZONE.STB", &STB_ZONE );
         STBStoreData( "3DDataPeg\\STB\\ITEM_DROP.STB", &STB_DROP );
-        STBStoreData("3DDataPeg\\STB\\LIST_UPGRADE.STB", &upgradeData);
+        //STBStoreData("3DDataPeg\\STB\\LIST_UPGRADE.STB", &upgradeData);
         STBStoreData("3DDataPeg\\STB\\LIST_BREAK.STB", &BreakData);    //LMA: for break and chest and blue break.
+        STBStoreDataChar("3DDataPeg\\STB\\LIST_ZONE.STB", &ZoneData);  //LMA: Getting Zone Data.
     }
     else
     {
@@ -73,8 +74,9 @@ bool CWorldServer::LoadSTBData( )
         STBStoreData( "3DData\\STB\\LIST_SELL.STB", &STB_SELL );
         STBStoreData( "3DData\\STB\\LIST_ZONE.STB", &STB_ZONE );
         STBStoreData( "3DData\\STB\\ITEM_DROP.STB", &STB_DROP );
-        STBStoreData("3DData\\STB\\LIST_UPGRADE.STB", &upgradeData);
+        //STBStoreData("3DData\\STB\\LIST_UPGRADE.STB", &upgradeData);
         STBStoreData("3DData\\STB\\LIST_BREAK.STB", &BreakData);    //LMA: for break and chest and blue break.
+        STBStoreDataChar("3DData\\STB\\LIST_ZONE.STB", &ZoneData);  //LMA: Getting Zone Data.
     }
 
     //LMA: Loading STL too :)
@@ -98,7 +100,8 @@ bool CWorldServer::LoadSTBData( )
         STLStoreData( "3DDataPeg\\STB\\LIST_NPC_S.STL", 15 );
         STLStoreData( "3DDataPeg\\STB\\STR_ITEMPREFIX.STL", 16 );
         STLStoreData( "3DDataPeg\\STB\\LIST_SKILL_S.STL", 17 ); //Skills take a lot
-        STLStoreData( "3DDataPeg\\STB\\LIST_QUEST_S.STL",19);
+        STLStoreData( "3DDataPeg\\STB\\LIST_QUEST_S.STL",18);
+        STLStoreData( "3DDataPeg\\STB\\LIST_ZONE_S.STL",19);
     }
     else
     {
@@ -120,6 +123,7 @@ bool CWorldServer::LoadSTBData( )
         STLStoreData( "3DData\\STB\\STR_ITEMPREFIX.STL", 16 );
         STLStoreData( "3DData\\STB\\LIST_SKILL_S.STL", 17 );
         STLStoreData( "3DData\\STB\\LIST_QUEST_S.STL",18);
+        STLStoreData( "3DData\\STB\\LIST_ZONE_S.STL",19);
     }
 
     //adding some special values :)
@@ -155,7 +159,7 @@ bool CWorldServer::LoadIfoObjects( )
     WarpGate.direction=0;
     WarpGate.mapid=2;
     WarpGate.IfoX=34;
-    WarpGate.IfoX=32;
+    WarpGate.IfoY=32;
     WarpGate.clientID=0;
     WarpGate.Npc=NULL;
 
@@ -302,8 +306,14 @@ bool CWorldServer::InitDefaultValues()
     UseList.max=STB_ITEM[9].rowcount;
 
     //LMA: hard for now...
+    /*
     MapList.Index = new CMap*[300];
     MapList.max=300;
+    */
+    //Real amount.
+    MapList.Index = new CMap*[ZoneData.rowcount];
+    MapList.max=ZoneData.rowcount;
+    maxZone=ZoneData.rowcount;
 
     //LMA: adding questItems too
     QuestItemData=new CQuestItemData*[STB_ITEM[12].rowcount];
@@ -333,6 +343,8 @@ bool CWorldServer::InitDefaultValues()
     nullequip->weight = 0;
     nullequip->quality = 0;
     nullequip->level = 0;
+    nullequip->craft=0;
+    nullequip->craft_level=0;
     nullequip->material = 0;
     nullequip->craft_difficult=0;
     nullequip->defense = 0;
@@ -342,6 +354,8 @@ bool CWorldServer::InitDefaultValues()
     nullequip->attackpower = 0;
     nullequip->attackspeed =0;
     nullequip->itemgrade = 0;
+    nullequip->itemgradeID=0;
+
     for(int i=0;i<3;i++)
     {
         nullequip->occupation[i] = 0;
@@ -384,6 +398,8 @@ bool CWorldServer::InitDefaultValues()
     nullpat->pricerate = 0;
     nullpat->weight = 0;
     nullpat->quality = 0;
+    nullpat->craft=0;
+    nullpat->craft_level=0;
     nullpat->material = 0;
     nullpat->craft_difficult=0;
     nullpat->partversion = 0;
@@ -441,6 +457,11 @@ bool CWorldServer::InitDefaultValues()
     nulluse->weight = 0;
     nulluse->quality = 0;
     nulluse->pricevalue = 0;
+    nulluse->craft=0;
+    nulluse->craftlevel=0;
+    nulluse->craft_difficult=0;
+    nulluse->material=0;
+
     for(int i=0;i<2;i++)
     {
         nulluse->usecondition[i] = 0;
@@ -455,11 +476,15 @@ bool CWorldServer::InitDefaultValues()
     //product null init
     CProductData* nullproduct = new CProductData;
     nullproduct->id = 0;
-    for(UINT i=0;i<50;i++)
+    //for(UINT i=0;i<50;i++)
+    for(UINT i=0;i<4;i++)
     {
         nullproduct->item[i];
         nullproduct->amount[i];
     }
+
+    nullproduct->item_0_family=0;
+
     ProductList.nullproduct = nullproduct;
     for(UINT i=0;i<ProductList.max;i++)
     {
@@ -474,6 +499,8 @@ bool CWorldServer::InitDefaultValues()
     nulljem->pricerate = 0;
     nulljem->weight = 0;
     nulljem->quality = 0;
+    nulljem->craft=0;
+    nulljem->craft_level=0;
     nulljem->material = 0;
     nulljem->craft_difficult=0;
     for(int i=0;i<2;i++)
@@ -600,11 +627,15 @@ bool CWorldServer::LoadNPCData( )
         //LMA: Mass Exporter.
         if (Config.massexport==1)
         {
+            /*
             if(NPC_AIP.find(newnpc->AI)==NPC_AIP.end())
             {
-                NPC_AIP[newnpc->AI]=newnpc->id;
+                //NPC_AIP[newnpc->AI]=newnpc->id;
+                NPC_AIP[newnpc->AI].push_back(newnpc->id);
             }
+            */
 
+            NPC_AIP[newnpc->AI].push_back(newnpc->id);
         }
 
     }
@@ -932,6 +963,7 @@ bool CWorldServer::LoadRespawnData( )
 	return true;
 }
 
+/*
 bool CWorldServer::LoadChestData( )
 {
     Log(MSG_LOAD, "Chest Data                   ");
@@ -1030,6 +1062,7 @@ bool CWorldServer::LoadChestData( )
     Log( MSG_LOAD, "Chest Data loaded" );
    	return true;
 }
+*/
 
 bool CWorldServer::LoadMobGroups()
 {
@@ -1084,8 +1117,10 @@ bool CWorldServer::LoadMobGroups()
     thisgroup->lastRespawnTime = clock();
     thisgroup->active = 0;
     thisgroup->basicKills = 0;
+    thisgroup->lastKills=0;
     thisgroup->curTac = 0;
     thisgroup->curBasic = 0;
+    thisgroup->group_ready=false;
 
 
     thisgroup->basicMobs.clear();
@@ -1673,12 +1708,29 @@ bool CWorldServer::LoadPYDropsData( )
    	Log( MSG_LOAD, "PYDrops Data                " );
     MDropList.clear();
     MYSQL_ROW row;
-    MYSQL_RES *result = DB->QStore("SELECT id,type,min_level,max_level,prob,mob,map,alt FROM item_drops");
+    MYSQL_RES *result = DB->QStore("SELECT id,type,min_level,max_level,prob,mob,map,alt,ref FROM item_drops");
     if(result==NULL)
     {
         DB->QFree( );
         return false;
     }
+
+    //Creating indexes
+    int nb_max_itemtype[15];
+    nb_max_itemtype[0]=0;
+    nb_max_itemtype[13]=0;
+
+    for(int j=1;j<10;j++)
+    {
+        nb_max_itemtype[j]=EquipList[j].max;
+    }
+
+    nb_max_itemtype[10]=UseList.max;
+    nb_max_itemtype[11]=JemList.max;
+    nb_max_itemtype[12]=NaturalList.max;
+    nb_max_itemtype[14]=PatList.max;
+
+
     while(row = mysql_fetch_row(result))
     {
         CMDrops* newdrop = new (nothrow) CMDrops;
@@ -1690,22 +1742,55 @@ bool CWorldServer::LoadPYDropsData( )
         newdrop->prob = atoi(row[4]);
         newdrop->mob = atoi(row[5]);
         newdrop->map = atoi(row[6]);
+
+        int record_id= atoi(row[8]);
+
         char *tmp;
         if((tmp = strtok( row[7] , "|"))==NULL)
+        {
             newdrop->alt[0]=0;
+        }
         else
+        {
             newdrop->alt[0]=atoi(tmp);
+        }
+
         for(unsigned int i=1;i<8; i++)
         {
             if((tmp = strtok( NULL , "|"))==NULL)
+            {
                 newdrop->alt[i]=0;
+            }
             else
+            {
                 newdrop->alt[i]=atoi(tmp);
+            }
+
         }
+
+        //LMA: checking stupid drops...
+        if(newdrop->itemtype<=0||newdrop->itemtype==13||newdrop->itemtype>14)
+        {
+            Log(MSG_WARNING,"Incorrect drop itemtype detected (%i) for record %i",newdrop->itemtype,record_id);
+            delete newdrop;
+            continue;
+        }
+
+        //checking items.
+        if (newdrop->itemnum<=0||newdrop->itemnum>=nb_max_itemtype[newdrop->itemtype])
+        {
+            Log(MSG_WARNING,"Incorrect drop itemnum detected (%i==0 or >=%u) for record %i",newdrop->itemnum,nb_max_itemtype[newdrop->itemtype],record_id);
+            delete newdrop;
+            continue;
+        }
+
         MDropList.push_back( newdrop );
     }
+
     DB->QFree( );
     Log( MSG_LOAD, "PYDrops Data loaded" );
+
+
     return true;
 }
 
@@ -1744,27 +1829,51 @@ bool CWorldServer::LoadMonsters( )
 {
 	Log( MSG_LOAD, "Monsters Spawn              " );
 	// Do our monster spawning
-       for (UINT i = 0; i < MapList.Map.size(); i++) {
-      CMap *thismap = MapList.Map.at(i);
-      for (UINT j = 0; j < thismap->MobGroupList.size(); j++) {
-        bool GroupFull = false;
-        CMobGroup* thisgroup = thismap->MobGroupList.at(j);
-        // Load some basic mobs onto map
-        for (UINT k = 0; k < thisgroup->limit; k++) {
-          CMob* thismob = thisgroup->basicMobs.at(thisgroup->curBasic);
-          thisgroup->curBasic++;
-          if (thisgroup->curBasic >= thisgroup->basicMobs.size()) thisgroup->curBasic = 0;
-          for (UINT l = 0; l < thismob->amount; l++) {
-            fPoint position = RandInCircle( thisgroup->point, thisgroup->range );
-            thismap->AddMonster( thismob->mobId, position, 0, thismob->mobdrop, thismob->mapdrop, thisgroup->id );
-            if (thisgroup->active > thisgroup->limit) {
-              GroupFull = true;
-              break;
+       for (UINT i = 0; i < MapList.Map.size(); i++)
+       {
+          CMap *thismap = MapList.Map.at(i);
+          for (UINT j = 0; j < thismap->MobGroupList.size(); j++)
+          {
+            bool GroupFull = false;
+            CMobGroup* thisgroup = thismap->MobGroupList.at(j);
+
+            // Load some basic mobs onto map
+            thisgroup->curBasic=0;
+            int nb_groups=1;    //LMA: only one group at a time...
+
+            for (UINT k = 0; k < thisgroup->basicMobs.size(); k++)
+            {
+              if (thisgroup->curBasic >= thisgroup->basicMobs.size())
+              {
+                  thisgroup->curBasic = 0;
+              }
+
+              CMob* thismob = thisgroup->basicMobs.at(thisgroup->curBasic); //LMA
+              thisgroup->curBasic++;
+
+              for (UINT l = 0; l < thismob->amount; l++)
+              {
+                fPoint position = RandInCircle( thisgroup->point, thisgroup->range );
+                thismap->AddMonster( thismob->mobId, position, 0, thismob->mobdrop, thismob->mapdrop, thisgroup->id );
+
+                //LMA: enough or just one group at a time.
+                if (thisgroup->active >= thisgroup->limit||nb_groups==1)
+                {
+                  GroupFull = true;
+                  break;
+                }
+
+              }
+
+              if (GroupFull)
+              {
+                  break;
+              }
+
             }
+
           }
-          if (GroupFull) break;
-        }
-      }
+
     }
 
 
@@ -1774,8 +1883,12 @@ bool CWorldServer::LoadMonsters( )
 bool CWorldServer::LoadUpgrade( )
 {
 
+    Log( MSG_LOAD, "Refine Data - CSV      " );
+    /*
+    //LMA: old code.
     Log( MSG_LOAD, "Refine Data - STB      " );
-    for (UINT i = 0; i<upgradeData.rowcount; i++) {
+    for (UINT i = 0; i<upgradeData.rowcount; i++)
+    {
         // weapons
         if (upgradeData.rows[i][0] != 0)
         {
@@ -1789,9 +1902,112 @@ bool CWorldServer::LoadUpgrade( )
         }
     }
 
-    STBFreeData(&upgradeData);
+    STBFreeData(&upgradeData);*/
+
+    //LMA: New refine system from naRose.
+    for (int k=0;k<10;k++)
+    {
+        upgrade[k][0]=100;
+        upgrade[k][1]=100;
+    }
+
+    FILE* fh = NULL;
+    fh = fopen("data/refine.csv", "r");
+    if(fh==NULL)
+    {
+        Log(MSG_ERROR, "\nError loading file data/refine.csv" );
+        return false;
+    }
+    char line[500];
+    fgets( line, 500, fh );// this is the column name
+    while(!feof(fh))
+    {
+        memset( &line, '\0', 500 );
+        fgets( line, 500, fh );
+
+        int id = GetUIntValue(",", &line);
+        int pc_usual = GetUIntValue(",");
+        int pc_with_bonus = GetUIntValue(",");
+
+        if(id>9||id<1)
+        {
+            Log(MSG_WARNING,"Incorrect refine %i",id);
+            continue;
+        }
+
+        if(pc_usual>100)
+            pc_usual=100;
+        if(pc_with_bonus>100)
+            pc_with_bonus=100;
+        if(pc_usual>pc_with_bonus)
+            Log(MSG_WARNING,"percentage with bonus is < usual percentage (%u<%u)",pc_with_bonus,pc_usual);
+
+        upgrade[id][0]=pc_usual;
+        upgrade[id][1]=pc_with_bonus;
+        //Log(MSG_INFO,"Reading [%i]=(%i,%i)",id,pc_usual,pc_with_bonus);
+    }
+
+    fclose(fh);
+
+    for (int k=0;k<15;k++)
+    {
+        for (int j=0;j<2;j++)
+        {
+            refine_grade[k][j]=0;
+        }
+
+    }
+
+    //list: 1 to 9 are grades 1 to 9, 11 is unique, 12 brave, 13 item mall, 14 event.
+    //[grade][0] is safe up to (<=)
+    //[grade][1] is "can degrade" up to (<=)
+    //the rest (if both failed) then the grade can break.
+    //refine_grade[1][0]=5;   //gear grade 1 can be refined up to 5 safely
+    //refine_grade[1][1]=8;   //gear grade 1 can be refined up to 8, but can be degraded (so if >8 it can break)
+
+    fh = fopen("data/refine_rules.csv", "r");
+    if(fh==NULL)
+    {
+        Log(MSG_ERROR, "\nError loading file data/refine.csv" );
+        return false;
+    }
+    fgets( line, 500, fh );// this is the column name
+    while(!feof(fh))
+    {
+        memset( &line, '\0', 500 );
+        fgets( line, 500, fh );
+
+        int id = GetUIntValue(",", &line);
+        int safe_until = GetUIntValue(",");
+        int can_degrade = GetUIntValue(",");
+
+        if(id>14||id<1)
+        {
+            Log(MSG_WARNING,"Incorrect refine rules ID: %i (max 14)",id);
+            continue;
+        }
+
+        if(safe_until>9||safe_until<0||can_degrade>9||can_degrade<0)
+        {
+            Log(MSG_WARNING,"Incorrect values in refine rule %i",id);
+            continue;
+        }
+
+        if(can_degrade<safe_until)
+        {
+            Log(MSG_WARNING,"percentage with bonus is < usual percentage (%u<%u)",can_degrade,safe_until);
+        }
+
+        refine_grade[id][0]=safe_until;
+        refine_grade[id][1]=can_degrade;
+        //Log(MSG_INFO,"Reading rule [%i]=(%i,%i)",id,safe_until,can_degrade);
+    }
+
+    fclose(fh);
 
    	Log( MSG_LOAD, "Refine Data loaded" );
+
+
 	return true;
 }
 
@@ -1826,6 +2042,8 @@ bool CWorldServer::LoadEquip( )
             newequip->weight = STB_ITEM[j].rows[i][7];
             newequip->quality = STB_ITEM[j].rows[i][8];
             newequip->level = STB_ITEM[j].rows[i][13];
+            newequip->craft= STB_ITEM[j].rows[i][12];
+            newequip->craft_level= STB_ITEM[j].rows[i][13];
             newequip->material = STB_ITEM[j].rows[i][14];
             newequip->craft_difficult= STB_ITEM[j].rows[i][15];
             newequip->defense = STB_ITEM[j].rows[i][31];
@@ -1883,6 +2101,9 @@ bool CWorldServer::LoadEquip( )
                 newequip->stat1[k] = STB_ITEM[j].rows[i][(24+k)];
             for(int k=0;k<2;k++)
                 newequip->stat2[k] = STB_ITEM[j].rows[i][(27+k)];
+
+            //LMA: Used for refine.
+            newequip->itemgradeID=STB_ITEM[j].rows[i][45];
             newequip->itemgrade = STB_ITEM[j].rows[i][46];
 
             //LMA: raretype not handled !!
@@ -1915,6 +2136,8 @@ bool CWorldServer::LoadJemItem( )
         thisjem->pricerate = STB_ITEM[10].rows[i][6];
         thisjem->weight = STB_ITEM[10].rows[i][7];
         thisjem->quality = STB_ITEM[10].rows[i][8];
+        thisjem->craft = STB_ITEM[10].rows[i][12];
+        thisjem->craft_level = STB_ITEM[10].rows[i][13];
         thisjem->material = STB_ITEM[10].rows[i][14];
         thisjem->craft_difficult= STB_ITEM[10].rows[i][15];
         thisjem->stat1[0] = STB_ITEM[10].rows[i][16];
@@ -1982,6 +2205,8 @@ bool CWorldServer::LoadPatItem( )
         newpat->pricerate = STB_ITEM[13].rows[i][6];
         newpat->weight = STB_ITEM[13].rows[i][7];
         newpat->quality = STB_ITEM[13].rows[i][8];
+        newpat->craft = STB_ITEM[13].rows[i][12];
+        newpat->craft_level = STB_ITEM[13].rows[i][13];
         newpat->material = STB_ITEM[13].rows[i][14];
         newpat->craft_difficult= STB_ITEM[13].rows[i][15];
         newpat->parttype = STB_ITEM[13].rows[i][16];
@@ -2026,6 +2251,7 @@ bool CWorldServer::LoadProductItem( )
             return false;
         }
         newproduct->id = i;
+        newproduct->item_0_family=STB_PRODUCT.rows[i][1];
         newproduct->item[0]=STB_PRODUCT.rows[i][2];
         newproduct->amount[0]=STB_PRODUCT.rows[i][3];
         newproduct->item[1]=STB_PRODUCT.rows[i][4];
@@ -2090,6 +2316,8 @@ bool CWorldServer::LoadConsItem( )
         newuse->pricerate = STB_ITEM[9].rows[i][6];
         newuse->weight = STB_ITEM[9].rows[i][7];
         newuse->quality = STB_ITEM[9].rows[i][8];
+        newuse->craft=STB_ITEM[9].rows[i][12];
+        newuse->craftlevel=STB_ITEM[9].rows[i][13];
         newuse->material= STB_ITEM[9].rows[i][14];
         newuse->craft_difficult= STB_ITEM[9].rows[i][15];
         newuse->pricevalue = STB_ITEM[9].rows[i][16];
@@ -2113,6 +2341,9 @@ bool CWorldServer::LoadConsItem( )
     return true;
 }
 
+
+/*
+//LMA: Old version...
 bool CWorldServer::LoadZoneData( )
 {
     Log( MSG_LOAD, "Zone Data                   " );
@@ -2154,7 +2385,7 @@ bool CWorldServer::LoadZoneData( )
         newzone->nighttime = GetUIntValue(",");
         newzone->allowpvp = GetUIntValue(",");
         newzone->allowpat = GetUIntValue(",")==0?true:false;
-        newzone->ghost = GetUIntValue(",");
+        //newzone->ghost = GetUIntValue(",");
 
         //LMA begin
         //CF Mode
@@ -2195,6 +2426,111 @@ bool CWorldServer::LoadZoneData( )
     }
     fclose(fh);
     Log( MSG_LOAD, "Zone Data Loaded" );
+
+    return true;
+}
+*/
+
+
+//LMA: Loading Zone data (no CF anymore).
+bool CWorldServer::LoadZoneData( )
+{
+
+    Log( MSG_LOAD, "Zone Data - STB   " );
+    for(unsigned int i=0;i<ZoneData.rowcount;i++)
+    {
+        CMap* newzone = new (nothrow) CMap( );
+        if(newzone==NULL)
+        {
+            Log(MSG_WARNING, "\nError allocing memory: use" );
+            return false;
+        }
+
+        newzone->id = i;
+
+        //We load only the interesting maps.
+        if(ZoneData.rows[i][13]==0)
+        {
+            newzone->dayperiod = 0;
+            newzone->morningtime = 0;
+            newzone->daytime = 0;
+            newzone->eveningtime = 0;
+            newzone->nighttime = 0;
+            newzone->allowpvp = 0;
+            newzone->allowpat = false;
+            newzone->STLID=0;
+
+            //QSD triggers.
+            newzone->QSDzone=0;
+            newzone->QSDkilling=0;
+            newzone->QSDDeath=0;
+
+            newzone->MapTime = 0;
+            newzone->LastUpdate = clock( );
+            newzone->CurrentTime = 0;
+            newzone->MonsterSpawnList.clear();
+            newzone->MobGroupList.clear();
+
+            MapList.Index[newzone->id] = newzone;
+            continue;
+        }
+
+        //LMA: check if out of memory (shouldn't happen).
+        if (newzone->id>=MapList.max)
+        {
+           Log(MSG_WARNING,"list Zone, index overflow trapped %i>%i (increase MAX_MAP_DATA)",newzone->id,MapList.max);
+           delete newzone;
+           continue;
+        }
+
+        newzone->dayperiod = ZoneData.rows[i][13];
+        newzone->morningtime = ZoneData.rows[i][14];
+        newzone->daytime = ZoneData.rows[i][15];
+        newzone->eveningtime = ZoneData.rows[i][16];
+        newzone->nighttime = ZoneData.rows[i][17];
+        newzone->allowpvp = ZoneData.rows[i][18];
+        newzone->allowpat = ZoneData.rows[i][30]==0?true:false;
+        //newzone->ghost = GetUIntValue(",");   //never used.
+        newzone->STLID= ZoneData.rows[i][26];
+
+        //QSD triggers.
+        newzone->QSDzone=ZoneData.rows[i][22];
+        newzone->QSDkilling=ZoneData.rows[i][23];
+        newzone->QSDDeath=ZoneData.rows[i][24];
+
+        newzone->MapTime = 0;
+        newzone->LastUpdate = clock( );
+        newzone->CurrentTime = 0;
+        newzone->MonsterSpawnList.clear();
+        newzone->MobGroupList.clear();
+
+        //LMA: Forcing some map to pvp group.
+        //TODO: perhaps the STB[20] value (Zone Type, ZT) tells the real pvp type.
+        //Pvp gives 1,2,11 (seems like on / off), ZT gives 2 (all?), 3 (clan?), 4 (union?)
+        /*
+        if(newzone->id==9||(newzone->id>=74&&newzone->id<=120))
+        {
+            newzone->allowpvp = 2;
+        }
+        */
+
+        //LMA: new way, we use pvp_status and pvp_id from character now.
+        if (newzone->allowpvp >=1&&newzone->allowpvp <=2)
+        {
+            newzone->allowpvp = 1;
+        }
+        else
+        {
+            newzone->allowpvp = 0;
+        }
+
+        MapList.Map.push_back(newzone);
+        MapList.Index[newzone->id] = newzone;
+    }
+
+    Log( MSG_LOAD, "Zone Data STB Loaded" );
+
+
     return true;
 }
 
@@ -2235,6 +2571,12 @@ bool CWorldServer::LoadGrids( )
         if (j==0)
            continue;
 
+        if(j>=NB_MAPS)
+        {
+            Log(MSG_WARNING,"Incorrect map when loading grids (%i>=%u), change NB_MAPS?",j,NB_MAPS);
+            continue;
+        }
+
         if(k>=NB_GRIDS)
         {
             Log(MSG_WARNING,"We try to load more active maps that we can handle (%i>=%u), change NB_GRIDS",k,NB_GRIDS);
@@ -2261,7 +2603,7 @@ bool CWorldServer::LoadGrids( )
         allmaps[j].nb_col=(int) ceil(gridmaps[k].length/MINVISUALRANGE);
         allmaps[j].nb_row=(int) ceil(gridmaps[k].width/MINVISUALRANGE);
 
-        //Log(MSG_LOAD,"map %i, row=%i, col=%i",j,allmaps[j].nb_row,allmaps[j].nb_col);
+        //Log(MSG_INFO,"map %i, row=%i, col=%i",j,allmaps[j].nb_row,allmaps[j].nb_col);
 
         if (gridmaps[k].width==0)
            gridmaps[k].width=1;
@@ -2269,11 +2611,20 @@ bool CWorldServer::LoadGrids( )
         if (gridmaps[k].length==0)
            gridmaps[k].length=1;
 
-         //resetting values...
-         for (j=0;j<NB_CELL_MAX;j++)
+         //resetting values (old way).
+         /*for (j=0;j<NB_CELL_MAX;j++)
          {
              gridmaps[k].coords[j]=0;
          }
+         */
+
+        //LMA: making the right grid
+        gridmaps[k].nb_cells=(allmaps[j].nb_col+2)*(allmaps[j].nb_row+2);
+        gridmaps[k].coords = new int[gridmaps[k].nb_cells];
+        for (j=0;j<gridmaps[k].nb_cells;j++)
+        {
+            gridmaps[k].coords[j]=0;
+        }
 
        k++;
     }
@@ -2318,6 +2669,12 @@ bool CWorldServer::LoadStatLookup( )
 
     while( row = mysql_fetch_row(result) )
     {
+        if(counter>=MAX_EXTRA_STATS)
+        {
+            Log(MSG_WARNING,"Too many stats, change MAX_EXTRA_STATS value (%u)",MAX_EXTRA_STATS);
+            break;
+        }
+
         StatLookup[counter].id = atoi(row[0]);
         StatLookup[counter].statnumber = atoi(row[1]);
         counter++;
@@ -2438,6 +2795,20 @@ bool CWorldServer::LoadBreakChestBlueList()
     UINT itemtype=0;
     UINT itemnum=0;
 
+    //New naRose break code.
+    int old_break=3;
+
+
+    if(BreakData.fieldcount>70)
+    {
+       Log(MSG_INFO,"Loading new naRose Break file");
+       old_break=4;
+    }
+    else
+    {
+       Log(MSG_INFO,"Loading old naRose Break file");
+    }
+
     for(unsigned int i=0;i<BreakData.rowcount;i++)
     {
         //let's check if we have a break, a chest or a blue craft stuff...
@@ -2507,13 +2878,39 @@ bool CWorldServer::LoadBreakChestBlueList()
                     //We read the 20 items.
                     for(int j=0;j<20;j++)
                     {
-                        newbreak->product[j]=BreakData.rows[i][2+j*3];
-                        newbreak->amount[j]=BreakData.rows[i][3+j*3];
-                        newbreak->prob[j]=BreakData.rows[i][4+j*3];
+                        newbreak->product[j]=BreakData.rows[i][2+j*old_break];
+                        newbreak->amount_min[j]=0;
+
+                        if(old_break!=3)
+                        {
+                            newbreak->amount_min[j]=BreakData.rows[i][3+j*old_break];
+                            newbreak->amount_max[j]=BreakData.rows[i][4+j*old_break];
+                            newbreak->prob[j]=BreakData.rows[i][5+j*old_break];
+                        }
+                        else
+                        {
+                            newbreak->amount_max[j]=BreakData.rows[i][3+j*old_break];
+                            newbreak->prob[j]=BreakData.rows[i][4+j*old_break];
+                        }
+
+                        if(newbreak->amount_min[j]==0)
+                        {
+                            newbreak->amount_min[j]=1;
+                        }
+
                     }
 
-                    newbreak->numToGive = BreakData.rows[i][62];
-                    newbreak->total = BreakData.rows[i][63];
+                    if(old_break!=3)
+                    {
+                        newbreak->numToGive = BreakData.rows[i][83];
+                        newbreak->total = BreakData.rows[i][84];
+                    }
+                    else
+                    {
+                        newbreak->numToGive = BreakData.rows[i][62];
+                        newbreak->total = BreakData.rows[i][63];
+                    }
+
                     nb_break++;
                     BreakList.push_back( newbreak );
                     //Log(MSG_INFO,"Break added: (%i:%i), numtogive %i, total %i",newbreak->itemtype,newbreak->itemnum,newbreak->numToGive,newbreak->total);
@@ -2531,11 +2928,11 @@ bool CWorldServer::LoadBreakChestBlueList()
 
                     //Patch for Xmas gift boxes...
                     newchest->chestid = itemnum;
-/*                     if (itemnum>=245&&itemnum<=247)
+                    /*if (itemnum>=245&&itemnum<=247)
                     {
                         newchest->chestid+=2;
-                    }
-*/
+                    }*/
+
                    //We read the 20 items.
                    int nb_rewards=0;
                    UINT rewtype=0;
@@ -2545,15 +2942,15 @@ bool CWorldServer::LoadBreakChestBlueList()
 
                     for(int j=0;j<20;j++)
                     {
-                        if (BreakData.rows[i][2+j*3]==0)
+                        if (BreakData.rows[i][2+j*old_break]==0)
                         {
                             //No more rewards to be read.
                             break;
                         }
 
                         isok=true;
-                        rewtype=int(BreakData.rows[i][2+j*3]/1000);
-                        rewnum=BreakData.rows[i][2+j*3]%1000;
+                        rewtype=int(BreakData.rows[i][2+j*old_break]/1000);
+                        rewnum=BreakData.rows[i][2+j*old_break]%1000;
 
                         if(rewnum==0||rewtype>14||rewtype==0)
                         {
@@ -2565,12 +2962,12 @@ bool CWorldServer::LoadBreakChestBlueList()
                         if(!isok)
                         {
                             isok=true;
-                            rewtype=int(BreakData.rows[i][2+j*3]/1000000);
-                            rewnum=BreakData.rows[i][2+j*3]%1000000;
+                            rewtype=int(BreakData.rows[i][2+j*old_break]/1000000);
+                            rewnum=BreakData.rows[i][2+j*old_break]%1000000;
 
                             if(rewnum==0||rewtype>14||rewtype==0)
                             {
-                                Log(MSG_WARNING,"Problem getting item from Break STB (line %i): %i",i,BreakData.rows[i][2+j*3]);
+                                Log(MSG_WARNING,"Problem getting item from Break STB (line %i): %i",i,BreakData.rows[i][2+j*old_break]);
                                 isok=false;
                             }
                             else
@@ -2595,13 +2992,40 @@ bool CWorldServer::LoadBreakChestBlueList()
 
                         Reward->id = rewnum;
                         Reward->type=rewtype;
-                        Reward->rewardamount=BreakData.rows[i][3+j*3];
-                        Reward->prob=BreakData.rows[i][4+j*3];
-                        newchest->probmax+=BreakData.rows[i][4+j*3];
+                        Reward->rewardamount_min=0;
+
+                        if(old_break!=3)
+                        {
+                            Reward->rewardamount_min=BreakData.rows[i][3+j*old_break];
+                            Reward->rewardamount_max=BreakData.rows[i][4+j*old_break];
+                            Reward->prob=BreakData.rows[i][5+j*old_break];
+                            newchest->probmax+=BreakData.rows[i][5+j*old_break];
+                        }
+                        else
+                        {
+                            Reward->rewardamount_max=BreakData.rows[i][3+j*old_break];
+                            Reward->prob=BreakData.rows[i][4+j*old_break];
+                            newchest->probmax+=BreakData.rows[i][4+j*old_break];
+                        }
+
+                        if(Reward->rewardamount_min==0)
+                        {
+                            Reward->rewardamount_min=1;
+                        }
+
                         newchest->Rewards.push_back( Reward );
                     }
 
-                    newchest->rewardposs = BreakData.rows[i][62];
+
+                    if(old_break!=3)
+                    {
+                        newchest->rewardposs = BreakData.rows[i][83];
+                    }
+                    else
+                    {
+                        newchest->rewardposs = BreakData.rows[i][62];
+                    }
+
                     nb_chest++;
                     ChestList.push_back( newchest );
                     //Log(MSG_INFO,"Chest added: (%i:%i), numtogive %i",10,newchest->chestid,newchest->rewardposs);
@@ -2633,7 +3057,6 @@ bool CWorldServer::LoadBreakChestBlueList()
 }
 
 // From osprose
-
 bool CWorldServer::LoadConfig( )
 {
     Log( MSG_INFO, "Loading database config" );
@@ -2642,7 +3065,7 @@ bool CWorldServer::LoadConfig( )
         refine_chance, rare_refine, kill_on_fail, player_damage, monster_damage, player_acc, monster_acc, \
         pvp_acc, skill_damage, maxlevel, drop_type, savetime, partygap, maxstat, cfmode, autosave, mapdelay, \
         visualdelay, worlddelay, fairymode, fairystay, fairywait, fairytestmode, osrosever, testgrid, jrose, \
-        is_pegasus, monmax, massexport FROM list_config");
+        is_pegasus, monmax, massexport,uwnbplayers,uwside FROM list_config");
 
     if(result==NULL)
     {
@@ -2698,6 +3121,10 @@ bool CWorldServer::LoadConfig( )
        GServer->Config.is_pegasus = atoi(row[32]);
        GServer->Config.monmax = atoi(row[33]);
        GServer->Config.massexport = atoi(row[34]);
+
+       //LMA: Union Wars.
+       UWNbPlayers=atoi(row[35]);
+       ObjVar[1113][2]=atoi(row[36]);
     }
 
     //LMA: jRose.
@@ -2713,6 +3140,14 @@ bool CWorldServer::LoadConfig( )
        Log (MSG_INFO, "Handling naRose STB, AIP, QSD, database.");
 
     DB->QFree( );
+
+   //Checking UW values, are they ok?
+   if(ObjVar[1113][2]<0||ObjVar[1113][2]>2)
+   {
+       ObjVar[1113][2]=0;
+       GServer->DB->QExecute("UPDATE list_config SET uwside=%i",ObjVar[1113][2]);
+   }
+
     Log( MSG_INFO, "Config Data Loaded" );
 
 

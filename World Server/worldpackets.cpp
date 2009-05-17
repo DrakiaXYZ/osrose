@@ -44,8 +44,33 @@ void CWorldServer::pakPlayer( CPlayer *thisclient )
         thisclient->Position->current = thisclient->Position->destiny;
         thisclient->Position->Map = 2;
     }
+
     CMap* map = MapList.Index[thisclient->Position->Map];
     map->AddPlayer( thisclient );
+
+    //LMA: we execute the map "welcome quest trigger", used to set pvp most of the time.
+    if(!thisclient->is_born)
+    {
+        thisclient->pvp_id=-1;
+        dword hash_zone=map->QSDzone;
+
+        if(hash_zone>0)
+        {
+            //int success=thisclient->ExecuteQuestTrigger(hash_zone,false);
+            int success=thisclient->ExecuteQuestTrigger(hash_zone,true);
+            if (success==QUEST_SUCCESS)
+            {
+                //Log(MSG_WARNING,"successful first map %i trigger for %s",map->id,thisclient->CharInfo->charname);
+            }
+            else
+            {
+                Log(MSG_WARNING,"UNsuccessful first map %i trigger for %s",map->id,thisclient->CharInfo->charname);
+            }
+
+        }
+
+        thisclient->is_born=true;
+    }
 
     //LMA: Little fix if players comes with too much HP / MP In Game (exit when fairied?)
     if (thisclient->Stats->HP>thisclient->GetMaxHP())
@@ -293,18 +318,46 @@ bool CWorldServer::pakDoID( CPlayer* thisclient, CPacket* P )
         ADDWORD    ( pak, 0x1388 );
         thisclient->Party->party->SendToMembers( &pak, thisclient );
     }
-	BEGINPACKET( pak, 0x721 );
-    ADDWORD    ( pak, 0x0022 );
-    ADDWORD    ( pak, 0x0002 );
-    ADDWORD    ( pak, 0x0000 );
-    thisclient->client->SendPacket( &pak );
 
-	RESETPACKET( pak, 0x730 );
-    ADDWORD    ( pak, 0x0005 );
-    ADDDWORD   ( pak, 0x40b3a24d );
-    thisclient->client->SendPacket( &pak );
+    //LMA: We do the warp zone here.
+    CMap* map = MapList.Index[thisclient->Position->Map];
+    //LMA: We do a quest trigger if needed...
+    //If we are already in the map, no need to redo all the stuff again.
+    //We don't do the qsdzone again if in the UW map...
+    dword hash_zone=map->QSDzone;
+    //if(hash_zone>0&&((id!=thisclient->Position->Map)||(id!=9)))
+    if(hash_zone>0)
+    {
+        //LMA: we set the pvp vars to nothing again.
+        thisclient->pvp_id=-1;
+        thisclient->pvp_status=-1;
 
-    RESETPACKET( pak, 0x753 );
+        //int success=thisclient->ExecuteQuestTrigger(hash_zone,false);
+        int success=thisclient->ExecuteQuestTrigger(hash_zone,true);
+        if (success==QUEST_SUCCESS)
+        {
+            //Log(MSG_WARNING,"teleporting player %s, quest %u returned ok",thisclient->CharInfo->charname,hash_zone);
+
+            //Special case for map 9 (UW).
+            if(map->id==9)
+            {
+                if(thisclient->UWPosition->Map>0&&thisclient->UWPosition->source.x>0&&thisclient->UWPosition->source.y>0)
+                {
+                    Log(MSG_WARNING,"Player %s is UW teleporting to map %i (%.2f,%.2f)",thisclient->CharInfo->charname,thisclient->UWPosition->Map,thisclient->UWPosition->source.x,thisclient->UWPosition->source.y);
+                }
+
+            }
+
+        }
+        else
+        {
+            Log(MSG_WARNING,"teleporting player %s, quest %u returned false",thisclient->CharInfo->charname,hash_zone);
+        }
+
+    }
+    //LMA: end of zone
+
+    BEGINPACKET( pak, 0x753 );
     ADDWORD    ( pak, thisclient->clientid );			// USER ID
     ADDWORD    ( pak, thisclient->Stats->HP );		// CURRENT HP
     ADDWORD    ( pak, thisclient->Stats->MP );		// CURRENT MP
@@ -331,65 +384,27 @@ bool CWorldServer::pakDoID( CPlayer* thisclient, CPacket* P )
     ADDBYTE    ( pak, 0x32 );  //10
     ADDBYTE    ( pak, 0x32 );  //11
 
-    CMap* map = MapList.Index[thisclient->Position->Map];
-    if(map->allowpvp!=0)
+    //CMap* map = MapList.Index[thisclient->Position->Map];
+
+    //LMA: new pvp code.
+    if(map->allowpvp!=1)
     {
-        ADDWORD(pak, 0x0001)//player vs player map
+        //non player vs player map
+        ADDWORD(pak, 0x0000);
     }
     else
     {
-        ADDWORD(pak, 0x0000)//non player vs player map
+        //player vs player map
+        ADDWORD(pak, 0x0001);
     }
 
-    ADDWORD    (pak, 0x0000 );//??
+    ADDWORD    (pak, 0x0000 );
+
     // Map Time
     ADDDWORD( pak, map->MapTime );
-    if(map->allowpvp==1)
-    {
-        // pvp all vs all
-        //ADDWORD(pak, 51 );
 
-        //LMA: CF case...
-        if(map->id>=11&&map->id<=13&&thisclient->Clan->clanid>0)
-        {
-            Log(MSG_INFO,"CF map, sending clanid (allowpvp=1) %i",thisclient->Clan->clanid);
-            ADDWORD(pak, thisclient->Clan->clanid);
-        }
-        else
-        {
-            //test maxxon
-            //ADDWORD(pak, 51);
-            ADDWORD (pak, thisclient->clientid);
-        }
-
-    }
-    else if(map->allowpvp==2) // pvp group vs group
-    {
-        //LMA: for Union war.
-        //2do: check packet.
-        if (map->id==9&&thisclient->CharInfo->unionid>0)
-        {
-            int lma_alliance=0x07D0;
-            if (thisclient->CharInfo->unionid==3||thisclient->CharInfo->unionid==5)
-            {
-                lma_alliance=0x03E8;
-            }
-
-            ADDWORD(pak, lma_alliance);
-            Log(MSG_INFO,"0x753 %i",lma_alliance);
-        }
-        else
-        {
-            //test maxxon
-            //ADDWORD(pak, 51);
-            ADDWORD(pak, thisclient->Clan->clanid );
-        }
-        /*ADDWORD(pak, thisclient->Clan->clanid );*/
-    }
-    else
-    {
-        ADDWORD(pak, 2 );
-    }
+    thisclient->pvp_id=thisclient->ReturnPvp(NULL,thisclient);
+    ADDWORD(pak,thisclient->pvp_id);
 
     //LMA: Update.
     ADDWORD(pak, 0x0000 );
@@ -416,6 +431,18 @@ bool CWorldServer::pakDoID( CPlayer* thisclient, CPacket* P )
     thisclient->CleanPlayerVector( );
 	thisclient->Session->inGame = true;
 	thisclient->firstlogin=clock();    //LMA for fairy
+
+	//LMA: In some special cases, we have to warp the guy again...
+	if(thisclient->map_warp_zone!=0&&thisclient->Warp_Zone.x!=0&&thisclient->Warp_Zone.y!=0)
+	{
+	    CMap* mapWarp = MapList.Index[thisclient->map_warp_zone];
+	    mapWarp->TeleportPlayer(thisclient,thisclient->Warp_Zone);
+	    thisclient->map_warp_zone=0;
+	    thisclient->Warp_Zone.x=0;
+	    thisclient->Warp_Zone.y=0;
+	}
+
+
 	return true;
 }
 
@@ -497,7 +524,7 @@ bool CWorldServer::pakSpawnIfoObject( CPlayer* thisclient, UINT npctype,bool for
         SendToAllInMap(&pak,WarpGate.mapid);
     }
 
-    Log(MSG_INFO,"Spawning WarpGate, does it appear? %i",GServer->WarpGate.IfoObjVar[0]);
+    //Log(MSG_INFO,"Spawning WarpGate, does it appear? %i",GServer->WarpGate.IfoObjVar[0]);
 
 
 	return true;
@@ -528,25 +555,25 @@ bool CWorldServer::pakSpawnNPC( CPlayer* thisclient, CNPC* thisnpc )
 	if (thisnpc->dialog!=0)
 	{
         ADDWORD( pak, thisnpc->dialog );
-        Log(MSG_INFO,"Special dialog %i for NPC %i",thisnpc->dialog, thisnpc->npctype);
+        //Log(MSG_INFO,"Special dialog %i for NPC %i",thisnpc->dialog, thisnpc->npctype);
     }
     else if(thisnpc->thisnpc->dialogid!=0)
     {
-         Log(MSG_INFO,"Default dialog %i for NPC %i",thisnpc->thisnpc->dialogid, thisnpc->npctype);
+         //Log(MSG_INFO,"Default dialog %i for NPC %i",thisnpc->thisnpc->dialogid, thisnpc->npctype);
          ADDWORD( pak, thisnpc->thisnpc->dialogid );
     }
     else
     {
         // NPC dialog should be type - 900, if not specified in DB
         ADDWORD( pak, thisnpc->npctype - 900 );
-        Log(MSG_INFO,"NO default or special dialog %i for NPC %i",thisnpc->npctype - 900, thisnpc->npctype);
+        //Log(MSG_INFO,"NO default or special dialog %i for NPC %i",thisnpc->npctype - 900, thisnpc->npctype);
     }
 
 	ADDFLOAT( pak, thisnpc->dir );
 
     if (thisnpc->npctype == 1115)
     {
-       ADDBYTE( pak, GServer->Config.Cfmode ) // Burland Clan Field open/close
+       ADDBYTE( pak, GServer->Config.Cfmode ) // Burtland Clan Field open/close
        ADDBYTE( pak, 0 );
     }
 
@@ -555,7 +582,7 @@ bool CWorldServer::pakSpawnNPC( CPlayer* thisclient, CNPC* thisnpc )
     //Event:
     if (thisnpc->event!=0&&thisnpc->npctype!=1115)
     {
-        Log(MSG_INFO,"Event number %i for NPC %i",thisnpc->event, thisnpc->npctype);
+        //Log(MSG_INFO,"Event number %i for NPC %i",thisnpc->event, thisnpc->npctype);
         ADDWORD ( pak, thisnpc->event);
     }
     else if(thisnpc->npctype!=1115)
@@ -632,8 +659,11 @@ bool CWorldServer::pakChangeStance( CPlayer* thisclient, CPacket* P )
 	ADDWORD( pak, thisclient->clientid );
 	ADDBYTE( pak, thisclient->Status->Stance );
 
+    //LMA: putting the speed again...
     //ADDWORD( pak, thisclient->Stats->Move_Speed );
-	SendToVisible( &pak, thisclient );
+    ADDWORD( pak, thisclient->Stats->Base_Speed );
+
+    SendToVisible( &pak, thisclient );
 
     //Fuel.
 	if (thisclient->Status->Stance==DRIVING)
@@ -1273,6 +1303,14 @@ bool CWorldServer::pakGate( CPlayer* thisclient, CPacket* P )
     // broken telegates. We might need to dump the scale and work from that - Drakia
     if( thisgate == NULL ||thisclient->Position->Map != thisgate->srcMap ||distance(thisclient->Position->current, thisgate->src) > 100 )
     {
+        if(thisgate == NULL)
+        {
+            Log( MSG_HACK, "Player %s[Map: %i X: %f Y: %f] - Gate Hacking[ID: %i], Gates doesn't exist!",
+                     thisclient->CharInfo->charname, thisclient->Position->Map,
+                     thisclient->Position->current.x, thisclient->Position->current.y, GateID);
+            return true;
+        }
+
       Log( MSG_HACK, "Player %s[Map: %i X: %f Y: %f] - Gate Hacking[ID: %i], distance %.2f",
                      thisclient->CharInfo->charname, thisclient->Position->Map,
                      thisclient->Position->current.x, thisclient->Position->current.y, GateID,distance(thisclient->Position->current, thisgate->src) );
@@ -1558,8 +1596,67 @@ bool CWorldServer::pakUserDied ( CPlayer* thisclient, CPacket* P )
 
     }
 
-    thisclient->Stats->HP = thisclient->Stats->MaxHP * 10 / 100;
-    Log(MSG_INFO,"Player %s died, we give him %I64i Hp",thisclient->CharInfo->charname,thisclient->Stats->HP);
+    //LMA: Special Union War case ;)
+    /*
+    if(thisclient->Position->Map==9)
+    {
+        int success=QUEST_FAILURE;
+        char* tempName = "PvP10-331";
+        dword hash = MakeStrHash(tempName);
+        success=thisclient->ExecuteQuestTrigger(hash,true);
+        if (success==QUEST_SUCCESS)
+        {
+            Log(MSG_WARNING,"Player %s has been killed in UW, 100%HP 100%MP %s",thisclient->CharInfo->charname);
+            Log(MSG_INFO,"Player %s died in UW, we give him %I64i Hp",thisclient->CharInfo->charname,thisclient->Stats->HP);
+
+            if(thisclient->UWPosition->Map>0&&thisclient->UWPosition->source.x>0&&thisclient->UWPosition->source.y>0)
+            {
+                Log(MSG_WARNING,"Player %s is UW teleporting after death to map %i (%.2f,%.2f)",thisclient->CharInfo->charname,thisclient->UWPosition->Map,thisclient->UWPosition->source.x,thisclient->UWPosition->source.y);
+                fPoint coord;
+                coord.x = thisclient->UWPosition->source.x;
+                coord.y = thisclient->UWPosition->source.y;
+                MapList.Index[thisclient->UWPosition->Map]->TeleportPlayer( thisclient, coord, false );
+            }
+
+        }
+        else
+        {
+            Log(MSG_WARNING,"Player %s has been killed in UW, quest returned failure",thisclient->CharInfo->charname);
+        }
+
+    }
+    else
+    {
+        thisclient->Stats->HP = thisclient->Stats->MaxHP * 10 / 100;
+        Log(MSG_INFO,"Player %s died, we give him %I64i Hp",thisclient->CharInfo->charname,thisclient->Stats->HP);
+        if(thisrespawn!=NULL)
+        {
+            // geo edit for saved town warp // 29 sep 07
+            map = MapList.Index[thisrespawn->destMap];
+            map->TeleportPlayer( thisclient, thisrespawn->dest, false );
+        }
+        else
+        {
+            Log(MSG_WARNING,"Player died, respawn not found for map %i, respawn %i",map->id,respawn);
+            fPoint coord;
+            coord.x = 5200;
+            coord.y = 5200;
+            MapList.Index[2]->TeleportPlayer( thisclient, coord, false );
+        }
+
+    }
+    */
+
+    if(thisclient->Stats->HP<=0||(thisclient->Stats->HP < (thisclient->Stats->MaxHP * 10 / 100)))
+    {
+        thisclient->Stats->HP = thisclient->Stats->MaxHP * 10 / 100;
+        Log(MSG_INFO,"Player %s died, we give him %I64i Hp",thisclient->CharInfo->charname,thisclient->Stats->HP);
+    }
+    else
+    {
+        Log(MSG_INFO,"Player %s died, he has %I64i Hp",thisclient->CharInfo->charname,thisclient->Stats->HP);
+    }
+
     if(thisrespawn!=NULL)
     {
         // geo edit for saved town warp // 29 sep 07
@@ -1732,6 +1829,14 @@ bool CWorldServer::pakNPCBuy ( CPlayer* thisclient, CPacket* P )
 			thisitem.socketed = false;
 			thisitem.stats = 0;
 			thisitem.gem = 0;
+			thisitem.sp_value=0;
+
+			if(thisitem.itemtype==14)
+			{
+			    thisitem.sp_value=thisitem.lifespan*10;
+			}
+
+			thisitem.last_sp_value=0;
 
 			//checking money / reward points now...
     		switch(thisitem.itemtype)
@@ -2202,8 +2307,9 @@ bool CWorldServer::pakStartSkill ( CPlayer* thisclient, CPacket* P )
 
 	   BEGINPACKET( pak, 0x79f );
 	   ADDWORD( pak, character->clientid );
-	   ADDWORD( pak, character->Stats->HP );
-	   ADDWORD( pak, 0 );
+	   /*ADDWORD( pak, character->Stats->HP );
+	   ADDWORD( pak, 0 );*/
+	   ADDDWORD   ( pak, character->Stats->HP );    //LMA: DDWORD :)
 	   thisclient->client->SendPacket( &pak );
     }
 	CSkills* thisskill = GetSkillByID( skillid );
@@ -2567,9 +2673,18 @@ bool CWorldServer::pakGiveQuest( CPlayer* thisclient, CPacket* P )
   dword hash = GETDWORD((*P),2);
 
 
-  if( thisclient->questdebug ) SendPM( thisclient, "Event Trigger [%08x] Action %i", hash, action);
+  if( thisclient->questdebug )
+  {
+      SendPM( thisclient, "Event Trigger [%08x] Action %i", hash, action);
+  }
 
-  if (action == 2) {
+  LogDebugPriority(3);
+  LogDebug("PakGiveQuest %u ([%08x]), action %i slot %i",hash,hash,action,slot);
+  Log(MSG_WARNING,"PakGiveQuest %u ([%08x]), action %i slot %i",hash,hash,action,slot);
+  LogDebugPriority(4);
+
+  if (action == 2)
+  {
     if( thisclient->questdebug ) SendPM( thisclient, "Delete quest - Slot %i", slot);
     for (dword i = slot; i < 9; i++) thisclient->quest.quests[i] = thisclient->quest.quests[i+1];
     thisclient->quest.quests[9].Clear();
@@ -2578,15 +2693,32 @@ bool CWorldServer::pakGiveQuest( CPlayer* thisclient, CPacket* P )
     ADDBYTE ( pak, slot);
     ADDDWORD( pak, hash);
     thisclient->client->SendPacket(&pak);
+
+      LogDebugPriority(3);
+      LogDebug("PakGiveQuest %u ([%08x]), action %i slot %i delete quest",hash,hash,action,slot);
+      LogDebugPriority(4);
     return true;
   }
-  if (action != 3) return false;
+
+  if (action != 3)
+  {
+      return false;
+  }
+
   int success = thisclient->ExecuteQuestTrigger(hash);
   BEGINPACKET ( pak, 0x730);
   ADDBYTE ( pak, success);
   ADDBYTE ( pak, 0);
   ADDDWORD( pak, hash);
   thisclient->client->SendPacket(&pak);
+
+  Log(MSG_INFO,"PakGiveQuest %u",hash);
+
+  LogDebugPriority(3);
+  LogDebug("PakGiveQuest %u ([%08x]), action %i slot %i result %i",hash,hash,action,slot,success);
+  LogDebugPriority(4);
+
+
   return true;
 }
 
@@ -2775,6 +2907,10 @@ bool CWorldServer::pakUseItem ( CPlayer* thisclient, CPacket* P )
             {
            	   this_summon->skillid=thisuse->usetype;
            	   this_summon->buffid=thisuse->use_buff;
+
+           	   //LMA: new HP amount.
+                this_summon->Stats->MaxHP=SummonFormula(thisclient,this_summon);
+                this_summon->Stats->HP=this_summon->Stats->MaxHP;
             }
 
             flag = true;
@@ -2830,12 +2966,14 @@ bool CWorldServer::pakUseItem ( CPlayer* thisclient, CPacket* P )
              //LMA: some special skill cases where it's handled in quest itself :)
              flag=false;
         }
+        break;
         case 12:
         {
              //LMA: Refuel :)
             thisclient->TakeFuel(thisuse->usevalue);
             flag=true;
         }
+        break;
         case 13:
         {
              //LMA: Clan Points :)
@@ -2957,7 +3095,7 @@ bool CWorldServer::pakUseItem ( CPlayer* thisclient, CPacket* P )
             }
 
             //LMA: for tests.
-            //thisclient->saveskills();
+            thisclient->saveskills();
             BEGINPACKET( pak,0x7a3 );
             ADDWORD    ( pak, thisclient->clientid );
             ADDWORD    ( pak, thisuse->itemnum );
@@ -3121,6 +3259,13 @@ bool CWorldServer::pakEquipABC ( CPlayer* thisclient, CPacket* P )
 
 bool CWorldServer::pakCraft( CPlayer* thisclient, CPacket* P )
 {
+    //0x00=success
+    //0x01=failure
+    //0x02=not enough MP
+    //0x03=not enough materials
+    //0x04=no materials
+    //0x05=craft skill level is insufficient.
+    bool painting=false;
 	if(thisclient->Shop->open==true)
         return true;
 	CItem item;
@@ -3160,48 +3305,329 @@ bool CWorldServer::pakCraft( CPlayer* thisclient, CPacket* P )
 
     //LMA: Craft success or failure?
     int failure=0;
+    UINT craftID=0; //LMA: Searching skill
+    UINT craft_level=0; //LMA: Searching skill
+    item.sp_value=0;
+    item.last_sp_value=-1;
     switch(item.itemtype)
     {
         case 10:
         {
             //Use
             failure=UseList.Index[item.itemnum]->craft_difficult;
+            craftID=UseList.Index[item.itemnum]->craft;
+            craft_level=UseList.Index[item.itemnum]->craftlevel;
         }
         break;
         case 11:
         {
             //JEM
             failure=JemList.Index[item.itemnum]->craft_difficult;
+            craftID=JemList.Index[item.itemnum]->craft;
+            craft_level=JemList.Index[item.itemnum]->craft_level;
         }
         break;
         case 14:
         {
             //PAT
             failure=PatList.Index[item.itemnum]->craft_difficult;
+            item.sp_value=item.lifespan*10;
+            craftID=PatList.Index[item.itemnum]->craft;
+            craft_level=PatList.Index[item.itemnum]->craft_level;
+
+            //LMA: Let's check if it's a painting job.
+            for(char used=5; used != 13; used +=2)
+            {
+                WORD material= GETWORD((*P), used);
+                if(CheckInventorySlot(thisclient,material))
+                {
+                    //PAT painting: 12::442
+                    if (thisclient->items[material].itemnum==442&&thisclient->items[material].itemtype==12)
+                    {
+                        painting=true;
+                        break;
+                    }
+
+                }
+
+            }
+
         }
         break;
         default:
         {
             //Equiplist.
-            failure=EquipList[item.itemtype].Index[item.itemnum]->craft_difficult;
+            if(item.itemtype>=1&&item.itemtype<=9)
+            {
+                failure=EquipList[item.itemtype].Index[item.itemnum]->craft_difficult;
+                craftID=EquipList[item.itemtype].Index[item.itemnum]->craft;
+                craft_level=EquipList[item.itemtype].Index[item.itemnum]->craft_level;
+            }
+            else
+            {
+                Log(MSG_HACK,"Incorrect Itemtype in craft %i, player %s",item.itemtype,thisclient->CharInfo->charname);
+                return true;
+            }
+
         }
         break;
     }
 
-    failure-=(int) (thisclient->Attr->Con/40);
-    if (failure<=0)
-        failure=1;
-    if (failure>=100)
-        failure=99;
-
-    //real one :)
-    /*
-    if(GServer->RandNumber(0,100)<=failure)
+    //LMA: Searching for the good skill in player's skill list.
+    if(craftID==0||craft_level==0)
     {
-        Log(MSG_INFO,"Craft has failed");
+        Log(MSG_HACK,"Player %s tried to craft item %i::%i with incorrect craft values %i,%i",thisclient->CharInfo->charname,item.itemtype,item.itemnum,craftID,craft_level);
         return true;
     }
-    */
+
+    bool skill_found=true;
+
+    //LMA: no MP taken and no failure when painting.
+    if(!painting)
+    {
+        skill_found=false;
+
+        for (int k=0;k<MAX_ALL_SKILL;k++)
+        {
+            if(thisclient->cskills[k].thisskill==NULL||thisclient->cskills[k].thisskill->skilltype!=2)
+            {
+                continue;
+            }
+
+            if(thisclient->cskills[k].thisskill->atkpower==craftID&&thisclient->cskills[k].level==craft_level)
+            {
+                skill_found=true;
+                //LMA: checking MP amount.
+                for (int j=0;j<2;j++)
+                {
+                    if(thisclient->cskills[k].thisskill->costtype[j]==0||thisclient->cskills[k].thisskill->costamount[j]==0)
+                    {
+                        continue;
+                    }
+
+                    if(thisclient->cskills[k].thisskill->costtype[j]==C_MP)
+                    {
+                        if(thisclient->Stats->MP<thisclient->cskills[k].thisskill->costamount[j])
+                        {
+                            Log(MSG_WARNING,"Player %s tried to craft item %i::%i, craft values %i,%i, not enough MP",thisclient->CharInfo->charname,item.itemtype,item.itemnum,craftID,craft_level);
+                            //not enough MP
+                            BEGINPACKET( pak, 0x07d8);
+                            ADDWORD( pak, thisclient->clientid );
+                            ADDBYTE( pak, 0x02);
+                            ADDBYTE( pak, 0x00);
+                            thisclient->client->SendPacket( &pak );
+                            return true;
+                        }
+
+                        thisclient->Stats->MP-=thisclient->cskills[k].thisskill->costamount[j];
+                    }
+                    else if(thisclient->cskills[k].thisskill->costtype[j]==C_HP)
+                    {
+                        if(thisclient->Stats->HP<thisclient->cskills[k].thisskill->costamount[j])
+                        {
+                            Log(MSG_WARNING,"Player %s tried to craft item %i::%i, craft values %i,%i, not enough HP",thisclient->CharInfo->charname,item.itemtype,item.itemnum,craftID,craft_level);
+                            //not enough HP
+                            BEGINPACKET( pak, 0x07d8);
+                            ADDWORD( pak, thisclient->clientid );
+                            ADDBYTE( pak, 0x02);
+                            ADDBYTE( pak, 0x00);
+                            thisclient->client->SendPacket( &pak );
+                            return true;
+                        }
+
+                        thisclient->Stats->HP-=thisclient->cskills[k].thisskill->costamount[j];
+                    }
+                    else
+                    {
+                        Log(MSG_WARNING,"Player %s tried to craft item %i::%i, craft values %i,%i, unknown costype %i",thisclient->CharInfo->charname,item.itemtype,item.itemnum,craftID,craft_level,thisclient->cskills[k].thisskill->costtype[j]);
+                    }
+
+                }
+
+                break;
+            }
+
+        }
+
+        if (!skill_found)
+        {
+            Log(MSG_HACK,"Player %s tried to craft item %i::%i, craft values %i,%i but without the skill...",thisclient->CharInfo->charname,item.itemtype,item.itemnum,craftID,craft_level);
+            BEGINPACKET( pak, 0x07d8);
+            ADDWORD( pak, thisclient->clientid );
+            ADDBYTE( pak, 0x05);
+            ADDBYTE( pak, 0x00);
+            thisclient->client->SendPacket( &pak );
+            return true;
+        }
+
+        //end of search.
+
+
+        failure-=(int) (thisclient->Attr->Con/40);
+        if (failure<=0)
+            failure=1;
+        if (failure>=100)
+            failure=99;
+
+        //LMA: Failure.
+        bool test_fail=false;
+        //test_fail=true;
+        if((GServer->RandNumber(0,100)<=failure)||test_fail)
+        {
+            Log(MSG_INFO,"Craft has failed");
+
+            BEGINPACKET( pak, 0x07d8);
+            ADDWORD( pak, thisclient->clientid );
+            ADDBYTE( pak, 0x00);
+            ADDBYTE( pak, item.itemtype);
+            ADDWORD( pak, item.itemnum);// item id not shifted
+            thisclient->client->SendPacket(&pak);
+
+            RESETPACKET( pak, 0x07af);
+            ADDBYTE( pak, 0x01);
+
+            int nb_items=0;
+            int nb_fails=0;
+            for(char used=5; used != 13; used +=2)
+            {
+                if(GETWORD((*P), used)!=0)
+                {
+                    nb_items++;
+                }
+
+            }
+
+            nb_fails=GServer->RandNumber(0,nb_items);
+
+            if(nb_fails>(nb_items-1))
+            {
+                nb_fails=nb_items-1;
+            }
+
+            if(nb_fails<0)
+            {
+                nb_fails=0;
+            }
+
+            ADDWORD( pak, nb_fails);
+
+            int bar[4];
+            bar[0] = item.durability * 9;
+            bar[1] = changeofstatsrange * 9;
+            bar[2] = item.durability + changeofstatsrange * 6;
+            bar[3] = item.durability + changeofstatsrange + bar[2] / 3;
+
+            nb_items=0;
+            for(char used=5; used != 13; used +=2)
+            {
+                if(GETWORD((*P), used)!=0&&nb_items<=nb_fails)
+                {
+                    ADDWORD( pak, bar[nb_items]);
+                }
+                else
+                {
+                    ADDWORD( pak, 0x99a0);
+                }
+
+                nb_items++;
+            }
+
+            ADDDWORD(pak, 0xCD48FB40);
+            ADDDWORD(pak, 0x00CD01CD);
+            ADDDWORD( pak, 0x00000000 );
+            ADDWORD ( pak, 0x03E8 );
+            thisclient->client->SendPacket( &pak );
+
+            //deleting first item in player's inventory.
+            int	materialnumber = 0;
+            if(item.itemtype<10)
+            {
+                materialnumber = EquipList[item.itemtype].Index[item.itemnum]->material;
+            }
+            else
+            {
+                switch(item.itemtype)
+                {
+                    //UseList by core
+                    case 10:materialnumber = UseList.Index[item.itemnum]->material;break;
+                    case 11:materialnumber = JemList.Index[item.itemnum]->material;break;
+                    case 14:materialnumber = PatList.Index[item.itemnum]->material;break;
+                }
+            }
+
+            nb_items=0;
+            int	m = 0;
+            for(char used=5; used != 13; used +=2)
+            {
+                if(nb_items>nb_fails)
+                {
+                    break;
+                }
+
+                WORD material= GETWORD((*P), used);
+                if (material != 0)
+                {
+                    if(!CheckInventorySlot( thisclient, material))
+                    {
+                        Log(MSG_HACK, "Player: %s, can't delete items in craft failure0 slot %i", thisclient->CharInfo->charname,material);
+                        return true;
+                    }
+
+                    if (thisclient->items[material].count < ProductList.Index[materialnumber]->amount[m])
+                    {
+                        Log(MSG_HACK, "Player: %s, can't delete items in craft failure1", thisclient->CharInfo->charname);
+                        return true;
+                    }
+
+                    UINT clientMat = (thisclient->items[material].itemtype * 1000) + thisclient->items[material].itemnum;
+
+                    if (ProductList.Index[materialnumber]->item[m]>0&&clientMat != ProductList.Index[materialnumber]->item[m])
+                    {
+                        Log(MSG_HACK, "Player: %s, can't delete items in craft failure2", thisclient->CharInfo->charname);
+                        return true;
+                    }
+
+                    //LMA: The first material can be generic.
+                    if(m==0&&ProductList.Index[materialnumber]->item[m]==0&&ProductList.Index[materialnumber]->item_0_family!=0)
+                    {
+                        if(ReturnItemType(thisclient,material)!=ProductList.Index[materialnumber]->item_0_family)
+                        {
+                            Log(MSG_HACK, "Player: %s, can't delete items in craft failure3 (incorrect type)", thisclient->CharInfo->charname);
+                            return true;
+                        }
+
+                    }
+
+                    thisclient->items[material].count -= ProductList.Index[materialnumber]->amount[m];
+                    m++;
+
+                    if (thisclient->items[material].count <=0)
+                    {
+                        ClearItem(thisclient->items[material]);
+                    }
+
+                }
+
+                nb_items++;
+            }
+
+            //LMA: saving slots.
+            for(char used=5; used != 13; used +=2)
+            {
+                WORD slot= GETWORD((*P), used);
+                if (slot == 0)
+                {
+                    continue;
+                }
+
+                thisclient->SaveSlot41(slot);
+            }
+
+
+            return true;
+        }
+
+    }
 
 	// stats set
 	item.socketed = 0;
@@ -3228,17 +3654,33 @@ bool CWorldServer::pakCraft( CPlayer* thisclient, CPacket* P )
         }
 
 		int	m = 0;
-		for(char used=5; used != 11; used +=2)
+
+		//LMA: TEST fix 4th tab by Shakar
+		//for(char used=5; used != 11; used +=2)
+		for(char used=5; used != 13; used +=2)
         {
             WORD material= GETWORD((*P), used);//gets inventory location
             if (material != 0)
             {
                 if(!CheckInventorySlot( thisclient, material))
-                    return false;
+                {
+                    BEGINPACKET( pak, 0x07d8);
+                    ADDWORD( pak, thisclient->clientid );
+                    ADDBYTE( pak, 0x03);
+                    ADDBYTE( pak, 0x00);
+                    thisclient->client->SendPacket( &pak );
+                    return true;
+                }
+
                 if (thisclient->items[material].count < ProductList.Index[materialnumber]->amount[m])
                 {
                     Log(MSG_HACK, "Nb Client craft mats don't equal server. Player: %s", thisclient->CharInfo->charname);
-                    return false;
+                    BEGINPACKET( pak, 0x07d8);
+                    ADDWORD( pak, thisclient->clientid );
+                    ADDBYTE( pak, 0x03);
+                    ADDBYTE( pak, 0x00);
+                    thisclient->client->SendPacket( &pak );
+                    return true;
                 }
 
                 UINT clientMat = (thisclient->items[material].itemtype * 1000) + thisclient->items[material].itemnum;
@@ -3248,7 +3690,28 @@ bool CWorldServer::pakCraft( CPlayer* thisclient, CPacket* P )
                 if (ProductList.Index[materialnumber]->item[m]>0&&clientMat != ProductList.Index[materialnumber]->item[m])
                 {
                     Log(MSG_HACK, "Client craft mats don't equal server. Player: %s", thisclient->CharInfo->charname);
-                    return false;
+                    BEGINPACKET( pak, 0x07d8);
+                    ADDWORD( pak, thisclient->clientid );
+                    ADDBYTE( pak, 0x03);
+                    ADDBYTE( pak, 0x00);
+                    thisclient->client->SendPacket( &pak );
+                    return true;
+                }
+
+                //LMA: The first material can be generic.
+                if(m==0&&ProductList.Index[materialnumber]->item[m]==0&&ProductList.Index[materialnumber]->item_0_family!=0)
+                {
+                    if(ReturnItemType(thisclient,material)!=ProductList.Index[materialnumber]->item_0_family)
+                    {
+                        Log(MSG_HACK, "Player: %s, can't delete items in craft failure3 (incorrect type)", thisclient->CharInfo->charname);
+                        BEGINPACKET( pak, 0x07d8);
+                        ADDWORD( pak, thisclient->clientid );
+                        ADDBYTE( pak, 0x03);
+                        ADDBYTE( pak, 0x00);
+                        thisclient->client->SendPacket( &pak );
+                        return true;
+                    }
+
                 }
 
                 thisclient->items[material].count -= ProductList.Index[materialnumber]->amount[m];
@@ -3264,9 +3727,15 @@ bool CWorldServer::pakCraft( CPlayer* thisclient, CPacket* P )
         }
 
 		thisclient->items[newslot] = item;
+
         BEGINPACKET( pak, 0x07d8);
         ADDWORD( pak, thisclient->clientid );
-        ADDWORD( pak, 0x0100);
+
+        //LMA: Itemtype?
+        //ADDWORD( pak, 0x0100);
+        ADDBYTE( pak, 0x00);
+        ADDBYTE( pak, item.itemtype);
+
         ADDWORD( pak, item.itemnum);// item id not shifted
         thisclient->client->SendPacket(&pak);
 
@@ -3280,8 +3749,10 @@ bool CWorldServer::pakCraft( CPlayer* thisclient, CPacket* P )
         int bar3 = item.durability + changeofstatsrange * 6;
         int bar4 = item.durability + changeofstatsrange + bar3 / 3;
 
-        ADDWORD( pak, bar1);//progress bar1 0 is empty 0x0400 is full bar
-        ADDWORD( pak, bar2);//progress bar2 0 is empty 0x0400 is full bar
+        /*ADDWORD( pak, bar1);//progress bar1 0 is empty 0x0400 is full bar
+        ADDWORD( pak, bar2);//progress bar2 0 is empty 0x0400 is full bar*/
+        if ((GETWORD((*P),  5))==0){ ADDWORD( pak, 0x99a0);}else{ ADDWORD( pak, bar1);}
+        if ((GETWORD((*P),  7))==0){ ADDWORD( pak, 0x99a0);}else{ ADDWORD( pak, bar2);}
         if ((GETWORD((*P),  9))==0){ ADDWORD( pak, 0x99a0);}else{ ADDWORD( pak, bar3);}//progress bar3 0 is empty 0x0400 is full bar
         if ((GETWORD((*P), 11))==0){ ADDWORD( pak, 0x99a0);}else{ ADDWORD( pak, bar4);}//progress bar4 0 is empty 0x0400 is full bar
         ADDDWORD(pak, BuildItemHead(item));
@@ -3298,22 +3769,52 @@ bool CWorldServer::pakCraft( CPlayer* thisclient, CPacket* P )
 
         ADDDWORD( pak, 0x00000000 );
         ADDWORD ( pak, 0x0000 );
-        int crafting_exp = item.durability + changeofstatsrange * (thisclient->Stats->Level/ 15);
-        thisclient->CharInfo->Exp += crafting_exp;//  add exp
         thisclient->client->SendPacket(&pak);
-        RESETPACKET( pak, 0x79b );
-        ADDDWORD   ( pak, thisclient->CharInfo->Exp );
-        ADDWORD    ( pak, thisclient->CharInfo->stamina );
-        ADDWORD    ( pak, 0 );
-        thisclient->client->SendPacket( &pak );
+
+        //LMA: No Exp for painting.
+        if(!painting)
+        {
+            int crafting_exp = item.durability + changeofstatsrange * (thisclient->Stats->Level/ 15);
+            thisclient->CharInfo->Exp += crafting_exp;//  add exp
+            RESETPACKET( pak, 0x79b );
+            ADDDWORD   ( pak, thisclient->CharInfo->Exp );
+            ADDWORD    ( pak, thisclient->CharInfo->stamina );
+            ADDWORD    ( pak, 0 );
+            thisclient->client->SendPacket( &pak );
+        }
+
      }
      else
      {
-         BEGINPACKET (pak, 0x702);
+        BEGINPACKET( pak, 0x07d8);
+        ADDWORD( pak, thisclient->clientid );
+        ADDBYTE( pak, 0x03);
+        ADDBYTE( pak, 0x00);
+        thisclient->client->SendPacket( &pak );
+
+         RESETPACKET (pak, 0x702);
          ADDSTRING(pak, "No free slot !");
          ADDBYTE(pak, 0);
          thisclient->client->SendPacket(&pak);
      }
+
+    //LMA: saving slots.
+    for(char used=5; used != 13; used +=2)
+    {
+        WORD slot= GETWORD((*P), used);
+        if (slot == 0)
+        {
+            continue;
+        }
+
+        thisclient->SaveSlot41(slot);
+    }
+
+    //saving "result".
+    if(newslot!=0xffff)
+    {
+        thisclient->SaveSlot41(newslot);
+    }
 
 
      return true;
@@ -4255,7 +4756,8 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
                            rand -= BreakList.at(k)->prob[i];
                    }
 
-                   if(m>14)
+                   //if(m>14)
+                   if(m>=20)
                    {
                        is_failed=true;
                        //return false;
@@ -4330,7 +4832,18 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
                CItem newitem;
                newitem.itemnum = num;
                newitem.itemtype = type;
-               newitem.count = BreakList.at(k)->amount[m];
+
+               //LMA: naRose new STB.
+               //newitem.count = BreakList.at(k)->amount[m];
+                if(BreakList.at(k)->amount_min[m]!=BreakList.at(k)->amount_max[m])
+                {
+                    newitem.count = RandNumber(BreakList.at(k)->amount_min[m],BreakList.at(k)->amount_max[m]);
+                }
+                else
+                {
+                    newitem.count =BreakList.at(k)->amount_max[m];
+                }
+
                newitem.refine = 0;
                newitem.lifespan = 100;
                newitem.durability = RandNumber(40,50);
@@ -4413,7 +4926,18 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
                     item.itemtype = reward->type;
                     item.itemnum = reward->id;
                     //item.count = reward->rewardamount;
-                    item.count = RandNumber( 1,reward->rewardamount);
+
+                    //LMA: naRose changed their way.
+                    //item.count = RandNumber( 1,reward->rewardamount);
+                    if(reward->rewardamount_max!=reward->rewardamount_min)
+                    {
+                        item.count = RandNumber( reward->rewardamount_min,reward->rewardamount_max);
+                    }
+                    else
+                    {
+                        item.count =reward->rewardamount_max;
+                    }
+
                     item.socketed = false;
                     item.appraised = true;
                     item.lifespan = 100;
@@ -4427,8 +4951,8 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
                     break;
                 }
             }
-            unsigned int rewardmax = RandNumber( 1, thischest->rewardposs ); //test
 
+            unsigned int rewardmax = RandNumber( 1, thischest->rewardposs ); //test
             bonus=0;
 
             //if (rewardCount > 1)
@@ -4440,7 +4964,8 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
                 for(UINT i=0;i<thischest->Rewards.size() - 1;i++)
                 {
                     CReward* reward = thischest->Rewards.at( i );
-                    if (reward->id != item.itemnum) {
+                    if (reward->id != item.itemnum)
+                    {
                         prob += reward->prob;
 
                         //LMA: extra bonus for mileage boxes.
@@ -4454,7 +4979,18 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
                             itemextra.itemtype = reward->type;
                             itemextra.itemnum = reward->id;
                             //itemextra.count = reward->rewardamount;
-                            itemextra.count = RandNumber( 1,reward->rewardamount);
+
+                            //LMA: naRose changed their way.
+                            //itemextra.count = RandNumber( 1,reward->rewardamount);
+                            if(reward->rewardamount_max!=reward->rewardamount_min)
+                            {
+                                itemextra.count = RandNumber( reward->rewardamount_min,reward->rewardamount_max);
+                            }
+                            else
+                            {
+                                itemextra.count =reward->rewardamount_max;
+                            }
+
                             itemextra.socketed = false;
                             itemextra.appraised = true;
                             itemextra.lifespan = 100;
@@ -4466,14 +5002,18 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
                             itemextra.last_sp_value=0;
                             break;
                         }
+
                     }
+
                 }
+
                 if (itemextra.itemnum == 0)
                 {
                     Log(MSG_INFO, "Could not obtain secondary reward. Make sure all chests have atleast 2 rewards.");
                     //rewardCount = 1;
                     rewardmax=1;
                 }
+
             }
 
             thisclient->items[chestSlot].count--;
@@ -4483,6 +5023,14 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
             unsigned int tempslot = thisclient->AddItem(item);
             if (tempslot != 0xffff)
             {
+                //LMA: temp fix.
+                //TODO: really add "rewardmax" items...
+                if(rewardmax>1)
+                {
+                    //For now, only 1 item + 1 bonus item + chest.
+                    rewardmax=2;
+                }
+
                 BEGINPACKET( pak, 0x7bc );
                 ADDBYTE (pak, 0x13);  // Status code. Congrats?
                 //ADDBYTE (pak, (rewardCount + 1));  // Number of items
@@ -4526,33 +5074,117 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
         {
             BYTE item = GETBYTE((*P),3);
             BYTE material = GETBYTE((*P),4);
+
             if(!CheckInventorySlot( thisclient, item))
                 return false;
             if(!CheckInventorySlot( thisclient, material))
                 return false;
-            if(thisclient->items[item].count<1 || thisclient->items[material].count<1)
+
+            //LMA: We need to get the "real" item needed for upgrade.
+            UINT gradeIndex=EquipList[thisclient->items[item].itemtype].Index[thisclient->items[item].itemnum]->itemgradeID;
+
+            if(gradeIndex==0||gradeIndex>=ProductList.max)
+            {
+                Log(MSG_HACK,"Player %s can't refine %u::%u, index %u",thisclient->CharInfo->charname,thisclient->items[item].itemtype,thisclient->items[item].itemnum,gradeIndex);
+                return false;
+            }
+
+            UINT needed_itemtype=0;
+            UINT needed_itemnum=0;
+            UINT needed_amount=0;
+            UINT zulyamount=0;
+            int quality=0;
+
+            needed_amount=ProductList.Index[gradeIndex]->amount[0];
+            needed_itemtype=gi(ProductList.Index[gradeIndex]->item[0],0);
+            needed_itemnum=gi(ProductList.Index[gradeIndex]->item[0],1);
+
+            //LMA: special case venurune
+            int extra_offset=0;
+            bool venurune=false;
+
+            if(thisclient->items[material].itemtype==12&&thisclient->items[material].itemnum==445)
+            {
+                venurune=true;
+                extra_offset=1;//it's an offset, NOT a %!
+                needed_amount=1;
+                needed_itemnum=445;
+                needed_itemtype=12;
+            }
+
+            if(needed_itemtype!=thisclient->items[material].itemtype||needed_itemnum!=thisclient->items[material].itemnum)
+            {
+                Log(MSG_HACK,"Player %s uses wrong item (%u::%u instead of %u::%u) to refine %u::%u",thisclient->CharInfo->charname,thisclient->items[material].itemtype,thisclient->items[material].itemnum,needed_itemtype,needed_itemnum,thisclient->items[item].itemtype,thisclient->items[item].itemnum);
+                return false;
+            }
+
+            //LMA: item amount
+            //if(thisclient->items[item].count<1 || thisclient->items[material].count<1)
+            if(thisclient->items[item].count<1 || thisclient->items[material].count<needed_amount)
             {
                 BEGINPACKET( pak, 0x7bc );
                 ADDBYTE    ( pak, 0x12 );
                 ADDBYTE    ( pak, 0x00 );
                 thisclient->client->SendPacket( &pak );
+                Log(MSG_HACK,"Player %s hasn't enough item %i*(%u::%u) for refine",thisclient->CharInfo->charname,needed_amount,needed_itemtype,needed_itemnum);
                 return true;
             }
+
+            //LMA: taking the money, we need the quality.
+            if(thisclient->items[item].itemtype<=0||thisclient->items[item].itemtype>=11)
+            {
+                Log(MSG_WARNING,"Error, player %s tryes to refine item %u::%u",thisclient->CharInfo->charname,thisclient->items[item].itemtype,thisclient->items[item].itemnum);
+            }
+            else
+            {
+                if(thisclient->items[item].itemnum>=EquipList[thisclient->items[item].itemtype].max)
+                {
+                    Log(MSG_WARNING,"Error, player %s tryes to refine itemn %u::%u but >= %u ",thisclient->CharInfo->charname,thisclient->items[item].itemtype,thisclient->items[item].itemnum,EquipList[thisclient->items[item].itemtype].max);
+                }
+                else
+                {
+                    quality=EquipList[thisclient->items[item].itemtype].Index[thisclient->items[item].itemnum]->quality;
+                }
+
+            }
+
+            //end of zuly check.
+
             unsigned int nextlevel = ( thisclient->items[item].refine / 16 ) + 1;
             if( nextlevel > 9 )
                 return true;
+
+            //LMA: How much zuly? :)
+            if(quality>0&&nextlevel>1)
+            {
+                float basis=(pow(quality,3)*(float)((float)127/(float)7685496)+pow(quality,2)*(float)((float)435665/(float)1097928)+quality*(float)((float)31437683/(float)3842748)-(float)((float)77200/(float)24633));
+                float quant=((float)(nextlevel-1)*nextlevel)/2;
+                zulyamount=(UINT)(basis*quant);
+                Log(MSG_INFO,"Trying to get %u Z for quality %i (basis %f, quant %f)",zulyamount,quality,basis,quant);
+            }
+
+            if(zulyamount>0)
+            {
+                if (thisclient->CharInfo->Zulies<zulyamount)
+                {
+                    SendPM(thisclient,"You don't have enough money to refine, %u needed");
+                    Log(MSG_WARNING,"Error, player %s tryes to refine item %u::%u but hasn't enough money, %u needed, he has %li",thisclient->CharInfo->charname,thisclient->items[item].itemtype,thisclient->items[item].itemnum,zulyamount,thisclient->CharInfo->Zulies);
+                    return true;
+                }
+
+                //taking the money (packet not needed).
+                thisclient->CharInfo->Zulies-=zulyamount;
+                /*
+                BEGINPACKET( pak, 0x71d );
+                ADDQWORD( pak, thisclient->CharInfo->Zulies );
+                thisclient->client->SendPacket( &pak );*/
+            }
+
             unsigned int prefine = rand()%100;
             bool success = false;
-            if (thisclient->items[item].itemtype == 8) {
-                // weapons
-                if( prefine <= upgrade[0][nextlevel] ) {
-                    success = true;
-                }
-            } else {
-                // gear
-                if( prefine <= upgrade[1][nextlevel] ) {
-                    success = true;
-                }
+            if( prefine <= (upgrade[nextlevel][extra_offset]) )
+            {
+                success = true;
             }
 
             BEGINPACKET( pak, 0x7bc );
@@ -4563,16 +5195,76 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
             }
             else
             {
+                //LMA: Old code.
+                /*
                 if (nextlevel > 5) { // take item away
                     ClearItem( thisclient->items[item] );
                 } else { // decreade grade
                     thisclient->items[item].refine = RandNumber(0,4) * 16;
                 }
                 ADDBYTE    ( pak, 0x11 );// 0x11 Fail
+                */
+
+                //LMA: new way, Getting item grade.
+                int grade=0;
+                if(thisclient->items[item].itemtype>9)
+                {
+                    Log(MSG_WARNING,"Weird itemtype for refine %i::%i for %s",thisclient->items[item].itemtype,thisclient->items[item].itemnum,thisclient->CharInfo->charname);
+                }
+                else
+                {
+                    if(thisclient->items[item].itemnum>=EquipList[thisclient->items[item].itemtype].max)
+                    {
+                        Log(MSG_WARNING,"Weird itemnum for refine %i::%i for %s (>= %u)",thisclient->items[item].itemtype,thisclient->items[item].itemnum,thisclient->CharInfo->charname,EquipList[thisclient->items[item].itemtype].max);
+                    }
+                    else
+                    {
+                        grade=EquipList[thisclient->items[item].itemtype].Index[thisclient->items[item].itemnum]->itemgrade;
+                    }
+
+                }
+
+                if(grade>14)
+                {
+                    Log(MSG_WARNING,"Weird grade for refine %i::%i for %s, %u",thisclient->items[item].itemtype,thisclient->items[item].itemnum,thisclient->CharInfo->charname,grade);
+                    grade=0;
+                }
+
+                if(nextlevel<=refine_grade[grade][0])
+                {
+                    //Success, always success :)
+                    success=true;
+                    thisclient->items[item].refine = nextlevel*16;
+                    ADDBYTE    ( pak, 0x10 );// 0x10 successful
+                }
+                else if (nextlevel<=refine_grade[grade][1])
+                {
+                    //Only degrade.
+                    if(nextlevel>1)
+                    {
+                        thisclient->items[item].refine = RandNumber(0,nextlevel-1) * 16;
+                    }
+                    else
+                    {
+                        thisclient->items[item].refine = 0;
+                    }
+
+                    ADDBYTE    ( pak, 0x11 );// 0x11 Fail
+                }
+                else
+                {
+                    //Ouch, break time.
+                    ClearItem( thisclient->items[item] );
+                    ADDBYTE    ( pak, 0x11 );// 0x11 Fail
+                }
+
             }
-            thisclient->items[material].count--; // geo edit, moved this up two lines
+
+            //thisclient->items[material].count--; // geo edit, moved this up two lines
+            thisclient->items[material].count-=needed_amount;   //LMA: item amount
             if(thisclient->items[material].count<1)
                 ClearItem( thisclient->items[material] );
+
             ADDBYTE    ( pak, 0x03 );//items a actualizar
             ADDBYTE    ( pak, material );
             ADDDWORD   ( pak, BuildItemHead( thisclient->items[material] ) );
@@ -4917,8 +5609,9 @@ bool CWorldServer::pakShowHeal( CPlayer* thisclient, CPacket* P )
 
     	BEGINPACKET( pak, 0x79f );
     	ADDWORD( pak, character->clientid );
-    	ADDWORD( pak, character->Stats->HP );
-    	ADDWORD( pak, 0 );
+    	/*ADDWORD( pak, character->Stats->HP );
+    	ADDWORD( pak, 0 );*/
+    	ADDDWORD   ( pak, character->Stats->HP );    //LMA: DDWORD :)
         thisclient->client->SendPacket( &pak );
         thisclient->Battle->contatk = false;
     }

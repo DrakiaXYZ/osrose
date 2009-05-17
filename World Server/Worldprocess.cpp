@@ -34,6 +34,7 @@ bool CWorldServer::GiveExp( CMonster* thismon, UINT special_lvl, UINT special_ex
     {
         MonsterDamage* thisplayer = thismon->PlayersDamage.at(i);
 		CPlayer* thisclient = GetClientByCID( thisplayer->charid, thismon->Position->Map );
+
 		if( thisplayer->damage>0 && thisclient!=NULL )
         {
     		if( thisclient->Battle->target == thismon->clientid )
@@ -86,6 +87,7 @@ bool CWorldServer::GiveExp( CMonster* thismon, UINT special_lvl, UINT special_ex
                         pflag = true;
                     }
                 }
+
                 if( !pflag )
                 {
                     CPartyExp* thisparty = new CPartyExp;
@@ -130,10 +132,14 @@ bool CWorldServer::GiveExp( CMonster* thismon, UINT special_lvl, UINT special_ex
             BEGINPACKET( pak, 0x79b );
             ADDDWORD   ( pak, thisclient->CharInfo->Exp );
             ADDWORD    ( pak, thisclient->CharInfo->stamina );
-            ADDWORD    ( pak, 0 );
+            //ADDWORD    ( pak, 0 );
+            ADDWORD    ( pak, thismon->clientid );
             thisclient->client->SendPacket( &pak );
         }
+
     }
+
+
     for(int p=0;p<PartyExp.size();p++)
     {
         CPartyExp* thisparty = PartyExp.at( p );
@@ -151,16 +157,56 @@ bool CWorldServer::GiveExp( CMonster* thismon, UINT special_lvl, UINT special_ex
                 {
                     partyclient->Party->party->Exp = 0;
                 }
-                if( partyclient->Party->party->Exp > GetMaxPartyExp( partyclient->Party->party->PartyLevel ) )
+
+                //LMA: old code
+                /*if( partyclient->Party->party->Exp > GetMaxPartyExp( partyclient->Party->party->PartyLevel ) )
                 {
                     partyclient->Party->party->PartyLevel++;
                     partyclient->Party->party->Exp -= GetMaxPartyExp( partyclient->Party->party->PartyLevel-1 );
                 }
+                */
+
+                //New code.
+                bool new_level=false;
+                while(partyclient->Party->party->PartyLevel<50&&partyclient->Party->party->Exp > GetMaxPartyExp( partyclient->Party->party->PartyLevel ) )
+                {
+                    partyclient->Party->party->PartyLevel++;
+                    partyclient->Party->party->Exp -= GetMaxPartyExp( partyclient->Party->party->PartyLevel-1 );
+                    Log(MSG_INFO,"Going from party level %i to %i, exp left %I64i",partyclient->Party->party->PartyLevel-1,partyclient->Party->party->PartyLevel,partyclient->Party->party->Exp);
+                    new_level=true;
+                }
+
+                if( partyclient->Party->party->PartyLevel == 50)
+                {
+                    partyclient->Party->party->Exp = 0;
+                }
+
+                //Strange thing when a new level:
+                unsigned long long send_exp=partyclient->Party->party->Exp;
+                if(new_level)
+                {
+                    send_exp+=0x80000000;
+                }
+
+                Log(MSG_INFO,"Exp sent: %I64i",send_exp);
+                //End of code.
+
                 BEGINPACKET( pak, 0x7d4 );
                 ADDBYTE    ( pak, partyclient->Party->party->PartyLevel );
-                ADDDWORD   ( pak, partyclient->Party->party->Exp );
+
+                //LMA: little change.
+                //ADDDWORD   ( pak, partyclient->Party->party->Exp );
+                ADDDWORD   ( pak, send_exp );
+
                 partyclient->Party->party->SendToMembers( &pak );
                 thisparty->flag = true;
+            }
+
+            //LMA: no exp for dead people.
+            if(partyclient->IsDead())
+            {
+                Log(MSG_INFO,"No exp for player %s, he's dead.",partyclient->CharInfo->charname);
+                continue;
             }
 
             //LMA Begin
@@ -181,7 +227,8 @@ bool CWorldServer::GiveExp( CMonster* thismon, UINT special_lvl, UINT special_ex
     		BEGINPACKET( pak, 0x79b );
     		ADDDWORD   ( pak, partyclient->CharInfo->Exp );
     		ADDWORD    ( pak, partyclient->CharInfo->stamina );
-    		ADDWORD    ( pak, 0 );
+    		//ADDWORD    ( pak, 0 );
+    		ADDWORD    ( pak, thismon->clientid );
     		partyclient->client->SendPacket( &pak );
         }
     }

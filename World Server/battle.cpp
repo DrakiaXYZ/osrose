@@ -34,11 +34,11 @@ void CCharacter::DoAttack( )
         CCharacter* Enemy = GetCharTarget( );
         if(Enemy == NULL && Battle->atktype != SKILL_AOE && Battle->atktype != BUFF_AOE)
         {
-            //Log(MSG_DEBUG,"No Enemy found");
+            //LogDebug("No Enemy found");
             ClearBattle( Battle );
             return;
         }
-        //Log(MSG_DEBUG,"Client id: %i Enemy client id: %i",clientid, Enemy->clientid);
+        //LogDebug("Client id: %i Enemy client id: %i",clientid, Enemy->clientid);
         if(this == Enemy) //summoned monster is attacking itself. It has been observed to happen
         {
             //Log(MSG_INFO,"Clearing Battle for this summon");
@@ -213,8 +213,12 @@ void CCharacter::DoAttack( )
                 ClearBattle( Battle );
                 return;
             }
+
             if(IsTargetReached( Enemy, skill ) && CanAttack( ))
+            {
                 BuffSkill( Enemy, skill );
+            }
+
         }
         break;
        case SKILL_BUFF://buffs
@@ -260,26 +264,42 @@ void CCharacter::DoAttack( )
             */
             //osptest
             CCharacter* Enemy = GetCharTarget( );
-
             if(Enemy == NULL)
             {
-                //Log(MSG_DEBUG,"this target is NULL");
+                //LogDebug("this target is NULL");
                 ClearBattle( Battle );
                 return;
             }
+
             CSkills* skill = GServer->GetSkillByID( Battle->skillid );
 
             if(skill == NULL)
             {
-                //Log(MSG_DEBUG,"this skill is NULL");
+                //LogDebug("this skill is NULL");
                 //ClearBattle( Battle );
                 return;
             }
-            //Log(MSG_DEBUG,"Called skill buff code for skill %i",skill->id);
+
+            //LogDebug("Called skill buff code for skill %i",skill->id);
             if(IsTargetReached( Enemy, skill ) && CanAttack( ))
             {
-                //Log(MSG_DEBUG,"Skill successfully cast");
+                //LogDebug("Skill successfully cast");
+                //BuffSkill( Enemy, skill );
+
+                if(IsPlayer())
+                {
+                    CPlayer* plkiller=(CPlayer*) this;
+                    Log(MSG_WARNING,"Before Buff skill Player %i (%s) targets cid %i",clientid,plkiller->CharInfo->charname,plkiller->Battle->target);
+                }
+
                 BuffSkill( Enemy, skill );
+
+                if(IsPlayer())
+                {
+                    CPlayer* plkiller=(CPlayer*) this;
+                    Log(MSG_WARNING,"After Buff skill Player %i (%s) targets cid %i",clientid,plkiller->CharInfo->charname,plkiller->Battle->target);
+                }
+
             }
             //osptest end
         }
@@ -317,11 +337,11 @@ void CCharacter::DoAttack( )
             {
                 if(Enemy==NULL)
                 {
-                   Log(MSG_INFO,"player %i: default AOE attack (%i/%i) %i for ennemy NULL ", clientid,Battle->atktype,AOE_TARGET,skill->id);
+                   Log(MSG_INFO,"player %i: default AOE attack (%i/%i) %i for enemy NULL ", clientid,Battle->atktype,AOE_TARGET,skill->id);
                 }
                 else
                 {
-                   Log(MSG_INFO,"player %i: default AOE attack (%i/%i) %i for ennemy %i ", clientid,Battle->atktype,AOE_TARGET,skill->id,Enemy->clientid);
+                   Log(MSG_INFO,"player %i: default AOE attack (%i/%i) %i for enemy %i ", clientid,Battle->atktype,AOE_TARGET,skill->id,Enemy->clientid);
                 }
 
                 AoeSkill( skill, Enemy );
@@ -447,11 +467,11 @@ void CCharacter::NormalAttack( CCharacter* Enemy )
     Enemy->Stats->HP -=  (long long) hitpower;
 
     //LMA: logs.
-    if(Position->Map==8||Position->Map==40)
+    if(Position->Map==8||Position->Map==40||Position->Map==9)
     {
         if(Enemy->IsPlayer())
         {
-            Log(MSG_INFO,"Player is hit %li, HP goes to %I64i",hitpower,Enemy->Stats->HP);
+            //Log(MSG_INFO,"Player is hit %li, HP goes to %I64i",hitpower,Enemy->Stats->HP);
         }
 
     }
@@ -477,13 +497,37 @@ void CCharacter::NormalAttack( CCharacter* Enemy )
     BEGINPACKET( pak, 0x799 );
     ADDWORD    ( pak, clientid );
     ADDWORD    ( pak, Battle->atktarget );
-    ADDDWORD   ( pak, hitpower );
+
+    //LMA: little test (see TESTDEATH)
+    //ADDDWORD   ( pak, hitpower );
 
     if(Enemy->IsDead())
     {
-        Log(MSG_INFO,"Someone %i killed %i (NORMAL_ATTACK).",clientid,Enemy->clientid);
+        //LMA: UW handling, we add the handling for other quests as well...
+        //if (!is_already_dead&&(GServer->MapList.Index[Position->Map]->QSDkilling>0||GServer->MapList.Index[Position->Map]->QSDDeath>0)&&IsPlayer()&&Enemy->IsPlayer())
+        if (!is_already_dead&&((GServer->MapList.Index[Position->Map]->QSDkilling>0&&IsPlayer()&&Enemy->IsPlayer())||(GServer->MapList.Index[Position->Map]->QSDDeath&&Enemy->IsPlayer())))
+        {
+            //Log(MSG_INFO,"UWKILL begin normal atk");
+            UWKill(Enemy);
+        }
+
+        //LMA: TESTDEATH :: We try to force the DEATH
+        ADDDWORD   ( pak, Enemy->Stats->MaxHP );
+
+        //Logs.
+        /*if(IsPlayer()&&Enemy->IsPlayer())
+        {
+            CPlayer* plkilled=(CPlayer*) Enemy;
+            CPlayer* plkiller=(CPlayer*) this;
+            Log(MSG_INFO,"NA CID %i (%s) killed %i (%s) (NORMAL_ATTACK).",clientid,plkiller->CharInfo->charname,Enemy->clientid,plkilled->CharInfo->charname);
+        }
+        else
+        {
+            Log(MSG_INFO,"NA CID %i killed %i (NORMAL_ATTACK).",clientid,Enemy->clientid);
+        }*/
 
         CDrop* thisdrop = NULL;
+        //Log(MSG_WARNING,"Dead, critical %i",critical);
         ADDDWORD   ( pak, critical?28:16 );
         if(!Enemy->IsSummon( ) && !Enemy->IsPlayer( ))
         {
@@ -520,9 +564,62 @@ void CCharacter::NormalAttack( CCharacter* Enemy )
         if(!is_already_dead)
             TakeExp(Enemy);
         //end of test.
+        //Log(MSG_WARNING,"End of dead packet",);
+
+
+        //LMA: test packet...
+        //0x820 - 01 00 00 00
+        if(Enemy->IsPlayer())
+        {
+            CPlayer* plkilled=(CPlayer*) Enemy;
+            if(plkilled!=NULL)
+            {
+                BEGINPACKET( pak, 0x820 );
+                ADDWORD    ( pak, 1 );
+                ADDWORD    ( pak, 0 );
+                plkilled->client->SendPacket(&pak);
+                //Log(MSG_WARNING,"NA Packet 820 sent to %s",plkilled->CharInfo->charname);
+            }
+
+        }
+
+        //LMA: We send two other packets, just to be sure...
+        /*
+        if(Enemy->IsPlayer())
+        {
+            for (int k=0;k<1;k++)
+            {
+                BEGINPACKET( pak, 0x799 );
+                ADDWORD    ( pak, clientid );
+                ADDWORD    ( pak, Battle->atktarget );
+                ADDDWORD   ( pak, Enemy->Stats->MaxHP*2);
+                ADDDWORD   ( pak, 16 );
+                GServer->SendToVisible( &pak, Enemy);
+                Log(MSG_WARNING,"Special death Packet, sent");
+            }
+
+        }
+        */
+
     }
     else
     {
+        //LMA: TESTDEATH
+        ADDDWORD   ( pak, hitpower );
+
+        //Logs.
+        /*if(IsPlayer()&&Enemy->IsPlayer())
+        {
+            CPlayer* plkilled=(CPlayer*) Enemy;
+            CPlayer* plkiller=(CPlayer*) this;
+            Log(MSG_WARNING,"NA hitpower %i, critical %i, %i (%s) hitting %i (%s)",hitpower,critical,clientid,plkiller->CharInfo->charname,Enemy->clientid,plkilled->CharInfo->charname);
+            Log(MSG_WARNING,"NA Player %i (%s) targets cid %i",clientid,plkiller->CharInfo->charname,plkiller->Battle->target);
+        }
+        else
+        {
+            Log(MSG_WARNING,"NA, Not dead, hitpower %i, critical %i (%i hitting %i)",hitpower,critical,clientid,Enemy->clientid);
+        }*/
+
         ADDDWORD   ( pak, (hitpower>0?(critical?12:0):0) );
         GServer->SendToVisible( &pak, Enemy );
     }
@@ -598,6 +695,8 @@ bool CCharacter::BuffSkill( CCharacter* Target, CSkills* skill )
     }
 
     //Log(MSG_INFO,"new stat MP %i",Stats->MP);
+
+    //Log(MSG_INFO,"%i Really doing skill %i to %i",clientid,skill->id,Target->clientid);
 
     Battle->castTime = 0;
     UseBuffSkill( Target, skill );
@@ -698,6 +797,9 @@ bool CCharacter::SummonBuffSkill( CCharacter* Target, CSkills* skill )
 // do AoE skill
 bool CCharacter::AoeSkill( CSkills* skill, CCharacter* Enemy )
 {
+
+    //LMA: not here since AOE can have NULL Enemy, will be catched later by the call to the skill.
+    //bool is_already_dead=Enemy->IsDead();
     Log(MSG_INFO,"In AOE Skill");
     Position->destiny = Position->current;
     //Log(MSG_INFO,"Position in AOE: %.2f,%.2f",Position->current.x,Position->current.y);
@@ -771,11 +873,12 @@ bool CCharacter::AoeSkill( CSkills* skill, CCharacter* Enemy )
     */
 
     //osprose
-    //2do: pvp ?
+    //TODO: pvp ?
     UINT save_atktype=Battle->atktype;
 
     if(IsPlayer() || IsSummon())
     {
+        //monsters.
         for(UINT i=0;i<map->MonsterList.size();i++)
         {
             CMonster* monster = map->MonsterList.at(i);
@@ -807,7 +910,41 @@ bool CCharacter::AoeSkill( CSkills* skill, CCharacter* Enemy )
             }
 
         }
+
+        //Pvp, group Vs group, here all.
+        if(map->allowpvp!=0&&IsPlayer())
+        {
+            CPlayer* plattacker=(CPlayer*) this;
+            for (UINT i=0;i<map->PlayerList.size();i++)
+            {
+                CPlayer* thisplayer=map->PlayerList.at(i);
+                if(thisplayer==NULL)
+                {
+                    continue;
+                }
+
+                //not attacking allies.
+                if(thisplayer->pvp_id==plattacker->pvp_id)
+                {
+                    continue;
+                }
+
+                if(GServer->IsMonInCircle( goodtarget,thisplayer->Position->current,(float)skill->aoeradius+1))
+                {
+                    //LMA: we have to since AOE doesn't have a specific target and atkskil resets some values.
+                    Battle->skilltarget=thisplayer->clientid;
+                    Battle->skillid=skill->id;
+                    Battle->atktype = save_atktype;
+                    UseAtkSkill( (CCharacter*) thisplayer, skill );
+                    Log(MSG_WARNING,"AOE Skill pvp player %s",thisplayer->CharInfo->charname);
+                }
+
+            }
+
+        }
+
     }
+
     if(IsMonster() && !IsSummon())
     {
         for(UINT i=0;i<map->PlayerList.size();i++)
@@ -828,10 +965,26 @@ bool CCharacter::AoeSkill( CSkills* skill, CCharacter* Enemy )
     {
         if(!Enemy->IsDead( ))
         {
+            //LMA: UW handling.
+            //LMA: done in AtkSkill
+            /*
+            if ((Position->Map==9)&&IsPlayer()&&Enemy->IsPlayer())
+            {
+                Log(MSG_INFO,"UWKILL begin AOE skill");
+                UWKill(Enemy);
+            }
+            */
+
             Battle->atktarget = Battle->target;
             Battle->atktype = NORMAL_ATTACK;
             Battle->skilltarget = 0;
             Battle->skillid = 0;
+
+            //LMA: done in AtkSkill
+            /*
+            if(!is_already_dead)
+                TakeExp(Enemy);
+            */
         }
         else
         {
@@ -962,7 +1115,11 @@ bool CCharacter::AoeBuff( CSkills* skill )
     Battle->bufftarget = 0;
     Battle->skilltarget = 0;
     Battle->skillid = 0;
-    Battle->atktype = NORMAL_ATTACK;
+
+    //LMA: no because in weird cases (party+first target buff+aoe buff)
+    //a party buffer could attack a buffed one.
+    //Battle->atktype = NORMAL_ATTACK;
+    Battle->atktype = 0;
     //ClearBattle( Battle );
     //osprose end
 
@@ -1098,7 +1255,8 @@ void CCharacter::UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff )
     {
         ADDWORD    ( pak, clientid );
         ADDWORD    ( pak, Enemy->clientid );
-        ADDDWORD   ( pak, skillpower );
+        //LMA: Skillpower elsewhere.
+        //ADDDWORD   ( pak, skillpower );
     }
     else
     {
@@ -1106,7 +1264,8 @@ void CCharacter::UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff )
         ADDWORD    ( pak, clientid );
         ADDDWORD   ( pak, 0x000007f8 );
         ADDBYTE    ( pak, 0x00 );
-        ADDDWORD   ( pak, skillpower );
+        //LMA: Skillpower elsewhere.
+        //ADDDWORD   ( pak, skillpower );
     }
 
     //end of patch
@@ -1114,7 +1273,18 @@ void CCharacter::UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff )
     //If Enemy is killed
     if(Enemy->IsDead())
     {
-        Log(MSG_INFO,"Ennemy is dead");
+        //LMA: Skillpower elsewhere.
+        ADDDWORD   ( pak, Enemy->Stats->MaxHP);
+
+        //LMA: UW handling, adding support for other quests.
+        //if (!is_already_dead&&(GServer->MapList.Index[Position->Map]->QSDkilling>0||GServer->MapList.Index[Position->Map]->QSDDeath>0)&&IsPlayer()&&Enemy->IsPlayer())
+        if (!is_already_dead&&((GServer->MapList.Index[Position->Map]->QSDkilling>0&&IsPlayer()&&Enemy->IsPlayer())||(GServer->MapList.Index[Position->Map]->QSDDeath&&Enemy->IsPlayer())))
+        {
+            Log(MSG_INFO,"UWKILL begin skill atk");
+            UWKill(Enemy);
+        }
+
+        Log(MSG_INFO,"Enemy is dead");
         CDrop* thisdrop = NULL;
         ADDDWORD   ( pak, 16 );
         if(!Enemy->IsSummon( ) && !Enemy->IsPlayer( ))
@@ -1150,13 +1320,45 @@ void CCharacter::UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff )
         //OnEnemyDie( Enemy );
         ClearBattle(Battle);
         if(!is_already_dead)
+        {
             TakeExp(Enemy);
+
+            //Some monsters trigger QSD on death...
+            /*
+            if(IsPlayer()&&Enemy->IsMonster()&&Enemy->char_montype==3003)
+            {
+                CPlayer* thisplayer= (CPlayer*) this;
+                //StPatrick_01;
+                thisplayer->ExecuteQuestTrigger(71055222,true);
+            }
+            */
+
+        }
         //end of test.
+
+        //LMA: Special Packet to tell if the player is dead?
+        if(Enemy->IsPlayer())
+        {
+            CPlayer* plkilled=(CPlayer*) Enemy;
+            if(plkilled!=NULL)
+            {
+                BEGINPACKET( pak, 0x820 );
+                ADDWORD    ( pak, 1 );
+                ADDWORD    ( pak, 0 );
+                plkilled->client->SendPacket(&pak);
+                Log(MSG_WARNING,"Packet 820 sent to %s",plkilled->CharInfo->charname);
+            }
+
+        }
+
     }
     else
     {
+        //LMA: Skillpower elsewhere.
+        ADDDWORD   ( pak, skillpower );
+
         //If enemy is still alive
-        Log(MSG_INFO,"The ennemy is still alive");
+        Log(MSG_INFO,"The enemy is still alive");
         ADDDWORD   ( pak, 4 );
         GServer->SendToVisible( &pak, Enemy );
 
@@ -1170,7 +1372,7 @@ void CCharacter::UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff )
         //Send (de)buff information to the whole world
         if(skill->nbuffs>0 && bflag)
         {
-            Log(MSG_INFO,"The ennemy cliendID %u is beeing buffed with %u",Battle->skilltarget,Battle->skillid);
+            Log(MSG_INFO,"The enemy cliendID %u is being buffed with %u",Battle->skilltarget,Battle->skillid);
             BEGINPACKET( pak, 0x7b5 );
             ADDWORD    ( pak, Battle->skilltarget );
             ADDWORD    ( pak, clientid );
@@ -1325,7 +1527,14 @@ bool CCharacter::UseSkill( CSkills* skill, CCharacter *Target )
 //LMA: We take exp from a dead player.
 bool CCharacter::TakeExp( CCharacter *Target )
 {
-    if(!Target->IsPlayer())
+    //LMA: We don't take exp from a player if the killer is a Player.
+    if(!Target->IsPlayer()||((!Target->IsPlayer())&&(!IsPlayer())))
+    {
+        return true;
+    }
+
+    //no need to take exp from UW.
+    if(Position->Map==9)
     {
         return true;
     }
@@ -1356,3 +1565,87 @@ bool CCharacter::TakeExp( CCharacter *Target )
 
     return true;
 }
+
+//LMA: Union war kill (and more generally qsd killing / death trigger).
+void CCharacter::UWKill(CCharacter* Enemy)
+{
+    if(!IsPlayer()&&!Enemy->IsPlayer())
+    {
+        Log(MSG_WARNING,"No player for UWKill");
+        return;
+    }
+
+    CPlayer* plkiller=NULL;
+    CPlayer* plkilled=NULL;
+
+    if(IsPlayer())
+    {
+        plkiller=(CPlayer*) this;
+    }
+
+    if(Enemy->IsPlayer())
+    {
+        plkilled=(CPlayer*) Enemy;
+    }
+
+    int killer_level=0;
+    int killed_level=0;
+
+    dword hashkilling = GServer->MapList.Index[Position->Map]->QSDkilling;
+    dword hashdeath = GServer->MapList.Index[Position->Map]->QSDDeath;
+
+    //The killer.
+    if(hashkilling>0&&plkiller!=NULL)
+    {
+        plkiller->ExecuteQuestTrigger(hashkilling,true);
+        //Log(MSG_WARNING,"quest hash %u to the killer %s",hashkilling,plkiller->CharInfo->charname);
+        killer_level=plkiller->Stats->Level;
+    }
+
+    //The killed one.
+    if(hashkilling>0&&plkilled!=NULL)
+    {
+        plkilled->ExecuteQuestTrigger(hashdeath,true);
+        //Log(MSG_WARNING,"quest hash %u to the killed %s",hashdeath,plkilled->CharInfo->charname);
+        killed_level=plkilled->Stats->Level;
+    }
+
+    //Let's give some exp points to the killer...
+    if(!IsPlayer()||!Enemy->IsPlayer())
+    {
+        //only if both are players.
+        return;
+    }
+
+    if(plkiller==NULL)
+    {
+        return;
+    }
+
+    if(plkilled==NULL)
+    {
+        killed_level=killer_level;
+    }
+
+    UINT bonus_exp=GServer->GetColorExp(killer_level,killed_level,7000);
+    plkiller->CharInfo->Exp += bonus_exp;
+    BEGINPACKET( pak, 0x79b );
+    ADDDWORD   ( pak, plkiller->CharInfo->Exp );
+    ADDWORD    ( pak, plkiller->CharInfo->stamina );
+
+    if(plkilled!=NULL)
+    {
+        ADDWORD    ( pak, plkilled->clientid );
+    }
+    else
+    {
+        ADDWORD    ( pak, 0 );
+    }
+
+    plkiller->client->SendPacket( &pak );
+    //Log(MSG_WARNING,"Giving %u exp to %s",bonus_exp,plkiller->CharInfo->charname);
+
+
+  return;
+}
+

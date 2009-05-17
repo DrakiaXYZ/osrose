@@ -927,10 +927,7 @@ void CPlayer::GiveCP(unsigned int points)
          return;
      if (Clan->clanid==0)
      {
-        BEGINPACKET(pak, 0x702);
-		ADDSTRING(pak, "User does not have a clan.");
-		ADDBYTE(pak, 0);
-		client->SendPacket(&pak);
+        Log(MSG_WARNING,"GiveCP:: User %s does not have a clan",CharInfo->charname);
         return;
      }
 
@@ -943,13 +940,24 @@ void CPlayer::GiveCP(unsigned int points)
     ADDBYTE( pak, 0 );
     client->SendPacket( &pak );
 
+    //LMA: We DON'T get the real value here since it's used for CP consumption
+    //that would make too many requests...
+    //Clan->CP=GServer->getClanPoints(Clan->clanid);
+	if(Clan->CP+points<0)
+	{
+        Clan->CP=0;
+	}
+	else
+	{
+	    Clan->CP+=points;
+	}
+
     RESETPACKET( pak, 0x7e0 );
  	ADDBYTE    ( pak, 0xfe );
 	ADDWORD    ( pak, CharInfo->charid);  //charid
 	ADDDWORD    ( pak, points);  //Clan points (to be added)
 	cryptPacket( (char*)&pak, GServer->cct );
 	send( GServer->csock, (char*)&pak, pak.Size, 0 );
-
 
     //Add the last packet needed.
     RESETPACKET( pak, 0x7e0 );
@@ -982,12 +990,12 @@ void CPlayer::TakeFuel(int add_fuel)
        if(items[135].itemnum==0||items[136].itemnum==0)
           return;
 
-       Log(MSG_INFO,"Refueling by %i %%, lifespan was %i",add_fuel,items[136].lifespan);
+       //Log(MSG_INFO,"Refueling by %i %%, lifespan was %i",add_fuel,items[136].lifespan);
        items[136].lifespan+=add_fuel;
        if(items[136].lifespan>100)
          items[136].lifespan=100;
        items[136].sp_value=items[136].lifespan*10;
-       Log(MSG_INFO,"New fuel lifespan %i",items[136].lifespan);
+       //Log(MSG_INFO,"New fuel lifespan %i",items[136].lifespan);
        BEGINPACKET( pak,0x7ce );
        ADDWORD    ( pak, 0x88 );
        ADDWORD    ( pak, items[136].sp_value ); //%*10
@@ -1064,7 +1072,7 @@ void CPlayer::TakeFuel(int add_fuel)
     //How much taken in the meantime?
     float current_fuel=((float) save_fuel)*total_fuel/(10*100);
     conso_fuel*=250*(clock()-last_fuel)/(60*1000*100);
-    Log(MSG_INFO,"Total fuel %.2f/%.2f, conso fuel %.2f, multiplicator %i, frame %i:%i, engine %i:%i",current_fuel,total_fuel,conso_fuel,GServer->PatList.Index[items[136].itemnum]->fuelcons,GServer->PatList.Index[items[135].itemnum]->fuelcons,GServer->PatList.Index[items[135].itemnum]->maxfuel,GServer->PatList.Index[items[136].itemnum]->fuelcons,GServer->PatList.Index[items[136].itemnum]->maxfuel);
+    //Log(MSG_INFO,"Total fuel %.2f/%.2f, conso fuel %.2f, multiplicator %i, frame %i:%i, engine %i:%i",current_fuel,total_fuel,conso_fuel,GServer->PatList.Index[items[136].itemnum]->fuelcons,GServer->PatList.Index[items[135].itemnum]->fuelcons,GServer->PatList.Index[items[135].itemnum]->maxfuel,GServer->PatList.Index[items[136].itemnum]->fuelcons,GServer->PatList.Index[items[136].itemnum]->maxfuel);
 
     //How much left?
     if(current_fuel==0)
@@ -1086,7 +1094,7 @@ void CPlayer::TakeFuel(int add_fuel)
     save_fuel=(int) (current_fuel*10);
     items[136].lifespan=(int) current_fuel;
     items[136].sp_value=save_fuel;
-    Log(MSG_INFO,"New lifespan %i, saved value %i",items[136].lifespan,save_fuel);
+    //Log(MSG_INFO,"New lifespan %i, saved value %i",items[136].lifespan,save_fuel);
 
     //Sending Lifespan Packet for PAT
     BEGINPACKET( pak,0x7ce );
@@ -1207,8 +1215,10 @@ unsigned CPlayer::getWeaponType()
 }
 
 //removes bugged or restricted items - By PurpleYouko
+//LMA: allowed now?
 bool CPlayer::CheckItems()
 {
+    /*
      CPlayer* thisclient = GServer->GetClientByCharName( CharInfo->charname );
      if(thisclient->items[7].itemtype == 8 && thisclient->items[7].itemnum == 40)
      {
@@ -1216,7 +1226,9 @@ bool CPlayer::CheckItems()
          ClearItem( thisclient->items[7] );
          GServer->SendPM(thisclient, "Sorry. The Morningstar is a banned item. It has been confiscated");
          thisclient->SetStats( );
-     }
+     }*/
+
+
     return true;
  }
 
@@ -1314,11 +1326,11 @@ void CPlayer::RebuildItemMall()
 		itemmallitems[i].socketed = (atoi(row[8])==1)?true:false;
 		itemmallitems[i].appraised = (atoi(row[9])==1)?true:false;
 		itemmallitems[i].gem = atoi(row[10]);
-		Log(MSG_INFO,"We have item %i * %i:%i",itemmallitems[i].count,itemmallitems[i].itemtype,itemmallitems[i].itemnum);
+		//Log(MSG_INFO,"We have item %i * %i:%i",itemmallitems[i].count,itemmallitems[i].itemtype,itemmallitems[i].itemnum);
 		i++;
 	}
 
-    Log(MSG_INFO,"We have %i items in item mall",nsitemmallitems);
+    //Log(MSG_INFO,"We have %i items in item mall",nsitemmallitems);
     GServer->DB->QFree( );
     if (!do_again)
        return;
@@ -1793,8 +1805,9 @@ bool CPlayer::PrizeExchange(CPlayer* thisclient, UINT prizeid)
 
 
 //QSD Quests
-int CPlayer::ExecuteQuestTrigger(dword hash)
+int CPlayer::ExecuteQuestTrigger(dword hash,bool send_packet)
 {
+    //Log(MSG_WARNING,"EXTP BEGIN %u for %s",hash,CharInfo->charname);
     CQuestTrigger* trigger = NULL;
     CQuestTrigger* nexttrigger = NULL;
     CheckQuest = -1;
@@ -1806,35 +1819,41 @@ int CPlayer::ExecuteQuestTrigger(dword hash)
         nexttrigger = GServer->TriggerList.at(j + 1);
         break;
       }
+
     }
-    if (trigger == NULL) return QUEST_FAILURE;
+
+    if (trigger == NULL)
+    {
+        Log(MSG_WARNING,"EXTP, questid %u not found",hash);
+        return QUEST_FAILURE;
+    }
 
     int success = QUEST_SUCCESS;
-    Log(MSG_DEBUG, "Trigger Executed: %s[%i]", trigger->TriggerName, trigger->CheckNext);
+    LogDebug( "EXTP::Trigger Executed: %s[%i]", trigger->TriggerName, trigger->CheckNext);
 
     for (dword i = 0; i < trigger->ConditionCount; i++)
     {
       int command = trigger->Conditions[i]->opcode;
       if (command > 30 || command < 0) continue;
       success = (*GServer->qstCondFunc[command])(GServer, this, trigger->Conditions[i]->data);
-      Log(MSG_DEBUG, "Condition %03u returned %d", command, success);
+      LogDebug( "EXTP::Condition %03u returned %d", command, success);
 
       if (success == QUEST_FAILURE)
       {
         if (!trigger->CheckNext)
         {
-            Log(MSG_DEBUG,"No checknext, FAILURE");
+            LogDebug("EXTP::No checknext (FAILURE)");
             return success;
         }
         else
         {
-            Log(MSG_DEBUG,"checknext, FAILURE");
-            return ExecuteQuestTrigger(nexttrigger->TriggerHash);
+            LogDebug("EXTP::checknext because FAILURE");
+            return ExecuteQuestTrigger(nexttrigger->TriggerHash,send_packet);
         }
 
       }
 
-      Log(MSG_DEBUG,"Quest cdt success");
+      LogDebug("EXTP::Quest cdt success");
     }
 
     for (dword i = 0; i < trigger->ActionCount; i++)
@@ -1842,13 +1861,27 @@ int CPlayer::ExecuteQuestTrigger(dword hash)
       int command = trigger->Actions[i]->opcode;
       if ((command > 28 || command < 0) && command != 34)
       {
-          Log(MSG_DEBUG, "unknown Action command %i", command);
+          LogDebug( "unknown Action command %i", command);
           continue;
       }
 
-      Log(MSG_DEBUG,"QSD ACT %03u BEGIN",command);
-      Log(MSG_DEBUG, "Reward %03u returned %d", command, (*GServer->qstRewdFunc[command])(GServer, this, trigger->Actions[i]->data));
+      //LogDebug("EXTP::QSD ACT %03u BEGIN",command);
+      LogDebug( "EXTP::Reward %03u returned %d", command, (*GServer->qstRewdFunc[command])(GServer, this, trigger->Actions[i]->data));
     }
+
+    //LMA: In some case we have to send a quest packet.
+    if(send_packet&&success==QUEST_SUCCESS)
+    {
+        //Log(MSG_WARNING,"P::Sending quest ok for questid %u",hash);
+        BEGINPACKET ( pak, 0x730);
+        ADDBYTE ( pak, success);
+        ADDBYTE ( pak, 0);
+        ADDDWORD( pak, hash);
+        client->SendPacket(&pak);
+    }
+
+    //Log(MSG_WARNING,"EXTP END %u for %s",hash,CharInfo->charname);
+
     return success;
 }
 
@@ -1893,6 +1926,15 @@ void CPlayer::SetQuestVar(short nVarType, short nVarNO, short nValue){
       if(nVarNO >= 10) return;
       quest.UnionVar[nVarNO] = nValue;
       return;
+    case 0x700:
+    {
+        //LMA: ClanVar
+        if(nVarNO >= 5) return;
+        quest.ClanVar[nVarNO] = nValue;
+        return;
+    }
+    break;
+
   }
 }
 
@@ -1911,7 +1953,7 @@ int CPlayer::GetQuestVar(short nVarType, short nVarNO){
       return activeQuest->GetSwitchBit(nVarNO);
     }
     case 0x200://Remaining time
-      Log(MSG_DEBUG, "GetQuestVar got remaining quest time");
+      Log(MSG_WARNING,"GetQuestVar got remaining quest time, but not coded yet!");
       return 1;
     case 0x300:
       if(nVarNO >= 5) return -1;
@@ -1925,6 +1967,14 @@ int CPlayer::GetQuestVar(short nVarType, short nVarNO){
     case 0x600:
       if(nVarNO >= 10) return -1;
       return quest.UnionVar[nVarNO];
+    case 0x700:
+    {
+        //LMA: ClanVar
+      if(nVarNO >= 5) return -1;
+      return quest.ClanVar[nVarNO];
+    }
+    break;
+
   }
   return -1;
 }

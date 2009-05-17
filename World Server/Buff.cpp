@@ -54,12 +54,12 @@ bool CWorldServer::InstantBuff( CSkills* thisskill, CCharacter* character, int E
             {
                 if(character->Stats->HP <= 0) //character is dead
                     return true;
-                Log(MSG_INFO,"Character %i HP is initially %I64i", character->clientid, character->Stats->HP);
+                //Log(MSG_INFO,"Character %i HP is initially %I64i", character->clientid, character->Stats->HP);
                 character->Stats->HP += (long int)thisskill->value1[i]; //apparently there is no buff here. // + Evalue - 8;
-                Log(MSG_INFO,"Character %i healed by %i points",character->clientid, thisskill->value1[i]);
+                //Log(MSG_INFO,"Character %i healed by %i points",character->clientid, thisskill->value1[i]);
                 if(character->Stats->HP > character->Stats->MaxHP )
                     character->Stats->HP = character->Stats->MaxHP;
-                Log(MSG_INFO,"Character %i HP is now %I64i", character->clientid, character->Stats->HP);
+                //Log(MSG_INFO,"Character %i HP is now %I64i", character->clientid, character->Stats->HP);
                 return true;
             }
         }
@@ -68,11 +68,11 @@ bool CWorldServer::InstantBuff( CSkills* thisskill, CCharacter* character, int E
         {
             if(thisskill->duration <= 0 )// recover MP
             {
-                Log(MSG_INFO,"Character %i MP was %I64i", character->clientid, character->Stats->MP);
+                //Log(MSG_INFO,"Character %i MP was %I64i", character->clientid, character->Stats->MP);
                 character->Stats->MP += (long int)thisskill->value1[i];
                 if(character->Stats->MP > character->Stats->MaxMP)
                     character->Stats->MP = character->Stats->MaxMP;
-                Log(MSG_INFO,"Character %i MP is now %I64i", character->clientid, character->Stats->MP);
+                //Log(MSG_INFO,"Character %i MP is now %I64i", character->clientid, character->Stats->MP);
                 return true;
             }
         }
@@ -622,13 +622,15 @@ CBValue CWorldServer::GetBuffValue( CSkills* thisskill, CCharacter* character, U
     bool BuffFlag = false;
     // not currently detecting debuffs properly so let's bring in some new code :)
     //PY buff mod based on thiskill->status[i]
+
+    //LMA: removing 13 (max mp) from debuff to buff
     switch(thisskill->status[i])
     {
-        case 12: case 14: case 16: case 18: case 20: case 22: case 24: case 26: case 28: case 35: case 36: case 53:
+        case 12: case 13: case 14: case 16: case 18: case 20: case 22: case 24: case 26: case 28: case 35: case 36: case 53:
         case 54: case 83:
              Buff = true;
         break;
-        case 7: case 8: case 9: case 10: case 13: case 15: case 17: case 19: case 21: case 23: case 25: case 27: case 29:
+        case 7: case 8: case 9: case 10: case 15: case 17: case 19: case 21: case 23: case 25: case 27: case 29:
         case 30: case 31: case 32: case 59: case 60:
         case 58: case 61: case 71: case 77:  case 78: case 79: case 80: case 33: case 34:
              Buff = false;

@@ -1188,6 +1188,15 @@ unsigned int CPlayer::GetAttackSpeed( )
         wpnspd = GServer->EquipList[WEAPON].Index[items[7].itemnum]->attackspeed;
         switch(wpnspd)
         {
+            case 20:
+                aspeed=53;  //slow -8
+            break;
+            case 18:
+                aspeed=63;  //slow -6
+            break;
+            case 13:
+                aspeed=83;  //LMA: slow -1
+            break;
             case 12: //normal
                 aspeed = 88;
             break;
@@ -1208,6 +1217,12 @@ unsigned int CPlayer::GetAttackSpeed( )
             break;
             case 6: //+6
                 aspeed = 136;
+            break;
+            default:
+            {
+                aspeed=88;  //LMA: normal, else there won't be any attacks.
+                Log(MSG_WARNING,"Unknow aspeed for weapon %i (%i)",items[7].itemnum,wpnspd);
+            }
             break;
         }
     }
@@ -2204,6 +2219,11 @@ unsigned int CPlayer::GetCurrentWeight( )
     UINT weight = 0;
     for(UINT i=0;i<MAX_INVENTORY;i++)
     {
+        if(items[i].itemtype==0||items[i].itemnum==0)
+        {
+            continue;
+        }
+
         if(items[i].itemtype<10)
         {
             weight += GServer->EquipList[items[i].itemtype].Index[items[i].itemnum]->weight;

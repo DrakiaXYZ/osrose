@@ -284,6 +284,8 @@ struct CROSEServerConfig
     int Command_Moveto;
     int Command_Mute;
     int Command_Npc;
+    int Command_NpcObjVar;  //LMA: Getting ObjVar for NPCs.
+    int Command_NpcSetObjVar;   //LMA: Setting ObjVar for NPCs.
     int Command_NpcLtb; //LMA: npc shouts or announces LTB string
     int Command_Pak;
     int Command_Pak2;
@@ -293,6 +295,7 @@ struct CROSEServerConfig
     int Command_PlayerInfo;
     int Command_Pvp;
     int Command_Rate;
+    int Command_RaiseCG;    //LMA: Raise Clan Grade.
     int Command_Reborn;  //reborn by Core
     int Command_Refine;
     int Command_Reload;
@@ -304,6 +307,8 @@ struct CROSEServerConfig
     int Command_Setqflag; // by Drakia
     int Command_Setqvar; // by Drakia
     int Command_Settime;
+    int Command_SetUW;  //LMA: Forcing UW.
+    int Command_SetUWnb;    //LMA: Forcing UW nb players.
     int Command_ShopType;
     int Command_Shutdown;
     int Command_SpeedModif;
@@ -337,6 +342,7 @@ class CBaseSocket
     	char*			CryptTable;			// This is for decrypting incomming packets
     	string          ClientIP;       // Client IP
     	char            ClientSubNet[12];   // Lan Subnet
+    	clock_t CxTime;  //LMA: Connexion time
 };
 // Client class
 class CClientSocket : public CBaseSocket
@@ -366,6 +372,7 @@ class CServerSocket : public CBaseSocket
     	void FillFDS( fd_set* fds );         // Create FDS table
     	void HandleClients( fd_set* fds );   // Handle Clients
     	void AddUser( SOCKET sock, sockaddr_in* ClientInfo ); // Add User
+    	void PingClients();  //LMA: Pinging clients.
     	void DisconnectClient( CClientSocket* thisclient );   // Disconnect Client
         unsigned long int GetServerTime( ); // return server time
 

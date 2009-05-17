@@ -316,6 +316,8 @@
 
 //LMA: Max hp mob
 #define MAXHPMOB 0xFFFFFFFF
+#define MAX_NPC 4000    //max npc amount in Objvar.
+#define MAX_EXTRA_STATS 302   //max stats (for Py's code).
 
 #include "../common/sockets.h"
 
@@ -342,6 +344,8 @@ struct CEquip
     UINT pricerate;
     UINT weight;
     UINT quality;
+    UINT craft;
+    UINT craft_level;
     UINT level;
     UINT material;
     UINT craft_difficult;
@@ -355,6 +359,7 @@ struct CEquip
     UINT attackdistance;
     UINT attackpower;
     UINT attackspeed;
+    UINT itemgradeID;   //LMA: Used for refine.
     UINT itemgrade;
     UINT movespeed;
     UINT STLId;
@@ -369,6 +374,8 @@ struct CJemData
     UINT price;
     UINT pricerate;
     UINT weight;
+    UINT craft;
+    UINT craft_level;
     UINT quality;
     UINT material;
     UINT craft_difficult;
@@ -399,6 +406,8 @@ struct CPatData
     UINT pricerate;
     UINT weight;
     UINT quality;
+    UINT craft;
+    UINT craft_level;
     UINT material;
     UINT craft_difficult;
     UINT parttype;
@@ -419,8 +428,11 @@ struct CPatData
 struct CProductData
 {
     UINT id;
-    UINT item[50];
-    UINT amount[50];
+    UINT item_0_family;
+    /*UINT item[50];
+    UINT amount[50];*/
+    UINT item[4];
+    UINT amount[4];
 };
 
 struct CCSellData
@@ -439,6 +451,8 @@ struct CUseData
     UINT is_mileage;
     UINT weight;
     UINT quality;
+    UINT craft; //LMA: for craft.
+    UINT craftlevel;    //LMA: for craft.
     UINT material; //core
     UINT craft_difficult; //LMA
     UINT usecondition[2];
@@ -574,7 +588,7 @@ struct SClan
     int logo;
     int back;
     int grade;
-    int cp;
+    unsigned int cp;
     char name[50];
     char slogan[100];
     char news[200];
@@ -963,6 +977,8 @@ struct CMobGroup {
   UINT daynight;    //LMA: day, night or both?
   UINT respawntime;
   UINT basicKills;
+  UINT lastKills;   //LMA: last kills
+  bool group_ready; //LMA: ready to spawn?
   UINT curTac;
   UINT curBasic;
   fPoint point;
@@ -1037,7 +1053,8 @@ struct CReward
     unsigned int id;
     unsigned int type;
     unsigned int prob;
-    unsigned int rewardamount;
+    unsigned int rewardamount_min;
+    unsigned int rewardamount_max;
     unsigned int rewardposs;
 };
 
@@ -1153,12 +1170,14 @@ struct CFairy
 //LMA: for map grids:
 struct CGridMap
 {
-    int coords[NB_CELL_MAX]; //10*10 map grid (8*8 for map and a 1 border) (now it can change according to map size).
+    //int coords[NB_CELL_MAX]; //10*10 map grid (8*8 for map and a 1 border) (now it can change according to map size).
+    int *coords; //real size.
     int length;       //length of the map
     int width;       //Width of the map
     bool always_on;              //always display or not? (default 0).
     int org_x;                   //point of Origine (never 0,0 and sometimes not the same)...
     int org_y;
+    UINT nb_cells;
 };
 
 struct CListMap
@@ -1178,7 +1197,8 @@ struct CBreakList
     UINT itemnum;
     UINT itemtype;
     UINT product[20];
-    UINT amount[20];
+    UINT amount_min[20];
+    UINT amount_max[20];
     UINT prob[20];
     UINT numToGive;
     UINT total;
@@ -1208,7 +1228,8 @@ struct SQuest
         Switches[byteId] = Switches[byteId] | ((value?1:0) << bitId);
     };
 
-    void AddItem(CItem* item, byte btOp = 2)
+    //LMA: Let's cheat ;)
+    /*void AddItem(CItem* item, byte btOp = 2)
     {
         for(dword i = 0; i < 6; i++){
             if(Items[i].GetPakHeader() == item->GetPakHeader()) {
@@ -1231,6 +1252,38 @@ struct SQuest
             return;
         }
     };
+    */
+
+    UINT AddItem(CItem* item, byte btOp = 2)
+    {
+        for(dword i = 0; i < 6; i++){
+            if(Items[i].GetPakHeader() == item->GetPakHeader()) {
+                if(btOp == 1){
+                    Items[i].count += item->count;
+                    return Items[i].count;
+                }else if(btOp == 0){
+                    if(Items[i].count <= item->count)
+                    {
+                        Items[i].Clear();
+                        return 0;
+                    }
+                    else
+                    {
+                        Items[i].count -= item->count;
+                        return Items[i].count;
+                    }
+
+                }
+            }
+            if(btOp == 0) continue;
+            if(Items[i].GetPakHeader() != 0) continue;
+            Items[i].itemnum = item->itemnum;
+            Items[i].itemtype = item->itemtype;
+            Items[i].count = item->count;
+            return Items[i].count;
+        }
+    };
+
 
     void Clear(){
         memset(this, 0, sizeof(SQuest));
@@ -1247,12 +1300,30 @@ struct SQuestData
 
     SQuest quests[10];
     byte flags[0x40];
-    CNPC* selectedNpc;
+    //CNPC* selectedNpc;    //LMA: outdated.
+    word ClanVar[5];   //LMA: Clan Var (at the end to preserve the existing records...)
+    int RefNPC;
 
     void SetFlag( dword flagid, bool value ){
         dword byteid = flagid / 8;
         dword bitid = flagid % 8;
-        flags[byteid] = flags[byteid] | ((value?1:0) << bitid);
+
+        //LMA: buggy, doesn't comes back to 0
+        //flags[byteid] = flags[byteid] | ((value?1:0) << bitid);
+
+        if(value)
+        {
+            flags[byteid] = flags[byteid] | (1 << bitid);
+        }
+        else
+        {
+            if (GetFlag(flagid))
+            {
+                flags[byteid] = flags[byteid] ^ (1 << bitid);
+            }
+
+        }
+
     }
 
     bool GetFlag( dword flagid ){

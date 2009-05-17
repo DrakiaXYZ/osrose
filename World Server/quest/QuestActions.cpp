@@ -78,33 +78,59 @@ dword GetRewardValue(dword function, dword amount, CPlayer* client, word nDupCNT
 }
 
 //Update Quest
-QUESTREWD(000){
+QUESTREWD(000)
+{
 	GETREWDDATA(000);
 
 	switch(data->btOp){//0 remove, 1 start, 2 replace quest keep items, 3 replace quest delete items, 4 select
 		case 0:
 		{
-      if( client->questdebug )
-        server->SendPM(client, "Remove Quest: %u", data->iQuestSN);
-      if (client->ActiveQuest == data->iQuestSN) client->ActiveQuest = 0;
-			for(dword i = 0; i < 10; i++){
-				if(client->quest.quests[i].QuestID != data->iQuestSN) continue;
+            if (client->ActiveQuest == data->iQuestSN) client->ActiveQuest = 0;
+            for(dword i = 0; i < 10; i++)
+            {
+                if(client->quest.quests[i].QuestID != data->iQuestSN) continue;
 
-    				memset(&client->quest.quests[i], 0, sizeof(SQuest));
-    				break;
-    			}
+                //LMA: Special for UW :(
+                if(data->iQuestSN>=2851&&data->iQuestSN<=2858)
+                {
+                    //getting the proof of rival extermination.
+                    UINT zaward=5000*client->uw_kills;
+                    client->uw_kills=0;
+                    if (zaward>0)
+                    {
+                        BEGINPACKET(pak, 0x7a7);
+                        ADDWORD(pak, client->clientid);
+                        ADDWORD(pak, 0);
+                        ADDBYTE(pak, 0);
+                        ADDDWORD(pak, 0xccccccdf);
+                        ADDDWORD(pak, zaward);
+                        ADDDWORD( pak, 0xcccccccc );
+                        ADDWORD ( pak, 0xcccc );
+                        client->client->SendPacket(&pak);
+                        Log(MSG_WARNING,"Giving %u zuly to player %s",zaward,client->CharInfo->charname);
+                    }
+
+                }
+                //End of patch.
+
+                memset(&client->quest.quests[i], 0, sizeof(SQuest));
+                LogDebug("We tried to delete quest %i",data->iQuestSN);
+                break;
             }
+
+        }
 		break;
 		case 1:
 		{
-      if( client->questdebug )
-        server->SendPM(client, "Start Quest: %u", data->iQuestSN);
+            if( client->questdebug )
+                server->SendPM(client, "Start Quest: %u", data->iQuestSN);
 			for(dword i = 0; i < 10; i++){
 			  if(client->quest.quests[i].QuestID == data->iQuestSN) return QUEST_SUCCESS;
 				if(client->quest.quests[i].QuestID != 0) continue;
 				memset(&client->quest.quests[i], 0, sizeof(SQuest));
 				client->quest.quests[i].QuestID = data->iQuestSN;
 				client->quest.quests[i].StartTime = time(NULL);
+				LogDebug("We tried to start quest %i",data->iQuestSN);
 				break;
 			}
 			client->ActiveQuest = data->iQuestSN;
@@ -112,12 +138,13 @@ QUESTREWD(000){
 		break;
 		case 2:
 		{
-      if( client->questdebug )
-        server->SendPM(client, "Replace Quest, keep items: %u", data->iQuestSN);
+              if( client->questdebug )
+                server->SendPM(client, "Replace Quest, keep items: %u", data->iQuestSN);
 			for(dword i = 0; i < 10; i++){
 				if(client->quest.quests[i].QuestID != client->ActiveQuest) continue;
 				client->quest.quests[i].QuestID = data->iQuestSN;
 				client->quest.quests[i].StartTime = time(NULL);
+				LogDebug("We tried to replace quest %i with items",data->iQuestSN);
 				break;
             }
 			client->ActiveQuest = data->iQuestSN;
@@ -125,13 +152,14 @@ QUESTREWD(000){
 		break;
 		case 3:
 		{
-      if( client->questdebug )
-        server->SendPM(client, "Replace Quest, delete items: %u", data->iQuestSN);
+          if( client->questdebug )
+            server->SendPM(client, "Replace Quest, delete items: %u", data->iQuestSN);
 			for(dword i = 0; i < 10; i++){
 				if(client->quest.quests[i].QuestID != client->ActiveQuest) continue;
 				memset(&client->quest.quests[i], 0, sizeof(SQuest));
 				client->quest.quests[i].QuestID = data->iQuestSN;
 				client->quest.quests[i].StartTime = time(NULL);
+				LogDebug("We tried to replace quest %i without items",data->iQuestSN);
 				break;
             }
 			client->ActiveQuest = data->iQuestSN;
@@ -139,8 +167,9 @@ QUESTREWD(000){
 		break;
 		case 4:
 		{
-      if( client->questdebug )
-        server->SendPM(client, "Select Quest: %u", data->iQuestSN);
+            if( client->questdebug )
+                server->SendPM(client, "Select Quest: %u", data->iQuestSN);
+            LogDebug("We tried to select quest %i",data->iQuestSN);
 			client->ActiveQuest = data->iQuestSN;
 		}
 		break;
@@ -149,23 +178,94 @@ QUESTREWD(000){
 }
 
 //Update Quest Items
-QUESTREWD(001){
+QUESTREWD(001)
+{
     GETREWDDATA(001);
   if( client->questdebug )
     server->SendPM(client, "Update Quest Item (uiItemSN: %u btOp: %u nDupCNT: %u)", data->uiItemSN, data->btOp, data->nDupCNT);
 	CItem tmpItem;
-	tmpItem.itemtype = data->uiItemSN / 1000;
-	tmpItem.itemnum = data->uiItemSN % 1000;
+
+	//LMA: Correct way...
+	/*tmpItem.itemtype = data->uiItemSN / 1000;
+	tmpItem.itemnum = data->uiItemSN % 1000;*/
+	tmpItem.itemtype = GServer->gi(data->uiItemSN,0);
+	tmpItem.itemnum = GServer->gi(data->uiItemSN,1);
 	tmpItem.count = data->nDupCNT;
 
 	SQuest* curQuest = client->GetActiveQuest();
-	if(curQuest == NULL) {
-	  //Log(MSG_DEBUG, "Couldn't find active quest, wtf? Id %u", client->ActiveQuest);
+	if(curQuest == NULL)
+	{
+	  LogDebug( "Couldn't find active quest, wtf? Id %u", client->ActiveQuest);
 	  return QUEST_FAILURE;
-                         }
-	curQuest->AddItem(&tmpItem, data->btOp);
+    }
 
-                         return QUEST_SUCCESS;
+    //LMA: sometimes it's not a quest item...
+    if (tmpItem.itemtype!=13)
+    {
+        int slot=0;
+
+        if(data->btOp==0)
+        {
+            tmpItem.count = 0;
+            slot = client->GetNewItemSlot( tmpItem );
+            if (client->items[slot].count<data->nDupCNT)
+            {
+                Log(MSG_HACK,"QSD001: %s: Not enough items to be deleted!",client->CharInfo->charname);
+                return QUEST_FAILURE;
+            }
+
+            client->items[slot].count-=data->nDupCNT;
+            if (client->items[slot].count==0)
+            {
+                ClearItem(client->items[slot]);
+                client->UpdateInventory(slot,0xffff,true);
+            }
+
+        }
+        else
+        {
+            tmpItem.durability = 50;
+            tmpItem.gem = 0;
+            tmpItem.stats = 0;
+            tmpItem.refine = 0;
+            tmpItem.socketed = 0;
+            tmpItem.lifespan = 100;
+            tmpItem.appraised = 1;
+
+            tmpItem.sp_value=0;
+            tmpItem.last_sp_value=0;
+
+            if(tmpItem.itemtype==14)
+            {
+                tmpItem.sp_value=tmpItem.lifespan*10;
+                tmpItem.last_sp_value=tmpItem.sp_value;
+            }
+
+            slot=client->AddItem(tmpItem);
+            if(slot==0xffff)
+            {
+                Log(MSG_WARNING,"QSDA1:: Impossible to add item in player's inventory");
+                return QUEST_FAILURE;
+            }
+
+            //let's update player's inventory.
+            client->UpdateInventory(slot,0xffff,true);
+        }
+
+    }
+    else
+    {
+        UINT nb_items=curQuest->AddItem(&tmpItem, data->btOp);
+        //LMA: Special for Union War.
+        if (tmpItem.itemnum==496)
+        {
+            client->uw_kills=nb_items;
+        }
+
+    }
+
+
+    return QUEST_SUCCESS;
 }
 
 //Set Quest Variable
@@ -189,7 +289,8 @@ QUESTREWD(002){
 }
 
 //Update Stats
-QUESTREWD(003){
+QUESTREWD(003)
+{
 	GETREWDDATA(003);
 	for(dword i = 0; i < data->iDataCnt; i++){
 		dword address = i * 0x0C;
@@ -201,11 +302,110 @@ QUESTREWD(003){
 
 		switch( curAbil->iType )
 		{
+        case sHair:
+        {
+            //LMA: changing face.
+            if(!OperateValues<int>(curAbil->btOp, (int*)&client->CharInfo->Hair, curAbil->iValue))
+				return QUEST_FAILURE;
+            LogDebug("QSDA3 setting Hair to %i",client->CharInfo->Hair);
+
+            //packet time.
+            //CharInfo->Hair = (thisquest->value3*5);
+            BEGINPACKET(pak, 0x721);
+            ADDWORD(pak, 9);
+            ADDWORD(pak, client->CharInfo->Hair);
+            ADDWORD(pak, 0);
+            client->client->SendPacket(&pak);
+            RESETPACKET(pak, 0x0730);
+            ADDWORD(pak, 5);
+            ADDWORD(pak, 0xa24d);
+            ADDWORD(pak, 0x40b3);
+            client->client->SendPacket(&pak);
+        }
+        break;
+        case sFace:
+        {
+            //LMA: Changing Face.
+            if(!OperateValues<int>(curAbil->btOp, (int*)&client->CharInfo->Face, curAbil->iValue))
+				return QUEST_FAILURE;
+            LogDebug("QSDA3 setting Face to %i",client->CharInfo->Face);
+
+            BEGINPACKET(pak, 0x721);
+            ADDWORD(pak, 8);
+            ADDWORD(pak, client->CharInfo->Face);
+            ADDWORD(pak, 0);
+            client->client->SendPacket(&pak);
+            RESETPACKET(pak, 0x0730);
+            ADDWORD(pak, 5);
+            ADDWORD(pak, 0xa24d);
+            ADDWORD(pak, 0x40b3);
+            client->client->SendPacket(&pak);
+        }
+        break;
+        case sReputation:
+        {
+            //LMA: Union Fame
+            if(!OperateValues<int>(curAbil->btOp, (int*)&client->CharInfo->unionfame, curAbil->iValue))
+				return QUEST_FAILURE;
+            LogDebug("QSDA3 setting Fame to %i (NOT COMPLETE)",client->CharInfo->unionfame);
+        }
+        break;
+        case sSkillPoints:
+        {
+            //LMA: Skill Points.
+            if(!OperateValues<int>(curAbil->btOp, (int*)&client->CharInfo->SkillPoints, curAbil->iValue))
+				return QUEST_FAILURE;
+            LogDebug("QSDA3 setting skillpoints to %i",client->CharInfo->SkillPoints);
+            BEGINPACKET( pak, 0x720 );
+            ADDWORD( pak, 37 );
+            ADDWORD( pak, client->CharInfo->SkillPoints );
+            ADDWORD( pak, 0 );
+            client->client->SendPacket( &pak );
+            RESETPACKET( pak, 0x0730 );
+            ADDWORD( pak, 5 );
+            ADDWORD( pak, 0xa24d );
+            ADDWORD( pak, 0x40b3 );
+            client->client->SendPacket( &pak );
+        }
+        break;
+        case sPvp:
+        {
+            //LMA: PVP Case.
+            if(!OperateValues<int>(curAbil->btOp, (int*)&client->pvp_id, curAbil->iValue))
+				return QUEST_FAILURE;
+
+			//LMA: We have to send a packet
+            BEGINPACKET( pak, 0x721 );
+            ADDWORD    ( pak, 0x0022 );
+            ADDWORD    ( pak, client->pvp_id );
+            ADDWORD    ( pak, 0x0000 );
+            client->client->SendPacket( &pak );
+
+            client->pvp_status=-1;
+
+            LogDebug("QSDA3 setting pvp to %i",client->pvp_id);
+        }
+        break;
 		case sGender:
+		{
 			if(!OperateValues<int>(curAbil->btOp, (int*)&client->CharInfo->Sex, curAbil->iValue))
 				return QUEST_FAILURE;
-			break;
 
+            LogDebug("QSDA3 setting Gender to %i",client->CharInfo->Sex);
+
+            //LMA: Adding packet.
+            BEGINPACKET( pak, 0x720 );
+            ADDWORD( pak, 2 );
+            ADDWORD( pak, client->CharInfo->Sex );
+            ADDWORD( pak, 0 );
+            client->client->SendPacket( &pak );
+            RESETPACKET( pak, 0x0730 );
+            ADDWORD( pak, 5 );
+            ADDWORD( pak, 0xa24d );
+            ADDWORD( pak, 0x40b3 );
+            client->client->SendPacket( &pak );
+		}
+        break;
 		case sJob:
 		{
 			if(!OperateValues<int>(curAbil->btOp, (int*)&client->CharInfo->Job, curAbil->iValue))
@@ -215,8 +415,7 @@ QUESTREWD(003){
 			ADDDWORD(pak, curAbil->iValue );
 			client->client->SendPacket( &pak );
 		}
-			break;
-
+        break;
 		case sUnion:
 		{
 		    //Log(MSG_INFO,"[Union] ? QUESTREWD(003) btOp %i, value: %i",curAbil->btOp,curAbil->iValue);
@@ -233,34 +432,35 @@ QUESTREWD(003){
         case 81:    //LMA: Union Points (no break, it's NOT a mistake)...
         {
             if (curAbil->iType==81)
-                client->CharInfo->union01=curAbil->iValue;
+                client->CharInfo->union01+=curAbil->iValue;
         }
         case 82:
         {
             if (curAbil->iType==82)
-                client->CharInfo->union02=curAbil->iValue;
+                client->CharInfo->union02+=curAbil->iValue;
         }
         case 83:
         {
             if (curAbil->iType==83)
-                client->CharInfo->union03=curAbil->iValue;
+                client->CharInfo->union03+=curAbil->iValue;
         }
         case 84:
         {
             if (curAbil->iType==84)
-                client->CharInfo->union04=curAbil->iValue;
+                client->CharInfo->union04+=curAbil->iValue;
         }
         case 85:
         {
             if (curAbil->iType==85)
-                client->CharInfo->union05=curAbil->iValue;
-            //Log(MSG_INFO,"[UnionPoints] ? QUESTREWD(003) btOp %i, value: %i",curAbil->btOp,curAbil->iValue);
-            BEGINPACKET( pak, 0x721 );
+                client->CharInfo->union05+=curAbil->iValue;
+            Log(MSG_INFO,"[UnionPoints] ? QUESTREWD(003) btOp %i, value: %i",curAbil->btOp,curAbil->iValue);
+            //BEGINPACKET( pak, 0x721 );
+            BEGINPACKET( pak, 0x720 );
             ADDWORD( pak, curAbil->iType );
             ADDWORD( pak, curAbil->iValue );
             ADDWORD( pak, 0x0000 );
             client->client->SendPacket( &pak );
-            //Log(MSG_INFO,"[UnionPoints] OK QUESTREWD(003) SET union0%i to %i",curAbil->iType-80,curAbil->iValue);
+            Log(MSG_INFO,"[UnionPoints] OK QUESTREWD(003) SET union0%i adding %i (new value %i,%i,%i,%i,%i)",curAbil->iType,curAbil->iValue,client->CharInfo->union01,client->CharInfo->union02,client->CharInfo->union03,client->CharInfo->union04,client->CharInfo->union05);
         }
         break;
 		case sStrength:
@@ -303,16 +503,27 @@ QUESTREWD(003){
 				return QUEST_FAILURE;
 			break;
         case sMoney:
+        {
             if(!OperateValues<int>(curAbil->btOp, (int*)&client->CharInfo->Zulies, curAbil->iValue))
                 return QUEST_FAILURE;
+
+            //LMA: do we really have to send it?
+            //we don't send it because most of the time the client will check again and if not enough, the check
+            //will fail (for example, taking union).
+            /*
 			// Send zuly update packet
             BEGINPACKET( pak, 0x71d );
             ADDQWORD( pak, client->CharInfo->Zulies );
             client->client->SendPacket( &pak );
+            */
+        }
             break;
 		default:
-			//Log(MSG_WARNING, "Type Unknown: '%i'", curAbil->iType);
-			break;
+		{
+			Log(MSG_WARNING, "Type Unknown: '%i'", curAbil->iType);
+		}
+        break;
+
 		}
 	}
 	return QUEST_SUCCESS;
@@ -329,20 +540,16 @@ QUESTREWD(005){
 	switch(data->btTarget){
 		case 0://EXP
 		{
-      if( client->questdebug )
-        server->SendPM(client, "Give EXP: %i", data->iValue);
-			client->CharInfo->Exp += GetRewardValue(data->btEquation, data->iValue, client, 0);
-			BEGINPACKET(pak, 0x79b);
-			ADDDWORD(pak, client->CharInfo->Exp);
-			ADDDWORD(pak, client->CharInfo->stamina);
-			ADDWORD (pak, 0);
-    			client->client->SendPacket(&pak);
-              }
+            client->CharInfo->Exp += GetRewardValue(data->btEquation, data->iValue, client, 0);
+            BEGINPACKET(pak, 0x79b);
+            ADDDWORD(pak, client->CharInfo->Exp);
+            ADDDWORD(pak, client->CharInfo->stamina);
+            ADDWORD (pak, 0);
+            client->client->SendPacket(&pak);
+        }
 		break;
 		case 1://Zuly
 		{
-      if( client->questdebug )
-        server->SendPM(client, "Give Zuly: %i", data->iValue);
 			client->CharInfo->Zulies += GetRewardValue(data->btEquation, data->iValue, client, 1);//dunno nDupCount for this one!
 			BEGINPACKET(pak, 0x71D);
 			ADDQWORD(pak, client->CharInfo->Zulies);
@@ -353,15 +560,20 @@ QUESTREWD(005){
         case 2://Item
         {
             CItem nItem;
-            nItem.itemtype = data->iItemSN / 1000;
-            nItem.itemnum = data->iItemSN % 1000;
-            if(nItem.IsStackable()){
-                nItem.count = GetRewardValue(data->btEquation, data->iValue, client, 0);
-            } else
-                nItem.count = 1;
+            //LMA: Correct way.
+            /*nItem.itemtype = data->iItemSN / 1000;
+            nItem.itemnum = data->iItemSN % 1000;*/
+            nItem.itemtype = GServer->gi(data->iItemSN,0);
+            nItem.itemnum = GServer->gi(data->iItemSN,1);
 
-            if( client->questdebug )
-                server->SendPM(client, "Give item [%i][%i]x%i", nItem.itemtype, nItem.itemnum, nItem.count);
+            if(nItem.IsStackable())
+            {
+                nItem.count = GetRewardValue(data->btEquation, data->iValue, client, 0);
+            }
+            else
+            {
+                nItem.count = 1;
+            }
 
             //Maxxon: How is durability done in Evo?
             //nItem.durability = GServer->EquipList[nItem.itemtype].Index[nItem.itemnum]->d;
@@ -372,14 +584,30 @@ QUESTREWD(005){
             nItem.socketed = 0;
             nItem.lifespan = 100;
             nItem.appraised = 1;
+
+            nItem.sp_value=0;
+            nItem.last_sp_value=0;
+
+            if(nItem.itemtype==14)
+            {
+                nItem.sp_value=nItem.lifespan*10;
+                nItem.last_sp_value=nItem.sp_value;
+            }
+
             dword slot = client->AddItem(nItem);
-            if (slot == 0xffff) { // Fail
+            if (slot == 0xffff)
+            { // Fail
                 BEGINPACKET( pak, 0x7a7);
                 ADDWORD(pak, 0x00);
                 ADDBYTE(pak, 0x03);
                 ADDBYTE(pak, 0x00);
                 client->client->SendPacket(&pak);
-            } else { // Success
+            }
+            else
+            {
+                client->UpdateInventory(slot,0xffff,true);
+                /*
+                // Success
                 BEGINPACKET( pak, 0x71f);
                 ADDBYTE(pak, 0x01);
                 ADDBYTE(pak, slot);
@@ -388,6 +616,7 @@ QUESTREWD(005){
                 ADDDWORD( pak, 0x00000000 );
                 ADDWORD ( pak, 0x0000 );
                 client->client->SendPacket(&pak);
+                */
             }
         }
         break;
@@ -398,10 +627,10 @@ QUESTREWD(005){
 }
 
 //Restore HP/MP
-QUESTREWD(006){
+QUESTREWD(006)
+{
 	GETREWDDATA(006);
-  if( client->questdebug )
-    server->SendPM(client, "Restore %i%% HP, %i%% MP", data->iPercentOfHP, data->iPercentOfMP);
+	//Log(MSG_WARNING,"We give %i HP and %i MP back to %s",data->iPercentOfHP,data->iPercentOfMP,client->CharInfo->charname);
 	client->Stats->HP = (long int)((float)client->Stats->MaxHP / 100.0f) * data->iPercentOfHP;
 	client->Stats->MP = (long int)((float)client->Stats->MaxHP / 100.0f) * data->iPercentOfMP;
 
@@ -409,23 +638,54 @@ QUESTREWD(006){
 }
 
 //Teleport
-QUESTREWD(007){
+QUESTREWD(007)
+{
 	GETREWDDATA(007);
 	fPoint thispoint;
 	thispoint.x = floor(((float)data->iX)/100);
 	thispoint.y = floor(((float)data->iY)/100);
-  if( client->questdebug )
-    server->SendPM(client, "Teleport [%i][%f][%f]", data->iZoneSN, thispoint.x, thispoint.y);
+
+	//LMA: Warping party members too.
+	if(data->btPartyOpt!=0&&client->Party->party!=NULL)
+	{
+        for(UINT i=0;i<client->Party->party->Members.size( );i++)
+        {
+            CPlayer* member = client->Party->party->Members.at(i);
+
+            //we'll warp our lad in last :)
+            if(client->clientid!=member->clientid)
+            {
+                GServer->TeleportTo(member, data->iZoneSN, thispoint);
+            }
+
+        }
+
+	}
+
+	//LMA: Special case, if player isn't in game right now, it can happend for qsds called when warped in maps.
+	//In this case, the warp should be done AFTER the pakdoid packet.
+	if(!client->Session->inGame)
+	{
+	    client->map_warp_zone=data->iZoneSN;
+	    client->Warp_Zone.x=thispoint.x;
+	    client->Warp_Zone.y=thispoint.y;
+	    //Log(MSG_WARNING,"QSDA007:: Player %s should be warped another time to %i (%u:%u)",client->CharInfo->charname,client->map_warp_zone,client->Warp_Zone.x,client->Warp_Zone.y);
+	    return QUEST_SUCCESS;
+	}
+
 	GServer->TeleportTo(client, data->iZoneSN, thispoint);
+
+
 	return QUEST_SUCCESS;
 }
 
 //Spawn Monster
-QUESTREWD(008){
+QUESTREWD(008)
+{
     GETREWDDATA(008);
 
-        //Log(MSG_DEBUG,"BEGIN QUESTREWD(008)");
-        fPoint position;
+    LogDebug("BEGIN QUESTREWD(008)");
+    fPoint position;
   dword mapId;
   if(data->iX == 0 || data->iY == 0 || data->iZoneSN == 0){
     position.x = client->Position->current.x;
@@ -436,11 +696,12 @@ QUESTREWD(008){
         position.y = data->iY / 100;
     mapId = data->iZoneSN;
   }
-	for(dword i = 0; i < data->iHowMany; i++) {
+	for(dword i = 0; i < data->iHowMany; i++)
+	{
 		fPoint pos = GServer->RandInCircle( position, data->iRange );
 
-  //LMA: coming from AIP.
-    //if( client->questdebug&&!client->is_invisible)
+        //LMA: coming from AIP.
+        //if( client->questdebug&&!client->is_invisible)
         //server->SendPM(client, "Spawn mob[%i] @ %f, %f", data->iMonsterSN, pos.x, pos.y);
         //Log(MSG_INFO, "Spawn mob[%i] @ map %i (%f,%f)", data->iMonsterSN, mapId,pos.x, pos.y);
 		CMap* map = GServer->MapList.Index[mapId];
@@ -452,8 +713,22 @@ QUESTREWD(008){
             mon->thisnpc->aggresive = 999; // Force the mob to be agressive.
         }
 		mon->lastSighCheck = 0; // Force sight check instantly.
+
+        //LMA: some monsters belong to a PVP team ;)
+        if(data->iTeamNo!=0)
+        {
+            mon->team=data->iTeamNo;
+            if(i==0)
+            {
+                //We display the msg just once :)
+                LogDebug("QSDA8::Monster %i has a team %i",mon->montype,mon->team);
+            }
+
+        }
+
     }
-    //Log(MSG_DEBUG,"END QUESTREWD(008)");
+
+    LogDebug("END QUESTREWD(008)");
 	return QUEST_SUCCESS;
 }
 
@@ -463,9 +738,15 @@ QUESTREWD(009){
 	char* tempName = reinterpret_cast<char*>(&data->szNextTriggerSN) - 2;
 	dword hash = MakeStrHash(tempName);
   if( client->questdebug )
+  {
     server->SendPM(client, "Execute Quest Trigger %s[%d] [%08x]", tempName, data->shNameLen, hash);
-	return client->ExecuteQuestTrigger(hash);
-    return QUEST_SUCCESS;
+  }
+
+    int tempval=client->quest.RefNPC;
+    int is_ok=client->ExecuteQuestTrigger(hash,true);
+    client->quest.RefNPC=tempval;
+
+    return is_ok;
 }
 
 //Reset Stats
@@ -490,28 +771,211 @@ QUESTREWD(010){
 }
 
 //Update Object Var
-QUESTREWD(011){
+//LMA: like AIP.
+QUESTREWD(011)
+{
 	GETREWDDATA(011);
-	/*if(entity->_EntityType != ENTITY_NPC) return QUEST_FAILURE;
+	if(data->btWho == 0)
+	{
+        short tempval = 0;
+        int refNPC = client->quest.RefNPC;
+        if(refNPC==0)
+        {
+            Log(MSG_WARNING,"QSDA11::Np NPC selected");
+            return QUEST_FAILURE;
+        }
 
-	if(data->btWho == 0){//Npc
-		CNpc* thisNpc = reinterpret_cast<CNpc*>(entity);
-		thisNpc = thisNpc->SelectedNpc;
-		if(thisNpc == NULL) return QUEST_FAILURE;
+        //LMA: WarpGate or standard NPC?
+        bool is_gate=false;
 
-		short VarValue = thisNpc->ObjVar.GetVar(data->nVarNo);
-		OperateValues(data->btOp, &VarValue, (short)data->iValue);
-		thisNpc->ObjVar.SetVar(data->nVarNo, VarValue);
-	}else if(data->btWho == 1){//Event
+        if(refNPC>10000&&refNPC==GServer->WarpGate.virtualNpctypeID)
+        {
+            LogDebug("QSDAC:: Warpgate");
+            //WarpGate.
+            if(data->nVarNo>19)
+                return QUEST_FAILURE;
+            tempval = GServer->WarpGate.IfoObjVar[data->nVarNo];
+            is_gate=true;
+        }
+        else
+        {
+            if(refNPC>=MAX_NPC)
+            {
+                Log(MSG_WARNING,"It seems NPC %i>=%u , change MAX_NPC value!",refNPC,MAX_NPC);
+                return QUEST_FAILURE;
+            }
+
+            tempval = GServer->ObjVar[refNPC][data->nVarNo];
+        }
+
+        LogDebug("QSDA11 Set variable NPC %i, data->btOp=%i, data->iValue=%i, data->nVarNo=%i",refNPC,data->btOp,data->iValue,data->nVarNo);
+
+        switch(data->btOp)
+        {
+        case 5:
+            tempval = data->iValue;
+            break;
+        case 6:
+            tempval += data->iValue;
+            break;
+        case 7:
+            tempval -= data->iValue;
+            break;
+        case 9:
+            tempval++;
+            break;
+        default:
+            return AI_FAILURE;
+            break;
+        }
+
+        if(tempval < 0)tempval = 0;
+
+        //WarpGate?
+        if(is_gate)
+        {
+            short previous_val=GServer->WarpGate.IfoObjVar[data->nVarNo];
+            GServer->WarpGate.IfoObjVar[data->nVarNo]=tempval;
+            if(data->nVarNo==0&&previous_val!=tempval)
+            {
+                if(tempval==0)
+                {
+                    GServer->WarpGate.hidden=true;
+                }
+                else
+                {
+                    GServer->WarpGate.hidden=false;
+                }
+
+                //LMA: 2 do, check if really needed....
+                //Forcing refresh.
+                //GServer->pakSpawnIfoObject(NULL,GServer->WarpGate.virtualNpctypeID,true);
+                BEGINPACKET( pak, 0x790 );
+                ADDWORD    ( pak, GServer->WarpGate.clientID);
+                ADDWORD    ( pak, tempval);
+                GServer->SendToAllInMap(&pak,GServer->WarpGate.mapid);
+            }
+
+        }
+        else
+        {
+            GServer->ObjVar[refNPC][data->nVarNo] = tempval;
+        }
+
+		if(data->nVarNo==0)
+		{
+		    //LMA: Oh boy...
+		    //TODO: check if we need to change eventId for ALL npc sharing this npctype?
+            if(client->Position->Map==0||client->Position->Map>=GServer->MapList.max)
+            {
+                Log(MSG_WARNING,"QSDA11: Player %s is in an incorrect map %i",client->CharInfo->charname,client->Position->Map);
+                return QUEST_FAILURE;
+            }
+
+            CMap* thisMap = GServer->MapList.Index[client->Position->Map];
+            CNPC* thisNpc = thisMap->GetNPCInMapQSD(refNPC);
+            if(thisNpc==NULL)
+            {
+                Log(MSG_WARNING,"QSDA11 Can't select NPC %i to change its eventID to %i",refNPC,tempval);
+                LogDebug("QSDA11 Can't select NPC %i to change its eventID to %i",refNPC,tempval);
+                //quest success for now...
+                return QUEST_SUCCESS;
+            }
+
+            BEGINPACKET( pak, 0x790 );
+            ADDWORD    ( pak, thisNpc->clientid);
+            ADDWORD    ( pak, tempval);
+            GServer->SendToAllInMap(&pak,GServer->WarpGate.mapid);
+		    Log(MSG_WARNING,"QSDA11 NPC %i should have changed his eventID to %i",refNPC,tempval);
+		    LogDebug("QSDA11 NPC %i should have changed his eventID to %i",refNPC,tempval);
+		}
+
+	}
+	else if	(data->btWho == 1)
+	{
+	    //Event
+	    /*
 		short VarValue = server->EventVar.GetVar(data->nVarNo);
 		OperateValues(data->btOp, &VarValue, (short)data->iValue);
 		server->EventVar.SetVar(data->nVarNo, VarValue);
+		*/
+        //Log(MSG_WARNING,"SERVER EVENT IN QUESTREWDC(011)");
+        //return QUEST_SUCCESS;
+
+        //LMA: For event Object.
+
+	    //Npc
+        int refNPC = client->quest.RefNPC;
+        if(refNPC==0)
+        {
+            Log(MSG_WARNING,"QSDA11::Np NPC selected");
+            return QUEST_FAILURE;
+        }
+
+        short tempval = 0;
+
+        if(refNPC>10000&&refNPC==GServer->WarpGate.virtualNpctypeID)
+        {
+            //WarpGate.
+            if(data->nVarNo>19)
+                return QUEST_FAILURE;
+            tempval = GServer->WarpGate.IfoObjVar[data->nVarNo];
+        }
+        else
+        {
+            LogDebug("QSDA11 Setting Unknown Object %i",refNPC);
+            return QUEST_FAILURE;
+        }
+
+        LogDebug("QSDA11 Set variable Object Event %i, data->btOp=%i, data->iValue=%i, data->nVarNo=%i",refNPC,data->btOp,data->iValue,data->nVarNo);
+
+        switch(data->btOp)
+        {
+        case 5:
+            tempval = data->iValue;
+            break;
+        case 6:
+            tempval += data->iValue;
+            break;
+        case 7:
+            tempval -= data->iValue;
+            break;
+        case 9:
+            tempval++;
+            break;
+        default:
+            return AI_FAILURE;
+            break;
+        }
+
+        if(tempval < 0)tempval = 0;
+
+        short previous_val=GServer->WarpGate.IfoObjVar[data->nVarNo];
+        GServer->WarpGate.IfoObjVar[data->nVarNo]=tempval;
+        if(data->nVarNo==0&&previous_val!=tempval)
+        {
+            if(tempval==0)
+            {
+                GServer->WarpGate.hidden=true;
+            }
+            else
+            {
+                GServer->WarpGate.hidden=false;
+            }
+
+            //LMA: 2 do, check if really needed....
+            //Forcing refresh.
+            //GServer->pakSpawnIfoObject(NULL,GServer->WarpGate.virtualNpctypeID,true);
+            BEGINPACKET( pak, 0x790 );
+            ADDWORD    ( pak, GServer->WarpGate.clientID);
+            ADDWORD    ( pak, tempval);
+            GServer->SendToAllInMap(&pak,GServer->WarpGate.mapid);
+        }
+
 	}
 
-	return QUEST_SUCCESS;*/
 
-	//LMA: 2do
-	return QUEST_FAILURE;
+	return QUEST_SUCCESS;
 }
 
 //NPC Speak
@@ -548,18 +1012,55 @@ QUESTREWD(012){
 	return QUEST_FAILURE; // This is cool and all, but we lack the stuff to do it - Drakia
 }
 
+/*
 //Unknown
 QUESTREWD(013){
 	return QUEST_SUCCESS;
+}
+*/
+
+//PY: Execute Quest Trigger
+QUESTREWD(013)
+{
+	//	byte btWho               pos 0x00
+	//	int iWho                 pos 0x00
+	//dword iSec                 pos 0x02
+	//word nNameLength           pos 0x06
+	//string szTriggerName       pos 0x08
+	//dword m_HashNextTrigger    pos 0x06 + nNameLength?
+	//looks like a quest trigger to me
+	GETREWDDATA(013);
+	char* tempName = reinterpret_cast<char*>(&data->szTriggerName) - 2;
+	dword hash = MakeStrHash(tempName);
+    if( client->questdebug )
+    {
+        server->SendPM(client, " RWD 013 pretty sure this -- Execute Quest Trigger %s[%d] [%08x]", tempName, data->nNameLength, hash);
+    }
+
+    int tempval=client->quest.RefNPC;
+    int is_ok=client->ExecuteQuestTrigger(hash,true);
+    client->quest.RefNPC=tempval;
+
+
+    return is_ok;
 }
 
 //Learn Skill
 QUESTREWD(014){
     GETREWDDATA(014);
   if( client->questdebug )
+  {
     server->SendPM(client, "Learn skill: %i", data->iSkillNo);
-    GServer->LearnSkill(client, data->iSkillNo, false);
-//	GServer->LearnSkill(client, data->iSkillNo);
+  }
+
+    if(!GServer->LearnSkill(client, data->iSkillNo, false))
+    {
+        Log(MSG_WARNING,"QSDA014:: Player %s failed to learn skill %i",client->CharInfo->charname,data->iSkillNo);
+    }
+
+    //	GServer->LearnSkill(client, data->iSkillNo);
+
+
 	return QUEST_SUCCESS;
 }
 
@@ -593,16 +1094,38 @@ QUESTREWD(018){
 
 //Execute Quest Trigger in Other Map
 QUESTREWD(019){
+    LogDebug("QSDA19 Not coded for players");
 	return QUEST_SUCCESS;
 }
 
 //PvP Status
-QUESTREWD(020){
+QUESTREWD(020)
+{
+    //LMA: We use it now :)
+    GETREWDDATA(020);
+    client->pvp_status=data->btNoType;
+    client->pvp_id=-1;
+
+
 	return QUEST_SUCCESS;
 }
 
-//Set Respawn Position
-QUESTREWD(021){
+//Set Respawn Position (Credits PY)
+QUESTREWD(021)
+{
+    GETREWDDATA(021);
+    //LMA: We change it a bit :)
+    client->Position->saved = client->Position->Map;
+
+    //LMA: We change it a bit :)
+    float X=(float)(data->iX)/((float)100);
+    float Y=(float)(data->iY)/((float)100);
+    client->UWPosition->Map=client->Position->Map;
+    client->UWPosition->source.x=X;
+    client->UWPosition->source.y=Y;
+    client->UWPosition->source.z=0;
+
+
 	return QUEST_SUCCESS;
 }
 
@@ -625,15 +1148,21 @@ QUESTREWD(023){
         {
         CPlayer* player = map->PlayerList.at(j);
         if( player->Clan->clanid != client->Clan->clanid ) continue;
+
+        //LMA: Getting real grade
+        player->Clan->grade=GServer->getClanGrade(player->Clan->clanid);
         player->Clan->grade++;
 
         //load clan info in char server
 	    BEGINPACKET( pak, 0x7e0 );
-	    ADDBYTE    ( pak, 0xfb ); //action to update clan informacion (charserver)
-	    ADDWORD    ( pak, player->Clan->clanid );
+	    ADDBYTE    ( pak, 0xfb ); //action to update clan information (charserver)
+	    ADDWORD    ( pak, client->CharInfo->charid );   //LMA: adding client ID.
+	    //ADDWORD    ( pak, player->Clan->clanid ); //LMA: should be useless...
 	    ADDWORD    ( pak, player->Clan->grade );
         //GServer->SendISCPacket( &pak );
-		Log (MSG_NOTICE, "implement CharServer communication in __FILE__ line __LINE__");
+		//Log (MSG_NOTICE, "implement CharServer communication in __FILE__ line __LINE__");
+        cryptPacket( (char*)&pak, GServer->cct );
+        send( GServer->csock, (char*)&pak, pak.Size, 0 );
 
         //Send to other players
         RESETPACKET( pak, 0x7e0 );
@@ -655,12 +1184,60 @@ QUESTREWD(023){
 }
 
 //Clan Money
-QUESTREWD(024){
+QUESTREWD(024)
+{
+    //LMA: never used.
 	return QUEST_SUCCESS;
 }
 
 //Clan Points
-QUESTREWD(025){
+QUESTREWD(025)
+{
+    //LMA: let's add or delete clan points ;)
+    GETREWDDATA(025);
+    int points=data->nPOINT;
+
+
+    //Loading "real" CP points.
+    client->Clan->CP=GServer->getClanPoints(client->Clan->clanid);
+
+    //we "delete" points.
+    if(data->btOP==7)
+    {
+        points=-1*points;
+    }
+
+    if (client->Clan->CP+points<0)
+    {
+        client->Clan->CP=0;
+    }
+    else
+    {
+        client->Clan->CP+=points;
+    }
+
+    //sending packet.
+    BEGINPACKET( pak, 0x7e0 );
+    ADDBYTE    ( pak, 0xfe );
+    ADDWORD    ( pak, client->CharInfo->charid);  //charid
+    ADDDWORD    ( pak, points);  //Clan points (to be added)
+    cryptPacket( (char*)&pak, GServer->cct );
+    send( GServer->csock, (char*)&pak, pak.Size, 0 );
+
+    RESETPACKET( pak, 0x7e0 );
+    ADDBYTE    ( pak, 0x35 );
+    ADDWORD    ( pak, client->clientid );
+    ADDWORD    ( pak, client->Clan->clanid );
+    ADDWORD    ( pak, 0x0000 );
+    ADDWORD    ( pak, client->Clan->back );
+    ADDWORD    ( pak, client->Clan->logo );
+    ADDBYTE    ( pak, client->Clan->grade );
+    ADDBYTE    ( pak, client->Clan->clanrank);
+    ADDSTRING  ( pak, client->Clan->clanname );
+    ADDBYTE    ( pak, 0x00 );
+    client->client->SendPacket(&pak);
+
+
 	return QUEST_SUCCESS;
 }
 
@@ -700,27 +1277,43 @@ QUESTREWD(028){
 }
 
 //Unspawn a NPC
-QUESTREWD(034){
+//LMA: JUST for a specific player ! More like a hiding !
+//LMA: We changed the way the NPC was used.
+QUESTREWD(034)
+{
     GETREWDDATA(034);
 
-    if (client->questdebug) {
+    if (client->questdebug)
+    {
         server->SendPM(client, "removing selected NPC");
     }
 
-    if (client->quest.selectedNpc == NULL) {
+    //if (client->quest.selectedNpc == NULL)
+    if (client->quest.RefNPC == 0)
+    {
         // WTF?
+        Log(MSG_WARNING,"QSDA34::No NPC selected");
         return QUEST_FAILURE;
     }
 
-    for (int i = 0; i < client->VisibleNPCs.size(); i++) {
+    for (int i = 0; i < client->VisibleNPCs.size(); i++)
+    {
         CNPC* curNpc = client->VisibleNPCs.at(i);
-        if (curNpc == client->quest.selectedNpc) {
+        //if (curNpc == client->quest.selectedNpc)
+
+        if (curNpc->npctype == client->quest.RefNPC)
+        {
             // found!
+            /*
             //client->VisibleNPCs.erase(client->VisibleNPCs.begin()+i);
             client->ClearObject(client->quest.selectedNpc->clientid);
             client->quest.selectedNpc = NULL;
+            */
+            client->ClearObject(curNpc->clientid);
+            client->quest.RefNPC = 0;
             return QUEST_SUCCESS;
         }
+
     }
 
     return QUEST_FAILURE;

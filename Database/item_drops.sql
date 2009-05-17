@@ -4,7 +4,7 @@ Source Host: localhost
 Source Database: osrose
 Target Host: localhost
 Target Database: osrose
-Date: 9/16/2008 12:29:36 PM
+Date: 3/28/2009 9:26:52 AM
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -23,7 +23,7 @@ CREATE TABLE `item_drops` (
   `alt` varchar(500) collate latin1_general_ci NOT NULL default '0|0|0|0|0|0|0',
   `description` varchar(100) collate latin1_general_ci NOT NULL,
   PRIMARY KEY  (`ref`)
-) ENGINE=MyISAM AUTO_INCREMENT=9532 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=9555 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- ----------------------------
 -- Records 
@@ -437,13 +437,6 @@ INSERT INTO `item_drops` VALUES ('407', '992', '8', '0', '0', '200', '0', '212',
 INSERT INTO `item_drops` VALUES ('408', '993', '8', '0', '0', '200', '0', '1428', '0|0|0|0|0|0|0', '');
 INSERT INTO `item_drops` VALUES ('409', '993', '8', '0', '0', '200', '0', '408', '0|0|0|0|0|0|0', '');
 INSERT INTO `item_drops` VALUES ('410', '993', '8', '0', '0', '200', '0', '409', '0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('619', '390', '10', '65', '90', '200', '0', '0', '0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('618', '391', '10', '55', '80', '200', '0', '0', '0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('617', '392', '10', '45', '70', '200', '0', '0', '0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('616', '393', '10', '35', '60', '200', '0', '0', '0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('615', '394', '10', '65', '90', '200', '0', '0', '0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('614', '395', '10', '55', '80', '200', '0', '0', '0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('613', '396', '10', '45', '70', '200', '0', '0', '0|0|0|0|0|0|0', '');
 INSERT INTO `item_drops` VALUES ('411', '397', '10', '35', '60', '200', '0', '0', '0|0|0|0|0|0|0', '');
 INSERT INTO `item_drops` VALUES ('412', '403', '10', '120', '190', '150', '0', '12', '0|0|0|0|0|0|0', '');
 INSERT INTO `item_drops` VALUES ('413', '402', '10', '0', '0', '500', '0', '3', '0|0|0|0|0|0|0', '');
@@ -588,7 +581,6 @@ INSERT INTO `item_drops` VALUES ('551', '180', '12', '0', '0', '400', '0', '43',
 INSERT INTO `item_drops` VALUES ('552', '184', '12', '0', '0', '400', '0', '41', '0|0|0|0|0|0|0', '');
 INSERT INTO `item_drops` VALUES ('553', '184', '12', '0', '0', '400', '0', '43', '0|0|0|0|0|0|0', '');
 INSERT INTO `item_drops` VALUES ('554', '184', '12', '0', '0', '500', '0', '42', '0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('609', '184', '12', '0', '0', '600', '0', '44', '0|0|0|0|0|0|0', '');
 INSERT INTO `item_drops` VALUES ('555', '185', '12', '0', '0', '4000', '1', '0', '0|0|0|0|0|0|0', '');
 INSERT INTO `item_drops` VALUES ('556', '186', '12', '0', '0', '350', '0', '131', '0|0|0|0|0|0|0', '');
 INSERT INTO `item_drops` VALUES ('557', '186', '12', '0', '0', '400', '0', '132', '0|0|0|0|0|0|0', '');
@@ -602,9 +594,6 @@ INSERT INTO `item_drops` VALUES ('564', '197', '12', '25', '200', '300', '0', '0
 INSERT INTO `item_drops` VALUES ('565', '198', '12', '100', '120', '500', '0', '0', '0|0|0|0|0|0|0', '');
 INSERT INTO `item_drops` VALUES ('566', '199', '12', '100', '120', '500', '0', '0', '0|0|0|0|0|0|0', '');
 INSERT INTO `item_drops` VALUES ('567', '200', '12', '0', '0', '200', '0', '201', '0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('612', '200', '12', '0', '0', '300', '0', '1388', '0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('610', '200', '12', '0', '0', '350', '0', '660', '0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('611', '200', '12', '0', '0', '400', '0', '661', '0|0|0|0|0|0|0', '');
 INSERT INTO `item_drops` VALUES ('568', '201', '12', '60', '80', '500', '0', '0', '0|0|0|0|0|0|0', '');
 INSERT INTO `item_drops` VALUES ('569', '202', '12', '70', '85', '400', '0', '0', '0|0|0|0|0|0|0', '');
 INSERT INTO `item_drops` VALUES ('570', '203', '12', '95', '115', '300', '0', '0', '0|0|0|0|0|0|0', '');
@@ -644,6 +633,17 @@ INSERT INTO `item_drops` VALUES ('604', '387', '12', '85', '110', '1000', '0', '
 INSERT INTO `item_drops` VALUES ('605', '388', '12', '95', '120', '1000', '0', '0', '0|0|0|0|0|0|0', '');
 INSERT INTO `item_drops` VALUES ('606', '389', '12', '105', '130', '500', '0', '0', '0|0|0|0|0|0|0', '');
 INSERT INTO `item_drops` VALUES ('607', '390', '12', '115', '140', '500', '0', '0', '0|0|0|0|0|0|0', '');
+INSERT INTO `item_drops` VALUES ('609', '184', '12', '0', '0', '600', '0', '44', '0|0|0|0|0|0|0', '');
+INSERT INTO `item_drops` VALUES ('610', '200', '12', '0', '0', '350', '0', '660', '0|0|0|0|0|0|0', '');
+INSERT INTO `item_drops` VALUES ('611', '200', '12', '0', '0', '400', '0', '661', '0|0|0|0|0|0|0', '');
+INSERT INTO `item_drops` VALUES ('612', '200', '12', '0', '0', '300', '0', '1388', '0|0|0|0|0|0|0', '');
+INSERT INTO `item_drops` VALUES ('613', '396', '10', '45', '70', '200', '0', '0', '0|0|0|0|0|0|0', '');
+INSERT INTO `item_drops` VALUES ('614', '395', '10', '55', '80', '200', '0', '0', '0|0|0|0|0|0|0', '');
+INSERT INTO `item_drops` VALUES ('615', '394', '10', '65', '90', '200', '0', '0', '0|0|0|0|0|0|0', '');
+INSERT INTO `item_drops` VALUES ('616', '393', '10', '35', '60', '200', '0', '0', '0|0|0|0|0|0|0', '');
+INSERT INTO `item_drops` VALUES ('617', '392', '10', '45', '70', '200', '0', '0', '0|0|0|0|0|0|0', '');
+INSERT INTO `item_drops` VALUES ('618', '391', '10', '55', '80', '200', '0', '0', '0|0|0|0|0|0|0', '');
+INSERT INTO `item_drops` VALUES ('619', '390', '10', '65', '90', '200', '0', '0', '0|0|0|0|0|0|0', '');
 INSERT INTO `item_drops` VALUES ('620', '101', '10', '2', '15', '3000', '0', '0', '0|0|0|0|0|0|0', '');
 INSERT INTO `item_drops` VALUES ('621', '102', '10', '12', '25', '3000', '0', '0', '0|0|0|0|0|0|0', '');
 INSERT INTO `item_drops` VALUES ('622', '103', '10', '22', '35', '3000', '0', '0', '0|0|0|0|0|0|0', '');
@@ -690,26 +690,44 @@ INSERT INTO `item_drops` VALUES ('662', '280', '10', '100', '150', '100', '0', '
 INSERT INTO `item_drops` VALUES ('663', '281', '10', '120', '170', '80', '0', '0', '0|0|0|0|0|0|0', '');
 INSERT INTO `item_drops` VALUES ('664', '282', '10', '140', '190', '60', '0', '0', '0|0|0|0|0|0|0', '');
 INSERT INTO `item_drops` VALUES ('665', '2', '12', '0', '0', '1', '0', '0', '0|0|0|0|0|0|0', '');
-INSERT INTO `item_drops` VALUES ('9516', '403', '12', '0', '0', '550', '0', '303', '0|0|0|0|0|0|0', 'Santa Lottery');
-INSERT INTO `item_drops` VALUES ('9513', '247', '10', '300', '350', '450', '0', '0', '0|0|0|0|0|0|0', 'Xmas Gift, all maps, all mobs');
-INSERT INTO `item_drops` VALUES ('9514', '248', '10', '300', '350', '450', '0', '0', '0|0|0|0|0|0|0', 'Xmas Gift, all maps, all mobs');
-INSERT INTO `item_drops` VALUES ('9515', '249', '10', '300', '350', '450', '0', '0', '0|0|0|0|0|0|0', 'Xmas Gift, all maps, all mobs');
-INSERT INTO `item_drops` VALUES ('9517', '87', '12', '150', '250', '300', '64', '0', '0|0|0|0|0|0|0', '7th Bindrunes - Marsh');
-INSERT INTO `item_drops` VALUES ('9518', '77', '12', '150', '250', '200', '64', '0', '0|0|0|0|0|0|0', '7th Talismans - Marsh');
-INSERT INTO `item_drops` VALUES ('9519', '1080', '10', '300', '350', '450', '0', '0', '0|0|0|0|0|0|0', 'Valentine Day 2008, all maps, all mobs');
-INSERT INTO `item_drops` VALUES ('9520', '1081', '10', '300', '350', '450', '0', '0', '0|0|0|0|0|0|0', 'St. Patricks Day 2008, all mobs');
+INSERT INTO `item_drops` VALUES ('666', '201', '12', '150', '250', '1500', '66', '0', '202|203|204|205|206|0|0', 'Ruins - Pat Mats');
+INSERT INTO `item_drops` VALUES ('667', '65', '12', '150', '250', '1500', '66', '0', '69|70|0|0|0|0|0', 'Ruins - Chemicals');
+INSERT INTO `item_drops` VALUES ('668', '130', '12', '150', '250', '1500', '66', '0', '20|25|15|198|199|94|95', 'Ruins - misc');
+INSERT INTO `item_drops` VALUES ('669', '91', '12', '150', '250', '1500', '66', '0', '115|133|40|119|18|45|50', 'Ruins - misc');
+INSERT INTO `item_drops` VALUES ('670', '177', '12', '150', '250', '1500', '66', '0', '11|37|9|35|30|0|0', 'Ruins - Misc');
+INSERT INTO `item_drops` VALUES ('672', '421', '8', '150', '250', '1500', '66', '0', '448|350|322|279|251|222|0', 'Ruins - Weapons');
+INSERT INTO `item_drops` VALUES ('673', '184', '8', '150', '250', '1500', '66', '0', '152|121|0|0|0|0|0', 'Ruins - Weapons');
+INSERT INTO `item_drops` VALUES ('674', '44', '2', '150', '250', '30', '66', '0', '74|104|134|0|0|0|0', 'Ruins - Head 180 - All Mobs');
+INSERT INTO `item_drops` VALUES ('675', '44', '3', '150', '250', '30', '66', '0', '74|104|134|0|0|0|0', 'Ruins - Chest 180 - All Mobs');
+INSERT INTO `item_drops` VALUES ('676', '44', '4', '150', '250', '30', '66', '0', '74|104|134|0|0|0|0', 'Ruins - Gloves 180 - All Mobs');
+INSERT INTO `item_drops` VALUES ('677', '44', '5', '150', '250', '30', '66', '0', '74|104|134|0|0|0|0', 'Ruins - Shoes 180 - All Mobs');
 INSERT INTO `item_drops` VALUES ('1000', '304', '11', '0', '0', '60', '0', '1591', '305|306|314|315|316|324|325|326|334|335|336|344|345|346|354|355|356', 'Grade 4 - 6 Gems - MossGolem');
-INSERT INTO `item_drops` VALUES ('9521', '1082', '10', '300', '350', '500', '0', '0', '0|0|0|0|0|0|0', 'Easter 2008, all mobs');
-INSERT INTO `item_drops` VALUES ('1001', '304', '11', '0', '0', '60', '0', '1719', '305|306|314|315|316|324|325|326|334|335|336|344|345|346|354|355|356', 'Grade 4 - 6 Gems - Kera\r\n');
+INSERT INTO `item_drops` VALUES ('1001', '304', '11', '0', '0', '60', '0', '1719', '305|306|314|315|316|324|325|326|334|335|336|344|345|346|354|355|356', 'Grade 4 - 6 Gems - Kera');
 INSERT INTO `item_drops` VALUES ('1002', '304', '11', '0', '0', '60', '0', '1582', '305|306|314|315|316|324|325|326|334|335|336|344|345|346|354|355|356', 'Grade 4 - 6 Gems - IkanessHeavygear');
-INSERT INTO `item_drops` VALUES ('1003', '304', '11', '0', '0', '60', '0', '1571', '305|306|314|315|316|324|325|326|334|335|336|344|345|346|354|355|356', 'Grade 4 - 6 Gems - Sikuku Elite Slaughterer\r\n');
-INSERT INTO `item_drops` VALUES ('9522', '78', '10', '150', '250', '300', '64', '0', '0|0|0|0|0|0|0', '8th Talismans - Marsh');
-INSERT INTO `item_drops` VALUES ('9523', '87', '10', '120', '200', '300', '62', '0', '0|0|0|0|0|0|0', '7th Bindrunes - Shady');
-INSERT INTO `item_drops` VALUES ('9524', '77', '10', '120', '200', '300', '62', '0', '0|0|0|0|0|0|0', '7th Talismans - Shady');
-INSERT INTO `item_drops` VALUES ('9525', '181', '10', '30', '49', '1500', '11', '0', '182|183|184|185|0|0|0', 'Clan Points - JP CF');
-INSERT INTO `item_drops` VALUES ('9526', '181', '10', '50', '69', '1500', '12', '0', '182|183|184|185|0|0|0', 'Clan Points - JP CF');
-INSERT INTO `item_drops` VALUES ('9527', '181', '10', '70', '89', '1500', '13', '0', '182|183|184|185|0|0|0', 'Clan Points - JP CF');
-INSERT INTO `item_drops` VALUES ('9528', '185', '10', '120', '160', '1500', '59', '0', '186|187|188|189|190|0|0', 'Clan Points - Luna CF');
-INSERT INTO `item_drops` VALUES ('9529', '407', '12', '0', '0', '1500', '0', '299', '0|0|0|0|0|0|0', 'Cleanup at Sunshine Coast - Mr Cannie');
-INSERT INTO `item_drops` VALUES ('9530', '407', '12', '0', '0', '1500', '0', '300', '0|0|0|0|0|0|0', 'Cleanup at Sunshine Coast - Mr Baggie');
-INSERT INTO `item_drops` VALUES ('9531', '409', '12', '0', '0', '1500', '0', '0', '0|0|0|0|0|0|0', 'Grand Ballroom Event - Lacrima Drop');
+INSERT INTO `item_drops` VALUES ('1003', '304', '11', '0', '0', '60', '0', '1571', '305|306|314|315|316|324|325|326|334|335|336|344|345|346|354|355|356', 'Grade 4 - 6 Gems - Sikuku Elite Slaughterer');
+INSERT INTO `item_drops` VALUES ('1050', '270', '10', '0', '0', '300', '0', '0', '271|272|273|274|275|276', 'Dirty Items - all maps, all mobs');
+INSERT INTO `item_drops` VALUES ('1051', '280', '10', '0', '0', '900', '0', '0', '281|282', 'Drills - all maps, all mobs');
+INSERT INTO `item_drops` VALUES ('2000', '87', '12', '150', '250', '300', '64', '0', '0|0|0|0|0|0|0', '7th Bindrunes - Marsh');
+INSERT INTO `item_drops` VALUES ('2001', '77', '12', '150', '250', '200', '64', '0', '0|0|0|0|0|0|0', '7th Talismans - Marsh');
+INSERT INTO `item_drops` VALUES ('2002', '78', '10', '150', '250', '300', '64', '0', '0|0|0|0|0|0|0', '8th Talismans - Marsh');
+INSERT INTO `item_drops` VALUES ('2003', '87', '10', '120', '200', '300', '62', '0', '0|0|0|0|0|0|0', '7th Bindrunes - Shady');
+INSERT INTO `item_drops` VALUES ('2004', '77', '10', '120', '200', '300', '62', '0', '0|0|0|0|0|0|0', '7th Talismans - Shady');
+INSERT INTO `item_drops` VALUES ('2005', '78', '10', '150', '250', '300', '66', '0', '0|0|0|0|0|0|0', '8th Talismans - Ruins');
+INSERT INTO `item_drops` VALUES ('2006', '88', '10', '150', '250', '300', '66', '0', '0|0|0|0|0|0|0', '8th Bindrunes - Ruins');
+INSERT INTO `item_drops` VALUES ('3000', '181', '10', '30', '49', '1500', '11', '0', '182|183|184|185|0|0|0', 'Clan Points - JP CF');
+INSERT INTO `item_drops` VALUES ('3001', '181', '10', '50', '69', '1500', '12', '0', '182|183|184|185|0|0|0', 'Clan Points - JP CF');
+INSERT INTO `item_drops` VALUES ('3002', '181', '10', '70', '89', '1500', '13', '0', '182|183|184|185|0|0|0', 'Clan Points - JP CF');
+INSERT INTO `item_drops` VALUES ('3003', '185', '10', '120', '160', '1500', '59', '0', '186|187|188|189|190|0|0', 'Clan Points - Luna CF');
+INSERT INTO `item_drops` VALUES ('9500', '407', '12', '0', '0', '1500', '0', '299', '0|0|0|0|0|0|0', 'Cleanup at Sunshine Coast - Mr Cannie');
+INSERT INTO `item_drops` VALUES ('9501', '407', '12', '0', '0', '1500', '0', '300', '0|0|0|0|0|0|0', 'Cleanup at Sunshine Coast - Mr Baggie');
+INSERT INTO `item_drops` VALUES ('9510', '409', '12', '300', '350', '450', '0', '0', '0|0|0|0|0|0|0', 'Grand Ballroom Event - Lacrima Drop');
+INSERT INTO `item_drops` VALUES ('9520', '1080', '10', '300', '350', '450', '0', '0', '0|0|0|0|0|0|0', 'Valentine Day, all maps, all mobs');
+INSERT INTO `item_drops` VALUES ('9530', '1081', '10', '300', '350', '450', '0', '0', '0|0|0|0|0|0|0', 'St. Patricks Day, all mobs, all mobs');
+INSERT INTO `item_drops` VALUES ('9531', '418', '12', '300', '350', '450', '0', '0', '0|0|0|0|0|0|0', 'St. Patricks Day,  Shamrock, all mobs, all mobs');
+INSERT INTO `item_drops` VALUES ('9540', '1082', '10', '300', '350', '500', '0', '0', '0|0|0|0|0|0|0', 'Easter, all mobs, all mobs');
+INSERT INTO `item_drops` VALUES ('9541', '145', '10', '300', '350', '500', '0', '0', '250|251|0|0|0|0|0', 'Easter, all mobs, all mobs');
+INSERT INTO `item_drops` VALUES ('9550', '247', '10', '300', '350', '450', '0', '0', '0|0|0|0|0|0|0', 'Xmas Gift, all maps, all mobs');
+INSERT INTO `item_drops` VALUES ('9551', '248', '10', '300', '350', '450', '0', '0', '0|0|0|0|0|0|0', 'Xmas Gift, all maps, all mobs');
+INSERT INTO `item_drops` VALUES ('9552', '249', '10', '300', '350', '450', '0', '0', '0|0|0|0|0|0|0', 'Xmas Gift, all maps, all mobs');
+INSERT INTO `item_drops` VALUES ('9553', '416', '12', '300', '350', '450', '0', '0', '0|0|0|0|0|0|0', 'Xmas Event, Snow Crystal, all maps, all mobs');
+INSERT INTO `item_drops` VALUES ('9554', '403', '12', '0', '0', '550', '0', '303', '0|0|0|0|0|0|0', 'Santa Lottery');

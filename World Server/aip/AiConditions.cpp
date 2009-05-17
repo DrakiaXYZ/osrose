@@ -59,22 +59,22 @@ int AI_GetAbility(CCharacter* entity, byte btAbType)
 AICOND(000)
 {
 	//Always False
-	////Log(MSG_DEBUG, "AICOND(000) called");
+	LogDebug( "AICOND(000) called");
 	return AI_FAILURE;
 }
 
 //(Damage > iDamage) == true iDamage cRecvOrGive
 AICOND(001)
 {
-    ////Log(MSG_DEBUG, "AICOND(001) called");
+    LogDebug( "AICOND(001) called");
     GETAICONDDATA(001);
-    ////Log(MSG_DEBUG, "AIcond(001) %i %i %i",data->iDamage,data->cRecvOrGive,entity->damagecounter);
+    LogDebug( "AIcond(001) %i %i %i",data->iDamage,data->cRecvOrGive,entity->damagecounter);
     if(data->cRecvOrGive == 0)
     {
 		if(entity->damagecounter > data->iDamage)
         {
             entity->damagecounter = 0;
-            ////Log(MSG_DEBUG, "AIcond(001) Success ");
+            LogDebug( "AIcond(001) Success ");
             return AI_SUCCESS;}
 	}
     else
@@ -82,7 +82,7 @@ AICOND(001)
 		if(entity->damagecounter < data->iDamage)
         {
             entity->damagecounter = 0;
-            ////Log(MSG_DEBUG, "AIcond(001) Success ");
+            LogDebug( "AIcond(001) Success ");
             return AI_SUCCESS;
         }
 	}
@@ -103,14 +103,14 @@ AICOND(002)
 	//count how many aiobj between nLevelDiff and nLevelDiff2 who is btIsAllied within iDistance
 	//must be >= wChrNum
 
-	////Log(MSG_DEBUG, "AICOND(002) called");
+	LogDebug( "AICOND(002) called");
     GETAICONDDATA(002);
 	dword chrCount = 0;
 	dword eCount = 0;
 	int nearestDistance = 9999999;
 	int searchDistance = data->iDistance;
 	CMap* map = GServer->MapList.Index[entity->Position->Map];
-    ////Log(MSG_DEBUG, "Check Near (1)iDistance %i btIsAllied %i nLevelDiff %i nLevelDiff2 %i wChrNum %i", data->iDistance, data->btIsAllied, data->nLevelDiff, data->nLevelDiff2, data->wChrNum);
+    LogDebug( "Check Near (1)iDistance %i btIsAllied %i nLevelDiff %i nLevelDiff2 %i wChrNum %i", data->iDistance, data->btIsAllied, data->nLevelDiff, data->nLevelDiff2, data->wChrNum);
     if(data->btIsAllied == 1)
     {
     	dword entityCount = map->MonsterList.size();
@@ -144,11 +144,11 @@ AICOND(002)
     else
     {
     	dword entityCount = map->PlayerList.size();
-        ////Log(MSG_DEBUG, "entityCount %i", entityCount);
+        LogDebug( "entityCount %i", entityCount);
         for(UINT j=0;j<map->PlayerList.size();j++)
         {
             CPlayer* other = map->PlayerList.at(j);
-            ////Log(MSG_DEBUG, "player %i", other->clientid);
+            LogDebug( "player %i", other->clientid);
             if(eCount >= entityCount) break;
             ////Log(MSG_INFO, "1");
             if(other == NULL) continue;
@@ -156,10 +156,10 @@ AICOND(002)
             eCount++;
 
     		int levelDiff = (entity->Stats->Level - other->Stats->Level);
-            ////Log(MSG_DEBUG, "levelDiff %i < %i", levelDiff,data->nLevelDiff);
+            LogDebug( "levelDiff %i < %i", levelDiff,data->nLevelDiff);
     		if(levelDiff < data->nLevelDiff) continue;
             ////Log(MSG_INFO, "3");
-            ////Log(MSG_DEBUG, "levelDiff %i > %i", levelDiff,data->nLevelDiff2);
+            LogDebug( "levelDiff %i > %i", levelDiff,data->nLevelDiff2);
     		if(levelDiff > data->nLevelDiff2) continue;
             ////Log(MSG_INFO, "4");
             int iDistance = (int) GServer->distance( other->Position->current, entity->Position->current );
@@ -190,7 +190,7 @@ AICOND(003)
 	//dword iDistance;	//Pos: 0x00
 	//CObjCHAR::Get_MoveDISTANCE > iDistance == true
 	//distance from spawn point?
-	////Log(MSG_DEBUG, "AICOND(003) called");
+	LogDebug( "AICOND(003) called");
     GETAICONDDATA(003);
 
 	entity->UpdatePosition(false);
@@ -208,14 +208,14 @@ AICOND(004)
 	//dword iDistance;	//Pos: 0x00
 	//byte cMoreLess;	//Pos: 0x04
 	//distance to target (cMoreLess == 0 then >= else <=) iDistance
-	////Log(MSG_DEBUG, "AICOND(004) called");
+	LogDebug( "AICOND(004) called");
     GETAICONDDATA(004);
-	////Log(MSG_DEBUG, "AICOND(004) retrieved data");
+	LogDebug( "AICOND(004) retrieved data");
 	CCharacter* target = entity->GetCharTarget( );
     //CWorldEntity* target = entity->thisZone->GetEntity(entity->_TargetID);
 	if(target == NULL)
     {
-        ////Log(MSG_DEBUG, "AICOND(004) found no valid target");
+        LogDebug( "AICOND(004) found no valid target");
         return AI_FAILURE;
     }
 	target->UpdatePosition(false);
@@ -226,7 +226,7 @@ AICOND(004)
     {
 		if(distance >= data->iDistance)
         {
-            ////Log(MSG_DEBUG, "Check Distance (2) This distance: %i > %i", distance, data->iDistance);
+            LogDebug( "Check Distance (2) This distance: %i > %i", distance, data->iDistance);
             return AI_SUCCESS;
         }
 	}
@@ -234,7 +234,7 @@ AICOND(004)
     {
 		if(distance <= data->iDistance)
         {
-            ////Log(MSG_DEBUG, "Check Distance (2) This distance: %i < %i", distance, data->iDistance);
+            LogDebug( "Check Distance (2) This distance: %i < %i", distance, data->iDistance);
             return AI_SUCCESS;
         }
 	}
@@ -249,7 +249,7 @@ AICOND(005)
 	dword iDiff;	//Pos: 0x04
 	byte cMoreLess;	//Pos: 0x08
 	*/
-	////Log(MSG_DEBUG, "AICOND(005) called");
+	LogDebug( "AICOND(005) called");
     GETAICONDDATA(005);
 
 	//cAbType
@@ -261,15 +261,15 @@ AICOND(005)
 	//5 = Charm
 
 	//Check if "ability" (cMoreLess == 0 then >= else <=) iDiff
-	////Log(MSG_DEBUG, "Check AB (1)");
+	LogDebug( "Check AB (1)");
 	int value = AI_GetAbility(entity, data->cAbType);
-    ////Log(MSG_DEBUG, "Check AB (1) type %i diff %i", data->cAbType, data->iDiff);
+    LogDebug( "Check AB (1) type %i diff %i", data->cAbType, data->iDiff);
 	if(value < 0) return AI_FAILURE;
 	if(data->cMoreLess == 0)
     {
 		if(value > data->iDiff)
         {
-            ////Log(MSG_DEBUG, "Check AB (1) > %i", data->iDiff);
+            LogDebug( "Check AB (1) > %i", data->iDiff);
             return AI_SUCCESS;
         }
 	}
@@ -277,7 +277,7 @@ AICOND(005)
     {
 		if(value < data->iDiff)
         {
-            ////Log(MSG_DEBUG, "Check AB (1) < %i", data->iDiff);
+            LogDebug( "Check AB (1) < %i", data->iDiff);
             return AI_SUCCESS;
         }
 	}
@@ -290,10 +290,10 @@ AICOND(006)
 	//dword wHP;	//Pos: 0x00
 	//byte cMoreLess;	//Pos: 0x04
 	//Check if hp% (cMoreLess == 0 then >= else <=) wHP
-	////Log(MSG_DEBUG, "AICOND(000) called");
+	LogDebug( "AICOND(000) called");
     GETAICONDDATA(006);
 	dword value = (dword) (((float)entity->Stats->HP/ (float)entity->Stats->MaxHP) * 100.0f);
-    ////Log(MSG_DEBUG, "Check HP %i %i", data->cMoreLess, value);
+    LogDebug( "Check HP %i %i", data->cMoreLess, value);
 	if(data->cMoreLess == 0)
     {
 		if(value >= data->wHP) return AI_SUCCESS;
@@ -310,7 +310,7 @@ AICOND(007)
 {
 	//byte cPercent;	//Pos: 0x00
 	//Random number 0->100 if random number < cPercent then return true
-	//////Log(MSG_DEBUG, "AICOND(007) called");
+	LogDebug( "AICOND(007) called");
     GETAICONDDATA(007);
     //byte rand = rg.IRandom(0, 100) & 0xFF;
     //srand(time(NULL));
@@ -318,7 +318,7 @@ AICOND(007)
 
     //LMA: TEST.
     /*if(entity->Position->Map==59)
-        Log(MSG_DEBUG, "AICOND(007) brand =  %i chance = %i (brand<chance=>success)", brand, data->cPercent);*/
+        LogDebug( "AICOND(007) brand =  %i chance = %i (brand<chance=>success)", brand, data->cPercent);*/
     //END TEST
 
 	if(brand < data->cPercent) return AI_SUCCESS;
@@ -335,7 +335,7 @@ AICOND(008)
 
 	//find atleast 1 aiobj between nLevelDiff and nLevelDiff2 who is btIsAllied within iDistance
 
-	////Log(MSG_DEBUG, "AICOND(008) called");
+	LogDebug( "AICOND(008) called");
     GETAICONDDATA(008);
 
 	dword eCount = 0;
@@ -419,7 +419,7 @@ AICOND(010)
     //CWorldEntity* target = entity->thisZone->GetEntity(entity->_TargetID);
     CCharacter* target = entity->GetCharTarget( );
 	if(target == NULL) return AI_FAILURE;
-    ////Log(MSG_DEBUG, "Check AB (2) type %i ", data->cAbType);
+    LogDebug( "Check AB (2) type %i ", data->cAbType);
 	int myValue = AI_GetAbility(entity, data->cAbType);
 	if(myValue < 0) return AI_FAILURE;
 
@@ -450,17 +450,17 @@ AICOND(011)
 	CCharacter* target = entity->GetCharTarget( );
 	if(target == NULL)
     {
-        ////Log(MSG_DEBUG,"AICOND(011) could not find a valid target");
+        LogDebug("AICOND(011) could not find a valid target");
         return AI_FAILURE;
     }
 	int myValue = AI_GetAbility(target, data->cAbType);
-    ////Log(MSG_DEBUG, "AICOND(011) myValue: %i <> tValue: %i moreless: %i type: %i",myValue,tValue,data->cMoreLess,data->cAbType);
+    LogDebug( "AICOND(011) myValue: %i <> tValue: %i moreless: %i type: %i",myValue,tValue,data->cMoreLess,data->cAbType);
 	if(data->cMoreLess == 0) //0 = more
     {
 
         if(myValue >= tValue)
         {
-            ////Log(MSG_DEBUG, "AICOND(011) myValue: %i <= tValue: %i ",myValue,tValue);
+            LogDebug( "AICOND(011) myValue: %i <= tValue: %i ",myValue,tValue);
             return AI_SUCCESS;
         }
 	}
@@ -468,7 +468,7 @@ AICOND(011)
     {
         if(myValue <= tValue)
         {
-            ////Log(MSG_DEBUG, "AICOND(011) myValue: %i <= tValue: %i ",myValue,tValue);
+            LogDebug( "AICOND(011) myValue: %i <= tValue: %i ",myValue,tValue);
             return AI_SUCCESS;
         }
 	}
@@ -480,7 +480,7 @@ AICOND(012)
 {
 	//byte cWhen;	//Pos: 0x00
 	//Is it night or day? cWhen: ?1 = night 0 = day?
-	////Log(MSG_DEBUG,"Is it night or day?");
+	LogDebug("Is it night or day?");
 	GETAICONDDATA(012);
 	CMap* map = GServer->MapList.Index[entity->Position->Map];
 	if (data->cWhen == 1)
@@ -522,12 +522,12 @@ AICOND(013)
     }
     else  //should never be anything other than 0 or 1
     {
-        ////Log(MSG_DEBUG, "AICOND(013) Check Target (1) btCheckTarget %i ", data->btCheckTarget);
+        LogDebug( "AICOND(013) Check Target (1) btCheckTarget %i ", data->btCheckTarget);
         return AI_FAILURE;
     }
     if (target == NULL) //target not found
     {
-       ////Log(MSG_DEBUG, "AICOND(013) Check Target (1) not found btCheckTarget %i ", data->btCheckTarget);
+       LogDebug( "AICOND(013) Check Target (1) not found btCheckTarget %i ", data->btCheckTarget);
        return AI_FAILURE;
     }
 
@@ -539,7 +539,7 @@ AICOND(013)
     {
         buffs = GServer->BuildDeBuffs(target);
     }
-    ////Log(MSG_DEBUG, "Target: %i btStutusType: %i buffs: %i btHave: %i", target->clientid, data->btStatusType, buffs, data->btHave);
+    LogDebug( "Target: %i btStutusType: %i buffs: %i btHave: %i", target->clientid, data->btStatusType, buffs, data->btHave);
     if (data->btHave == 1) //True if HAS buffs
     {
        if(buffs != 0)return AI_SUCCESS;
@@ -551,7 +551,7 @@ AICOND(013)
        return AI_SUCCESS;
     }
 	//CCharacter* target = entity->GetCharTarget( );
-	////Log(MSG_DEBUG, "Check Target (1) shouldn't be able to get this far");
+	LogDebug( "Check Target (1) shouldn't be able to get this far");
 	return AI_SUCCESS;
 	//return AI_FAILURE;
 }
@@ -560,8 +560,8 @@ AICOND(013)
 AICOND(014)
 {
 	GETAICONDDATA(014);
-	////Log(MSG_DEBUG,"Checking Object Variable using NPC ref number AICOND(014)");
-	//Log(MSG_DEBUG,"AIC14, btVarIDX = %i, iValue = %i, btOp = %i",data->btVarIDX, data->iValue,data->btOp);
+	LogDebug("Checking Object Variable using NPC ref number AICOND(014)");
+	//LogDebug("AIC14, btVarIDX = %i, iValue = %i, btOp = %i",data->btVarIDX, data->iValue,data->btOp);
 
 	//Log(MSG_INFO,"AIC14 [%i] ?%i? %i",data->btVarIDX,data->btOp,data->iValue);
 
@@ -572,7 +572,8 @@ AICOND(014)
 	int ObjvarIndex = data->btVarIDX;
 
 	int tempval = GServer->ObjVar[refNPC][ObjvarIndex];
-	//Log(MSG_DEBUG,"AIC(014) Retrieved ObjVar[%i]=%i successfully NPC %i",ObjvarIndex,tempval,monster->thisnpc->refNPC);
+	LogDebug("AIC014:: test ObjVar[%i][%i] ?%i? %i (is now %i)",monster->thisnpc->refNPC,ObjvarIndex,data->btOp,data->iValue,tempval);
+
 	switch(data->btOp)
 	{
         case 0:
@@ -639,11 +640,13 @@ AICOND(016)
 AICOND(017)
 {
 	GETAICONDDATA(017);
-	//Log(MSG_DEBUG,"Setting NPC ref number AICOND(017) to %i",data->iNpcNo);
+	LogDebug("Setting NPC ref number AICOND(017) to %i",data->iNpcNo);
 	CMonster* monster = reinterpret_cast<CMonster*>(entity);
 	if(monster == NULL) return AI_FAILURE;
 	monster->thisnpc->refNPC = data->iNpcNo; // sets the reference variable for the correct ObjVar
-    //Log(MSG_DEBUG,"AICOND(017) Set NPC ref number %i", monster->thisnpc->refNPC);
+    LogDebug("AICOND(017) Set NPC ref number %i", monster->thisnpc->refNPC);
+
+
 	return AI_SUCCESS;
 }
 
@@ -656,13 +659,13 @@ AICOND(018)
 	//Distance to "CALLER" ??Possibly the one who summoned the monster??
 	GETAICONDDATA(018);
 		if(!entity->IsMonster( )) return AI_FAILURE;
-    //Log(MSG_DEBUG, "AICOND(018 1)");
+    LogDebug( "AICOND(018 1)");
 	CMonster* thisMonster = reinterpret_cast<CMonster*>(entity);
 	CMap* map = GServer->MapList.Index[thisMonster->Position->Map];
 	CCharacter* caller = map->GetCharInMap( thisMonster->owner );
 	//if(caller == NULL) return AI_FAILURE; // I think this is wrong. It should return true if there is no owner. Otherwise orphaned bonfires will live forever
     if(caller == NULL) return AI_SUCCESS;
-    ////Log(MSG_DEBUG, "AICOND(018 2)");
+    LogDebug( "AICOND(018 2)");
     //if(entity->_EntityType != ENTITY_MONSTER) return AI_FAILURE;
     //CMonster* thisMonster = reinterpret_cast<CMonster*>(entity);
     //CWorldEntity* caller = thisMonster->thisZone->GetEntity(thisMonster->_CallerID);
@@ -671,9 +674,9 @@ AICOND(018)
 	thisMonster->UpdatePosition(thisMonster->stay_still);
 	int distance = (int)GServer->distance( caller->Position->current, thisMonster->Position->current );
     //int distance = thisMonster->basic.pos.distance(caller->basic.pos);
-    //Log(MSG_DEBUG, "AICOND(018 3)");
+    LogDebug( "AICOND(018 3)");
 	if(OperateValues<int>(data->btOp, &distance, data->iDistance)) return AI_SUCCESS;
-    //Log(MSG_DEBUG, "AICOND(018 4)");
+    LogDebug( "AICOND(018 4)");
 	return AI_FAILURE;
 }
 
@@ -709,11 +712,29 @@ AICOND(020)
 	//4 = HP
 	//5 = Charm
 	GETAICONDDATA(020);
+
+	//LMA: in some occasions, the monster tests itselfs (when it's ==).
+	if(data->btOp==0)
+	{
+	    int value = AI_GetAbility(entity, data->btAbType);
+
+	    //LMA: TODO: test, special cases for hatchling...
+	    if (entity->char_montype==662)
+	    {
+	        value=100;
+	    }
+
+	    Log(MSG_WARNING,"AIC4:: %i %i %i, value %i",data->btOp,data->btAbType, data->iValue,value);
+	    if(value < 0) return AI_FAILURE;
+	    if(OperateValues<int>(data->btOp, &value, data->iValue)) return AI_SUCCESS;
+	    return AI_SUCCESS;
+	}
+
 	CCharacter* target = NULL;
 	target = entity->GetCharTarget( );
 	if(target == NULL)
 	    return AI_FAILURE;
-    ////Log(MSG_DEBUG, "Check AB (4) type %i iValue %i", data->btAbType, data->iValue);
+    LogDebug( "Check AB (4) type %i iValue %i", data->btAbType, data->iValue);
 	int value = AI_GetAbility(target, data->btAbType);
 	if(value < 0) return AI_FAILURE;
 	if(OperateValues<int>(data->btOp, &value, data->iValue)) return AI_SUCCESS;
@@ -727,16 +748,16 @@ AICOND(021)
 	//Do i have a "CALLER" ??Possibly the one who summoned the monster??
 	// more like Am I an orphan
 	GETAICONDDATA(021);
-    ////Log(MSG_DEBUG, "AICOND(021) Do i have a 'CALLER'");
+    LogDebug( "AICOND(021) Do i have a 'CALLER'");
 
 	if(!entity->IsMonster())return AI_SUCCESS;
     CMonster* thisMonster = reinterpret_cast<CMonster*>(entity);
-    ////Log(MSG_DEBUG, "AICOND(021) Checking now");
+    LogDebug( "AICOND(021) Checking now");
     //if(entity->_EntityType != ENTITY_MONSTER) return AI_FAILURE;
     //CMonster* thisMonster = reinterpret_cast<CMonster*>(entity);
     //CWorldEntity* caller = thisMonster->thisZone->GetEntity(thisMonster->_CallerID);
 	if(thisMonster->owner == 0) return AI_SUCCESS;
-    ////Log(MSG_DEBUG, "AICOND(021) Yes I am an orphan");
+    LogDebug( "AICOND(021) Yes I am an orphan");
 	return AI_FAILURE;
 }
 
@@ -744,31 +765,104 @@ AICOND(021)
 AICOND(022)
 {
 	//Does my "CALLER" have a target?
-    ////Log(MSG_DEBUG, "AICOND(022) Does my `CALLER` have a target?");
+    LogDebug( "AICOND(022) Does my `CALLER` have a target?");
 	GETAICONDDATA(022);
 
 	if(!entity->IsMonster( )) return AI_FAILURE;
-    ////Log(MSG_DEBUG, "AICOND(022 1)");
+    LogDebug( "AICOND(022 1)");
 	CMonster* thisMonster = reinterpret_cast<CMonster*>(entity);
 	CMap* map = GServer->MapList.Index[thisMonster->Position->Map];
 	CCharacter* caller = map->GetCharInMap( thisMonster->owner );
 	if(caller == NULL) return AI_FAILURE;
-    ////Log(MSG_DEBUG, "AICOND(022 2)");
+    LogDebug( "AICOND(022 2)");
 	CCharacter* target = map->GetCharInMap(caller->Battle->target);
-	if(target == entity) return AI_FAILURE;
+	if(target == NULL||target == entity) return AI_FAILURE;
 
 	//LMA: Summon won't attack his master :) would be bad ^_^
-	//LMA: monster can't attack another summon if it belongs to the same player...
-	if (target!=NULL&&entity->IsSummon())
+	//monster can't attack another summon if it belongs to the same player.
+	//monster can't attack allies.
+	if (entity->IsSummon()&&caller->IsPlayer())
 	{
-	    if((thisMonster->owner==target->clientid)||(thisMonster->owner==target->char_owner)) return AI_FAILURE;
+	    if((thisMonster->owner==target->clientid)||(thisMonster->owner==target->char_owner))
+	    {
+	        return AI_FAILURE;
+	    }
+
+	    //LMA: non pvp map...
+	    if (map->allowpvp==0&&(!target->IsMonster()))
+	    {
+	        return AI_FAILURE;
+	    }
+
 	    //LMA: pvp map...
-	    if (map->allowpvp==0&&(!target->IsMonster())) return AI_FAILURE;
+	    if(map->allowpvp!=0)
+	    {
+	        if (target->IsMonster())
+	        {
+	            //Do they have the same team ID?
+	            CMonster* thisTarget = reinterpret_cast<CMonster*>(target);
+	            if(thisMonster->team==thisTarget->team)
+	            {
+	                Log(MSG_INFO,"Monster %i is friend to monster %i (same team %i)",thisMonster->montype,thisTarget->montype,thisMonster->team);
+	                return AI_FAILURE;
+	            }
+
+	        }
+	        else if (target->IsPlayer())
+	        {
+	            //Are they on the same team?
+	            CPlayer* thisTarget = reinterpret_cast<CPlayer*>(target);
+	            CPlayer* thisPlayer = reinterpret_cast<CPlayer*>(caller);
+	            if(thisMonster->team==thisTarget->pvp_id)
+	            {
+	                Log(MSG_INFO,"Monster %i is friend to %s (same team %i as caller %s)",thisMonster->montype,thisTarget->CharInfo->charname,thisMonster->team,thisPlayer->CharInfo->charname);
+	                return AI_FAILURE;
+	            }
+
+	            //in the same party?
+	            if (thisTarget->Party->party!=NULL&&thisPlayer->Party->party!=NULL)
+	            {
+	                if(thisTarget->Party->party==thisPlayer->Party->party)
+	                {
+	                    Log(MSG_INFO,"Monster %i is friend to %s (in party with caller %s)",thisMonster->montype,thisTarget->CharInfo->charname,thisPlayer->CharInfo->charname);
+	                    return AI_FAILURE;
+	                }
+
+	            }
+
+
+	        }
+	        else
+	        {
+	            Log(MSG_WARNING,"Weird case, target is something else, chartype %i",target->CharType);
+	            return AI_FAILURE;
+	        }
+
+	    }
+
+	    Log(MSG_INFO,"Monster %i sees caller's master target",thisMonster->montype);
+	}
+	else if(!entity->IsSummon()&&caller->IsMonster())
+	{
+	    //LMA: some monsters have a monster as a master (mini warbiz for example).
+	    if (target->IsMonster())
+	    {
+	        Log(MSG_INFO,"A monster can't target a monster");
+	        return AI_FAILURE;
+	    }
+
+	    Log(MSG_INFO,"Monster %i sees monster's master target",thisMonster->montype);
+	}
+	else
+	{
+	    Log(MSG_WARNING,"AIP CDT022: Weird case");
+	    return AI_FAILURE;
 	}
 
-	if(target != NULL) return AI_SUCCESS;
-    ////Log(MSG_DEBUG, "AICOND(022 3)");
-	return AI_FAILURE;
+    LogDebug( "AICOND(022 3)");
+
+
+	return AI_SUCCESS;
 }
 
 //Check Time (3) (Game map time?)
@@ -786,6 +880,7 @@ AICOND(024)
 {
 	GETAICONDDATA(024);
 
+
     SYSTEMTIME sTIME;
     GetLocalTime(&sTIME);
 
@@ -798,9 +893,113 @@ AICOND(024)
     word wFrom = (data->btHour1 * 60) + data->btMin1;
     word wTo = (data->btHour2 * 60) + data->btMin2;
 
-    //Log(MSG_INFO,"AIC24 time h(%i>=%i>=%i) m(%i>=%i>=%i)",data->btHour2,sTIME.wHour,data->btHour1,data->btMin2,sTIME.wMinute,data->btMin1);
+    //LMA: Trick to Force UW...
+    if(GServer->UWForceFrom!=0)
+    {
+        SYSTEMTIME TimeFrom;
+        SYSTEMTIME TimeTo;
+        TimeFrom.wHour=0;
+        TimeFrom.wMinute=0;
+        TimeFrom.wSecond=0;
+        TimeTo.wHour=0;
+        TimeTo.wMinute=0;
+        TimeTo.wSecond=0;
+
+        //We only use the "00:28:00" slot.
+        int delay[6];
+        delay[0]=0;     //+0
+        delay[1]=31;    //+31
+        delay[2]=42;    //+11
+        delay[3]=52;    //+10
+        delay[4]=57;    //+5
+        delay[5]=61;    //+4
+        word from=0;
+        word to=0;
+        bool is_ok=false;
+
+        //0 is fine.
+        for (int k=0;k<12;k++)
+        {
+            if(k==0)
+            {
+                for (int j=0;j<6;j++)
+                {
+                    TimeFrom.wMinute=28+delay[j];
+                    TimeTo.wHour=TimeFrom.wHour;
+                    TimeTo.wMinute=TimeFrom.wMinute+1;
+                    from = ((TimeFrom.wHour * 60) + TimeFrom.wMinute);
+                    to = ((TimeTo.wHour * 60) + TimeTo.wMinute);
+
+                    LogDebug("testing time [%i:%i:00;%i:%i:00] (index %i)",data->btHour1,data->btMin1,data->btHour2,data->btMin2,j);
+
+                    if(wFrom==from&&wTo==to)
+                    {
+                        //We take TimeFrom and TomeTo as temp var.
+                        TimeFrom.wHour=0;
+                        TimeFrom.wMinute=0;
+                        TimeFrom.wSecond=0;
+                        TimeTo.wHour=0;
+                        TimeTo.wMinute=0;
+                        TimeTo.wSecond=0;
+                        TimeFrom.wMinute=GServer->UWForceFrom+delay[j];
+                        TimeTo.wMinute=TimeFrom.wMinute+1;
+
+                        wFrom = ((TimeFrom.wHour * 60) + TimeFrom.wMinute);
+                        wTo = ((TimeTo.wHour * 60) + TimeTo.wMinute);
+
+                        //We found something ok...
+                        int temph=wFrom/60;
+                        int tempm=wFrom-temph*60;
+                        int temph1=wTo/60;
+                        int tempm1=wTo-temph1*60;
+                        LogDebug("We changed time from [%i:%i:00;%i:%i:00] to [%i:%i:00;%i:%i:00] (index %i)",data->btHour1,data->btMin1,data->btHour2,data->btMin2,temph,tempm,temph1,tempm1,j);
+                        is_ok=true;
+                        break;
+                    }
+
+                }
+
+            }
+
+            if (is_ok)
+                break;
+
+            for (int j=0;j<6;j++)
+            {
+                TimeFrom.wHour=k*2;
+                TimeFrom.wMinute=28+delay[j];
+                TimeTo.wHour=TimeFrom.wHour;
+                TimeTo.wMinute=TimeFrom.wMinute+1;
+                from = ((TimeFrom.wHour * 60) + TimeFrom.wMinute);
+                to = ((TimeTo.wHour * 60) + TimeTo.wMinute);
+
+                if(wFrom==from&&wTo==to)
+                {
+                    LogDebug("We rejected UW time [%i:%i:00;%i:%i:00], hour %i, index %i",data->btHour1,data->btMin1,data->btHour2,data->btMin2,k,j);
+                    return AI_FAILURE;
+                }
+
+            }
+
+        }
+
+    }
+    //END of trick
+
+    int temph=wFrom/60;
+    int tempm=wFrom-temph*60;
+    int temph1=wTo/60;
+    int tempm1=wTo-temph1*60;
+
+    //LogDebug("AIC24 time h(%i>=%i>=%i)? m(%i>=%i>=%i)?",data->btHour2,sTIME.wHour,data->btHour1,data->btMin2,sTIME.wMinute,data->btMin1);
+    LogDebug("AIC24 time h(%i>=%i>=%i)? m(%i>=%i>=%i)?",temph1,sTIME.wHour,temph,tempm1,sTIME.wMinute,tempm);
     if(wMin >= wFrom && wMin <= wTo)
+    {
+        LogDebug("Time check success");
     	return AI_SUCCESS;
+    }
+
+    LogDebug("Time check failure");
 	return AI_FAILURE;
 }
 
@@ -825,8 +1024,10 @@ AICOND(026)
 {
 	GETAICONDDATA(026);
 	//channel >= min && channel <= max
-	//return AI_SUCCESS;
-	return AI_FAILURE;
+
+	//LMA: Success for now ;)
+	return AI_SUCCESS;
+	//return AI_FAILURE;
 }
 
 //Check Near Character
@@ -919,6 +1120,9 @@ AICOND(028)
 	CMonster* thisMonster = reinterpret_cast<CMonster*>(entity);
 	if(data->nVarIDX >19)return AI_FAILURE;
     UINT tempval = thisMonster->AIVar[data->nVarIDX];
+
+    LogDebug("AIC028:: check var[%i] ?%i? %i (is %i now)",data->nVarIDX,data->btOp,data->iValue,tempval);
+
 	switch(data->btOp)
 	{
         case 0:
@@ -958,13 +1162,39 @@ AICOND(029)
 	//byte btTargetType;	//Pos: 0x00
 	//UNKNOWN :@
 	GETAICONDDATA(029);
-	////Log(MSG_DEBUG,"aicon 029 check target type %i",data->btTargetType);
+	LogDebug("aicon 029 check target type %i",data->btTargetType);
 	return AI_FAILURE;
 }
 
-//Unknown
+//LMA: Timer since spawn (seconds).
 AICOND(030)
 {
+    GETAICONDDATA(030);
+    CMonster* thisMonster = reinterpret_cast<CMonster*>(entity);
+    if(thisMonster==NULL)
+    {
+        return AI_FAILURE;
+    }
+
+    if(thisMonster->IsSummon()&&thisMonster->life_time!=data->Timer)
+    {
+        thisMonster->life_time=data->Timer;
+        //Log(MSG_INFO,"Setting life time for monster %i to %u",thisMonster->montype,thisMonster->life_time);
+    }
+
+    clock_t diff_time=clock()-thisMonster->SpawnTime;
+
+    if(diff_time>=(data->Timer*CLOCKS_PER_SEC))
+    {
+        LogDebug("AIC030:: timer ok %u>=%u",diff_time,data->Timer*CLOCKS_PER_SEC);
+        return AI_SUCCESS;
+    }
+    else
+    {
+        LogDebug("AIC030:: timer NOT ok %u<%u",diff_time,data->Timer*CLOCKS_PER_SEC);
+    }
+
+
 	return AI_FAILURE;
 }
 

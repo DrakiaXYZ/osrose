@@ -39,6 +39,8 @@ class CAip
     	SAipDatum** Conditions;
 
     	dword ActionCount;
+    	int offset_ltb;
+    	int offset_qsd_trigger;
     	SAipDatum** Actions;
     	int AipVar;
     private:

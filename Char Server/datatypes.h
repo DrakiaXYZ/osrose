@@ -1,6 +1,6 @@
 /*
     Open Source Rose Online Team - http://www.dev-osrose.com
-    note: the Server is develop with erose source server + eich source        
+    note: the Server is develop with erose source server + eich source
 */
 #ifndef __ROSE_DATATYPES__
 #define __ROSE_DATATYPES__
@@ -50,7 +50,7 @@ struct CClans
     unsigned int siglogo;       //LMA: logos.
     int back;
     int grade;
-    int cp;  
+    unsigned int cp;
     char name[17];
     char slogan[30];
     char news[260];
@@ -61,9 +61,9 @@ struct CClans
 // Channel list
 struct CChanels
 {
-    UINT id;    
+    UINT id;
     char* ip;
-    UINT port;    
+    UINT port;
     SOCKET sock;
 };
 #endif

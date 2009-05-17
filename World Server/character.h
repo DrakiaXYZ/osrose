@@ -44,10 +44,13 @@ class CCharacter
         int last_coords;
         STATS *Stats;
         POSITION *Position;
+        UWPOSITION *UWPosition;  //LMA: Special Position, used for UW mainly.
         BATTLE* Battle;
         STATUS* Status;
         MAGICSTATUS MagicStatus[30];
         int AIVar[20];  //LMA: AIP.
+
+        int pvp_status; //LMA: pvp status (used by maps qsd warp mainly)
 
         //LMA: for AIP.
         CNPC* refnpc;
@@ -68,6 +71,7 @@ class CCharacter
         void UseAtkSkill( CCharacter* Enemy, CSkills* skill, bool deBuff= false );
         bool UseSkill( CSkills* skill, CCharacter *Target = NULL ); //for gm command
         bool TakeExp( CCharacter *Target ); //taking exp from a dead player.
+        void UWKill(CCharacter* Enemy); //LMA: Union War kill.
 
         //functions
         bool IsMonster( );

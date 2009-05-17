@@ -124,7 +124,7 @@ PVOID MapProcess( PVOID TS )
 
                     if(monster->Stats->HP<0)
                     {
-                        Log(MSG_INFO,"A monster %i is dead in map %i (position->Map %i)",monster->montype,map->id,monster->Position->Map);
+                        //Log(MSG_INFO,"A monster %i is dead in map %i (position->Map %i)",monster->montype,map->id,monster->Position->Map);
                     }
 
                     //LMA: AIP CODE
@@ -133,7 +133,7 @@ PVOID MapProcess( PVOID TS )
                     {
                         if(1000 < (UINT)GServer->round((clock( ) - monster->lastAiUpdate)))
                         {
-                            //Log(MSG_DEBUG,"DoAIP mainprocess monster loop %i",monster->thisnpc->AI);
+                            //LogDebug("DoAIP mainprocess monster loop %i",monster->thisnpc->AI);
                             monster->hitcount = 0;
                             monster->DoAi(monster->thisnpc->AI, 0);
                             monster->lastAiUpdate=clock();
@@ -230,7 +230,7 @@ PVOID MapProcess( PVOID TS )
                         //monster->DoAttack( );
                         if(2000<(UINT)GServer->round((clock( ) - monster->lastAiUpdate)))
                         {
-                            //Log(MSG_DEBUG,"DoAIP mainprocess monster on battle %i,2",monster->thisnpc->AI);
+                            //LogDebug("DoAIP mainprocess monster on battle %i,2",monster->thisnpc->AI);
 
                             if(!monster->IsBonfire())
                             {
@@ -264,7 +264,7 @@ PVOID MapProcess( PVOID TS )
                     {
                         if(2000<(UINT)GServer->round((clock( ) - monster->lastAiUpdate)))
                         {
-                            //Log(MSG_DEBUG,"DoAIP mainprocess monster iddle? %i,1",monster->thisnpc->AI);
+                            //LogDebug("DoAIP mainprocess monster iddle? %i,1",monster->thisnpc->AI);
                             monster->DoAi(monster->thisnpc->AI, 1);
                             monster->lastAiUpdate = clock();
                         }
@@ -302,8 +302,33 @@ PVOID MapProcess( PVOID TS )
 
                     if(monster->IsDead( ))
                     {
-                        Log(MSG_DEBUG,"DoAIP mainprocess monster is dead %i",monster->thisnpc->AI);
-                        monster->DoAi(monster->thisnpc->AI, 5);
+                        //LMA: we do it only if the monster didn't commit suicide, for Chief Turak for now...
+                        if(monster->montype!=1830)
+                        {
+                            LogDebugPriority(3);
+                            LogDebug("DoAIP mainprocess monster %u is dead %i",monster->montype,monster->thisnpc->AI);
+                            LogDebugPriority(4);
+                            monster->DoAi(monster->thisnpc->AI, 5);
+
+                        }
+                        else
+                        {
+                            if(monster->suicide)
+                            {
+                                LogDebugPriority(3);
+                                LogDebug("We DON'T DoAIP mainprocess monster %u is dead %i, because chief turak committed suicide.",monster->montype,monster->thisnpc->AI);
+                                LogDebugPriority(4);
+                            }
+                            else
+                            {
+                                LogDebugPriority(3);
+                                LogDebug("DoAIP mainprocess monster chief turak %u is dead %i",monster->montype,monster->thisnpc->AI);
+                                LogDebugPriority(4);
+                                monster->DoAi(monster->thisnpc->AI, 5);
+                            }
+
+                        }
+
                         monster->OnDie( );
                     }
 
@@ -327,8 +352,57 @@ PVOID MapProcess( PVOID TS )
 
                 if(npc->thisnpc->AI != 0)
                 {
-                     if(60000<(UINT)GServer->round((clock( ) - npc->lastAiUpdate))) //check every minute. Conditions seem to be based on 6 minute segments
+                    //check every minute. Conditions seem to be based on 6 minute segments
+                    //LMA: untrue for some NPCs, special case for UW...
+                    bool is_time_ok=false;
+                    int delay=60000;    //each AIP 60 seconds.
+
+                    //Leum, for Union War.
+                    if(npc->npctype==1113&&GServer->ObjVar[1113][1]>0)
+                    {
+                        //LogDebug("Doing an update for Leum each 10 seconds since UW is on");
+                        delay=10000;
+                    }
+
+                    //Walls for map 66
+                    if(npc->npctype>=1024&&npc->npctype<=1027&&GServer->ObjVar[1249][2]>0&&GServer->ObjVar[1249][2]<=90)
+                    {
+                        //LogDebug("Doing an update for Wall %i each second quest from Hope is on",npc->npctype);
+                        delay=1000;
+                    }
+
+                    //Hope map 66
+                    if(npc->npctype==1249&&GServer->ObjVar[1249][2]>0&&GServer->ObjVar[1249][2]<=90)
+                    {
+                        //LogDebug("Doing an update for Hope each 10 seconds quest from Hope is on",npc->npctype);
+                        delay=10000;
+                    }
+
+                    //LMA END
+
+                     //if(60000<(UINT)GServer->round((clock( ) - npc->lastAiUpdate)))
+                     //if(is_time_ok)
+                     if(delay<(UINT)GServer->round((clock( ) - npc->lastAiUpdate)))
                      {
+
+                        //Walls for map 66
+                        if(npc->npctype>=1024&&npc->npctype<=1027&&GServer->ObjVar[1249][2]>0&&GServer->ObjVar[1249][2]<=90)
+                        {
+                            Log(MSG_WARNING,"Doing an update for Wall %i each second quest from Hope is on",npc->npctype);
+                        }
+
+                        //Hope map 66
+                        if(npc->npctype==1249&&GServer->ObjVar[1249][2]>0&&GServer->ObjVar[1249][2]<=90)
+                        {
+                            Log(MSG_WARNING,"Doing an update for Hope each 10 seconds quest from Hope is on",npc->npctype);
+                        }
+                         //Log(MSG_INFO,"Doing AIP for NPC %i",npc->npctype);
+
+                         //LMA: Debug Log
+                         /*LogDebugPriority(3);
+                         LogDebug("We do AIP for NPC %i",npc->npctype);
+                         LogDebugPriority(4);*/
+
                          CNPCData* thisnpc = GServer->GetNPCDataByID( npc->npctype );
                          if(thisnpc == NULL)
                          {
@@ -343,13 +417,17 @@ PVOID MapProcess( PVOID TS )
 
                          int lma_previous_eventID=npc->thisnpc->eventid;
                          //Log(MSG_INFO,"XCIDAIBEGIN NPC %i map %i cid %i",npc->npctype,map->id,npc->clientid);
+
                          monster->DoAi(monster->thisnpc->AI, 1);
                          //Log(MSG_INFO,"XCIDAIEND NPC %i map %i cid %i",npc->npctype,map->id,npc->clientid);
 
                          //LMA: check if eventID changed, if we do it in AIP conditions / actions, it just fails...
                          if (lma_previous_eventID!=monster->thisnpc->eventid)
                          {
-                            Log(MSG_WARNING,"(1)Event ID not the same NPC %i from %i to %i in map %i, npc->thisnpc->eventid=%i !",npc->npctype,lma_previous_eventID,monster->thisnpc->eventid,map->id,npc->thisnpc->eventid);
+                            //Log(MSG_WARNING,"(1)Event ID not the same NPC %i from %i to %i in map %i, npc->thisnpc->eventid=%i !",npc->npctype,lma_previous_eventID,monster->thisnpc->eventid,map->id,npc->thisnpc->eventid);
+                            LogDebugPriority(3);
+                            LogDebug("(1)Event ID not the same NPC %i from %i to %i in map %i, npc->thisnpc->eventid=%i !",npc->npctype,lma_previous_eventID,monster->thisnpc->eventid,map->id,npc->thisnpc->eventid);
+                            LogDebugPriority(4);
                             npc->thisnpc->eventid=monster->thisnpc->eventid;
                             npc->event=npc->thisnpc->eventid;
                             //LMA: We have to change the event ID here since we didn't send the clientID :(
@@ -363,13 +441,18 @@ PVOID MapProcess( PVOID TS )
                          delete monster;
                          npc->lastAiUpdate = clock();
                      }
+
+
                 }
 
                 //LMA: Sometimes another NPC does the job for you.
                 if(npc->thisnpc->eventid!=GServer->ObjVar[npc->npctype][0])
                 {
                     int new_event_id=GServer->ObjVar[npc->npctype][0];
-                    Log(MSG_WARNING,"(2)Event ID not the same NPC %i from %i to %i in map %i, npc->thisnpc->eventid=%i !",npc->npctype,npc->thisnpc->eventid,new_event_id,map->id,npc->thisnpc->eventid);
+                    LogDebugPriority(3);
+                    //Log(MSG_WARNING,"(2)Event ID not the same NPC %i from %i to %i in map %i, npc->thisnpc->eventid=%i !",npc->npctype,npc->thisnpc->eventid,new_event_id,map->id,npc->thisnpc->eventid);
+                    LogDebug("(2)Event ID not the same NPC %i from %i to %i in map %i, npc->thisnpc->eventid=%i !",npc->npctype,npc->thisnpc->eventid,new_event_id,map->id,npc->thisnpc->eventid);
+                    LogDebugPriority(4);
                     npc->thisnpc->eventid=new_event_id;
                     npc->event=new_event_id;
                     //LMA: We have to change the event ID here since we didn't send the clientID :(

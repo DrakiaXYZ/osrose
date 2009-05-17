@@ -221,6 +221,7 @@ struct STR_REWD_024 {
 
 struct STR_REWD_025 {
 	short nPOINT;
+	//int nPOINT;
 	byte btOP;
 };
 
@@ -242,7 +243,11 @@ struct STR_REWD_028 {
 };
 
 // use LUA function
+//LMA: used now.
 struct STR_REWD_029 {
+    word unk1;
+    word unk2;
+    string LuaName;
 };
 
 // skill reset

@@ -1466,6 +1466,24 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
         Log( MSG_GMACTION, " %s : /killinrange %i" , thisclient->CharInfo->charname, range);
         return pakGMKillInRange( thisclient, range );
     }
+   else if (strcmp(command, "learnskill")==0)
+    {
+        //LMA: Used for tests.
+         if(Config.Command_Listqflag > thisclient->Session->accesslevel)
+            return true;
+        if ((tmp = strtok(NULL, " "))==NULL) return true; unsigned skillid=atoi(tmp);
+        Log( MSG_GMACTION, " %s : /learnskill %i" , thisclient->CharInfo->charname,skillid);
+        if (LearnSkill( thisclient, skillid,false))
+        {
+            SendPM(thisclient,"Skill %i learned with success.",skillid);
+        }
+        else
+        {
+            SendPM(thisclient,"Skill %i wasn't learned.",skillid);
+        }
+
+        return true;
+    }
    else if (strcmp(command, "level")==0)
     {
          if(Config.Command_Level > thisclient->Session->accesslevel)
@@ -1524,6 +1542,7 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
           sprintf(buf2, "%02x ", thisclient->quest.EpisodeVar[i]);
           buffer.append(buf2);
         }
+
         SendPM( thisclient, (char*)buffer.c_str() );
 
         buffer = "Job: ";
@@ -1532,6 +1551,7 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
           sprintf(buf2, "%02x ", thisclient->quest.JobVar[i]);
           buffer.append(buf2);
         }
+
         SendPM( thisclient, (char*)buffer.c_str());
 
         buffer = "Planet: ";
@@ -1550,16 +1570,139 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
             }
         SendPM( thisclient, (char*)buffer.c_str());
 
-        for (dword j = 0; j < 10; j++) {
-        if (thisclient->quest.quests[j].QuestID == 0) continue;
-        buffer = "Quest: ";
-          for(dword i = 0; i < 10; i++) {
-            char buf2[5];
-            sprintf(buf2, "%02x ", thisclient->quest.quests[j].Variables[i]);
-            buffer.append(buf2);
-          }
-          SendPM( thisclient, (char*)buffer.c_str());
+        //LMA: Clan Var.
+        buffer = "Clan: ";
+        for(dword i = 0; i < 5; i++) {
+          char buf2[5];
+          sprintf(buf2, "%02x ", thisclient->quest.ClanVar[i]);
+          buffer.append(buf2);
+            }
+        SendPM( thisclient, (char*)buffer.c_str());
+
+        for (dword j = 0; j < 10; j++)
+        {
+            if (thisclient->quest.quests[j].QuestID == 0) continue;
+            buffer="-> Vars: ";
+            SendPM(thisclient,"Quest %i/10 (%u): ",j,thisclient->quest.quests[j].QuestID);
+
+              for(dword i = 0; i < 10; i++)
+              {
+                char buf2[20];
+                sprintf(buf2, "[%i]=%i, ",i,thisclient->quest.quests[j].Variables[i]);
+                buffer.append(buf2);
+              }
+
+              SendPM( thisclient, (char*)buffer.c_str());
+
+              //quest objects.
+              for (int k=0;k<5;k++)
+              {
+                  if(thisclient->quest.quests[j].Items[k].itemtype==0||thisclient->quest.quests[j].Items[k].itemnum==0)
+                  {
+                      continue;
+                  }
+
+                  SendPM(thisclient,"-> Object slot %i:: %i*(%i::%i)",k,thisclient->quest.quests[j].Items[k].count,thisclient->quest.quests[j].Items[k].itemtype,thisclient->quest.quests[j].Items[k].itemnum);
+              }
         }
+
+    }
+   else if(strcmp(command, "listqvars")==0)
+    {
+        //server side.
+        if(Config.Command_Listqvar > thisclient->Session->accesslevel)
+           return true;
+
+        string buffer = "";
+        for(dword i = 0; i < 5; i++)
+        {
+          char buf2[20];
+          sprintf(buf2, "[%i]=%i, ",i,thisclient->quest.EpisodeVar[i]);
+          buffer.append(buf2);
+        }
+
+        Log(MSG_INFO,"%s Episode vars: %s",thisclient->CharInfo->charname,buffer.c_str());
+
+        buffer = "";
+        for(dword i = 0; i < 3; i++) {
+          char buf2[20];
+          sprintf(buf2, "[%i]=%i, ",i,thisclient->quest.JobVar[i]);
+          buffer.append(buf2);
+        }
+
+        Log(MSG_INFO,"%s Job vars: %s",thisclient->CharInfo->charname,buffer.c_str());
+
+        buffer = "";
+        for(dword i = 0; i < 7; i++) {
+          char buf2[20];
+          sprintf(buf2, "[%i]=%i, ",i,thisclient->quest.PlanetVar[i]);
+          buffer.append(buf2);
+        }
+
+        Log(MSG_INFO,"%s Planet vars: %s",thisclient->CharInfo->charname,buffer.c_str());
+
+        buffer = "";
+        for(dword i = 0; i < 10; i++) {
+          char buf2[20];
+          sprintf(buf2, "[%i]=%i, ",i,thisclient->quest.UnionVar[i]);
+          buffer.append(buf2);
+            }
+
+        Log(MSG_INFO,"%s Union vars: %s",thisclient->CharInfo->charname,buffer.c_str());
+
+        //LMA: Clan Var.
+        buffer = "";
+        for(dword i = 0; i < 5; i++) {
+          char buf2[20];
+          sprintf(buf2, "[%i]=%i, ",i, thisclient->quest.ClanVar[i]);
+          buffer.append(buf2);
+            }
+
+        Log(MSG_INFO,"%s Clan vars: %s",thisclient->CharInfo->charname,buffer.c_str());
+
+        //Quest flags.
+        buffer="Quest Flags: ";
+        for (int i=0;i<512;i++)
+        {
+            int bit=thisclient->quest.GetFlag(i);
+            if(bit==0)
+            {
+                continue;
+            }
+
+          char buf2[20];
+          sprintf(buf2, "[%i]=%i, ",i, bit);
+          buffer.append(buf2);
+        }
+
+        Log(MSG_INFO,"%s Quest Flags: %s",thisclient->CharInfo->charname,buffer.c_str());
+
+        for (dword j = 0; j < 10; j++)
+        {
+            if (thisclient->quest.quests[j].QuestID == 0) continue;
+            buffer="-> Vars: ";
+            Log(MSG_INFO,"Quest slot %i/10 (%u): ",j,thisclient->quest.quests[j].QuestID);
+              for(dword i = 0; i < 10; i++)
+              {
+                char buf2[20];
+                sprintf(buf2, "[%i]=%i, ",i,thisclient->quest.quests[j].Variables[i]);
+                buffer.append(buf2);
+              }
+
+              Log(MSG_INFO,"%s",buffer.c_str());
+
+              //quest objects.
+              for (int k=0;k<5;k++)
+              {
+                  if(thisclient->quest.quests[j].Items[k].itemtype==0||thisclient->quest.quests[j].Items[k].itemnum==0)
+                  {
+                      continue;
+                  }
+
+                  Log(MSG_INFO,"-> Object slot %i:: %i*(%i::%i)",k,thisclient->quest.quests[j].Items[k].count,thisclient->quest.quests[j].Items[k].itemtype,thisclient->quest.quests[j].Items[k].itemnum);
+              }
+        }
+
     }
    else if(strcmp(command, "maxstats")==0)    // MaxStats - by rl2171
     {
@@ -1587,9 +1730,11 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
 	        return true;
 		if ((tmp = strtok(NULL, " "))==NULL) return true; unsigned montype=atoi(tmp);
 		if ((tmp = strtok(NULL, " "))==NULL) return true; unsigned moncount=atoi(tmp);
+		unsigned monteam=0;
+		if ((tmp = strtok(NULL, " "))!=NULL) monteam=atoi(tmp);
         if (moncount > Config.monmax) moncount = Config.monmax; //max monsters from config
-		Log( MSG_GMACTION, " %s : /mon %i,%i" , thisclient->CharInfo->charname, montype, moncount);
-		return pakGMMon( thisclient, montype, moncount );
+		Log( MSG_GMACTION, " %s : /mon %i,%i,%i" , thisclient->CharInfo->charname, montype, moncount,monteam);
+		return pakGMMon( thisclient, montype, moncount,monteam );
 	}
    else if (strcmp(command, "mon2")==0)
     {    //Spawn "x" monsters
@@ -1660,6 +1805,7 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
             SendPM(thisclient, "def = Defense");
             SendPM(thisclient, "crit = Critical");
             SendPM(thisclient, "mspd = Movement Speed");
+            SendPM(thisclient, "team = PvP Team");
             SendPM(thisclient, "Example; /mystat ap");
          return true;
         }
@@ -1672,6 +1818,12 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
          else if(strcmp(tmp, "acc")==0)
          {
              sprintf ( buffer, "My Accuracy is %i", thisclient->Stats->Accury );
+             SendPM(thisclient, buffer);
+         }
+         else if(strcmp(tmp, "team")==0)
+         {
+             //LMA: pvp team.
+             sprintf ( buffer, "My team is %i, pvp status is %i", thisclient->pvp_id,thisclient->pvp_status);
              SendPM(thisclient, buffer);
          }
          else if(strcmp(tmp, "dodge")==0)
@@ -1694,6 +1846,11 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
              sprintf ( buffer, "My move speed is %i", thisclient->Stats->Move_Speed);
              SendPM(thisclient, buffer);
          }
+         else if(strcmp(tmp, "pos")==0)
+         {
+             sprintf ( buffer, "pos: %i (%.2f,%.2f)", thisclient->Position->Map,thisclient->Position->current.x,thisclient->Position->current.y);
+             SendPM(thisclient, buffer);
+         }
     }
    else if(strcmp(command, "mystat2")==0)    // mystat2 - by PurpleYouko - from osprose to test
     {
@@ -1713,25 +1870,25 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
          else if(strcmp(tmp, "hp")==0)
          {
              char buffer2[200];
-             sprintf ( buffer2, "My current HP is %i", thisclient->Stats->HP );
+             sprintf ( buffer2, "My current HP is %I64i", thisclient->Stats->HP );
              SendPM(thisclient, buffer2);
          }
          else if(strcmp(tmp, "mp")==0)
          {
              char buffer2[200];
-             sprintf ( buffer2, "My current MP is %i", thisclient->Stats->MP );
+             sprintf ( buffer2, "My current MP is %u", thisclient->Stats->MP );
              SendPM(thisclient, buffer2);
          }
          else if(strcmp(tmp, "maxhp")==0)
          {
              char buffer2[200];
-             sprintf ( buffer2, "My Maximum HP is %i", thisclient->GetMaxHP());
+             sprintf ( buffer2, "My Maximum HP is %I64i", thisclient->GetMaxHP());
              SendPM(thisclient, buffer2);
          }
          else if(strcmp(tmp, "maxmp")==0)
          {
              char buffer2[200];
-             sprintf ( buffer2, "My maximum MP is %i", thisclient->GetMaxMP());
+             sprintf ( buffer2, "My maximum MP is %u", thisclient->GetMaxMP());
              SendPM(thisclient, buffer2);
          }
          else if(strcmp(tmp, "dodge")==0)
@@ -1798,6 +1955,28 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
             eventid=atoi(tmp);
         Log( MSG_GMACTION, " %s : /npc %i, %i" , thisclient->CharInfo->charname, npcid, npcdialog);
         return pakGMNpc(thisclient, npcid, npcdialog,eventid);
+	}
+   else if(strcmp(command, "npcobjvar")==0)
+    {
+        if(Config.Command_NpcObjVar > thisclient->Session->accesslevel)
+	       return true;
+		if((tmp = strtok(NULL, " "))==NULL) return true;
+		int npctype=atoi(tmp);
+        Log( MSG_GMACTION, " %s : /npcobjvar %i" , thisclient->CharInfo->charname, npctype);
+        return pakGMObjVar(thisclient,npctype);
+	}
+   else if(strcmp(command, "npcsetobjvar")==0)
+    {
+        if(Config.Command_NpcSetObjVar > thisclient->Session->accesslevel)
+	       return true;
+		if((tmp = strtok(NULL, " "))==NULL) return true;
+		int npctype=atoi(tmp);
+        if((tmp = strtok(NULL, " "))==NULL) return true;
+		int index=atoi(tmp);
+        if((tmp = strtok(NULL, " "))==NULL) return true;
+		int value=atoi(tmp);
+        Log( MSG_GMACTION, " %s : /npcsetobjvar %i %i %i" , thisclient->CharInfo->charname, npctype,index,value);
+        return pakGMSetObjVar(thisclient,npctype,index,value);
 	}
    else if (strcmp(command, "npcltb")==0) /* LMA:npc shouts or announces with LTB string */
    {
@@ -1945,6 +2124,12 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
             break;
         }
     }
+   else if(strcmp(command, "raisecg")==0)
+    {
+        if(Config.Command_RaiseCG > thisclient->Session->accesslevel)
+	       return true;
+	    return pakGMRaiseCG(thisclient);
+	}
    else if(strcmp(command, "rate")==0) //incomplete
     {
         if(Config.Command_Rate > thisclient->Session->accesslevel)
@@ -2366,6 +2551,50 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
             }
         }
     }
+   else if(strcmp(command, "setuw")==0)
+    {
+        if(Config.Command_SetUW > thisclient->Session->accesslevel)
+           return true;
+        if ((tmp = strtok(NULL, " "))==NULL) return true;
+        int time = atoi(tmp);
+
+        if (time<0)
+            return true;
+
+        if (time==0)
+        {
+            SendPM( thisclient, "%s: /setuw %i (UW forcing deactivated)",thisclient->CharInfo->charname,time);
+        }
+        else
+        {
+            SendPM( thisclient, "%s: /setuw %i (UW will forced to start in %i minutes)",thisclient->CharInfo->charname,time);
+        }
+
+
+        return pakGMForceUW(thisclient,time);
+    }
+   else if(strcmp(command, "setuwnb")==0)
+    {
+        if(Config.Command_SetUWnb > thisclient->Session->accesslevel)
+           return true;
+        if ((tmp = strtok(NULL, " "))==NULL) return true;
+        int nb_players = atoi(tmp);
+
+        if (nb_players<0)
+            return true;
+
+        if (nb_players==0)
+        {
+            SendPM( thisclient, "%s: /setuwnb %i (UW nb players forcing deactivated)",thisclient->CharInfo->charname,nb_players,nb_players);
+        }
+        else
+        {
+            SendPM( thisclient, "%s: /setuwnb %i (UW needs %i players on each side to begin)",thisclient->CharInfo->charname,nb_players,nb_players);
+        }
+
+
+        return pakGMForceUWPlayers(thisclient,nb_players);
+    }
    else if (strcmp(command, "shoptype")==0)
 	{
         if(Config.Command_ShopType > thisclient->Session->accesslevel)
@@ -2450,14 +2679,14 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
 	    Log( MSG_GMACTION, " mSpeedModif changed to %i by %s" , mSpeedModif, thisclient->CharInfo->charname);
 	    return pakGMChangeMSpeedModif(thisclient, mSpeedModif);
 	}
-   else if (strcmp(command, "stat")==0) /// Code By Minoc
+   else if (strcmp(command, "stat")==0) // Code By Minoc
     {
         if(Config.Command_Stat > thisclient->Session->accesslevel)
 	       return true;
         if ((tmp = strtok(NULL, " "))==NULL) return true; char* statname =(char*)tmp;
         if ((tmp = strtok(NULL, " "))==NULL) return true; int statvalue    = atoi(tmp);
-        if (statvalue > Config.MaxStat)  /// code by PurpleYouko for setting max stat to 300
-            statvalue = Config.MaxStat;  /// extra code to match setting in worldserver.conf by Atomsk
+        if (statvalue > Config.MaxStat)  // code by PurpleYouko for setting max stat to 300
+            statvalue = Config.MaxStat;  // extra code to match setting in worldserver.conf by Atomsk
         Log( MSG_GMACTION, " %s : /stat %s %i" , thisclient->CharInfo->charname, statname, statvalue);
         return pakGMStat( thisclient , statname , statvalue);
     }
@@ -2499,10 +2728,19 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
         unsigned int summon = atoi(tmp);
 
         unsigned int lma_aip=0;
+        unsigned int lma_hp=0;
         if ((tmp = strtok(NULL, " "))!=NULL)
+        {
             lma_aip = atoi(tmp);
 
-        Log( MSG_GMACTION, " %s : /summon %i %i" , thisclient->CharInfo->charname, summon,lma_aip);
+            if ((tmp = strtok(NULL, " "))!=NULL)
+            {
+                lma_hp = atoi(tmp);
+            }
+
+        }
+
+        Log( MSG_GMACTION, " %s : /summon %i %i %u" , thisclient->CharInfo->charname, summon,lma_aip,lma_hp);
         fPoint position = RandInCircle( thisclient->Position->current, 5 );
         CMap* map = MapList.Index[thisclient->Position->Map];
         CMonster* thismonster=map->AddMonster( summon, position, thisclient->clientid );
@@ -2511,6 +2749,19 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
         if (thismonster!=NULL&&lma_aip!=0)
         {
             thismonster->sp_aip=lma_aip;
+        }
+
+        if(thismonster!=NULL&&lma_hp!=0)
+        {
+            thismonster->Stats->MaxHP=lma_hp;
+            thismonster->Stats->HP=lma_hp;
+        }
+        else
+        {
+            //LMA: new formula ;)
+            thismonster->Stats->MaxHP=SummonFormula(thisclient,thismonster);
+            thismonster->Stats->HP=thismonster->Stats->MaxHP;
+            //Log(MSG_WARNING,"New HP value for summon %I64i",thismonster->Stats->HP);
         }
 
         //Start Animation
@@ -2670,7 +2921,7 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
         if(Config.Command_Who2 > thisclient->Session->accesslevel)
            return true;
         SendPM(thisclient, "The following players are currently connected;");
-        int count=1;
+        int count=0;
         int hiddenam=0;
         char line0[200];
         while(count <= (ClientList.size()-1))
@@ -2678,7 +2929,7 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
             CPlayer* whoclient = (CPlayer*)ClientList.at(count)->player;
             if(whoclient->Session->accesslevel > 100)
             {
-//                sprintf(line0, "%s - GM[%i]", whoclient->CharInfo->charname, whoclient->Session->accesslevel);
+                //sprintf(line0, "%s - GM[%i]", whoclient->CharInfo->charname, whoclient->Session->accesslevel);
                 sprintf(line0, "%s - (GM %i, lvl %u), map %u[%.2f,%.2f]", whoclient->CharInfo->charname, whoclient->Session->accesslevel,
                 whoclient->Stats->Level,
                 whoclient->Position->Map,
@@ -2687,15 +2938,15 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
             }
             else
             {
-//                sprintf(line0, "%s", whoclient->CharInfo->charname);
-        sprintf(line0, "%s (job %u, lvl %u), map %u[%.2f,%.2f]", whoclient->CharInfo->charname,
-        whoclient->CharInfo->Job,
-        whoclient->Stats->Level,
-        whoclient->Position->Map,
-        whoclient->Position->current.x,
-        whoclient->Position->current.y);
-
+                //sprintf(line0, "%s", whoclient->CharInfo->charname);
+                sprintf(line0, "%s (job %u, lvl %u), map %u[%.2f,%.2f]", whoclient->CharInfo->charname,
+                whoclient->CharInfo->Job,
+                whoclient->Stats->Level,
+                whoclient->Position->Map,
+                whoclient->Position->current.x,
+                whoclient->Position->current.y);
             }
+
             if(!whoclient->isInvisibleMode || thisclient->Session->accesslevel >= whoclient->Session->accesslevel)
             {
                 SendPM(thisclient, line0 );
@@ -2704,9 +2955,12 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
             {
                 hiddenam++;
             }
+
             count++;
         }
+
         sprintf(line0, "There are currently %i players connected!", ((ClientList.size()-1)-hiddenam));
+        SendPM(thisclient, line0 );
         Log( MSG_GMACTION, " %s : /who2" , thisclient->CharInfo->charname);
         return true;
     }
@@ -2714,7 +2968,68 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
 	{
 	    return pakGMWhoAttacksMe(thisclient);
     }
+   else if(strcmp(command, "writeqvar")==0)
+    {
+        if(Config.Command_Listqvar > thisclient->Session->accesslevel)
+           return true;
 
+        if ((tmp = strtok(NULL, " "))==NULL) return true; int type=atoi(tmp);
+        if ((tmp = strtok(NULL, " "))==NULL) return true; int index=atoi(tmp);
+        if ((tmp = strtok(NULL, " "))==NULL) return true; int value= atoi( tmp );
+
+        if(value<0)
+            return true;
+
+        switch(type)
+        {
+            case 3:
+            {
+              if(index >= 5) return true;
+              thisclient->quest.EpisodeVar[index] = value;
+            }
+            break;
+            case 4:
+            {
+              if(index >= 3) return true;
+              thisclient->quest.JobVar[index] = value;
+            }
+            break;
+            case 5:
+            {
+              if(index >= 7) return true;
+              thisclient->quest.PlanetVar[index] = value;
+            }
+            break;
+            case 6:
+            {
+              if(index >= 10) return true;
+              thisclient->quest.UnionVar[index] = value;
+            }
+            break;
+            case 7:
+            {
+                if(index >= 5) return true;
+                thisclient->quest.ClanVar[index] = value;
+            }
+            break;
+            case 8:
+            {
+                if(index >= 512) return true;
+                if(value!=0&&value!=1) return true;
+                thisclient->quest.SetFlag(index,value);
+            }
+            break;
+            default:
+            {
+                SendPM(thisclient,"Incorrect type, only 3 to 7 available");
+                return true;
+            }
+
+        }
+
+        SendPM(thisclient,"type %i[%i] set to %i, please relog!",type,index,value);
+        Log(MSG_GMACTION,"%s has used /writeqvars %i %i %i",thisclient->CharInfo->charname,type,index,value);
+    }
     else
     {
 		Log( MSG_WARNING, "Invalid GM Command '%s' by '%s'", command, thisclient->CharInfo->charname);
@@ -2738,17 +3053,24 @@ bool CWorldServer::pakGMAnn( CPlayer* thisclient, CPacket *P )
 }
 
 // GM: Spawn x mobs
-bool CWorldServer::pakGMMon( CPlayer* thisclient, int montype, int moncount )
+bool CWorldServer::pakGMMon( CPlayer* thisclient, int montype, int moncount,int monteam)
 {
     //thisclient->Position->current->x
     fPoint position=thisclient->Position->current;
     CMap* map = MapList.Index[thisclient->Position->Map];
-    SendPM(thisclient,"%i monsters of type %i summoned near position %f %f Map: %i",moncount,montype,position.x,position.y,map->id);
+    SendPM(thisclient,"%i monsters of type %i summoned near position %.2f %.2f Map: %i (team %i)",moncount,montype,position.x,position.y,map->id,monteam);
 
 	for (int i=0; i<moncount; i++)
     {
         position = RandInCircle( thisclient->Position->current, 10 );
-        map->AddMonster( montype, position, 0, NULL, NULL, 0 , true );
+        CMonster* thismonster=map->AddMonster( montype, position, 0, NULL, NULL, 0 , true );
+
+        //LMA: adding team to monster (used for PVP for example).
+        if(thismonster!=NULL)
+        {
+            thismonster->team=monteam;
+        }
+
 	}
 	return true;
 }
@@ -2795,7 +3117,7 @@ bool CWorldServer::pakGMItem( CPlayer* thisclient, UINT itemid, UINT itemtype, U
     unsigned newslot = thisclient->GetNewItemSlot( item );
 
     //LMA: PAT:
-    if (newslot>=135&&newslot<=136)
+    if (itemtype==14)
     {
         item.sp_value=item.lifespan*10;
     }
@@ -3332,10 +3654,7 @@ bool CWorldServer::pakGMClanRewardPoints(CPlayer* thisclient, char* name, int po
 
      if (otherclient->Clan->clanid==0)
      {
-        BEGINPACKET(pak, 0x702);
-		ADDSTRING(pak, "User does not have a clan.");
-		ADDBYTE(pak, 0);
-		thisclient->client->SendPacket(&pak);
+        Log(MSG_WARNING,"pakGMClanRewardPoints:: User %s does not have a clan",thisclient->CharInfo->charname);
         return true;
      }
 
@@ -3372,6 +3691,37 @@ bool CWorldServer::pakGMClanRewardPoints(CPlayer* thisclient, char* name, int po
      return true;
 }
 
+//LMA: We raise the Clan Grade (as a test).
+bool CWorldServer::pakGMRaiseCG(CPlayer* thisclient)
+{
+    thisclient->Clan->grade=GServer->getClanGrade(thisclient->Clan->clanid);
+    thisclient->Clan->grade++;
+
+    BEGINPACKET( pak, 0x7e0 );
+    ADDBYTE    ( pak, 0xfb );
+    ADDWORD    ( pak, thisclient->CharInfo->charid);  //charid
+    ADDDWORD    ( pak, thisclient->Clan->grade);  //new grade.
+    cryptPacket( (char*)&pak, GServer->cct );
+    send( csock, (char*)&pak, pak.Size, 0 );
+
+    //Send to other players
+    RESETPACKET( pak, 0x7e0 );
+    ADDBYTE    ( pak, 0x35 );
+    ADDWORD    ( pak, thisclient->clientid );
+    ADDWORD    ( pak, thisclient->Clan->clanid);
+    ADDWORD    ( pak, 0x0000 );//???
+    ADDWORD    ( pak, thisclient->Clan->back );
+    ADDWORD    ( pak, thisclient->Clan->logo );
+    ADDBYTE    ( pak, thisclient->Clan->grade );//clan grade
+    ADDBYTE    ( pak, 0x06 );//clan rank
+    ADDSTRING  ( pak, thisclient->Clan->clanname );
+    ADDBYTE    ( pak, 0x00 );
+    GServer->SendToVisible( &pak, thisclient );
+
+
+     return true;
+}
+
 //LMA: Give clan points to somebody
 bool CWorldServer::pakGMClanPoints(CPlayer* thisclient, char* name, int points)
 {
@@ -3386,15 +3736,22 @@ bool CWorldServer::pakGMClanPoints(CPlayer* thisclient, char* name, int points)
 
      if (otherclient->Clan->clanid==0)
      {
-        BEGINPACKET(pak, 0x702);
-		ADDSTRING(pak, "User does not have a clan.");
-		ADDBYTE(pak, 0);
-		thisclient->client->SendPacket(&pak);
+        Log(MSG_WARNING,"pakGMClanPoints:: User %s does not have a clan",thisclient->CharInfo->charname);
         return true;
      }
 
      //adding points if needed
      //Asking CharServer to refresh the player's informations.
+    otherclient->Clan->CP=GServer->getClanPoints(otherclient->Clan->clanid);
+    if(otherclient->Clan->CP+points<0)
+    {
+        otherclient->Clan->CP=0;
+    }
+    else
+    {
+        otherclient->Clan->CP+=points;
+    }
+
     if (points>0)
     {
         char buffer[200];
@@ -3697,43 +4054,43 @@ bool CWorldServer::pakGMUnionPoints(CPlayer* thisclient, char* name, int nb_poin
         return true;
     }
 
-    if(nb_points<=0||thisclient->CharInfo->unionid==0)
+    if(nb_points<=0||otherclient->CharInfo->unionid==0)
     {
       return true;
     }
 
     int new_amount=0;
-    int new_offset=80+thisclient->CharInfo->unionid;
+    int new_offset=80+otherclient->CharInfo->unionid;
     switch(new_offset)
     {
         case 81:
         {
-            thisclient->CharInfo->union01+=nb_points;
-            new_amount=thisclient->CharInfo->union01;
+            otherclient->CharInfo->union01+=nb_points;
+            new_amount=otherclient->CharInfo->union01;
         }
         break;
         case 82:
         {
-            thisclient->CharInfo->union02+=nb_points;
-            new_amount=thisclient->CharInfo->union02;
+            otherclient->CharInfo->union02+=nb_points;
+            new_amount=otherclient->CharInfo->union02;
         }
         break;
         case 83:
         {
-            thisclient->CharInfo->union03+=nb_points;
-            new_amount=thisclient->CharInfo->union03;
+            otherclient->CharInfo->union03+=nb_points;
+            new_amount=otherclient->CharInfo->union03;
         }
         break;
         case 84:
         {
-            thisclient->CharInfo->union04+=nb_points;
-            new_amount=thisclient->CharInfo->union04;
+            otherclient->CharInfo->union04+=nb_points;
+            new_amount=otherclient->CharInfo->union04;
         }
         break;
         case 85:
         {
-            thisclient->CharInfo->union05+=nb_points;
-            new_amount=thisclient->CharInfo->union05;
+            otherclient->CharInfo->union05+=nb_points;
+            new_amount=otherclient->CharInfo->union05;
         }
         break;
     }
@@ -3841,6 +4198,12 @@ bool CWorldServer::pakGMItemtoplayer(CPlayer* thisclient, char* name , UINT item
 // Do Emotion
 bool CWorldServer::pakGMDoEmote( CPlayer* thisclient, int emotionid )
 {
+    //LMA: Fix
+    if(emotionid<=0||emotionid>300)
+    {
+        return true;
+    }
+
     ClearBattle( thisclient->Battle );
 	BEGINPACKET( pak, 0x781 );
 	ADDDWORD( pak, emotionid );
@@ -3882,6 +4245,12 @@ bool CWorldServer::pakGMStat( CPlayer* thisclient, char* statname, int statvalue
     {
         thisclient->Attr->Sen = statvalue;
         statid = 5;
+    }
+    else if (strcmp( statname, "team" )==0 || strcmp( statname, "Team" )==0)
+    {
+        thisclient->pvp_id=statvalue;
+        SendPM(thisclient,"Do a /here so other people can see your new team ID");
+        return true;
     }
     else
     {
@@ -4169,11 +4538,13 @@ bool CWorldServer::pakGMnpcshout( CPlayer* thisclient, char* shan, char* aipqsd,
 	{
 	    if ( strcmp ( aipqsd , "aip" )==0)
 	    {
-	        GServer->NPCShout(NULL,GServer->Ltbstring[ltbid]->LTBstring,GServer->GetNPCNameByType(thisnpc->npctype),thisnpc->posMap);
+	        //GServer->NPCShout(NULL,GServer->Ltbstring[ltbid]->LTBstring,GServer->GetNPCNameByType(thisnpc->npctype),thisnpc->posMap);
+	        GServer->NPCShout(NULL,GServer->Ltbstring[ltbid]->LTBstring,GServer->GetSTLMonsterNameByID(thisnpc->npctype),thisnpc->posMap);
 	    }
 	    else
 	    {
-	        GServer->NPCShout(NULL,GServer->LtbstringQSD[ltbid]->LTBstring,GServer->GetNPCNameByType(thisnpc->npctype),thisnpc->posMap);
+	        //GServer->NPCShout(NULL,GServer->LtbstringQSD[ltbid]->LTBstring,GServer->GetNPCNameByType(thisnpc->npctype),thisnpc->posMap);
+	        GServer->NPCShout(NULL,GServer->LtbstringQSD[ltbid]->LTBstring,GServer->GetSTLMonsterNameByID(thisnpc->npctype),thisnpc->posMap);
 	    }
 
 	}
@@ -4181,11 +4552,13 @@ bool CWorldServer::pakGMnpcshout( CPlayer* thisclient, char* shan, char* aipqsd,
 	{
 	    if ( strcmp ( aipqsd , "aip" )==0)
 	    {
-	        GServer->NPCAnnounce(GServer->Ltbstring[ltbid]->LTBstring,GServer->GetNPCNameByType(thisnpc->npctype));
+	        //GServer->NPCAnnounce(GServer->Ltbstring[ltbid]->LTBstring,GServer->GetNPCNameByType(thisnpc->npctype));
+	        GServer->NPCAnnounce(GServer->Ltbstring[ltbid]->LTBstring,GServer->GetSTLMonsterNameByID(thisnpc->npctype));
 	    }
 	    else
 	    {
-	        GServer->NPCAnnounce(GServer->LtbstringQSD[ltbid]->LTBstring,GServer->GetNPCNameByType(thisnpc->npctype));
+	        //GServer->NPCAnnounce(GServer->LtbstringQSD[ltbid]->LTBstring,GServer->GetNPCNameByType(thisnpc->npctype));
+	        GServer->NPCAnnounce(GServer->LtbstringQSD[ltbid]->LTBstring,GServer->GetSTLMonsterNameByID(thisnpc->npctype));
 	    }
 
 	}
@@ -4272,7 +4645,7 @@ bool CWorldServer::pakGMClass( CPlayer* thisclient, char* classid )
     {
         return true;
     }
-/*   add this section?
+    /*   add this section?
     // Set the quest vars for the new class by Drakia
     dword jVarSw = classid_new % 10;
     thisclient->quest.JobVar[0] = 0;
@@ -4283,7 +4656,8 @@ bool CWorldServer::pakGMClass( CPlayer* thisclient, char* classid )
       thisclient->quest.JobVar[0] = 1;
       thisclient->quest.JobVar[1] = 2;
     }
-*/
+    */
+
     bool changed = true;
     if ( thisclient->CharInfo->Job == classid_new )
        changed = false;
@@ -4301,7 +4675,17 @@ bool CWorldServer::pakGMClass( CPlayer* thisclient, char* classid )
 
     if ( changed )
     {
-       SendPM(thisclient, "Class changed!" );
+        //LMA: deleting all previous class skills.
+        for (int k=0;k<60;k++)
+        {
+            thisclient->cskills[k].id = 0;
+            thisclient->cskills[k].level = 1;
+            thisclient->cskills[k].thisskill=NULL;
+        }
+
+        thisclient->saveskills();
+        thisclient->ResetSkillOffset();
+        SendPM(thisclient, "Class changed! Relog to remove your previous skills." );
     }
     else
     {
@@ -4539,878 +4923,66 @@ bool CWorldServer::pakGMMaxStats( CPlayer* thisclient )
 
 
 //GM: All Skills {By CrAshInSiDe} - Skills and levels updated by rl2171 & Devilking
+//LMA: Mysql now.
 bool CWorldServer::pakGMAllSkill(CPlayer* thisclient, char* name)
 {
-    int classid = thisclient->CharInfo->Job;
-    bool is_ok=true;
+    bool is_ok=false;
+    int nb_skills=0;
     CPlayer* otherclient = GetClientByCharName( name );
     if(otherclient==NULL)
-    return true;
+        return true;
 
-    //LMA: We delete previous skills to avoir errors (only the class ones)...
+    int classid = otherclient->CharInfo->Job;
+
+
+    //LMA: MySQL time.
+    MYSQL_ROW row;
+    MYSQL_RES *result=NULL;
+    result = DB->QStore("SELECT skillid, skill_level FROM list_skills WHERE classid=%i OR classid=0 AND isactive=1",classid);
+    if(result==NULL) return true;
+
+    if(mysql_num_rows(result)==0)
+    {
+        Log(MSG_INFO,"No skill to add for class %i",classid);
+        DB->QFree( );
+        return true;
+    }
+
+    //LMA: We delete previous skills to avoid errors (only the class ones)...
     //They will be sorted correctly (if needed) at next startup...
-    for (int k=0;k<60;k++)
+    for (int k=0;k<320;k++)
     {
         otherclient->cskills[k].id = 0;
         otherclient->cskills[k].level = 0;
         otherclient->cskills[k].thisskill=NULL;
     }
 
-    if ( classid == 121 ) //Knight
+    while( row = mysql_fetch_row(result) )
     {
-        otherclient->cskills[0].id = 201;//Physical Training
-        otherclient->cskills[0].level = 9;
-        otherclient->cskills[1].id = 211;//Repose
-        otherclient->cskills[1].level = 9;
-        otherclient->cskills[2].id = 221;//Defense Training
-        otherclient->cskills[2].level = 9;
-        otherclient->cskills[3].id = 231;//Power Owerflow
-        otherclient->cskills[3].level = 5;
-        otherclient->cskills[4].id = 236;//howl
-        otherclient->cskills[4].level = 5;
-        otherclient->cskills[5].id = 241;//staminal assist
-        otherclient->cskills[5].level = 9;
-        otherclient->cskills[6].id = 251;//Melee Weapon Mastery
-        otherclient->cskills[6].level = 9;
-        otherclient->cskills[7].id = 261;//Melee Double Attack
-        otherclient->cskills[7].level = 9;
-        otherclient->cskills[8].id = 271;//One Handed Weapon Mastery
-        otherclient->cskills[8].level = 9;
-        otherclient->cskills[9].id = 281;//Shield Mastery
-        otherclient->cskills[9].level = 9;
-        otherclient->cskills[10].id = 291;//Fatal Thrust
-        otherclient->cskills[10].level = 9;
-        otherclient->cskills[11].id = 301;//durability assist
-        otherclient->cskills[11].level = 5;
-        otherclient->cskills[12].id = 306;//Shield Stun
-        otherclient->cskills[12].level = 5;
-        otherclient->cskills[13].id = 311;//soul wreck
-        otherclient->cskills[13].level = 4;
-        otherclient->cskills[14].id = 416;//taunt
-        otherclient->cskills[14].level = 5;
-        otherclient->cskills[15].id = 421;//soundles vacuum
-        otherclient->cskills[15].level = 4;
-        otherclient->cskills[16].id = 431;//Advanced Defense Training
-        otherclient->cskills[16].level = 9;
-        otherclient->cskills[17].id = 441;//One-Handed Combat Mastery
-        otherclient->cskills[17].level = 9;
-        otherclient->cskills[18].id = 451;//Actual Battle Training
-        otherclient->cskills[18].level = 9;
-        otherclient->cskills[19].id = 461;//Advanced Shield Mastery
-        otherclient->cskills[19].level = 18;
-        otherclient->cskills[20].id = 481;//Triple Strike
-        otherclient->cskills[20].level = 9;
-        otherclient->cskills[21].id = 491;//safe guard
-        otherclient->cskills[21].level = 5;
-        otherclient->cskills[22].id = 496;//Shield Reflect
-        otherclient->cskills[22].level = 5;
-        otherclient->cskills[23].id = 501;//battle alertniss
-        otherclient->cskills[23].level = 4;
-        otherclient->cskills[24].id = 506;//Staminal Training
-        otherclient->cskills[24].level = 9;
-        otherclient->cskills[25].id = 516;//Refreshment
-        otherclient->cskills[25].level = 9;
-        otherclient->cskills[26].id = 721;//Quick Step
-        otherclient->cskills[26].level = 5;
-        otherclient->cskills[27].id = 726;//Battle March
-        otherclient->cskills[27].level = 5;
-        otherclient->cskills[28].id = 731;//Sword Force
-        otherclient->cskills[28].level = 9;
-        // Mileage Items - knight - 1 handed
-        otherclient->cskills[29].id = 5601; // 847 - One-Handed Weapon Iron Blessing
-        otherclient->cskills[29].level = 1;
-        otherclient->cskills[30].id = 5602; // 848 - One-Handed Weapon Wind Blessing
-        otherclient->cskills[30].level = 1;
-        // Mileage - All jobs
-        otherclient->cskills[31].id = 5505; // 1091 - Swift Blessing
-        otherclient->cskills[31].level = 1;
-        otherclient->cskills[32].id = 5506; // 1092 - Nimble Blessing
-        otherclient->cskills[32].level = 1;
-        // Unique Items - knight - 1 handed
-        otherclient->cskills[33].id = 4211; // 569 - Sacrifice
-        otherclient->cskills[33].level = 4;
-        //Immortal Form
-        //otherclient->cskills[34].id = 426; // Immortal Form
-        //otherclient->cskills[34].level = 1;
-        SendPM (thisclient, "Relogin For Get All Skills");
-    }
-    else if ( classid == 122 ) //Champion
-    {
-        otherclient->cskills[0].id = 201;//Physical Training
-        otherclient->cskills[0].level = 9;
-        otherclient->cskills[1].id = 211;//Repose
-        otherclient->cskills[1].level = 9;
-        otherclient->cskills[2].id = 221;//Defense Training
-        otherclient->cskills[2].level = 9;
-        otherclient->cskills[3].id = 231;//Power Owerflow
-        otherclient->cskills[3].level = 5;
-        otherclient->cskills[4].id = 236;//howl
-        otherclient->cskills[4].level = 5;
-        otherclient->cskills[5].id = 241;//staminal assist
-        otherclient->cskills[5].level = 9;
-        otherclient->cskills[6].id = 251;//Melee Weapon Mastery
-        otherclient->cskills[6].level = 9;
-        otherclient->cskills[7].id = 261;//Melee Double Attack
-        otherclient->cskills[7].level = 9;
-        otherclient->cskills[8].id = 311;//soul wreck
-        otherclient->cskills[8].level = 4;
-        otherclient->cskills[9].id = 316;//Two-Handed Weapon Mastery
-        otherclient->cskills[9].level = 9;
-        otherclient->cskills[10].id = 326;//Two-Handed Sword Mastery
-        otherclient->cskills[10].level = 9;
-        otherclient->cskills[11].id = 336;//Piercing Lunge
-        otherclient->cskills[11].level = 9;
-        otherclient->cskills[12].id = 346;//Battle howl
-        otherclient->cskills[12].level = 4;
-        otherclient->cskills[13].id = 351;//Voltage Crash
-        otherclient->cskills[13].level = 4;
-        otherclient->cskills[14].id = 356;//Spear Mastery
-        otherclient->cskills[14].level = 9;
-        otherclient->cskills[15].id = 366;//Raging Spear Strike
-        otherclient->cskills[15].level = 9;
-        otherclient->cskills[16].id = 376;//battle scream
-        otherclient->cskills[16].level = 4;
-        otherclient->cskills[17].id = 381;//spear screw
-        otherclient->cskills[17].level = 4;
-        otherclient->cskills[18].id = 386;//Axe Mastery
-        otherclient->cskills[18].level = 9;
-        otherclient->cskills[19].id = 396;//Leaping Axe Strike
-        otherclient->cskills[19].level = 9;
-        otherclient->cskills[20].id = 406;//Battle cry
-        otherclient->cskills[20].level = 4;
-        otherclient->cskills[21].id = 411;//Axe Launcher
-        otherclient->cskills[21].level = 4;
-        otherclient->cskills[22].id = 416;//taunt
-        otherclient->cskills[22].level = 5;
-        otherclient->cskills[23].id = 421;//soundles vacuum
-        otherclient->cskills[23].level = 4;
-        otherclient->cskills[24].id = 501;//battle alertniss
-        otherclient->cskills[24].level = 4;
-        otherclient->cskills[25].id = 506;//Staminal Training
-        otherclient->cskills[25].level = 9;
-        otherclient->cskills[26].id = 516;//Refreshment
-        otherclient->cskills[26].level = 9;
-        otherclient->cskills[27].id = 531;//Melee Combat Mastery
-        otherclient->cskills[27].level = 9;
-        otherclient->cskills[28].id = 541;//Two-Handed Battle Mastery
-        otherclient->cskills[28].level = 9;
-        otherclient->cskills[29].id = 551;//Battle Sense Mastery
-        otherclient->cskills[29].level = 9;
-        otherclient->cskills[30].id = 561;//Advanced Two-Handed Sword Mastery
-        otherclient->cskills[30].level = 18;
-        otherclient->cskills[31].id = 581;//Geon Archangel Crumpler
-        otherclient->cskills[31].level = 9;
-        otherclient->cskills[32].id = 591;//combat howl
-        otherclient->cskills[32].level = 4;
-        otherclient->cskills[33].id = 596;//War howl
-        otherclient->cskills[33].level = 4;
-        otherclient->cskills[34].id = 601;//Seismic Impact
-        otherclient->cskills[34].level = 9;
-        otherclient->cskills[35].id = 611;//Advanced Spear Mastery
-        otherclient->cskills[35].level = 18;
-        otherclient->cskills[36].id = 631;//Longinus's Spear
-        otherclient->cskills[36].level = 9;
-        otherclient->cskills[37].id = 641;//combat scream
-        otherclient->cskills[37].level = 4;
-        otherclient->cskills[38].id = 646;//war scream
-        otherclient->cskills[38].level = 4;
-        otherclient->cskills[39].id = 651;//Achilles's Heel Strike
-        otherclient->cskills[39].level = 9;
-        otherclient->cskills[40].id = 661;//Advanced Axe Mastery
-        otherclient->cskills[40].level = 18;
-        otherclient->cskills[41].id = 681;//Vaulting Axe Smash
-        otherclient->cskills[41].level = 9;
-        otherclient->cskills[42].id = 691;//combat cry
-        otherclient->cskills[42].level = 4;
-        otherclient->cskills[43].id = 696;//war cry
-        otherclient->cskills[43].level = 4;
-        otherclient->cskills[44].id = 701;//Axe Slugger
-        otherclient->cskills[44].level = 9;
-        otherclient->cskills[45].id = 711;//motion sensing
-        otherclient->cskills[45].level = 5;
-        otherclient->cskills[46].id = 716;//beserk
-        otherclient->cskills[46].level = 5;
-        // Mileage Items - 2 hand sword
-        otherclient->cskills[47].id = 5603; // 849 - Two-Handed Sword Iron Blessing
-        otherclient->cskills[47].level = 1;
-        otherclient->cskills[48].id = 5604; // 850 - Two-Handed Sword Wind Blessing
-        otherclient->cskills[48].level = 1;
-        // Mileage Items - spear
-        otherclient->cskills[49].id = 5605; // 851 - Two-Handed Spear Iron Blessing
-        otherclient->cskills[49].level = 1;
-        otherclient->cskills[50].id = 5606; // 852 - Two-Handed Spear Wind Blessing
-        otherclient->cskills[50].level = 1;
-        // Mileage Items - axe
-        otherclient->cskills[51].id = 5607; // 853 - Two-Handed Axe Iron Blessing
-        otherclient->cskills[51].level = 1;
-        otherclient->cskills[52].id = 5608; // 854 - Two-Handed Axe Wind Blessing
-        otherclient->cskills[52].level = 1;
-        // Mileage - All jobs
-        otherclient->cskills[53].id = 5505; // 1091 - Swift Blessing
-        otherclient->cskills[53].level = 1;
-        otherclient->cskills[54].id = 5506; // 1092 - Nimble Blessing
-        otherclient->cskills[54].level = 1;
-        // Unique Items -
-        otherclient->cskills[55].id = 4211; // 569 - Sacrifice
-        otherclient->cskills[55].level = 4;
-        //Sword Master Form
-        //otherclient->cskills[56].id = 526; // Sword Master Form
-        //otherclient->cskills[56].level = 1;
+        is_ok=true;
+        nb_skills++;
+        if(nb_skills>=320)
+        {
+            Log(MSG_WARNING,"Too many skills, aborting");
+            break;
+        }
 
-        SendPM (thisclient, "Relogin For Get All Skills");
+        otherclient->cskills[nb_skills-1].id = atoi(row[0]);
+        otherclient->cskills[nb_skills-1].level = atoi(row[1]);
     }
 
-    else if ( classid == 221 ) //Mage
-    {
-        otherclient->cskills[0].id = 851;//Mana Bolt
-        otherclient->cskills[0].level = 9;
-        otherclient->cskills[1].id = 831;//Frostbiter
-        otherclient->cskills[1].level = 18;
-        otherclient->cskills[2].id = 891;//Spell Mastery
-        otherclient->cskills[2].level = 9;
-        otherclient->cskills[3].id = 861;//Mana Spear
-        otherclient->cskills[3].level = 9;
-        otherclient->cskills[4].id = 881;//Fire Ring
-        otherclient->cskills[4].level = 4;
-        otherclient->cskills[5].id = 871;//Voltage Jolt
-        otherclient->cskills[5].level = 4;
-        otherclient->cskills[6].id = 831;//Frostbiter
-        otherclient->cskills[6].level = 9;
-        otherclient->cskills[7].id = 821;//Ice Bolt
-        otherclient->cskills[7].level = 9;
-        otherclient->cskills[8].id = 841;//Wind Storm
-        otherclient->cskills[8].level = 4;
-        otherclient->cskills[9].id = 846;//Tornado
-        otherclient->cskills[9].level = 4;
-        otherclient->cskills[10].id = 876;//Icy Hailstorm
-        otherclient->cskills[10].level = 4;
-        otherclient->cskills[11].id = 886;//Meteorite Strike
-        otherclient->cskills[11].level = 4;
-        otherclient->cskills[12].id = 901;//Spirit Boost
-        otherclient->cskills[12].level = 9;
-        otherclient->cskills[13].id = 1046;//Sorceror Form
-        otherclient->cskills[13].level = 1;
-        otherclient->cskills[14].id = 1051;//Staff Combat Mastery
-        otherclient->cskills[14].level = 18;
-        otherclient->cskills[15].id = 1316;//Lucid Soul
-        otherclient->cskills[15].level = 9;
-        otherclient->cskills[16].id = 1136;//Mystic Eye
-        otherclient->cskills[16].level = 4;
-        otherclient->cskills[17].id = 1071;//Freezing Chill
-        otherclient->cskills[17].level = 9;
-        otherclient->cskills[18].id = 1101;//Soul Shock
-        otherclient->cskills[18].level = 5;
-        otherclient->cskills[19].id = 1121;//Hellfire
-        otherclient->cskills[19].level = 5;
-        otherclient->cskills[20].id = 1141;//Elemental Bolt
-        otherclient->cskills[20].level = 9;
-        otherclient->cskills[21].id = 1106;//Fierce Cudgeling
-        otherclient->cskills[21].level = 5;
-        otherclient->cskills[22].id = 1126;//Staff Stun
-        otherclient->cskills[22].level = 5;
-        otherclient->cskills[23].id = 1081;//Tempest
-        otherclient->cskills[23].level = 4;
-        otherclient->cskills[24].id = 1096;//Hurricane
-        otherclient->cskills[24].level = 5;
-        otherclient->cskills[25].id = 1151;//Aural Pierce
-        otherclient->cskills[25].level = 9;
-        otherclient->cskills[26].id = 1086;//Glaciating Chill
-        otherclient->cskills[26].level = 9;
-        otherclient->cskills[27].id = 1111;//Soul Electric
-        otherclient->cskills[27].level = 5;
-        otherclient->cskills[28].id = 1131;//Mana Burn
-        otherclient->cskills[28].level = 5;
-        otherclient->cskills[29].id = 1116;//Permafrost Chill
-        otherclient->cskills[29].level = 5;
-        otherclient->cskills[30].id = 1171;//Meteorite Flow
-        otherclient->cskills[30].level = 5;
-        otherclient->cskills[31].id = 1176;//Soul Doubt
-        otherclient->cskills[31].level = 5;
-        otherclient->cskills[32].id = 1161;//Elemental Spike
-        otherclient->cskills[32].level = 9;
-        otherclient->cskills[33].id = 801;//Staff Mastery
-        otherclient->cskills[33].level = 18;
-        otherclient->cskills[34].id = 911;//Meditation
-        otherclient->cskills[34].level = 9;
-        otherclient->cskills[35].id = 921;//Cure
-        otherclient->cskills[35].level = 5;
-        // Mileage Items - mage
-        otherclient->cskills[36].id = 5702; // 855 - Staff Iron Blessing
-        otherclient->cskills[36].level = 1;
-        otherclient->cskills[37].id = 5703; // 856 - Staff Wind Blessing
-        otherclient->cskills[37].level = 1;
-        otherclient->cskills[38].id = 5701; // 592 - Soul Restore
-        otherclient->cskills[38].level = 1;
-        // Mileage - All jobs
-        otherclient->cskills[39].id = 5505; // 1091 - Swift Blessing
-        otherclient->cskills[39].level = 1;
-        otherclient->cskills[40].id = 5506; // 1092 - Nimble Blessing
-        otherclient->cskills[40].level = 1;
-        // Unique Item
-        //otherclient->cskills[41].id = 4401; // 560 - Soul Recall
-        //otherclient->cskills[41].level = 3;
-
-        SendPM (thisclient, "Relogin For Get All Skills");
-    }
-    else if ( classid == 222 ) //Cleric
-    {
-        otherclient->cskills[0].id = 931;//Wand Mastery
-        otherclient->cskills[0].level = 18;
-        otherclient->cskills[1].id = 911;//Meditation
-        otherclient->cskills[1].level = 9;
-        otherclient->cskills[2].id = 921;//Cure
-        otherclient->cskills[2].level = 5;
-        otherclient->cskills[3].id = 926;//Hustle Charm
-        otherclient->cskills[3].level = 5;
-        otherclient->cskills[4].id = 951;//Mana Drop
-        otherclient->cskills[4].level = 9;
-        otherclient->cskills[5].id = 986;//Wallop Charm
-        otherclient->cskills[5].level = 9;
-        otherclient->cskills[6].id = 1021;//Bonfire
-        otherclient->cskills[6].level = 9;
-        otherclient->cskills[7].id = 1031;//Party Heal
-        otherclient->cskills[7].level = 5;
-        otherclient->cskills[8].id = 976;//Soul Revive
-        otherclient->cskills[8].level = 5;
-        otherclient->cskills[9].id = 996;//Resilience Charm
-        otherclient->cskills[9].level = 9;
-        otherclient->cskills[10].id = 1006;//Purify
-        otherclient->cskills[10].level = 4;
-        otherclient->cskills[11].id = 1036;//Blessed Mind
-        otherclient->cskills[11].level = 4;
-        otherclient->cskills[12].id = 1041;//Integrity
-        otherclient->cskills[12].level = 5;
-        otherclient->cskills[13].id = 961;//Voltage Shock
-        otherclient->cskills[13].level = 9;
-        otherclient->cskills[14].id = 971;//Summon Phantom Sword
-        otherclient->cskills[14].level = 5;
-        otherclient->cskills[15].id = 981;//Recovery
-        otherclient->cskills[15].level = 5;
-        otherclient->cskills[16].id = 1011;//Precision Charm
-        otherclient->cskills[16].level = 9;
-        otherclient->cskills[17].id = 1181;//Untouchable Aura
-        otherclient->cskills[17].level = 1;
-        otherclient->cskills[18].id = 1186;//Magic Battle Mastery
-        otherclient->cskills[18].level = 18;
-        otherclient->cskills[19].id = 1296;//Dragon Skin
-        otherclient->cskills[19].level = 9;
-        otherclient->cskills[20].id = 1306;//Chant Focusing
-        otherclient->cskills[20].level = 9;
-        otherclient->cskills[21].id = 1241;//Heavenly Grace
-        otherclient->cskills[21].level = 5;
-        otherclient->cskills[22].id = 1211;//Mana Wave
-        otherclient->cskills[22].level = 9;
-        otherclient->cskills[23].id = 1206;//Summon Mastery
-        otherclient->cskills[23].level = 4;
-        otherclient->cskills[24].id = 1246;//Battle Charm
-        otherclient->cskills[24].level = 9;
-        otherclient->cskills[26].id = 1256;//Salamander Flame
-        otherclient->cskills[26].level = 3;
-        otherclient->cskills[27].id = 1266;//Clobber Charm
-        otherclient->cskills[27].level = 5;
-        otherclient->cskills[28].id = 1276;//Critical Charm
-        otherclient->cskills[28].level = 9;
-        otherclient->cskills[29].id = 1271;//Evasive Charm
-        otherclient->cskills[29].level = 5;
-        otherclient->cskills[30].id = 1226;//Voltage Storm
-        otherclient->cskills[30].level = 9;
-        otherclient->cskills[31].id = 1236;//Summon Firegon
-        otherclient->cskills[31].level = 5;
-        otherclient->cskills[32].id = 1261;//Mana Flame
-        otherclient->cskills[32].level = 3;
-        otherclient->cskills[33].id = 1176;//Soul Doubt
-        otherclient->cskills[33].level = 5;
-        otherclient->cskills[34].id = 1286;//Valkyrie Charm
-        otherclient->cskills[34].level = 9;
-        otherclient->cskills[35].id = 1221;//Summon Elemental
-        otherclient->cskills[35].level = 5;
-        otherclient->cskills[36].id = 6001;//Wand Contol - 198
-        otherclient->cskills[36].level = 18;
-        otherclient->cskills[37].id = 6021;//Mystic Shielding - 198
-        otherclient->cskills[37].level = 9;
-        otherclient->cskills[38].id = 6031;//Improved Wand Mastery - 198
-        otherclient->cskills[38].level = 18;
-        otherclient->cskills[39].id = 6051;//Wand Focusing - 198
-        otherclient->cskills[39].level = 18;
-        otherclient->cskills[40].id = 6071;//Mystic Armor - 198
-        otherclient->cskills[40].level = 9;
-        otherclient->cskills[41].id = 6081;//Wand Combat Mastery - 198
-        otherclient->cskills[41].level = 18;
-        // Mileage Items - cleric
-        otherclient->cskills[42].id = 5704; // 857 - Wand Iron Blessing
-        otherclient->cskills[42].level = 1;
-        otherclient->cskills[43].id = 5705; // 858 - Wand Wind Blessing
-        otherclient->cskills[43].level = 1;
-        otherclient->cskills[44].id = 5701; // 592 - Soul Restore
-        otherclient->cskills[44].level = 1;
-        // Mileage - All jobs
-        otherclient->cskills[45].id = 5505; // 1091 - Swift Blessing
-        otherclient->cskills[45].level = 1;
-        otherclient->cskills[46].id = 5506; // 1092 - Nimble Blessing
-        otherclient->cskills[46].level = 1;
-        // Unique Item
-        otherclient->cskills[47].id = 4401; // 560 - Soul Recall
-        otherclient->cskills[47].level = 3;
-
-        SendPM (thisclient, "Relogin For Get All Skills");
-    }
-    else if ( classid == 321 ) //Raider
-    {
-        otherclient->cskills[0].id = 1401;//Combat Mastery
-        otherclient->cskills[0].level = 9;
-        otherclient->cskills[1].id = 1521;//Knuckle Mastery
-        otherclient->cskills[1].level = 18;
-        otherclient->cskills[2].id = 1541;//Double Slash
-        otherclient->cskills[2].level = 9;
-        otherclient->cskills[3].id = 1551;//Focused Impact
-        otherclient->cskills[3].level = 9;
-        otherclient->cskills[4].id = 1561;//pison knife
-        otherclient->cskills[4].level = 9;
-        otherclient->cskills[5].id = 1571;//triple slash
-        otherclient->cskills[5].level = 9;
-        otherclient->cskills[6].id = 1581;//katar upper
-        otherclient->cskills[6].level = 9;
-        otherclient->cskills[7].id = 1591;//dividing cleave
-        otherclient->cskills[7].level = 9;
-        otherclient->cskills[8].id = 1601;//venom knife
-        otherclient->cskills[8].level = 5;
-        otherclient->cskills[9].id = 1606;//Katar Mastery
-        otherclient->cskills[9].level = 9;
-        otherclient->cskills[10].id = 1616;//Dual Weapon Mastery
-        otherclient->cskills[10].level = 9;
-        otherclient->cskills[11].id = 1626;//stealth
-        otherclient->cskills[11].level = 4;
-        otherclient->cskills[12].id = 1631;//ferocity accordance
-        otherclient->cskills[12].level = 4;
-        otherclient->cskills[13].id = 1636;//weaken
-        otherclient->cskills[13].level = 4;
-        otherclient->cskills[14].id = 1641;//morror phantasim
-        otherclient->cskills[14].level = 4;
-        otherclient->cskills[15].id = 1646;//flame hawk
-        otherclient->cskills[15].level = 4;
-        otherclient->cskills[16].id = 1651;//spiral kick
-        otherclient->cskills[16].level = 4;
-        otherclient->cskills[17].id = 1776;//Assassin Form
-        otherclient->cskills[17].level = 1;
-        otherclient->cskills[18].id = 1781;//Combat Weapon Mastery
-        otherclient->cskills[18].level = 18;
-        otherclient->cskills[19].id = 1801;//Combo Slash
-        otherclient->cskills[19].level = 9;
-        otherclient->cskills[20].id = 1811;//mystic knife
-        otherclient->cskills[20].level = 4;
-        otherclient->cskills[21].id = 1946;//plasma falcon
-        otherclient->cskills[21].level = 4;
-        otherclient->cskills[22].id = 1816;//Crazy-Style Slash
-        otherclient->cskills[22].level = 9;
-        otherclient->cskills[23].id = 1826;//Quick-Style Assualt
-        otherclient->cskills[23].level = 9;
-        otherclient->cskills[24].id = 1951;//circle break
-        otherclient->cskills[24].level = 4;
-        otherclient->cskills[25].id = 1836;//screw slash
-        otherclient->cskills[25].level = 4;
-        otherclient->cskills[26].id = 1841;//Advanced Katar Mastery
-        otherclient->cskills[26].level = 9;
-        otherclient->cskills[27].id = 1851;//cloaking
-        otherclient->cskills[27].level = 4;
-        otherclient->cskills[28].id = 1856;//evasion guard
-        otherclient->cskills[28].level = 4;
-        otherclient->cskills[29].id = 1861;//Advanced Katar Mastery
-        otherclient->cskills[29].level = 9;
-        otherclient->cskills[30].id = 1871;//bloody assault
-        otherclient->cskills[30].level = 4;
-        otherclient->cskills[31].id = 1881;//critical accordance
-        otherclient->cskills[31].level = 4;
-        otherclient->cskills[32].id = 1886;//mental storm
-        otherclient->cskills[32].level = 4;
-        otherclient->cskills[33].id = 1891;//enfeeblement
-        otherclient->cskills[33].level = 4;
-        otherclient->cskills[34].id = 1896;//Phoenix Slash
-        otherclient->cskills[34].level = 9;
-        otherclient->cskills[35].id = 1906;//Flame Slash
-        otherclient->cskills[35].level = 9;
-        otherclient->cskills[36].id = 1916;//Freezing Assualt
-        otherclient->cskills[36].level = 9;
-        otherclient->cskills[37].id = 1926;//Precision Slash
-        otherclient->cskills[37].level = 9;
-        otherclient->cskills[38].id = 1936;//Precision Assualt
-        otherclient->cskills[38].level = 9;
-        otherclient->cskills[39].id = 1876;//vicious accordance
-        otherclient->cskills[39].level = 4;
-        otherclient->cskills[40].id = 1811;//Mystic Knife
-        otherclient->cskills[40].level = 4;
-        otherclient->cskills[41].id = 1506;//sprint
-        otherclient->cskills[41].level = 5;
-        otherclient->cskills[42].id = 1511;//velocity accordance
-        otherclient->cskills[42].level = 5;
-        otherclient->cskills[43].id = 1766;//rapid twitch
-        otherclient->cskills[43].level = 5;
-        otherclient->cskills[44].id = 1761;//hawker accordance
-        otherclient->cskills[44].level = 5;
-        otherclient->cskills[45].id = 1516;//secound sight
-        otherclient->cskills[45].level = 4;
-        otherclient->cskills[46].id = 1771;//requiem
-        otherclient->cskills[46].level = 4;
-        // Mileage Items - raider - katar
-        otherclient->cskills[47].id = 5803; // 861 - Katar Iron Blessing
-        otherclient->cskills[47].level = 1;
-        otherclient->cskills[48].id = 5804; // 862 - Katar Wind Blessing
-        otherclient->cskills[48].level = 1;
-        // Mileage Items - raider - dual
-        otherclient->cskills[49].id = 5805; // 863 - Duel Wield Iron Blessing
-        otherclient->cskills[49].level = 1;
-        otherclient->cskills[50].id = 5806; // 864 - Duel Wield Wind Blessing
-        otherclient->cskills[50].level = 1;
-        // Mileage - All jobs
-        otherclient->cskills[51].id = 5505; // 1091 - Swift Blessing
-        otherclient->cskills[51].level = 1;
-        otherclient->cskills[52].id = 5506; // 1092 - Nimble Blessing
-        otherclient->cskills[52].level = 1;
-
-
-        SendPM (thisclient, "Relogin For Get All Skills");
-    }
-    else if ( classid == 322 ) //Scout
-    {
-        otherclient->cskills[0].id = 1401;//Combat Mastery
-        otherclient->cskills[0].level = 9;
-        otherclient->cskills[1].id = 1411;//Bow Mastery
-        otherclient->cskills[1].level = 18;
-        otherclient->cskills[2].id = 1431;//Clamp Arrow
-        otherclient->cskills[2].level = 9;
-        otherclient->cskills[3].id = 1441;//Double Arrow
-        otherclient->cskills[3].level = 9;
-        otherclient->cskills[4].id = 1451;//Backpack Proficiency
-        otherclient->cskills[4].level = 9;
-        otherclient->cskills[5].id = 1461;//Mana Profut
-        otherclient->cskills[5].level = 9;
-        otherclient->cskills[6].id = 1471;//offensive focus
-        otherclient->cskills[6].level = 5;
-        otherclient->cskills[7].id = 1496;//soul disciplin
-        otherclient->cskills[7].level = 5;
-        otherclient->cskills[8].id = 1476;//Shackle Arrow
-        otherclient->cskills[8].level = 9;
-        otherclient->cskills[9].id = 1486;//Triple Arrow
-        otherclient->cskills[9].level = 9;
-        otherclient->cskills[10].id = 1501;//stun arrow
-        otherclient->cskills[10].level = 4;
-        otherclient->cskills[11].id = 1656;//Flame Hawk
-        otherclient->cskills[11].level = 1;
-        otherclient->cskills[12].id = 1661;//Advanced Bow Mastery
-        otherclient->cskills[12].level = 18;
-        otherclient->cskills[13].id = 1681;//Call Hawk
-        otherclient->cskills[13].level = 9;
-        otherclient->cskills[14].id = 1691;//Trap Arrow
-        otherclient->cskills[14].level = 9;
-        otherclient->cskills[15].id = 1701;//Aimed Triple Arrow
-        otherclient->cskills[15].level = 9;
-        otherclient->cskills[16].id = 1711;//camoflage
-        otherclient->cskills[16].level = 5;
-        otherclient->cskills[17].id = 1716;//longinus`s Incoration
-        otherclient->cskills[17].level = 5;
-        otherclient->cskills[18].id = 1721;//mana flow
-        otherclient->cskills[18].level = 9;
-        otherclient->cskills[19].id = 1731;//point black arrow
-        otherclient->cskills[19].level = 5;
-        otherclient->cskills[20].id = 1736;//Entangling Arrow
-        otherclient->cskills[20].level = 9;
-        otherclient->cskills[21].id = 1746;//Phoenix Arrow
-        otherclient->cskills[21].level = 9;
-        otherclient->cskills[22].id = 1756;//soul gurrent
-        otherclient->cskills[22].level = 5;
-        otherclient->cskills[23].id = 1506;//sprint
-        otherclient->cskills[23].level = 5;
-        otherclient->cskills[24].id = 1766;//rapid twitch
-        otherclient->cskills[24].level = 5;
-        otherclient->cskills[25].id = 1511;//Velocity accourdance
-        otherclient->cskills[25].level = 5;
-        otherclient->cskills[26].id = 1761;//Hawker accordance
-        otherclient->cskills[26].level = 5;
-        otherclient->cskills[27].id = 1516;//secound sight
-        otherclient->cskills[27].level = 4;
-        otherclient->cskills[28].id = 1771;//requiem
-        otherclient->cskills[28].level = 4;
-        otherclient->cskills[29].id = 1956;//impact arrow
-        otherclient->cskills[29].level = 6;
-        // Mileage Items - scout
-        otherclient->cskills[30].id = 5801; // 859 - Bow Iron Blessing
-        otherclient->cskills[30].level = 1;
-        otherclient->cskills[31].id = 5802; // 860 - Bow Wind Blessing
-        otherclient->cskills[31].level = 1;
-        // Mileage - All jobs
-        otherclient->cskills[32].id = 5505; // 1091 - Swift Blessing
-        otherclient->cskills[32].level = 1;
-        otherclient->cskills[33].id = 5506; // 1092 - Nimble Blessing
-        otherclient->cskills[33].level = 1;
-        // Unique Items - hawker
-        otherclient->cskills[34].id = 4601; // 565 - Call Beast
-        otherclient->cskills[34].level = 9;
-
-        SendPM (thisclient, "Relogin For Get All Skills");
-    }
-
-    else if ( classid == 421 ) //Bourgeois
-    {
-        otherclient->cskills[0].id = 2001;//Trigger Finger
-        otherclient->cskills[0].level = 9;
-        otherclient->cskills[1].id = 2011;//Tough Gunner
-        otherclient->cskills[1].level = 18;
-        otherclient->cskills[2].id = 2036;//Twin Shot
-        otherclient->cskills[2].level = 9;
-        otherclient->cskills[3].id = 2031;//Intesify
-        otherclient->cskills[3].level = 5;
-        otherclient->cskills[4].id = 2056;//selsam gaint
-        otherclient->cskills[4].level = 5;
-        otherclient->cskills[5].id = 2046;//craftsman talent
-        otherclient->cskills[5].level = 5;
-        otherclient->cskills[6].id = 2051;//Discount
-        otherclient->cskills[6].level = 5;
-        otherclient->cskills[7].id = 2061;//Sniping
-        otherclient->cskills[7].level = 9;
-        otherclient->cskills[8].id = 2071;//master twin shot
-        otherclient->cskills[8].level = 5;
-        otherclient->cskills[9].id = 2076;//Demolition Expertise
-        otherclient->cskills[9].level = 9;
-        otherclient->cskills[10].id = 2086;//backpack mastery
-        otherclient->cskills[10].level = 5;
-        otherclient->cskills[11].id = 2091;//illusion
-        otherclient->cskills[11].level = 5;
-        otherclient->cskills[12].id = 2096;//mercenery employment
-        otherclient->cskills[12].level = 4;
-        otherclient->cskills[13].id = 2111;//weapon expertise
-        otherclient->cskills[13].level = 5;
-        otherclient->cskills[14].id = 2101;//employ warrior
-        otherclient->cskills[14].level = 5;
-        otherclient->cskills[15].id = 2106;//employ hunter
-        otherclient->cskills[15].level = 5;
-        otherclient->cskills[16].id = 2256;//Veteran Sniper
-        otherclient->cskills[16].level = 9;
-        otherclient->cskills[17].id = 2266;//Ace Gunner
-        otherclient->cskills[17].level = 18;
-        otherclient->cskills[18].id = 2286;//Merchandising
-        otherclient->cskills[18].level = 9;
-        otherclient->cskills[19].id = 2296;//Third Eye
-        otherclient->cskills[19].level = 1;
-        otherclient->cskills[20].id = 2301;//triple shot
-        otherclient->cskills[20].level = 5;
-        otherclient->cskills[21].id = 2316;//Zulie Bolt
-        otherclient->cskills[21].level = 9;
-        otherclient->cskills[22].id = 2306;//Venemous Shot
-        otherclient->cskills[22].level = 9;
-        otherclient->cskills[23].id = 2401;//master triple shot
-        otherclient->cskills[23].level = 5;
-        otherclient->cskills[24].id = 2326;//Shrapnel Burst
-        otherclient->cskills[24].level = 9;
-        otherclient->cskills[25].id = 2336;//Chaotic Burst
-        otherclient->cskills[25].level = 9;
-        otherclient->cskills[26].id = 2346;//windstep
-        otherclient->cskills[26].level = 5;
-        otherclient->cskills[27].id = 2356;//stockpile
-        otherclient->cskills[27].level = 9;
-        otherclient->cskills[28].id = 2366;//weapon agument
-        otherclient->cskills[28].level = 5;
-        otherclient->cskills[29].id = 2351;//light step
-        otherclient->cskills[29].level = 5;
-        otherclient->cskills[30].id = 2376;//summon dreag knight
-        otherclient->cskills[30].level = 5;
-        otherclient->cskills[31].id = 2371;//jury rigging
-        otherclient->cskills[31].level = 5;
-        otherclient->cskills[32].id = 2381;//Toxic Shot
-        otherclient->cskills[32].level = 9;
-        otherclient->cskills[33].id = 2391;//Zulie Stun
-        otherclient->cskills[33].level = 9;
-        otherclient->cskills[34].id = 2406;//Cannon Splash Burst
-        otherclient->cskills[34].level = 9;
-        otherclient->cskills[35].id = 2416;//Flame Stun Burst
-        otherclient->cskills[35].level = 9;
-        otherclient->cskills[36].id = 2426;//reflect aura
-        otherclient->cskills[36].level = 5;
-        otherclient->cskills[37].id = 2431;//dual layer
-        otherclient->cskills[37].level = 5;
-        // Mileage Items - Borg - Launcher
-        otherclient->cskills[38].id = 5904; // 867 - Launcher Iron Blessing
-        otherclient->cskills[38].level = 1;
-        otherclient->cskills[39].id = 5905; // 868 - Launcher Wind Blessing
-        otherclient->cskills[39].level = 1;
-        // Mileage - All jobs
-        otherclient->cskills[40].id = 5505; // 1091 - Swift Blessing
-        otherclient->cskills[40].level = 1;
-        otherclient->cskills[41].id = 5506; // 1092 - Nimble Blessing
-        otherclient->cskills[41].level = 1;
-        //added for ver 144
-        otherclient->cskills[42].id = 2461; // Aimed Triple Shot
-        otherclient->cskills[42].level = 5;
-        SendPM (thisclient, "Relogin For Get All Skills");
-    }
-
-    else if ( classid == 422 ) //Artisan
-    {
-        //Common Tab
-        otherclient->cskills[0].id = 2031;//Intensify Weapon
-        otherclient->cskills[0].level = 5;
-        otherclient->cskills[1].id = 2036;//Twin Shot
-        otherclient->cskills[1].level = 9;
-        otherclient->cskills[2].id = 2046;//Craftsman's Talent
-        otherclient->cskills[2].level = 5;
-        otherclient->cskills[3].id = 2051;//Discount
-        otherclient->cskills[3].level = 5;
-        otherclient->cskills[4].id = 2056;//Salesman Gait
-        otherclient->cskills[4].level = 5;
-        otherclient->cskills[5].id = 2086;//Backpack Mastery
-        otherclient->cskills[5].level = 5;
-        otherclient->cskills[6].id = 2301;//Triple Shot
-        otherclient->cskills[6].level = 5;
-        otherclient->cskills[7].id = 2461;//Aimed Triple Shot
-        otherclient->cskills[7].level = 5;
-        //Crafting Tab
-        otherclient->cskills[8].id = 2116;//Weapon Research
-        otherclient->cskills[8].level = 9;
-        otherclient->cskills[9].id = 2126;//Armor Research
-        otherclient->cskills[9].level = 9;
-        otherclient->cskills[10].id = 2136;//SubItem Research
-        otherclient->cskills[10].level = 9;
-        otherclient->cskills[11].id = 2146;//Alchemy Research
-        otherclient->cskills[11].level = 9;
-        otherclient->cskills[12].id = 2156;//Weapon Craft
-        otherclient->cskills[12].level = 9;
-        otherclient->cskills[13].id = 2166;//Dark Blade Research
-        otherclient->cskills[13].level = 1;
-        otherclient->cskills[14].id = 2176;//Beam Blade Research
-        otherclient->cskills[14].level = 1;
-        otherclient->cskills[15].id = 2186;//Metal Blade Research
-        otherclient->cskills[15].level = 1;
-        otherclient->cskills[16].id = 2196;//Timber Blade Research
-        otherclient->cskills[16].level = 1;
-        otherclient->cskills[17].id = 2206;//Armor Craft
-        otherclient->cskills[17].level = 9;
-        otherclient->cskills[18].id = 2216;//Earth Blade Research
-        otherclient->cskills[18].level = 1;
-        otherclient->cskills[19].id = 2226;//Ocean Blade Research
-        otherclient->cskills[19].level = 1;
-        otherclient->cskills[20].id = 2236;//SubItem Craft
-        otherclient->cskills[20].level = 9;
-        otherclient->cskills[21].id = 2246;//Alchemy Craft
-        otherclient->cskills[21].level = 9;
-        otherclient->cskills[22].id = 2666;//Weapon Darkening
-        otherclient->cskills[22].level = 9;
-        otherclient->cskills[23].id = 2676;//Weapon Hardening
-        otherclient->cskills[23].level = 9;
-        otherclient->cskills[24].id = 2686;//Weapon Balancing
-        otherclient->cskills[24].level = 9;
-        otherclient->cskills[25].id = 2696;//Weapon Enchanting
-        otherclient->cskills[25].level = 9;
-        otherclient->cskills[26].id = 2706;//Armor Reinforcement
-        otherclient->cskills[26].level = 9;
-        otherclient->cskills[27].id = 2716;//Armor Endowment
-        otherclient->cskills[27].level = 9;
-        //Artisan Tab
-        otherclient->cskills[28].id = 2441;//Top Gunner
-        otherclient->cskills[28].level = 18;
-        otherclient->cskills[29].id = 2466;//Poison Shot
-        otherclient->cskills[29].level = 9;
-        otherclient->cskills[30].id = 2476;//Hypno Shot
-        otherclient->cskills[30].level = 5;
-        otherclient->cskills[31].id = 2481;//Summon Terror Knight
-        otherclient->cskills[31].level = 5;
-        otherclient->cskills[32].id = 2486;//Advanced Weapon Research
-        otherclient->cskills[32].level = 9;
-        otherclient->cskills[33].id = 2496;//Advanced Armor Research
-        otherclient->cskills[33].level = 9;
-        otherclient->cskills[34].id = 2506;//Advanced Subitem Research
-        otherclient->cskills[34].level = 9;
-        otherclient->cskills[35].id = 2516;//Advanced Alchemy Research
-        otherclient->cskills[35].level = 9;
-        otherclient->cskills[36].id = 2526;//Advanced Weapon Craft
-        otherclient->cskills[36].level = 9;
-        otherclient->cskills[37].id = 2536;//Advanced Dark Blade Research
-        otherclient->cskills[37].level = 1;
-        otherclient->cskills[38].id = 2546;//Advanced Beam Blade Research
-        otherclient->cskills[38].level = 1;
-        otherclient->cskills[39].id = 2556;//Advanced Metal Blade Research
-        otherclient->cskills[39].level = 1;
-        otherclient->cskills[40].id = 2566;//Advanced Timber Blade Research
-        otherclient->cskills[40].level = 1;
-        otherclient->cskills[41].id = 2576;//Advanced Armor Craft
-        otherclient->cskills[41].level = 9;
-        otherclient->cskills[42].id = 2586;//Advanced Earth Blade Research
-        otherclient->cskills[42].level = 1;
-        otherclient->cskills[43].id = 2596;//Advanced Ocean Blade Research
-        otherclient->cskills[43].level = 1;
-        otherclient->cskills[44].id = 2606;//Advanced SubItem Craft
-        otherclient->cskills[44].level = 9;
-        otherclient->cskills[45].id = 2616;//Advanced Alchemy Craft
-        otherclient->cskills[45].level = 9;
-        otherclient->cskills[46].id = 2626;//PAT Research
-        otherclient->cskills[46].level = 9;
-        otherclient->cskills[47].id = 2636;//PAT Craft
-        otherclient->cskills[47].level = 9;
-        otherclient->cskills[48].id = 2646;//Gem Cutting Research
-        otherclient->cskills[48].level = 9;
-        otherclient->cskills[49].id = 2656;//Gem Cutting
-        otherclient->cskills[49].level = 9;
-        otherclient->cskills[50].id = 2726;//Advanced Weapon Darkening
-        otherclient->cskills[50].level = 9;
-        otherclient->cskills[51].id = 2736;//Advanced Weapon Hardening
-        otherclient->cskills[51].level = 9;
-        otherclient->cskills[52].id = 2746;//Advanced Weapon Balancing
-        otherclient->cskills[52].level = 9;
-        otherclient->cskills[53].id = 2756;//Advanced Weapon Enchanting
-        otherclient->cskills[53].level = 9;
-        otherclient->cskills[54].id = 2766;//Advanced Armor Reinforcement
-        otherclient->cskills[54].level = 9;
-        otherclient->cskills[55].id = 2776;//Advanced Armor Endowment
-        otherclient->cskills[55].level = 9;
-        // Mileage Items - artisan
-        otherclient->cskills[56].id = 5902; // 865 - Gun Iron Blessing
-        otherclient->cskills[56].level = 1;
-        otherclient->cskills[57].id = 5903; // 866 - Gun Wind Blessing
-        otherclient->cskills[57].level = 1;
-        // Mileage - All jobs
-        otherclient->cskills[58].id = 5505; // 1091 - Swift Blessing
-        otherclient->cskills[58].level = 1;
-        otherclient->cskills[59].id = 5506; // 1092 - Nimble Blessing
-        otherclient->cskills[59].level = 1;
-        // Unique Items - artisan
-        otherclient->cskills[60].id = 4801; // 561 - Face Item Craft
-        otherclient->cskills[60].level = 9;
-        otherclient->cskills[61].id = 4811; // 562 - Accessory Craft
-        otherclient->cskills[61].level = 9;
-
-        SendPM (thisclient, "Relogin For Get All Skills");
-    }
-    else
-    {
-        /*
-        // Mileage Items - For which jobs?
-        otherclient->cskills[xx].id = 5501; // 590 - Mana Corrosion - all
-        otherclient->cskills[xx].level = 1;
-        otherclient->cskills[xx].id = 5502; // 591 - Dispel - all
-        otherclient->cskills[xx].level = 1;
-        otherclient->cskills[xx].id = 5901; // 593 - Virtuoso Crafting - (can learn, but not showing)
-        otherclient->cskills[xx].level = 1;
-        // Unique Items - For which jobs?
-        otherclient->cskills[xx].id = 4001; // 567 - ManaBrake - all
-        otherclient->cskills[xx].level = 1;
-        otherclient->cskills[xx].id = 4002; // 568 - Anti Magic Shell - all
-        otherclient->cskills[xx].level = 1;
-        otherclient->cskills[xx].id = xxxx; // 563 - all
-        otherclient->cskills[xx].level = x;
-        otherclient->cskills[xx].id = 4406; // 564 - Mana Shield - all - 4407, 4408
-        otherclient->cskills[xx].level = x;
-        otherclient->cskills[xx].id = 4821; // 566 - Expert Crafting - dealer - 4822, 4823
-        otherclient->cskills[xx].level = x;
-        otherclient->cskills[xx].id = 4201; //     - Adamantine Fist -
-        otherclient->cskills[xx].level = x;
-        // 5580-5595 other skills....basic?
-        */
-        is_ok=false;
-        SendPM(thisclient, "Can't add skills for this class");
-    }
+    DB->QFree( );
 
     if(is_ok)
     {
-        thisclient->AttrAllSkills();
-        thisclient->saveskills();
-        thisclient->ResetSkillOffset();
+        SendPM (otherclient, "Relogin to get all skills");
+        otherclient->AttrAllSkills();
+        otherclient->saveskills();
+        otherclient->ResetSkillOffset();
+    }
+    else
+    {
+        SendPM(thisclient, "Can't add skills for this class");
     }
 
 
@@ -5442,133 +5014,191 @@ bool CWorldServer::pakGMDelSkills(CPlayer* thisclient, char* name)
 }
 
 // All GM Skills
+//LMA: Mysql now.
 bool CWorldServer::pakGMGMSkills(CPlayer* thisclient, char* name)
 {
-    int classid = thisclient->CharInfo->Job;
-    bool is_ok=true;
     CPlayer* otherclient = GetClientByCharName( name );
     if(otherclient==NULL)
-    return true;
-
-    /*
-    //LMA: We delete previous skills to avoid errors (only the class ones)...
-    //They will be sorted correctly (if needed) at next startup...
-    for (int k=0;k<60;k++)
-    {
-        otherclient->cskills[k].id = 0;
-        otherclient->cskills[k].level = 0;
-        otherclient->cskills[k].thisskill=NULL;
-    }
-    */
+        return true;
 
     //LMA: Looking for good place to save it now...
     int family=3;
-    int nb_gm_skills=15;
-    int index=thisclient->FindSkillOffset(family);
+    int nb_gm_skills=0;
+
+    //LMA: MySQL time.
+    MYSQL_ROW row;
+    MYSQL_RES *result=NULL;
+    result = DB->QStore("SELECT skillid, skill_level FROM list_skills WHERE classid=2 AND isactive=1");
+    if(result==NULL) return true;
+
+    nb_gm_skills=mysql_num_rows(result);
+    if(nb_gm_skills==0)
+    {
+        Log(MSG_WARNING,"No GM Skill to learn.");
+        DB->QFree( );
+        return true;
+    }
+
+    int index=otherclient->FindSkillOffset(family);
     if(index==-1)
     {
-        Log(MSG_WARNING,"No Room anymore for learning Unique Skills.");
+        Log(MSG_WARNING,"No Room anymore for learning GM Skills.");
+        DB->QFree( );
         return true;
     }
 
     if (index+nb_gm_skills>=120)
     {
         Log(MSG_WARNING,"Not enough place to learn all GM skills.");
+        DB->QFree( );
         return true;
     }
 
     int index_ini=index;
 
-        // Visitor,     Soldier,            Knight,         Champion,           Muse,               Mage,             Cleric,           Hawker,             Raider,         Scout,          Dealer,             Bourgeois,      Artisan.
-    if (classid == 0 || classid == 111 || classid == 121 || classid == 122 || classid == 211 || classid == 221 || classid == 222 || classid == 311 || classid == 321 || classid == 322 || classid == 411 || classid == 421 || classid == 422 )
+    //time to learn...
+    while( row = mysql_fetch_row(result) )
     {
-        otherclient->cskills[index].id = 3201;//Healing All
-        otherclient->cskills[index].level = 1;
+        otherclient->cskills[index].id = atoi(row[0]);
+        otherclient->cskills[index].level = atoi(row[1]);
         index++;
-        otherclient->cskills[index].id = 3202;//ATK & Accuracy Up
-        otherclient->cskills[index].level = 1;
-        index++;
-        otherclient->cskills[index].id = 3203;//DEF & M-DEF Up
-        otherclient->cskills[index].level = 1;
-        index++;
-        otherclient->cskills[index].id = 3204;//A-SPD & CRI Up
-        otherclient->cskills[index].level = 1;
-        index++;
-        otherclient->cskills[index].id = 3205;//M-SPD & Dodge Up
-        otherclient->cskills[index].level = 1;
-        index++;
-        otherclient->cskills[index].id = 3210;//Purify All
-        otherclient->cskills[index].level = 1;
-        index++;
-        otherclient->cskills[index].id = 3211;//Invincibility (Self)
-        otherclient->cskills[index].level = 1;
-        index++;
-        otherclient->cskills[index].id = 3212;//Power Up (Self)
-        otherclient->cskills[index].level = 1;
-        index++;
-        otherclient->cskills[index].id = 3213;//Speed Up (Self)
-        otherclient->cskills[index].level = 1;
-        index++;
-        otherclient->cskills[index].id = 3214;//Invisibility (Self)
-        otherclient->cskills[index].level = 1;
-        index++;
-        otherclient->cskills[index].id = 3215;//Healing (Self)
-        otherclient->cskills[index].level = 1;
-        index++;
-        otherclient->cskills[index].id = 3216;//Kill (Anti-Crime)
-        otherclient->cskills[index].level = 1;
-        index++;
-        otherclient->cskills[index].id = 3217;//Stun (600")
-        otherclient->cskills[index].level = 1;
-        index++;
-        otherclient->cskills[index].id = 3218;//Mute (600")
-        otherclient->cskills[index].level = 1;
-        index++;
-        otherclient->cskills[index].id = 3219;//Purify
-        otherclient->cskills[index].level = 1;
-        index++;
+    }
 
-        for (int k=index_ini;k<index;k++)
+    DB->QFree( );
+
+    for (int k=index_ini;k<index;k++)
+    {
+        if (otherclient->cskills[k].id==0)
+            continue;
+
+        otherclient->cskills[k].thisskill = GServer->GetSkillByID( otherclient->cskills[k].id+otherclient->cskills[k].level-1 );
+        if(otherclient->cskills[k].thisskill==NULL)
         {
-            if (otherclient->cskills[k].id==0)
-                continue;
-
-            otherclient->cskills[k].thisskill = GServer->GetSkillByID( otherclient->cskills[k].id+otherclient->cskills[k].level-1 );
-            if(otherclient->cskills[k].thisskill==NULL)
-            {
-                otherclient->cskills[k].id=0;
-                otherclient->cskills[k].level=1;
-            }
-
+            otherclient->cskills[k].id=0;
+            otherclient->cskills[k].level=1;
         }
 
-        // Need to be tested out !!
-        /*
-        otherclient->cskills[15].id = 3220;//GM Passiv Skill
-        otherclient->cskills[15].level = 1;
-        otherclient->cskills[16].id = 3221;//DEV Passiv Sill
-        otherclient->cskills[16].level = 1;
-        otherclient->cskills[17].id = 3225;//
-        otherclient->cskills[17].level = 1;
-        otherclient->cskills[18].id = 3226;//
-        otherclient->cskills[18].level = 1;
-        otherclient->cskills[19].id = 3227;//
-        otherclient->cskills[19].level = 1;
-        */
-        SendPM (thisclient, "Relogin For Get All the GM  Skills");
+    }
+
+    SendPM (otherclient, "Relogin to get all the GM Skills");
+    otherclient->saveskills();
+    otherclient->ResetSkillOffset();
+
+
+    return true;
+}
+
+//LMA: We get the Objvar for a NPC.
+bool CWorldServer::pakGMObjVar(CPlayer* thisclient, int npctype, int output)
+{
+    //output==1 for PM.
+    //output==2 for debug.
+
+    if(npctype>=MAX_NPC)
+    {
+        return true;
+    }
+
+    CNPC* thisnpc = GetNPCByType(npctype);
+    if(thisnpc == NULL)
+    {
+        delete thisnpc;
+        return true;
+    }
+
+    if(output==1&&thisclient!=NULL)
+    {
+        //PM.
+        SendPM(thisclient,"Npc %i (%s) [%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i]",npctype,GetSTLMonsterNameByID(npctype),
+        ObjVar[npctype][0],ObjVar[npctype][1],ObjVar[npctype][2],ObjVar[npctype][3],ObjVar[npctype][4],ObjVar[npctype][5],ObjVar[npctype][6],ObjVar[npctype][7],ObjVar[npctype][8],ObjVar[npctype][9],
+        ObjVar[npctype][10],ObjVar[npctype][11],ObjVar[npctype][12],ObjVar[npctype][13],ObjVar[npctype][14],ObjVar[npctype][15],ObjVar[npctype][16],ObjVar[npctype][17],ObjVar[npctype][18],ObjVar[npctype][19]);
     }
     else
     {
-        is_ok=false;
-        SendPM(thisclient, "Can't add GM skills for this class");
-    }
-
-    if(is_ok)
-    {
-        thisclient->saveskills();
-        thisclient->ResetSkillOffset();
+        //debug.
+        LogDebug("Npc %i [0]=%i, [1]=%i, [2]=%i, [3]=%i, [4]=%i, [5]=%i, [6]=%i, [7]=%i, [8]=%i, [9]=%i, [10]=%i, [11]=%i, [12]=%i, [13]=%i, [14]=%i, [15]=%i, [16]=%i, [17]=%i, [18]=%i, [19]=%i (%s)",npctype,
+        ObjVar[npctype][0],ObjVar[npctype][1],ObjVar[npctype][2],ObjVar[npctype][3],ObjVar[npctype][4],ObjVar[npctype][5],ObjVar[npctype][6],ObjVar[npctype][7],ObjVar[npctype][8],ObjVar[npctype][9],
+        ObjVar[npctype][10],ObjVar[npctype][11],ObjVar[npctype][12],ObjVar[npctype][13],ObjVar[npctype][14],ObjVar[npctype][15],ObjVar[npctype][16],ObjVar[npctype][17],ObjVar[npctype][18],ObjVar[npctype][19],
+        GetSTLMonsterNameByID(npctype));
     }
 
 
     return true;
 }
+
+//LMA: We force an ObjVar value for a NPC
+bool CWorldServer::pakGMSetObjVar(CPlayer* thisclient, int npctype, int index, int value)
+{
+    if(npctype>=2000||value<0||index<0||index>19)
+    {
+        return true;
+    }
+
+    CNPC* thisnpc = GetNPCByType(npctype);
+    if(thisnpc == NULL)
+    {
+        delete thisnpc;
+        return true;
+    }
+
+    ObjVar[npctype][index]=value;
+    SendPM(thisclient,"ObjVar[%i][%i] is set to %i",npctype,index,value);
+
+    //Has eventID changed?
+    if(index==0)
+    {
+        thisnpc->event = value;
+
+        BEGINPACKET( pak, 0x790 );
+        ADDWORD    ( pak, thisnpc->clientid );
+        ADDWORD    ( pak, thisnpc->event );	  //LMA: Welcome in the real Word ^_^
+        GServer->SendToAllInMap(&pak,thisnpc->posMap);
+    }
+
+
+    return true;
+}
+
+
+//LMA: We force UnionWar
+bool CWorldServer::pakGMForceUW(CPlayer* thisclient, int time)
+{
+    if (time<=0)
+    {
+        UWForceFrom=0;
+        return true;
+    }
+
+    //Checking if UW is already in motion or not...
+    if(GServer->ObjVar[1113][1]!=0)
+    {
+        SendPM(thisclient,"Union War already started!");
+        return true;
+    }
+
+    SYSTEMTIME sTIME;
+    GetLocalTime(&sTIME);
+    sTIME.wMinute+=time;
+    UWForceFrom=(sTIME.wHour * 60) + sTIME.wMinute;
+
+
+    return true;
+}
+
+
+//LMA: We force Nb players requirement.
+bool CWorldServer::pakGMForceUWPlayers(CPlayer* thisclient, int nb_players)
+{
+    if (nb_players<=0||nb_players>=100)
+    {
+        UWNbPlayers=0;
+        return true;
+    }
+
+    UWNbPlayers=nb_players;
+    GServer->DB->QExecute("UPDATE list_config SET uwnbplayers=%i",UWNbPlayers);
+
+
+    return true;
+}
+

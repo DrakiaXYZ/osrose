@@ -71,6 +71,24 @@ bool CPlayer::loaddata( )
     CharInfo->union04=atoi(row[33]);
     CharInfo->union05=atoi(row[34]);
 
+    //LMA: Pvp according to union:
+    //LMA²: Will be set by QSDs now...
+    pvp_id=-1;
+    /*
+    if(CharInfo->unionid==1||CharInfo->unionid==4)
+    {
+        pvp_id=11;
+    }
+    else if(CharInfo->unionid==3||CharInfo->unionid==5)
+    {
+        pvp_id=13;
+    }
+    else
+    {
+        pvp_id=0;
+    }
+    */
+
     //LMA: mileage stuff
     bonusxp=atoi(row[35]);
     timerxp=atoi(row[36]);
@@ -94,10 +112,10 @@ bool CPlayer::loaddata( )
     struct tm * timeinfo;
     rawtime=Shop->mil_shop_time;
     timeinfo = localtime ( &rawtime );
-    Log(MSG_INFO,"Shop %i/%i/%i, %i:%i:%i",timeinfo->tm_year+1900,timeinfo->tm_mon+1,timeinfo->tm_mday,timeinfo->tm_hour+1,timeinfo->tm_min+1,timeinfo->tm_sec+1);
+    //Log(MSG_INFO,"Shop %i/%i/%i, %i:%i:%i",timeinfo->tm_year+1900,timeinfo->tm_mon+1,timeinfo->tm_mday,timeinfo->tm_hour+1,timeinfo->tm_min+1,timeinfo->tm_sec+1);
     rawtime=timerxp;
     timeinfo = localtime ( &rawtime );
-    Log(MSG_INFO,"Bonus Xp %i/%i/%i, %i:%i:%i",timeinfo->tm_year+1900,timeinfo->tm_mon+1,timeinfo->tm_mday,timeinfo->tm_hour+1,timeinfo->tm_min+1,timeinfo->tm_sec+1);
+    //Log(MSG_INFO,"Bonus Xp %i/%i/%i, %i:%i:%i",timeinfo->tm_year+1900,timeinfo->tm_mon+1,timeinfo->tm_mday,timeinfo->tm_hour+1,timeinfo->tm_min+1,timeinfo->tm_sec+1);
     //End of test
 
     time_t etime=time(NULL);
@@ -437,13 +455,41 @@ bool CPlayer::loaddata( )
 		CalculateSignature(itemnum);  //Calculate signature.
 
         //LMA: little check, refine from 1 to 9 are not valid...
+        /*
         if(items[itemnum].refine>0&&items[itemnum].refine<=9)
         {
             Log(MSG_WARNING,"Invalid refine %i for item (%i:%i) for %s",items[itemnum].refine,items[itemnum].itemtype,items[itemnum].itemnum,CharInfo->charname);
             items[itemnum].refine*=16;
         }
+        */
+
+        switch (items[itemnum].refine)
+        {
+            case 0:
+            case 16:
+            case 32:
+            case 48:
+            case 64:
+            case 80:
+            case 96:
+            case 112:
+            case 128:
+            case 144:
+            {
+                //Ok.
+            }
+            break;
+            default:
+            {
+                Log(MSG_WARNING,"Invalid refine %i for item (%i:%i) for %s",items[itemnum].refine,items[itemnum].itemtype,items[itemnum].itemnum,CharInfo->charname);
+                items[itemnum].refine=0;
+            }
+            break;
+
+        }
 
 	}
+
 	GServer->DB->QFree( );
 	result = GServer->DB->QStore("SELECT itemnum,itemtype,refine,durability,lifespan,slotnum,count,stats,socketed,appraised,gem FROM storage WHERE owner=%i", Session->userid);
 	if(result==NULL) return false;
@@ -474,7 +520,7 @@ bool CPlayer::loaddata( )
 
     if(Clan->clanid!=0)
     {
-    	result = GServer->DB->QStore("SELECT logo,back,name,grade FROM list_clan where id=%i", Clan->clanid);
+    	result = GServer->DB->QStore("SELECT logo,back,name,grade,cp FROM list_clan where id=%i", Clan->clanid);
         if(result==NULL) return false;
     	if(mysql_num_rows(result)!=1)
     	{
@@ -488,6 +534,7 @@ bool CPlayer::loaddata( )
     	    Clan->back = atoi(row[1]);
     	    strcpy(Clan->clanname,row[2]);
     	    Clan->grade = atoi(row[3]);
+    	    Clan->CP= atoi(row[4]);
         }
     	GServer->DB->QFree( );
     }
@@ -578,8 +625,11 @@ void CPlayer::CalculateSignature( int slot )
      if(items[slot].last_sp_value>1000)
      {
         Log(MSG_INFO,"ERROR sp_value, Previous value %i",items[slot].last_sp_value);
-        items[slot].last_sp_value=1000;
+        items[slot].sp_value=items[slot].lifespan*10;
+        items[slot].last_sp_value=-1;
+        //GServer->DB->QExecuteUpdate("UPDATE items SET sp_value=%i WHERE owner=%i",items[slot].sp_value,CharInfo->charid);
      }
+
 
      return;
 }
@@ -589,6 +639,7 @@ void CPlayer::CalculateSignature( int slot )
 //0=delete
 //1=add/update
 //2=do nothing
+/*
 int CPlayer::CheckSignature( int slot )
 {
      long int res_head=-1;
@@ -624,7 +675,64 @@ int CPlayer::CheckSignature( int slot )
         res_data+=(long int)pow(2,16)*(items[slot].lifespan*10);
 		res_data+=(long int)pow(2,9)*items[slot].durability;
 		res_data+=(long int)pow(2,28)*items[slot].refine;
-		//Log(MSG_INFO,"wep/pat: %i(%i*[%i:%i]), data: (%li:%li), head(%li:%li)",slot,items[slot].count,items[slot].itemtype,items[slot].itemnum,res_data,items[slot].sig_data,res_head,items[slot].sig_head);
+		Log(MSG_INFO,"Signature slot %i: %i*(%i::%i), data: (%li:%li), head(%li:%li)",slot,items[slot].count,items[slot].itemtype,items[slot].itemnum,res_data,items[slot].sig_data,res_head,items[slot].sig_head);
+
+        //special PAT handling
+		if(items[slot].itemtype == 14)
+		{
+             if(items[slot].sp_value<=0&&items[slot].lifespan>0)
+             {
+                items[slot].sp_value=10*items[slot].lifespan;
+                items[slot].last_sp_value=-1;
+             }
+
+            if ((items[slot].sig_head==res_head)&&(items[slot].sig_data==res_data)&&(items[slot].sig_gem==items[slot].gem)&&(items[slot].last_sp_value==items[slot].sp_value))
+               return 2;
+        }
+        else
+        {
+            if ((items[slot].sig_head==res_head)&&(items[slot].sig_data==res_data)&&(items[slot].sig_gem==items[slot].gem))
+               return 2;
+        }
+     }
+
+     items[slot].sig_head=res_head;
+     items[slot].sig_data=res_data;
+     items[slot].sig_gem=items[slot].gem;
+     items[slot].last_sp_value=items[slot].sp_value;
+
+
+     return res;
+}*/
+int CPlayer::CheckSignature( int slot )
+{
+     long int res_head=-1;
+     long int res_data=-1;
+     int res=1;
+
+
+     if(items[slot].itemnum==0)
+     {
+        items[slot].sig_head=0;
+        items[slot].sig_data=0;
+        items[slot].sig_gem=0;
+        return 0;
+     }
+
+     //res_head=(long int)pow(2,5)*items[slot].itemnum+items[slot].itemtype;
+     res_head=(long int)GServer->BuildItemHead(items[slot]);
+
+     if( items[slot].itemtype >= 10 && items[slot].itemtype <= 13 )
+     {
+         res_data=items[slot].count;
+         //Log(MSG_INFO,"item: %i(%i*[%i:%i]), data: (%i:%i)",slot,items[slot].count,items[slot].itemtype,items[slot].itemnum,res_data,items[slot].sig_data,res_head,items[slot].sig_head);
+         if ((items[slot].sig_head==res_head)&&(items[slot].sig_data==res_data))
+            return 2;
+     }
+     else
+     {
+         res_data=(long int)GServer->BuildItemData(items[slot]);
+		//Log(MSG_INFO,"Signature slot %i: %i*(%i::%i), data: (%li:%li), head(%li:%li)",slot,items[slot].count,items[slot].itemtype,items[slot].itemnum,res_data,items[slot].sig_data,res_head,items[slot].sig_head);
 
         //special PAT handling
 		if(items[slot].itemtype == 14)

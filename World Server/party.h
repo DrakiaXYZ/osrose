@@ -29,6 +29,7 @@ class CParty
         CParty( );
         ~CParty( );
 
+        UINT PartyId;
         CPlayer* GetMember( UINT id );
         CPlayer* GetMemberByCharID( UINT charid );
         void SendToMembers( CPacket* pak, CPlayer* exclient=NULL );

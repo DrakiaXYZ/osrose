@@ -36,6 +36,7 @@ int main(int argc, char *argv[])
 {
 	//LMA: Opening log.
 	LogHandleSp(1);
+	LogDebugPriority(0,true);   //LMA: LogDebug won't appear in Logs or screen.
 
     srand( (unsigned)time(NULL) );
     srand( rand()*time(NULL) );

@@ -23,8 +23,17 @@
 
 CPlayer::CPlayer( CClientSocket* CLIENT )
 {
+
     client = CLIENT;
     is_invisible=false;
+    is_born=false;   //LMA: brand new player.
+
+    pvp_id=-1;  //LMA: Pvp ID (set by qsd most of the time).
+
+    map_warp_zone=0;
+    Warp_Zone.x=0;
+    Warp_Zone.y=0;
+    Warp_Zone.z=0;
 
     //Special AIP case.
     if (CLIENT==NULL)
@@ -129,6 +138,7 @@ CPlayer::CPlayer( CClientSocket* CLIENT )
     Clan->grade = 0;
     Clan->logo = 0;
     Clan->back = 0;
+    Clan->CP= 0;
     memset( &Clan->clanname, '\0', 17 );
     // ATTRIBUTES
     Attr = new ATTRIBUTES;
@@ -154,6 +164,7 @@ CPlayer::CPlayer( CClientSocket* CLIENT )
     isInvisibleMode = false;
     Fairy = false;
     hits = 0;
+    uw_kills=0;
     //FairyTime = 0;
     nstorageitems = 0;
     nsitemmallitems = 0;
@@ -169,7 +180,34 @@ CPlayer::CPlayer( CClientSocket* CLIENT )
     for(int i=0;i<MAX_QUICKBAR;i++)
         quickbar[i] = 0;
 
-    quest.selectedNpc = NULL;
+    //quest.selectedNpc = NULL;
+    quest.RefNPC=0; //LMA: selected NPC.
+    for(int i=0;i<10;i++)
+    {
+        if(i<5)
+        {
+            quest.EpisodeVar[i]=0;
+            quest.ClanVar[i]=0;
+        }
+
+        if (i<3)
+        {
+            quest.JobVar[i]=0;
+        }
+
+        if (i<7)
+        {
+            quest.PlanetVar[i]=0;
+        }
+
+        quest.UnionVar[i]=0;
+        //quest.quests[i]=NULL;
+    }
+
+    for(int i=0;i<0x40;i++)
+    {
+        quest.flags[i]=0;
+    }
 
     ActiveQuest = 0;
     lastRegenTime = 0;
@@ -247,6 +285,101 @@ bool CPlayer::UpdateValues( )
     return true;
 }
 
+
+//LMA: pvp code is here now, should be more clear...
+int CPlayer::ReturnPvp( CPlayer* player, CPlayer* otherclient )
+{
+    //otherclient is "this" and we send the packet to "player".
+
+
+    //impossible case???
+    if(player!=NULL&&(!(otherclient->Party->party==NULL || otherclient->Party->party != player->Party->party || otherclient->Party->party == player->Party->party)))
+    {
+        Log(MSG_WARNING,"Should be impossible??? returnpvp returns 0x00");
+        return 0x00;
+    }
+
+    CMap* map=NULL;
+
+    if(player!=NULL)
+    {
+        map = GServer->MapList.Index[player->Position->Map];
+    }
+    else
+    {
+        map = GServer->MapList.Index[otherclient->Position->Map];
+    }
+
+    //everyone should be friend
+    if (map->allowpvp!=1)
+    {
+        //should be 2, set by QSDzone from maps at warp most of the time.
+        if(pvp_id==-1)
+        {
+            Log(MSG_WARNING,"%s, pvp map (%i), pvp_id shouldn't be -1!",CharInfo->charname,map->id);
+        }
+
+        //Log(MSG_WARNING,"%s, not pvp map (%i), we send pvp_id==%i",CharInfo->charname,map->id,pvp_id);
+        return pvp_id;
+    }
+
+    //map is pvp
+    //depends on pvp status now...
+    switch (pvp_status)
+    {
+        case -1:
+        {
+            //We rely on pvp_id
+            if(pvp_id==-1)
+            {
+                Log(MSG_WARNING,"%s, pvp map (%i), pvp_id shouldn't be -1 (2)!",CharInfo->charname,map->id);
+            }
+
+            //Log(MSG_WARNING,"%s, pvp map (%i), we send pvp_id==%i (pvp_id)",CharInfo->charname,map->id,pvp_id);
+            return pvp_id;
+        }
+        break;
+        case 0:
+        {
+            //everyone is an enemy
+            //Log(MSG_WARNING,"%s, pvp map (%i), we send pvp_id==%i (everyone)",CharInfo->charname,map->id,clientid + 0x100);
+            return clientid + 0x100;
+        }
+        break;
+
+        case 1:
+        {
+            //clan is friendly
+            //Log(MSG_WARNING,"%s, pvp map (%i), we send pvp_id==%i (clan)",CharInfo->charname,map->id,Clan->clanid);
+            return Clan->clanid;
+        }
+
+        case 2:
+        {
+            //party is friendly
+            /*Log(MSG_WARNING,"%s, pvp map (%i), we send pvp_id==%i (party)",CharInfo->charname,map->id,otherclient->Party->party);
+            return otherclient->Party->party;*/
+
+            //LMA: for the moment, party have no ID :(
+            Log(MSG_WARNING,"PVP: we don't have an ID for party...");
+            return 0x00;
+        }
+
+        default:
+        {
+            Log(MSG_WARNING,"Impossible pvp_status case (%i)",pvp_status);
+        }
+        break;
+
+    }
+
+    Log(MSG_WARNING,"ReturnPvp, we shouldn't be here");
+
+
+    return 0x00;
+}
+
+
 // Spawn Another User on the Screen
 bool CPlayer::SpawnToPlayer( CPlayer* player, CPlayer* otherclient )
 {
@@ -300,7 +433,13 @@ bool CPlayer::SpawnToPlayer( CPlayer* player, CPlayer* otherclient )
     }
     ADDWORD( pak, 0x0000 );
     ADDWORD( pak, 0x0000 );
-    if(otherclient->Party->party==NULL || otherclient->Party->party != player->Party->party || otherclient->Party->party == player->Party->party)
+
+    //LMA: new simpler way.
+    pvp_id=otherclient->ReturnPvp(player,otherclient);
+    ADDDWORD(pak,pvp_id);
+
+
+    /*if(otherclient->Party->party==NULL || otherclient->Party->party != player->Party->party || otherclient->Party->party == player->Party->party)
     {
         CMap* map = GServer->MapList.Index[player->Position->Map];
         if(map->allowpvp==1)
@@ -322,10 +461,43 @@ bool CPlayer::SpawnToPlayer( CPlayer* player, CPlayer* otherclient )
         }
         else if(map->allowpvp==2) // pvp group vs group
         {
-            //test maxxon:
-            Log(MSG_INFO,"[PVP2] sending clanid %i",Clan->clanid);
-            ADDDWORD(pak, Clan->clanid);
-            //2do: special case for union wars, there are two alliances, 1000/2000 (see map)?
+            //LMA: for Union war.
+            if (map->id==9&&CharInfo->unionid>0)
+            {
+                int lma_alliance=0;
+                lma_alliance=pvp_id;
+                if(lma_alliance!=11&&lma_alliance!=13)
+                {
+                    int new_value=11;
+                    if (CharInfo->unionid==3||CharInfo->unionid==5)
+                    {
+                        lma_alliance=13;
+                    }
+
+                    LogDebug("793: Wrong pvp_id for player %s, changing it from %i to %i",CharInfo->charname,lma_alliance,new_value);
+                    pvp_id=new_value;
+                    lma_alliance=pvp_id;
+                }
+
+                //lma_alliance=0x07D0;
+                //if (CharInfo->unionid==3||CharInfo->unionid==5)
+                //{
+                    //lma_alliance=0x03E8;
+                //}
+
+                ADDDWORD(pak, lma_alliance);
+                Log(MSG_INFO,"0x793 Alliance %i for Union %i",lma_alliance,CharInfo->unionid);
+            }
+            else
+            {
+                //test maxxon
+                //ADDWORD(pak, 51);
+                ADDDWORD(pak, Clan->clanid );
+            }
+
+            ////test maxxon:
+            //Log(MSG_INFO,"[PVP2] sending clanid %i",Clan->clanid);
+            //ADDDWORD(pak, Clan->clanid);
         }
         else
         {
@@ -335,7 +507,12 @@ bool CPlayer::SpawnToPlayer( CPlayer* player, CPlayer* otherclient )
         }
 
     }
-    else {ADDDWORD(pak, 0x00000000 );}
+    else
+    {
+        ADDDWORD(pak, 0x00000000 );
+    }*/
+
+
     ADDDWORD( pak, GServer->BuildBuffs( this ) );//BUFFS
     ADDBYTE( pak, CharInfo->Sex );					// GENDER
     ADDWORD( pak, Stats->Move_Speed );			// WALK SPEED MAYBE?

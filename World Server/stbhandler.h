@@ -28,5 +28,13 @@ struct CSTBData {
 	int** rows;
 };
 
+struct CSTBDataChar {
+	unsigned rowcount;
+	unsigned fieldcount;
+	unsigned long** rows;
+};
+
 int STBStoreData( char* filename, CSTBData* data );
 void STBFreeData( CSTBData* data );
+int STBStoreDataChar( char* filename, CSTBDataChar* data ); //LMA: returning unsigned long
+void STBFreeDataChar( CSTBDataChar* data );

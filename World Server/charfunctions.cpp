@@ -113,7 +113,11 @@ void CCharacter::StartAction( CCharacter* Target, BYTE action, UINT skillid, boo
             RESETPACKET( pak, 0x798 );
             ADDWORD    ( pak, clientid );
             ADDWORD    ( pak, Target->clientid );
-            ADDWORD    ( pak, Stats->Move_Speed );
+
+            //ADDWORD    ( pak, Stats->Move_Speed );
+            ADDWORD    ( pak, Stats->Base_Speed );
+            //Log(MSG_INFO,"move speed %u, base speed %u",Stats->Move_Speed,Stats->Base_Speed);
+
             ADDFLOAT   ( pak, Target->Position->current.x*100 );
             ADDFLOAT   ( pak, Target->Position->current.y*100 );
             Battle->target = Target->clientid;

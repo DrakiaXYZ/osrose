@@ -78,28 +78,26 @@ int STLStoreData(char* filename, int family)
         langOffset.push_back(temp);
     }
 
-    for (UINT i = 0; i < langCount; i++)
-    {
-        fseek( fh, langOffset.at(i), SEEK_SET );
-
-        for (UINT j = 0; j < entryCount; j++)
-        {
-          entry* Entry = index[j];
-          language lang;
-            temp=0;
-            fread(&temp,4,1,fh);
-            lang.offset=temp;
-          Entry->lang.push_back(lang);
-        }
-
-    }
 
     UINT i=STL_ENGLISH;
+    fseek( fh, langOffset.at(i), SEEK_SET );
+
+    for (UINT j = 0; j < entryCount; j++)
+    {
+      //entry* Entry = index[j];
+      language lang;
+        temp=0;
+        fread(&temp,4,1,fh);
+        lang.offset=temp;
+      //Entry->lang.push_back(lang);
+      index[j]->lang.push_back(lang);
+    }
 
     for (UINT j = 0; j < entryCount; j++)
     {
           entry* Entry = index[j];
-          language *item = &Entry->lang.at(i);
+          //language *item = &Entry->lang.at(i);
+          language *item = &Entry->lang.at(0);
           fseek( fh, item->offset, SEEK_SET );
           temp=0;
           fread(&temp,1,1,fh);

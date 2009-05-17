@@ -149,7 +149,7 @@ bool CMonster::OnEnemyOnSight( CPlayer* Enemy )
 // called when enemy die
 bool CMonster::OnEnemyDie( CCharacter* Enemy )
 {
-    Log(MSG_INFO,"An ennemy died, let's stop battle");
+    Log(MSG_INFO,"An enemy died, let's stop battle");
     Position->destiny = Position->source; //ON MOB DIE
     ClearBattle( Battle );
     MoveTo( Position->source );
@@ -651,7 +651,8 @@ bool CMonster::Turak3(CMonster* monster,CMap* map)
 
 */
 
-//osprose's summon update.
+//osprose's summon update (old code).
+/*
 bool CMonster::SummonUpdate(CMonster* monster, CMap* map, UINT j)
 {
      BEGINPACKET( pak, 0x799 );
@@ -676,35 +677,35 @@ bool CMonster::SummonUpdate(CMonster* monster, CMap* map, UINT j)
         else
         if (montype > 800 && montype < 811)
         {
-			/*CPlayer* ownerclient = monster->GetOwner( );
-            float distance = 0x9;
-            for(UINT i=0;i<GServer->MapList.Index[Position->Map]->PlayerList.size();i++)
-            {
-                CPlayer* thisclient = GServer->MapList.Index[Position->Map]->PlayerList.at(i);
-                float tempdist = GServer->distance( Position->current, thisclient->Position->current );
-                if(tempdist<distance)
-                {
-                    thisclient->Stats->HP += ((((montype-800)*5)+((ownerclient->Stats->Level)/10))+10);
-                    thisclient->Stats->MP += (((montype-800)*5)+((ownerclient->Stats->Level)/25));
-                    BEGINPACKET( pak, 0x7b2);
-                    ADDWORD    ( pak, monster->clientid );
-                    ADDWORD    ( pak, 0x0b9d );
-                    ADDBYTE    ( pak, 0x06 );
-                    thisclient->client->SendPacket(&pak);
-
-                    RESETPACKET( pak, 0x7b5);
-                    ADDWORD    ( pak, thisclient->clientid );
-                    ADDWORD    ( pak, monster->clientid );
-                    ADDWORD    ( pak, 0x0b9d+0x3000+((ownerclient->Stats->Level%4)*0x4000) );
-                    ADDBYTE    ( pak, ownerclient->Stats->Level/4 );
-                    thisclient->client->SendPacket(&pak);
-
-                    RESETPACKET( pak, 0x7b9);
-                    ADDWORD    ( pak, monster->clientid );
-                    ADDWORD    ( pak, 0x0b9d );
-                    thisclient->client->SendPacket(&pak);
-                }
-            }*/
+//			CPlayer* ownerclient = monster->GetOwner( );
+//            float distance = 0x9;
+//            for(UINT i=0;i<GServer->MapList.Index[Position->Map]->PlayerList.size();i++)
+//            {
+//                CPlayer* thisclient = GServer->MapList.Index[Position->Map]->PlayerList.at(i);
+//                float tempdist = GServer->distance( Position->current, thisclient->Position->current );
+//                if(tempdist<distance)
+//                {
+//                    thisclient->Stats->HP += ((((montype-800)*5)+((ownerclient->Stats->Level)/10))+10);
+//                    thisclient->Stats->MP += (((montype-800)*5)+((ownerclient->Stats->Level)/25));
+//                    BEGINPACKET( pak, 0x7b2);
+//                    ADDWORD    ( pak, monster->clientid );
+//                    ADDWORD    ( pak, 0x0b9d );
+//                    ADDBYTE    ( pak, 0x06 );
+//                    thisclient->client->SendPacket(&pak);
+//
+//                    RESETPACKET( pak, 0x7b5);
+//                    ADDWORD    ( pak, thisclient->clientid );
+//                    ADDWORD    ( pak, monster->clientid );
+//                    ADDWORD    ( pak, 0x0b9d+0x3000+((ownerclient->Stats->Level%4)*0x4000) );
+//                    ADDBYTE    ( pak, ownerclient->Stats->Level/4 );
+//                    thisclient->client->SendPacket(&pak);
+//
+//                    RESETPACKET( pak, 0x7b9);
+//                    ADDWORD    ( pak, monster->clientid );
+//                    ADDWORD    ( pak, 0x0b9d );
+//                    thisclient->client->SendPacket(&pak);
+//                }
+//            }
         }
     }
     else
@@ -718,6 +719,73 @@ bool CMonster::SummonUpdate(CMonster* monster, CMap* map, UINT j)
         GServer->SendToVisible( &pak, monster );
         map->DeleteMonster( monster, true, j );
     }
+
+    return true;
+}
+*/
+
+//osprose's summon update.
+//LMA: adding the new life_time for summons :)
+bool CMonster::SummonUpdate(CMonster* monster, CMap* map, UINT j)
+{
+    UINT die_amount=0;
+ 	clock_t etime = clock() - lastDegenTime;
+    CPlayer* ownerclient = monster->GetOwner( );
+
+    if( etime >= 4 * CLOCKS_PER_SEC && Stats->HP > 0 )
+    {
+        if(monster->life_time>0)
+        {
+            die_amount=(UINT)(monster->Stats->MaxHP/monster->life_time);
+            //Log(MSG_INFO,"die amount for %i is %u",monster->montype,die_amount);
+        }
+        else
+        {
+            die_amount=2;
+            //Log(MSG_INFO,"DEFAULT die amount for %i is %u",monster->montype,die_amount);
+        }
+
+        Stats->HP -= (die_amount*4);    //*4 because each 4 seconds ;)
+        lastDegenTime = clock();
+        if (Stats->HP < 1||ownerclient == NULL||ownerclient->IsDead())//orphan check
+        {
+            //he's dead.
+            //Log(MSG_INFO,"Summon should be dead now");
+            BEGINPACKET( pak, 0x799 );
+            ADDWORD    ( pak, monster->clientid );
+            ADDWORD    ( pak, monster->clientid );
+            ADDDWORD   ( pak, monster->thisnpc->hp*monster->thisnpc->level );
+            ADDDWORD   ( pak, 16 );
+            GServer->SendToVisible( &pak, monster );
+            map->DeleteMonster( monster, true, j );
+            return true;
+        }
+        else
+        {
+            if(Stats->HP >0)
+            {
+                //LMA: Trying to update real HP amount.
+                BEGINPACKET( pak, 0x79f );
+                ADDWORD    ( pak, monster->clientid );
+                ADDDWORD   ( pak, Stats->HP );
+                GServer->SendToVisible( &pak, monster );
+            }
+
+        }
+
+    }
+    else if (Stats->HP < 1)
+    {
+        //Log(MSG_INFO,"Summon should be dead now 2");
+        BEGINPACKET( pak, 0x799 );
+        ADDWORD    ( pak, monster->clientid );
+        ADDWORD    ( pak, monster->clientid );
+        ADDDWORD   ( pak, monster->thisnpc->hp*monster->thisnpc->level );
+        ADDDWORD   ( pak, 16 );
+        GServer->SendToVisible( &pak, monster );
+        map->DeleteMonster( monster, true, j );
+    }
+
 
     return true;
 }
@@ -737,51 +805,29 @@ void CMonster::DoAi(int ainumberorg,char type)//ainumber is monster->AI type is 
     CAip* script = NULL;
     int AIWatch = GServer->Config.AIWatch;
     int aiindex = (ainumber*0x10000)+(type*0x100);
-    /*
-    if(type == 5)
-    {
-        Log(MSG_INFO,"Monster died. Activating AI type 5");
-    }
-    */
 
-    //LMA: halloween debug (Odelo).
     bool lma_debug=false;
     int nb_turns=0;
-    //if(ainumber>=1088||ainumber<=1114)
-    //if(ainumber>=1113||ainumber<=1114)
-    //if(ainumber==1205||ainumber==1201)
+
     /*
-    if(ainumber==480&&type==3)
+    if(ainumber==1249||ainumber==1830)
     {
         lma_debug=true;
-    }
+        LogDebugPriority(3);
+    }*/
 
-    if(ainumber>=151&&ainumber<=154)
-    {
-        lma_debug=true;
-    }
-    */
-
+    //LMA: findchar and nearchar set to NULL.
+    nearChar=NULL;
+    findChar=NULL;
 
     //LMA: New way, faster?
     while(GServer->AipListMap.find(aiindex)!=GServer->AipListMap.end())
     {
         nb_turns++;
         if (lma_debug)
-            Log(MSG_INFO,"BEGIN%i CDT Turn %i",ainumber,nb_turns);
+            LogDebug("BEGIN%i CDT Turn %i",ainumber,nb_turns);
 
         script = GServer->AipListMap[aiindex];
-
-        //if(ainumber == AIWatch)Log(MSG_DEBUG, "Record count = %i",script->recordcount[type]);
-        //if(ainumber == AIWatch)Log(MSG_DEBUG, "aiCondition type: %i AI index: %i condition count %i", type, aiindex, script->ConditionCount);
-
-        /*
-        if (lma_debug)
-        {
-            Log(MSG_DEBUG, "DoAI%i script %i, Record count = %i",ainumber,script->AipID,script->recordcount[type]);
-            Log(MSG_DEBUG, "DoAI%i aiCondition type: %i AI index: %i condition count %i",ainumber,type, aiindex, script->ConditionCount);
-        }
-        */
 
         int success = AI_SUCCESS; //needs to be AI_SUCCESS otherwise would not perform conditionless actions
         int thisaction = 0;
@@ -793,53 +839,101 @@ void CMonster::DoAi(int ainumberorg,char type)//ainumber is monster->AI type is 
             if (command > 32 || command < 0) continue;
 
             success = (*GServer->aiCondFunc[command])(GServer, this, script->Conditions[i]->data);
-            if(ainumber == AIWatch)Log(MSG_DEBUG, "aiCondition %03u returned %d", command, success);
+            if(ainumber == AIWatch)LogDebug( "aiCondition %03u returned %d", command, success);
 
             if (success == AI_FAILURE)
             {
                 if (lma_debug)
-                    Log(MSG_DEBUG, "DoAI%i aiCondition %03u, %i/%i Failure.",ainumber,command,i,script->ConditionCount-1);
+                {
+                    LogDebug( "DoAI%i aiCondition %03u, %i/%i Failure.",ainumber,command,i,script->ConditionCount-1);
+                }
+
                 break;
             }
             else
             {
                 if (lma_debug)
-                    Log(MSG_DEBUG, "DoAI%i aiCondition %03u, %i/%i Success.",ainumber,command,i,script->ConditionCount-1);
+                {
+                    LogDebug( "DoAI%i aiCondition %03u, %i/%i Success.",ainumber,command,i,script->ConditionCount-1);
+                }
+
             }
 
         }
 
         if (lma_debug)
-            Log(MSG_INFO,"DoAI%i END CDT Turn %i",ainumber,nb_turns);
+        {
+            LogDebug("DoAI%i END CDT Turn %i",ainumber,nb_turns);
+        }
 
 
         if (success == AI_SUCCESS)
         {
             if (lma_debug)
-                Log(MSG_INFO,"DoAI%i BEGIN ACT Turn %i",ainumber,nb_turns);
+            {
+                LogDebug("DoAI%i BEGIN ACT Turn %i",ainumber,nb_turns);
+            }
+
+
+            //LMA: Special case, if we have a LTB and a qsd trigger in the same script, we do the LTB first.
+            if(script->offset_ltb!=-1&&script->offset_qsd_trigger!=-1)
+            {
+                //We do the LTB.
+                int command = script->Actions[script->offset_ltb]->opcode;
+                if (command > 38 || command < 0) continue;
+
+                success = (*GServer->aiActFunc[command])(GServer, this, script->Actions[script->offset_ltb]->data);
+                if(ainumber == AIWatch)LogDebug( "aiAction forced: %03u returned %d", command, success);
+
+                if(lma_debug)
+                {
+                    LogDebug( "DoAI%i aiAction Forced: %03u returned %d, %i/%i",ainumber,command, success,script->offset_ltb,script->ActionCount-1);
+                }
+
+            }
 
             for (dword i = 0; i < script->ActionCount; i++)
             {
+                if(script->offset_ltb!=-1&&script->offset_qsd_trigger!=-1&&i==script->offset_ltb)
+                {
+                    //We cancel the LTB, already done earlier.
+                    LogDebug( "DoAI%i aiAction: We cancel %i since it should be already done",ainumber,i);
+                    continue;
+                }
+
                 int command = script->Actions[i]->opcode;
                 if (command > 38 || command < 0) continue;
 
                 success = (*GServer->aiActFunc[command])(GServer, this, script->Actions[i]->data);
-                if(ainumber == AIWatch)Log(MSG_DEBUG, "aiAction: %03u returned %d", command, success);
+                if(ainumber == AIWatch)LogDebug( "aiAction: %03u returned %d", command, success);
 
                 if(lma_debug)
-                    Log(MSG_DEBUG, "DoAI%i aiAction: %03u returned %d, %i/%i",ainumber,command, success,i,script->ActionCount-1);
+                {
+                    LogDebug( "DoAI%i aiAction: %03u returned %d, %i/%i",ainumber,command, success,i,script->ActionCount-1);
+                }
+
             }
 
             if(success == AI_SUCCESS)
             {
                 if(lma_debug)
                 {
-                    Log(MSG_INFO,"DoAI%i END ACT SUCCESS Turn %i",ainumber,nb_turns);
+                    LogDebug("DoAI%i END ACT SUCCESS Turn %i",ainumber,nb_turns);
                 }
 
                 //LMA: Santa is special, he continues (Xmas Tree Spawning), same for some special others (gifts summoning)
                 if(ainumber!=1205&&ainumber!=2048&&ainumber!=2049)
                 {
+                    if(lma_debug)
+                    {
+                        GServer->pakGMObjVar(NULL, 1249,2);
+                        LogDebugPriority(4);
+                    }
+
+                    thisnpc->refNPC=0;
+                    nearChar=NULL;
+                    findChar=NULL;
+
                     return; //automatically return after performing the first successful action
                 }
 
@@ -847,13 +941,27 @@ void CMonster::DoAi(int ainumberorg,char type)//ainumber is monster->AI type is 
             else
             {
               if(lma_debug)
-                    Log(MSG_INFO,"DoAI%i END ACT FAILURE Turn %i",ainumber,nb_turns);
+              {
+                    LogDebug("DoAI%i END ACT FAILURE Turn %i",ainumber,nb_turns);
+              }
+
             }
 
         }
 
         aiindex++;
     }
+
+    if(lma_debug)
+    {
+        GServer->pakGMObjVar(NULL, 1249,2);
+        LogDebugPriority(4);
+    }
+
+
+    thisnpc->refNPC=0;
+    nearChar=NULL;
+    findChar=NULL;
 
 
     return;

@@ -185,6 +185,8 @@ struct STR_AI_COND_020 {
 	byte btOp;	//Pos: 0x08
 };
 
+
+
 struct STR_AI_COND_021 {
 	//Unknown (0x00 bytes)
 };
@@ -247,7 +249,8 @@ struct STR_AI_COND_029 {
 
 struct STR_AI_COND_030 {
 	//Unknown (0x04 bytes)
-	dword Unknown;	//Pos: 0x00
+	//dword Unknown;	//Pos: 0x00
+	dword Timer;	//Pos: 0x00, LMA: timer.
 };
 
 //LMA: Unknown and empty :)

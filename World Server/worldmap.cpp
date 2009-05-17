@@ -99,7 +99,7 @@ bool CMap::RemovePlayer( CPlayer* player, bool clearobject )
 
 
 // add a new monster to this map
-CMonster* CMap::AddMonster( UINT montype, fPoint position, UINT owner, CMDrops* MonsterDrop, CMDrops* MapDrop, UINT spawnid , bool GetDropData )
+CMonster* CMap::AddMonster( UINT montype, fPoint position, UINT owner, CMDrops* MonsterDrop, CMDrops* MapDrop, UINT spawnid , bool GetDropData, bool is_tactic)
 {
     // check if is a valid monster
     CNPCData* thisnpc = GServer->GetNPCDataByID( montype );
@@ -108,16 +108,21 @@ CMonster* CMap::AddMonster( UINT montype, fPoint position, UINT owner, CMDrops* 
         Log( MSG_WARNING, "Invalid montype %i", montype );
         return NULL;
     }
+
     CMonster* monster = new (nothrow) CMonster( position, montype, this->id, owner, spawnid  );
     if(monster==NULL)
     {
         Log( MSG_WARNING, "Error allocing memory" );
         return NULL;
     }
+
     monster->thisnpc = thisnpc;
+    monster->life_time=0;
     monster->SetStats( );
     monster->Stats->HP = monster->Stats->MaxHP;
     monster->Stats->MP = monster->Stats->MaxMP;
+    monster->is_tactical=is_tactic;
+    monster->suicide=false;
 
     //LMA: no agressivity in Santa's planetoid ;)
     if(monster->Position->Map==38)
@@ -150,11 +155,33 @@ CMonster* CMap::AddMonster( UINT montype, fPoint position, UINT owner, CMDrops* 
     monster->daynight=0;
     monster->sp_aip=0;
 
+    //LMA: team:
+    monster->team=0;
+
+    if(monster->IsSummon()&&owner!=0)
+    {
+        //Trying to get the owner.
+        CPlayer* tempplayer=GServer->GetClientByID(owner,monster->Position->Map);
+        if (tempplayer!=NULL)
+        {
+            monster->team=tempplayer->pvp_id;
+            Log(MSG_INFO,"ADDMONSTER, overwriting team with owner's pvp_id",tempplayer->pvp_id);
+        }
+
+    }
+
     if(spawnid!=0)
     {
         CMobGroup* thisgroup = GServer->GetMobGroup( spawnid, this->id );
         if(thisgroup!=NULL)
-            thisgroup->active++;
+        {
+            //LMA: only if not a tactical.
+            if(!monster->is_tactical)
+            {
+                thisgroup->active++;
+            }
+
+        }
 
         //LMA: daynight
         monster->daynight=thisgroup->daynight;
@@ -237,6 +264,7 @@ CMonster* CMap::AddMonster( UINT montype, fPoint position, UINT owner, CMDrops* 
     monster->skillid=0;
     monster->range=0;
     monster->buffid=0;
+    monster->char_montype=montype;
 
     //Log(MSG_INFO,"XCID, Addmonster %i in map %i",montype,monster->Position->Map);
 
@@ -254,10 +282,17 @@ bool CMap::DeleteMonster( CMonster* monster, bool clearobject, UINT i )
         CMobGroup* thisgroup = GServer->GetMobGroup( monster->Position->respawn, monster->Position->Map );
         if(thisgroup!=NULL)
         {
-            if(thisgroup->active >= thisgroup->limit)// reset spawn timer if the spawn is full
-                thisgroup->lastRespawnTime = clock();
-            thisgroup->active--;
-            thisgroup->basicKills++;
+            /*if(thisgroup->active >= thisgroup->limit)// reset spawn timer if the spawn is full
+                thisgroup->lastRespawnTime = clock();*/
+
+            //LMA: only if the monster isn't tactical...
+            if(!monster->is_tactical)
+            {
+                thisgroup->active--;
+                thisgroup->basicKills++;
+                thisgroup->lastKills++;
+            }
+
         }
     }
     if(clearobject)
@@ -318,6 +353,33 @@ bool CMap::DeleteDrop( CDrop* drop )
 bool CMap::AddNPC( CNPC* npc )
 {
     NPCList.push_back( npc );
+
+    //LMA: We keep a track with a more general map as well since we'll need it
+	//in some QSD...
+    if (GServer->ListAllNpc.find(npc->npctype)==GServer->ListAllNpc.end())
+    {
+        //not found yet.
+        GServer->ListAllNpc[npc->npctype].push_back(npc->posMap);
+        //Log(MSG_WARNING,"Adding NPC %i (didn't exist) in map %i",npc->npctype,npc->posMap);
+        return true;
+    }
+
+    //found, let's see if we already got a NPC in this map.
+    for (int k=0;k<GServer->ListAllNpc[npc->npctype].size();k++)
+    {
+        if(GServer->ListAllNpc[npc->npctype].at(k)==npc->posMap)
+        {
+            //Log(MSG_WARNING,"there is already a NPC %i in map %i",npc->npctype,npc->posMap);
+            return true;
+        }
+
+    }
+
+    //let's add it :)
+    GServer->ListAllNpc[npc->npctype].push_back(npc->posMap);
+    //Log(MSG_WARNING,"Adding NPC %i (already in other maps) in map %i as well",npc->npctype,npc->posMap);
+
+
     return true;
 }
 

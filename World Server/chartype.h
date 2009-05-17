@@ -50,6 +50,13 @@ struct POSITION
     //fPoint battle;
 };
 
+//LMA: For UW.
+struct UWPOSITION
+{
+    fPoint source;
+    unsigned int Map;
+};
+
 struct STATS
 {
     int Level;
@@ -307,6 +314,7 @@ struct QUESTS
 
 struct CLAN
 {
+    unsigned int CP;
     unsigned int clanid;
     unsigned int clanrank;
     unsigned int grade;

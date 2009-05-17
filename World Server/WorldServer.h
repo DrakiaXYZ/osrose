@@ -138,6 +138,7 @@ class CWorldServer : public CServerSocket
         char* GetStrValue( const char* s , void* var=NULL );
     	bool SendSysMsg( CPlayer* thisclient, string message );
     	UINT RandNumber( UINT init, UINT range, UINT seed=0 );
+        UINT ReturnItemType( CPlayer* thisclient, int slot );   //LMA: returns a "type" from an item in a slot.
     	UINT GetColorExp( UINT playerlevel,UINT moblevel, UINT exp );
     	bool CheckInventorySlot( CPlayer* thisclient, int slot );
     	bool pakGMClass( CPlayer* thisclient, char* classid );
@@ -146,6 +147,7 @@ class CWorldServer : public CServerSocket
     	bool pakGMHide( CPlayer* thisclient, int mode );
     	void SendToVisible( CPacket* pak, CPlayer* thisclient, bool thisclient=true );
     	void SendToVisible( CPacket* pak, CPlayer* thisclient, CPlayer* xotherclient );
+    	void SendToVisibleAIP( CPacket* pak, CMonster* thismon, CDrop* thisdrop );  //LMA: used for AIP.
 
     	void SendToVisible( CPacket* pak, class CCharacter* character, CDrop* thisdrop=NULL );
 
@@ -158,6 +160,7 @@ class CWorldServer : public CServerSocket
     	bool IsVisible( CPlayer* thisclient, CDrop* thisdrop );
         CItem GetItemByHeadAndData( unsigned head, unsigned data );
     	bool IsVisible( CPlayer* thisclient, CNPC* thisnpc );
+    	bool IsVisibleNPCType( CPlayer* thisclient, UINT npc_type );    //LMA: Used for AIP.
     	void SendToVisible( CPacket* pak, CMonster* thismon, CDrop* thisdrop=NULL );
     	void SendToVisible( CPacket* pak, CDrop* thisdrop );
         CPlayer* GetClientByUserName( char *username );
@@ -192,14 +195,18 @@ class CWorldServer : public CServerSocket
         char* GetSTLItemPrefix(int family, UINT idorg);  //LMA: to get an item prefix.
         char* GetSTLQuestByID(UINT idorg);  //LMA: getting quest name by STL.
         char* GetSTLSkillByID(UINT idorg);  //LMA: to get a skill name :)
+        char* GetSTLZoneNameByID(UINT idorg);   //LMA: get a zone name :)
         CNPC* GetNPCByType( UINT npctype );
         CDrop* GetDrop( CMonster* thismon );
         CDrop* GetPYDrop( CMonster* thismon, UINT droptype );   //hidden
     	void SendToAll( CPacket* pak );
     	void SendToAllInMap( CPacket* pak, int mapid);     //LMA: Send a message to all people in a given map
         UINT gi(UINT itemvalue, short type);    //LMA: to get a clean itemtype and itemnum.
-
+        UINT getClanPoints(int clanid);   //LMA: We get the exact Clan Points amount through mysql database
+        UINT getClanGrade(int clanid);    //LMA: We get the exact Clan Grade through mysql database
+        UINT SummonFormula(CPlayer* thisclient,CMonster* thismonster);    //LMA: Formulas for summons.
     	UINT GetNewClientID( );
+    	unsigned GetNewPartyID( );  //LMA: Getting a Party ID.
     	void DisconnectAll();
     	CPlayer* GetClientByUserID( UINT userid );
         UINT GetLevelGhost( UINT map, UINT level );
@@ -209,7 +216,7 @@ class CWorldServer : public CServerSocket
         bool GetAllStorage( CPlayer* thisclient);     //LMA: Getting Storage (all).
         bool GetSlotStorage( CPlayer* thisclient,UINT slotnum);   //LMA: refreshing one slot from MySQL storage.
         bool SaveSlotStorage( CPlayer* thisclient,UINT slotnum);  //LMA: Saving one slot into MySQL storage.
-        bool CWorldServer::SaveSlotMall( CPlayer* thisclient,UINT slotnum);  //LMA: Saving one slot into MySQL Item Mall.
+        bool SaveSlotMall( CPlayer* thisclient,UINT slotnum);  //LMA: Saving one slot into MySQL Item Mall.
         bool GetZulyStorage( CPlayer* thisclient);     //LMA: Get Zuly from Storage (from MySQL)
         bool SaveZulyStorage( CPlayer* thisclient);    //LMA: Save Zuly to Storage (to MySQL)
         CMonster* LookAOEMonster( CPlayer* thisclient);       //LMA: Trying to get a monster from a location (for AOE_TARGET paket mainly).
@@ -327,12 +334,13 @@ class CWorldServer : public CServerSocket
         bool pakGMEventType(CPlayer* thisclient, int npctype, int dialog, long int type); //Event
         bool pakGMEventIFO(CPlayer* thisclient, int ifoType,int eventID);   //LMA: for Ifo Objects
     	bool pakGMTele( CPlayer* thisclient, int map, float x, float y );
-    	bool pakGMMon( CPlayer* thisclient, int montype, int moncount );
+    	bool pakGMMon( CPlayer* thisclient, int montype, int moncount,int monteam=0 );
         //bool pakGMZulygive(CPlayer* thisclient, char* name, int zuly);
         bool pakGMZulygive(CPlayer* thisclient, char* name, long long zuly);
         bool pakGMFairyto(CPlayer* thisclient, char* name, int mode);
         bool pakGMClanRewardPoints(CPlayer* thisclient, char* name, int points);    //reward points
         bool pakGMClanPoints(CPlayer* thisclient, char* name, int points);    //clan points
+        bool pakGMRaiseCG(CPlayer* thisclient); //LMA: Raising Clan Grade
         bool pakGMManageFairy(CPlayer* thisclient, int mode);
         bool pakGMHurtHim(CPlayer* thisclient, char* name);   //LMA: Gm command.
         bool pakGMChangeFairyWait(CPlayer* thisclient, int newvalue);
@@ -341,6 +349,10 @@ class CWorldServer : public CServerSocket
         bool pakGMTelePlayerHere( CPlayer* thisclient, char* name );
         bool pakGMAllSkill ( CPlayer* thisclient, char* name); // by crashinside
         bool pakGMDelSkills ( CPlayer* thisclient, char* name); // by rl2171
+        bool pakGMObjVar(CPlayer* thisclient, int npctype, int output=1); //LMA: ObjVar for a NPC.
+        bool pakGMSetObjVar(CPlayer* thisclient, int npctype, int index, int value);    //LMA: set an ObjVar for a NPC.
+        bool pakGMForceUW(CPlayer* thisclient, int time); //LMA: forcing Union Wars.
+        bool pakGMForceUWPlayers(CPlayer* thisclient, int nb_players);   //LMA: forcing Union Wars (nb players).
         bool pakGMReborn( CPlayer* thisclient); //Reborn by Core
         bool pakGMLevel( CPlayer* thisclient, int level , char* name);
         bool pakGMTeleToPlayer( CPlayer* thisclient, char* name );
@@ -429,10 +441,16 @@ class CWorldServer : public CServerSocket
         inline int round(double x) {return int(x > 0.0 ? x + 0.5 : x - 0.5);};
         //vector<CAip*> AipList;
         map<dword,CAip*> AipListMap;    //LMA: testing maps...
-        map<UINT,UINT> NPC_AIP;       //LMA: NPC AIP.
+
+        //map<UINT,UINT> NPC_AIP;       //LMA: NPC AIP.
+        map<UINT,vector<UINT> > NPC_AIP;       //LMA: NPC AIP.
+
         fpAiCond aiCondFunc[32];
         fpAiAct aiActFunc[38];
-        int ObjVar[2000][20];  //NPC variables used in AI
+
+        //int ObjVar[4000][20];  //NPC variables used in AI
+        int ObjVar[MAX_NPC][20];  //NPC variables used in AI
+
         // AIP Functions
         void ReadAIP(strings path, dword index);
         void LoadAipData();
@@ -476,7 +494,7 @@ class CWorldServer : public CServerSocket
         //bool NPCShout( CMonster* thismon, char msg[200], char npc[50], int mapid=0);
         bool NPCShout( CMonster* thismon, char* msg, char* npc, int mapid=0);
         //bool NPCAnnounce( char msg[200], char npc[50] );
-        bool NPCAnnounce( char* msg, char* npc );
+        bool NPCAnnounce( char* msg, char* npc, int mapid=0 );
         bool NPCShout2( CMonster* thismon, char* msg, char* npc );
         bool NPCWhisper( CPlayer* thisclient, CMonster* thismon, char msg[200], char npc[50] );
         bool NPCMessage( CPlayer* thisclient, char msg[200], char npc[50] );
@@ -488,15 +506,19 @@ class CWorldServer : public CServerSocket
         bool RemoveParty( CParty* );
 
     	UINT				    ClientIDList[0x10000];	// Clients List
+    	bool				    PartyIDList[0x1000];     //LMA: Party IDs
     	SOCKET					csock;					// Socket for accessing the char server
     	char*					cct;					// Encryption table for char server
 
     	vector<CTeleGate*>		TeleGateList;			// Telegates List
         CStatus                 **StatusList;
         int                     maxStatus;
+        int                     maxZone;                //LMA: max map amount
     	map<int,char*>          NpcNameList;            //LMA: npc name map.
     	map<UINT,char*>         STLNameList;            //LMA: Name for all things taken from STL.
     	IfoObject               WarpGate;               //LMA: Warp Gate for Union.
+    	word                    UWForceFrom;            //LMA: Forcing Union Wars (test)
+    	int                     UWNbPlayers;            //LMA: Forcing Nb players required for UW.
         vector<CCustomGate*>    CustomGateList;         // Custom Telegate list
         vector<CCustomEvent*>   CustomEventList;        //Custom events list
 
@@ -518,12 +540,17 @@ class CWorldServer : public CServerSocket
         vector<CFairy*>         FairyList;              // Fairy List
         vector<CChest*>         ChestList;              // Chest List
 
+        map<int,vector<int> >    ListAllNpc;             //LMA: we store all the NPC in a single map.
+
         //CItemStas               StatsList[500];
         CItemStas               **StatsList;            //LMA: without limits...
         int                     maxStats;               //Nb Stats.
-        CExtraStats             StatLookup[301];        //PY: Item Stats
+        //CExtraStats             StatLookup[301];        //PY: Item Stats
+        CExtraStats             StatLookup[MAX_EXTRA_STATS];        //PY: Item Stats
 
-        UINT                    upgrade[2][10];
+        //UINT                    upgrade[2][10];
+        UINT                    upgrade[10][2];         //LMA: new way
+        UINT                    refine_grade[15][2];    //lma: refining rules.
         CEquipList              EquipList[10];
         CJemList                JemList;
         CNaturalList            NaturalList;
@@ -542,14 +569,15 @@ class CWorldServer : public CServerSocket
         CSTBData				STB_NPC;				// NPC data
         CSTBData                STB_SKILL;              // Skill data
         CSTBData                STB_STATUS;             // Status Data
-//        CSTBData				STB_QUEST;				// Quest data - already declared in line 393
+        //CSTBData				STB_QUEST;				// Quest data - already declared in line 393
         CSTBData				STB_ITEM[14];			// Item data
         CSTBData                STB_DROP;               // Drop list
         CSTBData                STB_ZONE;               // Zone data
         CSTBData                STB_PRODUCT;            // Crafting data
         CSTBData                STB_SELL;               // npc sell index
-        CSTBData                upgradeData;            // Upgrade - refine data
+        //CSTBData                upgradeData;            // Upgrade - refine data (LMA: we use a csv file now).
         CSTBData                BreakData;              // Break - Used for Break list, chests and blue crafts.
+        CSTBDataChar            ZoneData;               // LMA: zone Data.
 
 
     	clock_t				   lastServerStep;			// Last Update

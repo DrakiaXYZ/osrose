@@ -210,7 +210,7 @@ void CCharServer::DeleteClientSocket( CClientSocket* thisclient )
     }
     else
     {
-    	Log( MSG_INFO, "User disconnected" );
+    	Log( MSG_INFO, "User disconnected CCharServer::DeleteClientSocket %s",client->charname);
     }
 	delete (CCharClient*)thisclient;
 }

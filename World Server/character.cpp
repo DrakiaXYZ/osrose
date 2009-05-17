@@ -57,6 +57,18 @@ CCharacter::CCharacter( )
     Position->lastMoveTime = 0;
     Position->saved = 0;
     Position->respawn = 0;
+
+    //LMA: UW Position
+    UWPosition = new UWPOSITION;
+    assert(UWPosition);
+    UWPosition->Map=0;
+    UWPosition->source.x=0;
+    UWPosition->source.y=0;
+    UWPosition->source.z=0;
+
+    //LMA: pvp status.
+    pvp_status=-1;
+
     //BATLE
     Battle = new BATTLE;
     assert(Battle);
@@ -125,6 +137,8 @@ CCharacter::CCharacter( )
     }
     CharType = 0;
     clientid = 0xffff;
+    nearChar=NULL;
+    findChar=NULL;
 }
 
 //deconstructor
@@ -159,36 +173,36 @@ int CCharacter::ExecuteQuestTrigger(dword hash)
 
     if (trigger == NULL)
     {
-        Log(MSG_DEBUG, "Trigger not found hash %u", hash);
+        LogDebug( "EXTC::Trigger not found hash %u", hash);
         return QUEST_FAILURE;
     }
 
     int success = QUEST_SUCCESS;
-    Log(MSG_DEBUG, "Trigger Executed: %s[%i]", trigger->TriggerName, trigger->CheckNext);
+    LogDebug( "EXTC::Trigger Executed: %s[%i]", trigger->TriggerName, trigger->CheckNext);
 
     for (dword i = 0; i < trigger->ConditionCount; i++)
     {
       int command = trigger->Conditions[i]->opcode;
       if (command > 30 || command < 0) continue;
       success = (*GServer->qstCondFuncC[command])(GServer, this, trigger->Conditions[i]->data);
-      Log(MSG_DEBUG, "Condition %03u returned %d", command, success);
+      LogDebug( "EXTC::Condition %03u returned %d", command, success);
 
       if (success == QUEST_FAILURE)
       {
         if (!trigger->CheckNext)
         {
-            Log(MSG_DEBUG,"No checknext, FAILURE");
+            LogDebug("EXTC::No checknext, FAILURE");
             return success;
         }
         else
         {
-            Log(MSG_DEBUG,"checknext, FAILURE");
+            LogDebug("EXTC::checknext, FAILURE");
             return ExecuteQuestTrigger(nexttrigger->TriggerHash);
         }
 
       }
 
-      Log(MSG_DEBUG,"Quest cdt success");
+      LogDebug("EXTC::Quest cdt success");
     }
 
     for (dword i = 0; i < trigger->ActionCount; i++)
@@ -196,13 +210,15 @@ int CCharacter::ExecuteQuestTrigger(dword hash)
       int command = trigger->Actions[i]->opcode;
       if ((command > 28 || command < 0) && command != 34)
       {
-          Log(MSG_DEBUG, "unknown Action command %i", command);
+          LogDebug( "EXTC::unknown Action command %i", command);
           continue;
       }
 
-      Log(MSG_DEBUG,"QSD ACT %03u BEGIN",command);
-      Log(MSG_DEBUG, "Reward %03u returned %d", command, (*GServer->qstRewdFuncC[command])(GServer, this, trigger->Actions[i]->data));
+      //LogDebug("EXTC::QSD ACT %03u BEGIN",command);
+      LogDebug( "EXTC::Reward %03u returned %d", command, (*GServer->qstRewdFuncC[command])(GServer, this, trigger->Actions[i]->data));
     }
+
+
     return success;
 }
 

@@ -84,3 +84,89 @@ void STBFreeData( CSTBData* data )
 	delete [] data->rows[0];
 	delete [] data->rows;
 }
+
+
+//LMA: Special for Zone (unsigned long).
+int STBStoreDataChar( char* filename, CSTBDataChar* data )
+{
+	char tmpfield[512];
+	unsigned dataoffset = 0;
+	unsigned short fieldlen = 0;
+	int current_row=0;
+	int current_col=0;
+
+    FILE* fh = fopen( filename, "rb" );
+	if (  fh== 0 ) {
+		Log( MSG_ERROR, "Could not load STB '%s'", filename );
+		return 1;
+	}else{
+		// Read the header
+		fseek( fh, 4, SEEK_SET );
+		fread( &dataoffset, 4, 1, fh );
+		fread( &data->rowcount, 4, 1, fh );
+		fread( &data->fieldcount, 4, 1, fh );
+		data->rowcount--;
+		data->fieldcount--;
+		// Read the data
+		fseek( fh, dataoffset, SEEK_SET );
+		unsigned long* tmp = new unsigned long[data->rowcount*data->fieldcount];
+		data->rows = new unsigned long*[data->rowcount];
+		for( unsigned i = 0; i < data->rowcount; i++ ) data->rows[i] = &tmp[i*data->fieldcount];
+
+		for( unsigned j = 0; j < data->rowcount*data->fieldcount; j++ )
+		{
+			fread( &fieldlen, 2, 1, fh );
+			fread( tmpfield, 1, fieldlen, fh );
+			tmpfield[fieldlen]=0;
+
+			current_row=(int)(j/data->fieldcount);
+			current_col=j-(current_row*data->fieldcount);
+
+            if(current_col==26)
+            {
+                //STL.
+                if (fieldlen>3&&tmpfield[0]==76)
+                {
+
+                    for(int w=0;w<fieldlen;w++)
+                    {
+                        if(tmpfield[w]>=48&&tmpfield[w]<=57)
+                            break;
+                        tmpfield[w]=48;
+                    }
+
+                }
+                //LMA: end.
+            }
+            else if(current_col>=22&&current_col<=24)
+            {
+                //qsd triggers.
+                if(fieldlen==0)
+                {
+                    tmp[j]=0;
+                    continue;
+                }
+
+                tmp[j]=MakeStrHash(tmpfield);
+                continue;
+            }
+
+			tmp[j] = atol( tmpfield );
+		}
+
+		fclose( fh );
+	}
+
+	return 0;
+
+}
+
+//LMA: For unisnged long
+void STBFreeDataChar( CSTBData* data )
+{
+    //LMA: test to avoid stupid crash id STB not found.
+    if(data->rowcount==0)
+        return;
+	delete [] data->rows[0];
+	delete [] data->rows;
+}

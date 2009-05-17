@@ -43,18 +43,36 @@ bool CClientSocket::ReceiveData( )
 	// Calculate bytes to read to get the full packet
 	BytesToRead = PacketSize - PacketOffset;
 	// This should never happen, but it is integrated:
-	if ( BytesToRead > 0x600 - PacketOffset ) return false;
-	if ( BytesToRead == 0 ) return false;
+	if ( BytesToRead > 0x600 - PacketOffset )
+	{
+	    Log(MSG_WARNING,"wrong bytes to read, sid %i",sock);
+	    return false;
+	}
+
+	if ( BytesToRead == 0 )
+	{
+	    Log(MSG_WARNING,"BytesToRead == 0, sid %i",sock);
+	    return false;
+	}
+
 
 	// Receive data from client
 	ReceivedBytes = recv( sock, (char*)&Buffer[ PacketOffset ], BytesToRead, 0 );
-	if ( ReceivedBytes <= 0 ) return false;
+	if ( ReceivedBytes <= 0 )
+	{
+	    Log(MSG_WARNING,"ReceivedBytes <= 0, sid %i",sock);
+	    return false;
+	}
 
 	// Update pointer
 	PacketOffset += ReceivedBytes;
 
 	// If the packet is not complete, leave the function
-	if ( ReceivedBytes != BytesToRead ) return true;
+	if ( ReceivedBytes != BytesToRead )
+	{
+	    //Log(MSG_INFO,"Data not complete %u != %u, sid %i",ReceivedBytes,BytesToRead,sock);
+	    return true;
+	}
 
 	if ( PacketSize == 6 )
 	{
@@ -63,12 +81,18 @@ bool CClientSocket::ReceiveData( )
 		// Did we receive an incorrect buffer?
 		if ( PacketSize < 6 )
 		{
-			Log( MSG_WARNING, "(SID:%i) Client sent incorrect blockheader.", sock );
+			Log( MSG_WARNING, "(SID:%i) Client sent incorrect blockheader., sid %i", sock );
 			return false;
 		}
 		// Is the packet larger than just the header, then continue receiving
-		if ( PacketSize > 6 ) return true;
+		if ( PacketSize > 6 )
+		{
+		    //Log(MSG_INFO,"Data not complete, sid %i",sock);
+		    return true;
+		}
+
 	}
+
 	cryptPacket( (char*)Buffer, this->CryptTable );
 	CPacket* pak = (CPacket*)Buffer;
 
@@ -112,7 +136,10 @@ bool CClientSocket::ReceiveData( )
 
 	// Handle actions for this packet
 	if ( !GS->OnReceivePacket( this, pak ) )
+	{
+	    //Log(MSG_WARNING,"!GS->OnReceivePacket sid %i",sock);
 		return false;
+	}
 
 	// Reset values for the next packet
 	PacketSize   = 6;

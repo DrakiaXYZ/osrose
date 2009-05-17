@@ -38,7 +38,8 @@ class CMap
         bool AddPlayer( CPlayer* player );
         bool RemovePlayer( CPlayer* player, bool clearobject=true );
 
-    CMonster* AddMonster( UINT montype, fPoint position,  UINT owner=0, CMDrops* MonsterDrop=NULL, CMDrops* MapDrop=NULL, UINT spawnid=0, bool GetDropData=false );
+    //CMonster* AddMonster( UINT montype, fPoint position,  UINT owner=0, CMDrops* MonsterDrop=NULL, CMDrops* MapDrop=NULL, UINT spawnid=0, bool GetDropData=false );
+    CMonster* AddMonster( UINT montype, fPoint position,  UINT owner=0, CMDrops* MonsterDrop=NULL, CMDrops* MapDrop=NULL, UINT spawnid=0, bool GetDropData=false, bool is_tactic=false);    //LMA: adding tactic.
     bool DeleteMonster( CMonster*, bool clearobject=false, UINT i=0 );
     bool AddDrop( CDrop* drop );
     bool DeleteDrop( CDrop* drop );
@@ -48,7 +49,7 @@ class CMap
     CMonster* ConverToMonster( CMonster* monster, UINT newmonttype, bool heal=true );
     CMonster* ConverToMonster( CNPC* npc, UINT newmonttype );
 
-    bool TeleportPlayer( CPlayer* player, fPoint coord, bool TelePassenger=true );
+    bool TeleportPlayer( CPlayer* player, fPoint coordold, bool TelePassenger=true );
 
     CRespawnPoint* GetNearRespawn( CPlayer* player );
     CRespawnPoint* GetFirstRespawn( );
@@ -72,9 +73,13 @@ class CMap
     UINT eveningtime;  // evening start time
     UINT nighttime;    // nighttime start time
     UINT ZoneTime;     // how many 6 minute segments since start of the day
-    UINT ghost;        // ghosttime?
+    //UINT ghost;        // ghosttime?
     BYTE allowpvp;     // pvp allowed?
     bool allowpat;     // pat allowed?
+    UINT STLID;         //LMA: Stl ID.
+    unsigned long QSDzone;      //LMA: Zone transfer trigger
+    unsigned long QSDkilling;   //LMA: Killing trigger
+    unsigned long QSDDeath;        //LMA: Death trigger
 
     //LMA BEGIN
     //20070621-211100

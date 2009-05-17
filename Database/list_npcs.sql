@@ -191,6 +191,16 @@ INSERT INTO `list_npcs` VALUES (0, '[Sikuku Warrior] Wounded Soldier', 1263, 62,
 INSERT INTO `list_npcs` VALUES (0, '[Critically Wounded] Nukie', 1266, 62, 202.043, 5858.96, 5208.03, 363,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Sikuku Warrior] Yak', 1255, 62, 24.237, 5789.36, 5051.35, 354,0,0);
 INSERT INTO `list_npcs` VALUES (0, '[Sikuku Warrior] Ruduck', 1254, 62, 22.043, 5779.49, 5040.41, 353,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Smith] Kojo', 1247, 66, 352.369, 5545.17, 5190.61, 408,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Arumic Researcher] Redford', 1265, 66, 44.459, 5587.14, 4807.23, 407,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Cleric] Maria', 1248, 66, 135.541, 5668.65, 4861.56, 412,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Mountain Guide] Bennett ', 1250, 66, 248.756, 5687.64, 4862.35, 413,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Sikuku Tracker] Akuku', 1245, 66, 317.949, 5681.93, 4879.12, 410,0,0);
+INSERT INTO `list_npcs` VALUES (0, 'Eldeon Maze Wall 2-1', 1026, 66, 0.000, 5713.31, 4233.27, 0,0,0);
+INSERT INTO `list_npcs` VALUES (0, 'Eldeon Maze Wall 2-2', 1027, 66, 0.000, 5713.16, 3918.96, 0,0,0);
+INSERT INTO `list_npcs` VALUES (0, '[Ruins Curator] Hope', 1249, 66, 180.000, 5900.05, 4341.24, 409,0,0);
+INSERT INTO `list_npcs` VALUES (0, 'Eldeon Maze Wall 1-1', 1024, 66, 0.000, 5868.43, 4225.89, 0,0,0);
+INSERT INTO `list_npcs` VALUES (0, 'Eldeon Maze Wall 1-2', 1025, 66, 0.000, 5867.85, 3940.73, 0,0,0);
 INSERT INTO `list_npcs` VALUES (0, 'Gate', 1023, 101, 0.000, 5072.13, 5289.34, 0,0,0);
 INSERT INTO `list_npcs` VALUES (0, 'Gate', 1023, 101, 0.000, 5072.59, 5112.01, 0,0,0);
 INSERT INTO `list_npcs` VALUES (0, 'Gate', 1023, 101, 0.000, 5157.48, 5288.80, 0,0,0);

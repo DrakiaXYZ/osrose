@@ -153,6 +153,8 @@ struct STR_AI_ACT_020 {
 
 struct STR_AI_ACT_021 {
 	//Unknown (0x00 bytes)
+	dword iX;
+	dword iY;
 };
 
 struct STR_AI_ACT_022 {

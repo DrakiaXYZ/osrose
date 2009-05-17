@@ -83,8 +83,6 @@ echo updating telegates
 %mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < list_telegates.sql
 echo updating storage
 %mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < storage.sql
-echo updating extra_stats
-%mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < list_extra_stats.sql
 echo mileage
 %mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < mileage.sql
 echo item_drops
@@ -103,6 +101,8 @@ echo wishlist
 %mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < wishlist.sql
 echo GM Cart, CG list
 %mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < list_cart_cg.sql
+echo GM allskill
+%mysqlPath% -h %host% -u %user% --password=%pass% -D %db% < list_skills.sql
 
 
 :end

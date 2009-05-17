@@ -35,6 +35,12 @@ class CPlayer: public CCharacter
     bool Saved;// already save this player?(used ondisconnect/returnchar)
     bool isInvisibleMode;
 
+    //LMA: Pvp flag
+    int pvp_id;
+
+    //LMA: Warp flag
+    int map_warp_zone;
+    fPoint Warp_Zone;
 
     //LMA: HP / MP regeneration by bonfires and others...
     int sp_hp;
@@ -50,7 +56,9 @@ class CPlayer: public CCharacter
     UINT FairyListIndex;
 
     // variables
+    bool is_born;   //LMA: just came into play?
     bool is_invisible;  //LMA: for AIP.
+    UINT uw_kills;  //LMA: for Union War.
     unsigned int hits;
     USEDITEM* UsedItem;
     INFO* CharInfo;
@@ -156,6 +164,7 @@ class CPlayer: public CCharacter
     bool VisiblityList( );
     bool ForceRefreshMonster(bool refresh_all, UINT monster_id);      //LMA: force refresh (20070621-211100)
     bool SpawnToPlayer( CPlayer* player, CPlayer* otherclient );
+    int ReturnPvp( CPlayer* player, CPlayer* otherclient );    //LMA: for PVP.
     bool UpdateValues( );
     bool RefreshHPMP();  //LMA HP / MP Jumping
     void ReduceABC( );
@@ -178,7 +187,8 @@ class CPlayer: public CCharacter
     SQuest* GetActiveQuest( );
     int GetQuestVar(short nVarType, short nVarNO);
     void SetQuestVar(short nVarType, short nVarNO, short nValue);
-    int ExecuteQuestTrigger(dword hash);
+    //int ExecuteQuestTrigger(dword hash);
+    int ExecuteQuestTrigger(dword hash, bool send_packet=false);    //LMA: Special case, we send the "good" quest name.
 
     // Player Stats
     unsigned int GetAttackPower( );

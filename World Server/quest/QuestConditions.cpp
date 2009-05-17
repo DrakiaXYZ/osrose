@@ -23,20 +23,23 @@
 #include "../worldserver.h"
 
 //Check Quest
-QUESTCOND(000){
+QUESTCOND(000)
+{
 	GETCONDDATA(000);
-  if( client->questdebug )
-    server->SendPM(client, "Check quest: %i", data->iQuestSN);
-	for(dword i = 0; i < 10; i++){
-		if(client->quest.quests[i].QuestID == data->iQuestSN) {
-		  client->CheckQuest = i;
-      if( client->questdebug )
-        server->SendPM(client, "Check Quest - Found!");
-			return QUEST_SUCCESS;
+
+	for(dword i = 0; i < 10; i++)
+	{
+		if(client->quest.quests[i].QuestID == data->iQuestSN)
+		{
+            client->CheckQuest = i;
+            //LMA: We select this quest, else problems on getquestvars.
+            client->ActiveQuest=data->iQuestSN;
+            return QUEST_SUCCESS;
         }
+
 	}
-  if( client->questdebug )
-    server->SendPM(client, "Check Quest - Not Found!");
+
+
 	return QUEST_FAILURE;
 }
 
@@ -78,6 +81,13 @@ QUESTCOND(003){
           server->SendPM(client, "Check Stat[%i] - %i (Op: %i)", curAbil->iType, curAbil->iValue, curAbil->btOp);
 		switch( curAbil->iType )
 		{
+		    case sPvp:
+		    {
+                    if(!OperateValues<int>(curAbil->btOp, (int*)&client->pvp_id, curAbil->iValue))
+                    return QUEST_FAILURE;
+                    LogDebug("QSDC3 checking pvp %i %i",curAbil->btOp,curAbil->iValue);
+		    }
+		    break;
             case sGender:
                     if(!OperateValues<int>(curAbil->btOp, (int*)&client->CharInfo->Sex, curAbil->iValue))
                     return QUEST_FAILURE;
@@ -90,7 +100,6 @@ QUESTCOND(003){
                     return QUEST_FAILURE;
             }
             break;
-
             case sUnion:
             {
                 //Log(MSG_INFO,"[Union] ? QUESTCOND(003) btOp %i, value: %i",curAbil->btOp,curAbil->iValue);
@@ -172,12 +181,13 @@ QUESTCOND(003){
                     if(!OperateValues<int>(curAbil->btOp, (int*)&client->CharInfo->Zulies, curAbil->iValue))
                     return QUEST_FAILURE;
                 break;
-        case sEXPRate:
-            if(!OperateValues<int>(curAbil->btOp, (int*)&client->bonusxp, curAbil->iValue))
-                        return QUEST_FAILURE;
-        break;
+            case sEXPRate:
+                if(!OperateValues<int>(curAbil->btOp, (int*)&client->bonusxp, curAbil->iValue))
+                            return QUEST_FAILURE;
+            break;
             default:
                 Log(MSG_WARNING, "QuestCond 003: Type Unknown: '%i'", curAbil->iType);
+            break;
 		}
 	}
 	return QUEST_SUCCESS;
@@ -186,43 +196,68 @@ QUESTCOND(003){
 //Check Items
 QUESTCOND(004){
 	GETCONDDATA(004);
-	for(int i = 0; i < data->iDataCnt; i++){
+	for(int i = 0; i < data->iDataCnt; i++)
+	{
 		dword address = i * 0x10;
 		address += (dword)data;
 		address += 4;
 		STR_ITEM_DATA* curItem = (STR_ITEM_DATA*)address;
-    if( client->questdebug )
-      server->SendPM(client, "Check Item - [Slot:%i][Type:%i]", curItem->iWhere, curItem->uiItemSN);
-    // Check quest items for a specific amount
+
+        if( client->questdebug )
+          server->SendPM(client, "Check Item - [Slot:%i][Type:%i]", curItem->iWhere, curItem->uiItemSN);
+
+        // Check quest items for a specific amount
 		if (curItem->iWhere==13)
 		{
-      // Ok, check the current Check'd quest.
-      if (client->CheckQuest < 0) return QUEST_SUCCESS;
-      unsigned int j = client->CheckQuest;
-      for (unsigned int k = 0; k < 5; k++)
-          if (client->quest.quests[j].Items[k].itemnum == (curItem->uiItemSN % 1000))
+          // Ok, check the current Check'd quest.
+          if (client->CheckQuest < 0) return QUEST_SUCCESS;
+          unsigned int j = client->CheckQuest;
+          for (unsigned int k = 0; k < 5; k++)
+          {
+              //LMA: Correct way.
+              //if (client->quest.quests[j].Items[k].itemnum == (curItem->uiItemSN % 1000))
+              if (client->quest.quests[j].Items[k].itemnum == (GServer->gi(curItem->uiItemSN,1)))
+              {
+                if( client->questdebug )
+                  server->SendPM(client, "Operate - btOp: %i Val1: %i Val2: %i", curItem->btOp, client->quest.quests[j].Items[k].count, curItem->iRequestCnt);
+
+                if(!OperateValues<int>(curItem->btOp, (int*)(&client->quest.quests[j].Items[k].count), curItem->iRequestCnt))
                 {
-            if( client->questdebug )
-              server->SendPM(client, "Operate - btOp: %i Val1: %i Val2: %i", curItem->btOp, client->quest.quests[j].Items[k].count, curItem->iRequestCnt);
-            if(!OperateValues<int>(curItem->btOp, (int*)(&client->quest.quests[j].Items[k].count), curItem->iRequestCnt))
-                        	return QUEST_FAILURE;
-                        else
-                            return QUEST_SUCCESS;
-                    }
-      // Since the item doesn't exist, treat it as if there's 0 of them.
-      int tempInt = 0;
-      if(!OperateValues<int>(curItem->btOp, &tempInt, curItem->iRequestCnt))
-        return QUEST_FAILURE;
-      else
-      	return QUEST_SUCCESS;
+                    return QUEST_FAILURE;
                 }
-    // Check equipped items for a specific item? - Drakia
-		if(curItem->uiItemSN == 0 && curItem->iWhere != 0){
+                 else
+                 {
+                    return QUEST_SUCCESS;
+                 }
+
+               }
+
+          }
+
+          // Since the item doesn't exist, treat it as if there's 0 of them.
+          int tempInt = 0;
+          if(!OperateValues<int>(curItem->btOp, &tempInt, curItem->iRequestCnt))
+          {
+            return QUEST_FAILURE;
+          }
+          else
+          {
+            return QUEST_SUCCESS;
+          }
+
+        }
+
+        // Check equipped items for a specific item? - Drakia
+		if(curItem->uiItemSN == 0 && curItem->iWhere != 0)
+		{
 			int itemHead = client->items[curItem->iWhere].itemtype;
 			if(!OperateValues<int>(curItem->btOp, &itemHead, curItem->uiItemSN))
 				return QUEST_FAILURE;
 		}
+
 	}
+
+
 	return QUEST_SUCCESS;
 }
 
@@ -240,8 +275,8 @@ QUESTCOND(006){
 			return QUEST_FAILURE;
 	}
 
-//	float dx = client->Position->current.x - (float)data->iX;
-//	float dy = client->Position->current.y - (float)data->iY;
+    //float dx = client->Position->current.x - (float)data->iX;
+    //float dy = client->Position->current.y - (float)data->iY;
     float dx = client->Position->current.x - (float)(data->iX / 100);
     float dy = client->Position->current.y - (float)(data->iY / 100);
 	float distance = sqrt((dx*dx) + (dy*dy));
@@ -254,19 +289,30 @@ QUESTCOND(007){
 }
 
 //Quest Time
-QUESTCOND(008){
+QUESTCOND(008)
+{
   GETCONDDATA(008);
-  if( client->questdebug )
-    server->SendPM(client, "QuestTime - ulTime: %i btOp: %i", data->ulTime, data->btOp);
-  if (client->CheckQuest < 0) return QUEST_FAILURE; // Not checking a quest, don't return success
+  /*if( client->questdebug )
+    server->SendPM(client, "QuestTime - ulTime: %i btOp: %i", data->ulTime, data->btOp);*/
+  if (client->CheckQuest < 0)
+  {
+      LogDebug("QSDC8::No quest to check");
+      return QUEST_FAILURE; // Not checking a quest, don't return success
+  }
+
   long int Time = 0;
-  if (server->STB_QUEST.rows[client->quest.quests[client->CheckQuest].QuestID][1] > 0) {
+  if (server->STB_QUEST.rows[client->quest.quests[client->CheckQuest].QuestID][1] > 0)
+  {
     Time += client->quest.quests[client->CheckQuest].StartTime; // Start time
+    LogDebug("QSDC8::start time %li",Time);
     Time += server->STB_QUEST.rows[client->quest.quests[client->CheckQuest].QuestID][1] * 10; // Time to finish
+    LogDebug("QSDC8::with time to finish %li",Time);
     Time -= time(NULL); // Current time
     if (Time < 0) Time = 0; // Time is up
     Time /= 10; // Divide to get 10's of seconds
+    LogDebug("QSDC8::quest time %li",Time);
   }
+
   if (!OperateValues<dword>(data->btOp, (dword*)&Time, data->ulTime))
     return QUEST_FAILURE;
   else
@@ -280,16 +326,6 @@ QUESTCOND(009){
 	//int checkVal = (data->btOp)?QUEST_SUCCESS:QUEST_FAILURE;
   if( client->questdebug )
     server->SendPM(client, "Check Skill: %i", data->iSkillSN1);
-    /*
-	for(dword i = 0; i < MAX_BASICSKILL; i++){
-        if(client->bskills[i] == data->iSkillSN1)
-        	return (data->btOp)?QUEST_SUCCESS:QUEST_FAILURE;
-        // if(client->askill[i] == data->iSkillSN1)
-        //	return (data->btOp)?QUEST_SUCCESS:QUEST_FAILURE;
-        //if(client->pskill[i] == data->iSkillSN1)
-        //	return (data->btOp)?QUEST_SUCCESS:QUEST_FAILURE;
-    }
-    */
 
 	for (dword i = 0; i < MAX_ALL_SKILL; i++) {
         if(client->cskills[i].id == data->iSkillSN1)
@@ -304,23 +340,99 @@ QUESTCOND(010){
 }
 
 //Object Variable
-QUESTCOND(011){
-/*	if(entity->_EntityType != ENTITY_NPC) return QUEST_FAILURE;
-	GETCONDDATA(011);
+QUESTCOND(011)
+{
+	//LMA: Like AIP.
+    GETCONDDATA(011);
 
-	if(data->btWho == 0){
-		CNpc* thisNpc = reinterpret_cast<CNpc*>(entity);
-		thisNpc = thisNpc->SelectedNpc;
-		if(thisNpc == NULL) return QUEST_FAILURE;
-
-		short VarValue = thisNpc->ObjVar.GetVar(data->nVarNo);
-		if(OperateValues(data->btOp, &VarValue, (short)data->iValue)) return QUEST_SUCCESS;
+	int refNPC = client->quest.RefNPC;
+	if(refNPC==0)
+	{
+	    Log(MSG_WARNING,"QSDC11::Np NPC selected");
+	    return QUEST_FAILURE;
 	}
 
-	return QUEST_FAILURE;*/
-	// Don't think we've implemented NPC's having quests. - Drakia
-	Log(MSG_WARNING,"QSD CDT011 NOT CODED");
-	return QUEST_SUCCESS;
+	int ObjvarIndex = data->nVarNo;
+	int tempval = 0;
+	int orgvalue=0;
+
+    //LMA: WarpGate or standard NPC?
+    if(refNPC>10000&&refNPC==GServer->WarpGate.virtualNpctypeID)
+    {
+        //WarpGate.
+        if(ObjvarIndex>19)
+            return QUEST_FAILURE;
+        tempval = GServer->WarpGate.IfoObjVar[ObjvarIndex];
+    }
+    else
+    {
+        if(refNPC>=MAX_NPC)
+        {
+            Log(MSG_WARNING,"It seems NPC %i>=%u , change MAX_NPC value!",refNPC,MAX_NPC);
+            return QUEST_FAILURE;
+        }
+
+        tempval = GServer->ObjVar[refNPC][ObjvarIndex];
+    }
+
+    //LMA: We force the nb players required for UW.
+    orgvalue=data->iValue;
+    if(ObjvarIndex==2&&refNPC>=1088&&refNPC<=1091&&(orgvalue==30||orgvalue==33))
+    {
+        if(orgvalue==30&&data->btOp==2)
+        {
+            orgvalue=GServer->UWNbPlayers;
+            LogDebug("QSDC11::UW We trapped NPC %i[%i]>=%i (replaces >= %i)",refNPC,ObjvarIndex,orgvalue,data->iValue);
+        }
+
+        if(orgvalue==33&&data->btOp==4)
+        {
+            orgvalue=GServer->UWNbPlayers+3;
+            LogDebug("QSDC11::UW We trapped NPC %i[%i]<=%i (replaces <= %i)",refNPC,ObjvarIndex,orgvalue,data->iValue);
+        }
+
+    }
+
+    LogDebug("QSDC11: NPC %i, op=%i, value=%i (real=%i)",refNPC,data->btOp,orgvalue,tempval);
+
+	switch(data->btOp)
+	{
+        case 0:
+             if(tempval == orgvalue)
+                 return QUEST_SUCCESS;
+             break;
+        case 1:
+             if(tempval > orgvalue)
+                 return QUEST_SUCCESS;
+             break;
+        case 2:
+             if(tempval >= orgvalue)
+                 return QUEST_SUCCESS;
+             break;
+        case 3:
+             if(tempval < orgvalue)
+                 return QUEST_SUCCESS;
+             break;
+        case 4:
+             if(tempval <= orgvalue)
+                 return QUEST_SUCCESS;
+             break;
+        case 10:
+             if(tempval != orgvalue)
+                 return QUEST_SUCCESS;
+             break;
+        default:
+        {
+            //LogDebug("QUESTCOND(011) FAILED, switch default");
+             return QUEST_FAILURE;
+        }
+             break;
+    }
+
+    //LogDebug("QUESTCOND(011) FAILED, compare false");
+
+
+	return QUEST_FAILURE;
 }
 
 //Select an IFO Object.
@@ -354,10 +466,11 @@ QUESTCOND(012)
 
 
 //Select NPC
-QUESTCOND(013){
-    GETCONDDATA(013);
+QUESTCOND(013)
+{
+    /*GETCONDDATA(013);
 
-    /*if(entity->_EntityType != ENTITY_NPC) return QUEST_FAILURE;
+    if(entity->_EntityType != ENTITY_NPC) return QUEST_FAILURE;
 
     CNpc* thisNpc = reinterpret_cast<CNpc*>(entity);
     std::map<dword, CNpc*>::iterator triggerITR = server->NpcList.find(data->iNpcNo);
@@ -369,17 +482,24 @@ QUESTCOND(013){
 
     return QUEST_SUCCESS;*/
     // More NPC specific stuff
+    /*
     CMap* thisMap = GServer->MapList.Index[client->Position->Map];
     CNPC* thisNpc = thisMap->GetNPCInMapQSD(data->iNpcNo);
 
     if (thisNpc == NULL) {
-        Log (MSG_WARNING, "Questcondition 13: NPC not found");
+        Log (MSG_WARNING, "QSD  CDT13:: NPC %i not found in map %i",data->iNpcNo,client->Position->Map);
         return QUEST_FAILURE;
     }
 
     client->quest.selectedNpc = thisNpc;
 
     return QUEST_SUCCESS;
+    */
+
+    //LMA: like AIP.
+    GETCONDDATA(013);
+	client->quest.RefNPC=data->iNpcNo; // sets the reference variable for the correct ObjVar
+	return QUEST_SUCCESS;
 }
 
 
@@ -403,14 +523,74 @@ QUESTCOND(016){
     return QUEST_SUCCESS;
 }
 
-//NPC & Obj Variables?
-QUESTCOND(017){
+//LMA: Compare two NPC & Obj Variables.
+QUESTCOND(017)
+{
+    GETCONDDATA(017);
+
+    int var1=0;
+    int var2=0;
+
+    LogDebug("QD17 We compare NPC %i[%i] with (%i) NPC %i[%i]",data->NpcVar1.iNpcNo,data->NpcVar1.nVarNo,data->btOp,data->NpcVar1.iNpcNo,data->NpcVar1.nVarNo);
+
+    if(data->NpcVar1.iNpcNo>=MAX_NPC||data->NpcVar2.iNpcNo>=MAX_NPC||data->NpcVar1.nVarNo>=20||data->NpcVar2.nVarNo>=20)
+    {
+        if(data->NpcVar1.iNpcNo>=MAX_NPC)
+        {
+            Log(MSG_WARNING,"It seems NPC %i>=%u , change MAX_NPC value!",data->NpcVar1.iNpcNo,MAX_NPC);
+            return QUEST_FAILURE;
+        }
+
+        if(data->NpcVar2.iNpcNo>=MAX_NPC)
+        {
+            Log(MSG_WARNING,"It seems NPC %i>=%u , change MAX_NPC value!",data->NpcVar2.iNpcNo,MAX_NPC);
+            return QUEST_FAILURE;
+        }
+
+        LogDebug("QD17 Failure 1");
+        return QUEST_FAILURE;
+    }
+
+    var1=GServer->ObjVar[data->NpcVar1.iNpcNo][data->NpcVar1.nVarNo];
+    var1=GServer->ObjVar[data->NpcVar2.iNpcNo][data->NpcVar2.nVarNo];
+
+    if(!OperateValues<int>(data->btOp, (int*)&var1, var2))
+    {
+        LogDebug("QD17 Failure 2");
+        return QUEST_FAILURE;
+    }
+
+
+    LogDebug("QD17 Success");
+
     return QUEST_SUCCESS;
 }
 
-//Time on Date
-QUESTCOND(018){
-    return QUEST_SUCCESS;
+//Time on Date (credits PY)
+QUESTCOND(018)
+{
+    //Returns SUCCESS if the system time of the server is between the defined start and end times. Else returns FAILURE.
+    //Allows for time dependent quests
+    //byte btDate;       pos 0x00
+	//byte btHour1;      pos 0x01
+	//byte btMin1;       pos 0x02
+	//byte btHour2;      pos 0x03
+	//byte btMin2;       pos 0x04
+	GETCONDDATA(018);
+	SYSTEMTIME sTIME;
+    GetLocalTime(&sTIME);
+
+    if(data->btDate != 0)
+    {
+    	if(sTIME.wDay != data->btDate)
+    		return QUEST_FAILURE;
+    }
+    word wMin = ((sTIME.wHour * 60) + sTIME.wMinute);
+    word wFrom = (data->btHour1 * 60) + data->btMin1;
+    word wTo = (data->btHour2 * 60) + data->btMin2;
+    if(wMin >= wFrom && wMin <= wTo)
+    	return QUEST_SUCCESS;
+	return QUEST_FAILURE;
 }
 
 //Time on Day
@@ -423,8 +603,44 @@ QUESTCOND(020){
     return QUEST_SUCCESS;
 }
 
-//Unknown
-QUESTCOND(021){
+//LMA: In range from a NPC.
+QUESTCOND(021)
+{
+    GETCONDDATA(021);
+
+	int refNPC = client->quest.RefNPC;
+	if(refNPC==0)
+	{
+	    Log(MSG_WARNING,"QSDC21::No NPC selected.");
+	    return QUEST_FAILURE;
+	}
+
+	//Getting coordinates for this NPC.
+	if(client->Position->Map==0||client->Position->Map>=GServer->MapList.max)
+	{
+	    Log(MSG_WARNING,"QSDC21: Player %s is in an incorrect map %i",client->CharInfo->charname,client->Position->Map);
+	    return QUEST_FAILURE;
+	}
+
+	CMap* thisMap = GServer->MapList.Index[client->Position->Map];
+	CNPC* thisNpc = thisMap->GetNPCInMapQSD(refNPC);
+	if(thisNpc==NULL)
+	{
+	    Log(MSG_WARNING,"QSDC21::Incorrect NPC %u",refNPC);
+	    return QUEST_FAILURE;
+	}
+
+    int iDistance = (int) GServer->distance( thisNpc->pos, client->Position->current );
+
+    if (iDistance>data->iRadius)
+    {
+        Log(MSG_WARNING,"Player %s is too far from NPC %i",client->CharInfo->charname,refNPC);
+        return QUEST_FAILURE;
+    }
+
+    Log(MSG_INFO,"Player %s is in good distance from NPC %i",client->CharInfo->charname,refNPC);
+
+
     return QUEST_SUCCESS;
 }
 
@@ -433,14 +649,70 @@ QUESTCOND(022){
     return QUEST_SUCCESS;
 }
 
-//In Clan
-QUESTCOND(023){
-    return QUEST_SUCCESS;
+//In Clan (credits PY)
+QUESTCOND(023)
+{
+    //byte btReg         pos 0x00
+    GETCONDDATA(023);
+    int Clanid = client->Clan->clanid;
+    if(data->btReg == 0)
+    {
+        if(Clanid == 0)return QUEST_SUCCESS;
+        else return QUEST_FAILURE;
+    }
+    else
+    {
+        if(Clanid != 0)return QUEST_SUCCESS;
+        else return QUEST_FAILURE;
+    }
+
+    //btReg should only ever be 1 or 0 but just in case......
+
+
+    return QUEST_FAILURE;
 }
 
-//Clan Position
-QUESTCOND(024){
-    return QUEST_SUCCESS;
+//Clan Position (credits PY)
+QUESTCOND(024)
+{
+    //check my current rank in the clan against data->nPOS using btOP
+    GETCONDDATA(024);
+    //word nPOS;         pos 0x00
+	//byte btOP;         pos 0x02
+	int myRank = client->Clan->clanrank;
+    switch(data->btOP)
+	{
+        case 0:
+             if(myRank == data->nPOS)
+                 return QUEST_SUCCESS;
+             break;
+        case 1:
+             if(myRank > data->nPOS)
+                 return QUEST_SUCCESS;
+             break;
+        case 2:
+             if(myRank >= data->nPOS)
+                 return QUEST_SUCCESS;
+             break;
+        case 3:
+             if(myRank < data->nPOS)
+                 return QUEST_SUCCESS;
+             break;
+        case 4:
+             if(myRank <= data->nPOS)
+                 return QUEST_SUCCESS;
+             break;
+        case 10:
+             if(myRank != data->nPOS)
+                 return QUEST_SUCCESS;
+             break;
+        default:
+             return QUEST_FAILURE;
+             break;
+    }
+
+
+    return QUEST_FAILURE;
 }
 
 //Clan Contribution
@@ -448,29 +720,73 @@ QUESTCOND(025){
     return QUEST_SUCCESS;
 }
 
-//Clan Grade
-QUESTCOND(026){
-    return QUEST_SUCCESS;
+//Clan Grade (credits PY)
+QUESTCOND(026)
+{
+    //possibly compare client's current clan grade with data->nGRD using data->btOp?
+    GETCONDDATA(026);
+    //word nGRD;
+	//byte btOP;
+
+	//LMA: Getting real clan grade.
+	client->Clan->grade=GServer->getClanGrade(client->Clan->clanid);
+	int myGrade = client->Clan->grade;
+	switch(data->btOP)
+	{
+        case 0:
+             if(myGrade == data->nGRD)
+                 return QUEST_SUCCESS;
+             break;
+        case 1:
+             if(myGrade > data->nGRD)
+                 return QUEST_SUCCESS;
+             break;
+        case 2:
+             if(myGrade >= data->nGRD)
+                 return QUEST_SUCCESS;
+             break;
+        case 3:
+             if(myGrade < data->nGRD)
+                 return QUEST_SUCCESS;
+             break;
+        case 4:
+             if(myGrade <= data->nGRD)
+                 return QUEST_SUCCESS;
+             break;
+        case 10:
+             if(myGrade != data->nGRD)
+                 return QUEST_SUCCESS;
+             break;
+        default:
+             return QUEST_FAILURE;
+             break;
+    }
+
+
+    return QUEST_FAILURE;
 }
 
-//Clan Points
+//LMA: Check Clan Points amount (?)
 QUESTCOND(027){
     GETCONDDATA(027);
+
+    //LMA: This is supposed to be a condition, not an action...
+    /*
   if( client->questdebug )
     server->SendPM(client, "QUEST - Clan Points");
     switch(data->btOP)
     {
         case 0x01:
-             /*
-             BEGINPACKET( pak, 0x7e0 );
-             ADDBYTE    ( pak, 0x5C ); //action to update clan points (charserver)
-	         ADDWORD    ( pak, client->Clan->clanid);
-	         ADDWORD    ( pak, client->clientid );
-             ADDDWORD    ( pak, client->Clan->CP );
-             ADDWORD    ( pak, 0x00);
+
+             //BEGINPACKET( pak, 0x7e0 );
+             //ADDBYTE    ( pak, 0x5C ); //action to update clan points (charserver)
+	         //ADDWORD    ( pak, client->Clan->clanid);
+	         //ADDWORD    ( pak, client->clientid );
+             //ADDDWORD    ( pak, client->Clan->CP );
+             //ADDWORD    ( pak, 0x00);
              //GServer->SendISCPacket( &pak );
              //Log(MSG_NOTICE, "implement CharServer Communication at __FILE__ _LINE__");
-             */
+
 
              //LMA: temp version...
             BEGINPACKET( pak, 0x7e0 );
@@ -483,6 +799,44 @@ QUESTCOND(027){
             break;
     }
 	return QUEST_SUCCESS;
+	*/
+
+    //LMA: Getting real clan points amount.
+    client->Clan->CP=GServer->getClanPoints(client->Clan->clanid);
+	UINT myCP = client->Clan->CP;
+	switch(data->btOP)
+	{
+        case 0:
+             if(myCP == data->nPOINT)
+                 return QUEST_SUCCESS;
+             break;
+        case 1:
+             if(myCP > data->nPOINT)
+                 return QUEST_SUCCESS;
+             break;
+        case 2:
+             if(myCP >= data->nPOINT)
+                 return QUEST_SUCCESS;
+             break;
+        case 3:
+             if(myCP < data->nPOINT)
+                 return QUEST_SUCCESS;
+             break;
+        case 4:
+             if(myCP <= data->nPOINT)
+                 return QUEST_SUCCESS;
+             break;
+        case 10:
+             if(myCP != data->nPOINT)
+                 return QUEST_SUCCESS;
+             break;
+        default:
+             return QUEST_FAILURE;
+             break;
+    }
+
+
+    return QUEST_FAILURE;
 }
 
 //Clan Funds

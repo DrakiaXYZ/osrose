@@ -134,9 +134,18 @@ bool CCharServer::SendClanPoints (CCharClient* thisclient,long int lma_points)
         CClans *thisclan = GetClanByID(thisclient->clanid);
         if(thisclan!=NULL)
         {
-            thisclan->cp+=lma_points;          //clan points is handled by world server.
+            //clan points is handled by world server.
+            if(thisclan->cp+lma_points<0)
+            {
+                thisclan->cp=0;
+            }
+            else
+            {
+                thisclan->cp+=lma_points;
+            }
+
             //saving clanpoints.
-            DB->QExecute("UPDATE list_clan SET cp=%i WHERE id=%i",thisclan->cp,thisclient->clanid);
+            DB->QExecute("UPDATE list_clan SET cp=%u WHERE id=%i",thisclan->cp,thisclient->clanid);
 
             BEGINPACKET( pak, 0x7e0);
             ADDBYTE    ( pak, 0x33);//0x33 you have invited to clan
@@ -189,6 +198,43 @@ bool CCharServer::SendClanPoints (CCharClient* thisclient,long int lma_points)
         }
 
     }
+    return true;
+}
+
+//LMA: Saving Clan Grade.
+bool CCharServer::SendClanGrade (CCharClient* thisclient,int clan_grade)
+{
+    Log(MSG_INFO,"[CS]in SendClanGrade for %s",thisclient->charname);
+    if(thisclient->clanid <= 0 )
+        return true;
+
+    Log(MSG_INFO,"[CS] SendClanGrade, trying to get clan %i",thisclient->clanid );
+    CClans *thisclan = GetClanByID(thisclient->clanid);
+    if(thisclan!=NULL)
+    {
+        //clan grade is handled by world server.
+        thisclan->grade=clan_grade;
+
+        //saving clan grade.
+        DB->QExecute("UPDATE list_clan SET grade=%i WHERE id=%i",thisclan->grade,thisclient->clanid);
+        /*
+        BEGINPACKET( pak, 0x7e0 );
+        ADDBYTE    ( pak, 0x84 );
+        ADDWORD    ( pak, thisclient->clanid );
+        ADDWORD    ( pak, clan_grade );
+        ADDSTRING  ( pak, thisclient->charname );
+        ADDBYTE    ( pak, 0x00 );
+        SendToClanMembers(thisclient->clanid,&pak);
+        */
+
+        Log(MSG_INFO,"[CS] Clan packet: 0x7e0, SendClanGrade %s",thisclan->name);
+    }
+    else
+    {
+        Log(MSG_INFO,"[CS] clan ID %i not found in SendClanGrade",thisclient->clanid );
+    }
+
+
     return true;
 }
 
@@ -718,8 +764,25 @@ bool CCharServer::pakClanManager ( CCharClient* thisclient, CPacket* P )
                 ADDSTRING  ( pak, thisclan->news );
                 ADDBYTE    ( pak, 0x00 );
                 SendToClanMembers(thisclan->id,&pak);
-                if(!DB->QExecute("UPDATE list_clan SET news='%s' WHERE id=%i", thisclan->news, thisclan->id))
+
+                /*if(!DB->QExecute("UPDATE list_clan SET news='%s' WHERE id=%i", thisclan->news, thisclan->id))
                      return false;
+                     */
+
+                //LMA: escaping (and more).
+                char * lma_news = new char[strlen(news) + 1];
+                strcpy(lma_news,news);
+                char * new_news = new char[strlen(lma_news)*3 +1];
+                mysql_real_escape_string(DB->Mysql, new_news,lma_news,strlen(lma_news));
+                if(!DB->QExecute("UPDATE list_clan SET news='%s' WHERE id=%i", new_news, thisclan->id))
+                {
+                    delete lma_news;
+                    delete new_news;
+                    return false;
+                }
+
+                delete lma_news;
+                delete new_news;
             }
             delete []news;
         }
@@ -1166,6 +1229,29 @@ bool CCharServer::pakClanManager ( CCharClient* thisclient, CPacket* P )
 
              }
              break;
+        case 0xfb:
+            {
+                //LMA: Used for Clan Grade upgrade...
+                int lma_id = GETWORD((*P),1); // client ID
+                //int clan_id = GETWORD((*P),3); // clan ID
+                int clan_grade = GETWORD((*P),3); // clan grade
+                CCharClient* otherclient = GetClientByID( lma_id );
+                if(otherclient!=NULL)
+                {
+                    SendClanGrade (otherclient,clan_grade);
+
+                    //TODO: TEST! Is it refreshed?
+                    SendRewardPoints(otherclient,0);
+                    //SendRewardPoints(otherclient,lma_points);
+                    Log(MSG_INFO,"[CS] Forcing clan grade for %i, clan grade %i!",lma_id,clan_grade);
+                }
+                else
+                {
+                    Log(MSG_INFO,"[CS] ERROR Forcing clan grade for %i, not found, clan grade %i!",lma_id,clan_grade);
+                }
+
+            }
+            break;
 
         default:
             Log( MSG_INFO, "Clan action unknow %i ", action);

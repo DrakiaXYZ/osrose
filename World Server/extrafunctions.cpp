@@ -42,7 +42,31 @@ unsigned CWorldServer::BuildItemData( CItem thisitem )
 		unsigned part1 = (thisitem.refine>>4) << 28;
 		unsigned part2 = (thisitem.appraised?1:0) << 27;
 		unsigned part3 = (thisitem.socketed?1:0) << 26;
-		unsigned part4 = (thisitem.lifespan*10) << 16;
+
+		//LMA: special lifespan for PAT, trying to fix a weird bug at loading.
+		unsigned part4 = 0;
+		if(thisitem.itemtype==14)
+		{
+		    if(thisitem.sp_value<0||thisitem.sp_value>1000)
+		    {
+		        thisitem.sp_value=thisitem.lifespan*10;
+		    }
+
+		    if(thisitem.sp_value%10==0&&thisitem.sp_value<1000)
+		    {
+		        part4 = (thisitem.sp_value+1) << 16;
+		    }
+		    else
+		    {
+		        part4 = (thisitem.sp_value) << 16;
+		    }
+
+		}
+		else
+		{
+		    part4 = (thisitem.lifespan*10) << 16;
+		}
+
 		unsigned part5 = thisitem.durability << 9;
 		unsigned part6 = thisitem.stats;
 		unsigned part7 = thisitem.gem;
@@ -171,6 +195,43 @@ void CWorldServer::SendToVisible( CPacket* pak, CMonster* thismon, CDrop* thisdr
     }
 }
 
+//LMA: NPC, special for AIP.
+void CWorldServer::SendToVisibleAIP( CPacket* pak, CMonster* thismon, CDrop* thisdrop )
+{
+    CMap* map = MapList.Index[thismon->Position->Map];
+    for(UINT i=0;i<map->PlayerList.size();i++)
+    {
+        CPlayer* otherclient = map->PlayerList.at(i);
+        if(otherclient == NULL) continue;
+        if(otherclient->client==NULL) continue;
+        if(!otherclient->client->isActive) continue;
+        if(!otherclient->Session->inGame) continue;
+
+        //LMA: NPC or monster?
+        if(thismon->aip_npctype!=0)
+        {
+            if(IsVisibleNPCType(otherclient,thismon->aip_npctype))
+            {
+                otherclient->client->SendPacket( pak );
+            }
+
+        }
+        else
+        {
+            if(IsVisible(otherclient,thismon))
+            {
+                otherclient->client->SendPacket( pak );
+            }
+
+        }
+
+        if(thisdrop!=NULL)
+        {
+            otherclient->VisibleDrops.push_back( thisdrop );
+        }
+    }
+}
+
 // -- CHARACTER --
 void CWorldServer::SendToVisible( CPacket* pak, CCharacter* character, CDrop* thisdrop )
 {
@@ -259,6 +320,15 @@ bool CWorldServer::IsVisible( CPlayer* thisclient, CNPC* thisnpc )
 	return false;
 }
 
+//LMA: NPC Type (used for AIP)
+bool CWorldServer::IsVisibleNPCType( CPlayer* thisclient, UINT npc_type )
+{
+	for(unsigned j=0; j<thisclient->VisibleNPCs.size(); j++) {
+		if (npc_type==thisclient->VisibleNPCs.at(j)->npctype) return true;
+	}
+	return false;
+}
+
 // This function gets a new clientID for a npc, monster or mob
 unsigned CWorldServer::GetNewClientID( )
 {
@@ -273,6 +343,22 @@ unsigned CWorldServer::GetNewClientID( )
 	}
 
     Log(MSG_INFO,"XCID ERR");
+	return 0;
+}
+
+//LMA: Getting a Party ID.
+unsigned CWorldServer::GetNewPartyID( )
+{
+	for (unsigned i=1; i<0x1000; i++)
+    {
+		if (!PartyIDList[i])
+        {
+			PartyIDList[i] = true;
+			return i;
+		}
+	}
+
+    Log(MSG_INFO,"PCID ERR");
 	return 0;
 }
 
@@ -513,7 +599,16 @@ CNPC* CWorldServer::GetNPCByType( UINT npctype )
 CNPC* CWorldServer::GetNPCByID( UINT id, UINT map )
 {
     if(map!=0)
+    {
+        if (map>=MapList.max)
+        {
+            Log(MSG_WARNING,"Incorrect map %i >= %u in GetNPCByID",map,MapList.max);
+            return NULL;
+        }
+
         return MapList.Index[map]->GetNPCInMap( id );
+    }
+
 	for(unsigned j=0; j<MapList.Map.size(); j++)
     {
 		CNPC* thisnpc = MapList.Map.at( j )->GetNPCInMap( id );
@@ -565,6 +660,35 @@ char* CWorldServer::GetSTLMonsterNameByID(UINT idorg)
     }
 
     //Log(MSG_INFO,"[STL] npc or monster %i found %s",id,STLNameList[idu]);
+
+
+    return STLNameList[idu];
+}
+
+//LMA: getting the zone name by STL.
+//We get an ID here, NOT the STL value !
+char* CWorldServer::GetSTLZoneNameByID(UINT idorg)
+{
+    if (idorg>maxZone)
+    {
+        Log(MSG_WARNING,"STLZONE, incorrect id %u>%u",idorg,maxZone);
+        return STLNameList[1];
+    }
+
+    UINT id=MapList.Index[idorg]->STLID;
+
+    if(id==0)
+    {
+        return STLNameList[0];
+    }
+
+    UINT idu=19*100000+id;
+
+    if(STLNameList.find(idu)==STLNameList.end())
+    {
+        Log(MSG_INFO,"[STL] Zone STLID %i (Id %i) not found",id,idorg);
+        return STLNameList[0];
+    }
 
 
     return STLNameList[idu];
@@ -671,7 +795,7 @@ char* CWorldServer::GetSTLItemPrefix(int family,UINT idorg)
 
     if(STLNameList.find(idu)==STLNameList.end())
     {
-        Log(MSG_INFO,"[STL] itemprefix %i not found",id);
+        Log(MSG_INFO,"[STL] itemprefix %i not found, object %i:%i",id,family,idorg);
         return STLNameList[0];
     }
 
@@ -1240,6 +1364,13 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
                 }
 
             }
+            else if(useitem->itemnum==947)
+            {
+                //LMA: Net.
+                useitem->usescript = 15;
+                useitem->usetype = UseList.Index[useitem->itemnum]->useeffect[0];
+                useitem->usevalue = UseList.Index[useitem->itemnum]->useeffect[1];
+            }
             else
             {
                 Log( MSG_WARNING, "Unknown Item %i - Type %i",useitem->itemnum,type);
@@ -1283,10 +1414,11 @@ CUseInfo* CWorldServer::GetUseItemInfo(CPlayer* thisclient, unsigned int slot )
             useitem->usevalue = UseList.Index[useitem->itemnum]->useeffect[1];
         }
         break;
-
+        /*
             delete useitem;
             return NULL;
         break;
+        */
         case 320://Automatic Consumption - HP, MP, Stamina, Clan Point
             if (useitem->itemnum>150 && useitem->itemnum<192)
             {
@@ -1441,6 +1573,78 @@ bool CWorldServer::CheckInventorySlot( CPlayer* thisclient, int slot )
     return true;
 }
 
+
+//LMA: returns a "type" from an item in a slot.
+UINT CWorldServer::ReturnItemType( CPlayer* thisclient, int slot )
+{
+    UINT type=0;
+    int material=slot;
+
+    if(slot>=MAX_INVENTORY || slot<0||thisclient->items[material].itemtype==0||thisclient->items[material].itemnum==0)
+    {
+        Log(MSG_WARNING,"Incorrect data in ReturnItemType slot %i, item %u::%u",thisclient->items[material].itemtype,thisclient->items[material].itemnum);
+        return 0;
+    }
+
+    if(thisclient->items[material].itemtype>=1&&thisclient->items[material].itemtype<=9)
+    {
+        if(thisclient->items[material].itemnum>=EquipList[thisclient->items[material].itemtype].max)
+        {
+            Log(MSG_WARNING,"Incorrect itemnum in ReturnItemType slot %i, item %u::%u",thisclient->items[material].itemtype,thisclient->items[material].itemnum);
+            return 0;
+        }
+
+        type=EquipList[thisclient->items[material].itemtype].Index[thisclient->items[material].itemnum]->type;
+    }
+    else if(thisclient->items[material].itemtype==10)
+    {
+        if(thisclient->items[material].itemnum>=UseList.max)
+        {
+            Log(MSG_WARNING,"Incorrect itemnum in ReturnItemType slot %i, item %u::%u",thisclient->items[material].itemtype,thisclient->items[material].itemnum);
+            return 0;
+        }
+
+        type=UseList.Index[thisclient->items[material].itemnum]->type;
+    }
+    else if(thisclient->items[material].itemtype==11)
+    {
+        if(thisclient->items[material].itemnum>=JemList.max)
+        {
+            Log(MSG_WARNING,"Incorrect itemnum in ReturnItemType slot %i, item %u::%u",thisclient->items[material].itemtype,thisclient->items[material].itemnum);
+            return 0;
+        }
+
+        type=JemList.Index[thisclient->items[material].itemnum]->type;
+    }
+    else if(thisclient->items[material].itemtype==12)
+    {
+        if(thisclient->items[material].itemnum>=NaturalList.max)
+        {
+            Log(MSG_WARNING,"Incorrect itemnum in ReturnItemType slot %i, item %u::%u",thisclient->items[material].itemtype,thisclient->items[material].itemnum);
+            return 0;
+        }
+
+        type=NaturalList.Index[thisclient->items[material].itemnum]->type;
+    }
+    else if(thisclient->items[material].itemtype==14)
+    {
+        if(thisclient->items[material].itemnum>=PatList.max)
+        {
+            Log(MSG_WARNING,"Incorrect itemnum in ReturnItemType slot %i, item %u::%u",thisclient->items[material].itemtype,thisclient->items[material].itemnum);
+            return 0;
+        }
+
+        type=PatList.Index[thisclient->items[material].itemnum]->type;
+    }
+    else
+    {
+        Log(MSG_WARNING,"ReturnItemType, not coded for itemtype %i",thisclient->items[material].itemtype);
+    }
+
+
+    return type;
+}
+
 // Return a pseudo random number
 UINT CWorldServer::RandNumber( UINT init, UINT range, UINT seed )
 {
@@ -1532,6 +1736,8 @@ char* CWorldServer::GetStrValue( const char* s , void* var )
 
 bool CWorldServer::AddParty( CParty* thisparty )
 {
+    //LMA: adding ID.
+    thisparty->PartyId=GetNewPartyID();
     PartyList.push_back( thisparty );
     return true;
 }
@@ -1542,6 +1748,8 @@ bool CWorldServer::RemoveParty( CParty* thisparty )
     {
         if(PartyList.at(i)==thisparty)
         {
+            //LMA: freeing the ID as well.
+            PartyIDList[thisparty->PartyId]=false;
             PartyList.erase(PartyList.begin( )+i );
             return true;
         }
@@ -1576,6 +1784,12 @@ UINT CWorldServer::GetGridNumber(int mapid, int posx, int posy)
    int grid_id=0;
 
 
+    if(mapid>=NB_MAPS)
+    {
+        Log(MSG_WARNING,"Wrong map in GetGridNumber, %i>=%u",mapid,NB_MAPS);
+        return 0;
+    }
+
    grid_id=allmaps[mapid].grid_id;
    if (grid_id==-1||allmaps[mapid].always_on==true)
        return 0;
@@ -1590,6 +1804,12 @@ UINT CWorldServer::GetGridNumber(int mapid, int posx, int posy)
    //New way...
    res=(UINT) floor((posy-gridmaps[grid_id].org_y)/MINVISUALRANGE)+1;
    res=(UINT) (floor((posx-gridmaps[grid_id].org_x)/MINVISUALRANGE)+1)+res*(allmaps[mapid].nb_col+2);
+
+   if(res>=gridmaps[grid_id].nb_cells)
+   {
+       Log(MSG_WARNING,"A monster or player is in a wrong grid! map %i (%i,%i) %i>=%i",mapid,posx,posy,res,gridmaps[grid_id].nb_cells);
+       return 0;
+   }
 
 
    return res;
@@ -2073,7 +2293,9 @@ void CWorldServer::SendToAllInMap( CPacket* pak, int mapid)
 
 }
 
-//return itemtype or itemnum
+//LMA: return itemtype or itemnum
+//0 returns itemtype.
+//1 returns itemnum.
 UINT CWorldServer::gi(UINT itemvalue, short type)
 {
     UINT itemtype=0;
@@ -2160,4 +2382,66 @@ UINT CWorldServer::gi(UINT itemvalue, short type)
 
 
     return 0;
+}
+
+//LMA: We get the exact Clan Points amount through mysql database
+UINT CWorldServer::getClanPoints(int clanid)
+{
+    UINT nb_points=0;
+
+    MYSQL_RES *result = GServer->DB->QStore("SELECT cp FROM list_clan where id=%i", clanid);
+    if(result==NULL) return 0;
+    if(mysql_num_rows(result)!=1)
+    {
+        return 0;
+    }
+    else
+    {
+        MYSQL_ROW row = mysql_fetch_row(result);
+        nb_points= atoi(row[0]);
+    }
+
+    GServer->DB->QFree( );
+
+
+    return nb_points;
+}
+
+//LMA: We get the exact Clan Grade through mysql database
+UINT CWorldServer::getClanGrade(int clanid)
+{
+    int clangrade=0;
+
+    MYSQL_RES *result = GServer->DB->QStore("SELECT grade FROM list_clan where id=%i", clanid);
+    if(result==NULL) return 0;
+    if(mysql_num_rows(result)!=1)
+    {
+        return 0;
+    }
+    else
+    {
+        MYSQL_ROW row = mysql_fetch_row(result);
+        clangrade= atoi(row[0]);
+    }
+
+    GServer->DB->QFree( );
+
+
+    return clangrade;
+}
+
+
+//LMA: formula for summons (capsules) HP.
+UINT CWorldServer::SummonFormula(CPlayer* thisclient,CMonster* thismonster)
+{
+    if (thisclient==NULL)
+    {
+        return 0;
+    }
+
+    long long monster_hp=thismonster->thisnpc->hp;
+    long long res=(long long)(0.0984*thisclient->Stats->Level*thisclient->Stats->Level+22.514*thisclient->Stats->Level+monster_hp);
+
+
+    return res;
 }

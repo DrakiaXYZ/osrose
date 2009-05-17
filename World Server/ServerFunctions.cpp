@@ -23,42 +23,53 @@
 // from Paul_T
 bool CWorldServer::SendPM( CPlayer* thisclient, char* Format, ... )
 {
-  char buf[512];
-  va_list ap;
-  va_start( ap, Format );
-  vsprintf( buf, Format, ap );
-           BEGINPACKET( pak, 0x0784 );
-           ADDSTRING( pak, "Server" );
-           ADDBYTE( pak, 0 );
-     ADDSTRING( pak, buf );
-           ADDBYTE( pak, 0 );
-           thisclient->client->SendPacket(&pak);
-  va_end( ap );
-           return true;
+    char buf[512];
+    va_list ap;
+    va_start( ap, Format );
+    vsprintf( buf, Format, ap );
+    BEGINPACKET( pak, 0x0784 );
+    ADDSTRING( pak, "Server" );
+    ADDBYTE( pak, 0 );
+    ADDSTRING( pak, buf );
+    ADDBYTE( pak, 0 );
+    thisclient->client->SendPacket(&pak);
+    va_end( ap );
+    return true;
 }
 
 // from Paul_T
 bool CWorldServer::SendGlobalMSG( CPlayer* thisclient, char msg[200] )
 {
-           BEGINPACKET( pak, 0x0784 );
-           ADDSTRING( pak, thisclient->CharInfo->charname );
-           ADDBYTE( pak, 0 );
-           ADDSTRING( pak, msg );
-           ADDBYTE( pak, 0 );
-           SendToAll(&pak);
-           return true;
+    BEGINPACKET( pak, 0x0784 );
+    ADDSTRING( pak, thisclient->CharInfo->charname );
+    ADDBYTE( pak, 0 );
+    ADDSTRING( pak, msg );
+    ADDBYTE( pak, 0 );
+    SendToAll(&pak);
+    return true;
 }
 
 // NPC Announce to the server
-bool CWorldServer::NPCAnnounce( char* msg, char* npc)
+bool CWorldServer::NPCAnnounce( char* msg, char* npc, int mapid)
 {
-    Log(MSG_INFO,"%s announces: %s",npc,msg);
+    //LMA: We only announce in the NPC's map
+    //Log(MSG_INFO,"%s announces: %s",npc,msg);
     BEGINPACKET( pak, 0x702 );
     ADDSTRING( pak, npc );
 	ADDSTRING( pak, "> " );
 	ADDSTRING( pak, msg);
 	ADDBYTE( pak, 0x00);
-	SendToAll( &pak );
+
+	if(mapid!=0)
+	{
+	    SendToMap  ( &pak, mapid );
+	}
+	else
+	{
+	    SendToAll( &pak );
+	}
+
+
 	return true;
 }
 
@@ -168,7 +179,10 @@ bool CWorldServer::DoSkillScript( CCharacter* character, CSkills* thisskill )
         {
             if(thisskill->svalue1==0)
                 return false;
-            fPoint position = RandInCircle( character->Position->current, 5 );
+
+            //fPoint position = RandInCircle( character->Position->current, 5 );
+            fPoint position = RandInCircle( character->Position->current, 0 );
+
             CMap* map = MapList.Index[character->Position->Map];
             CMonster* thismonster=map->AddMonster( thisskill->svalue1, position, character->clientid );
             if (thismonster!=NULL)
@@ -374,7 +388,7 @@ CDrop* CWorldServer::GetDrop( CMonster* thismon )
 // Build Drop the PY way
 CDrop* CWorldServer::GetPYDrop( CMonster* thismon, UINT droptype )
 {   //if droptype = 1 then it is a normal drop. if it is 2 then it is a potential side drop.
-    Log(MSG_INFO,"GetPYDrop, monster %i, droptype %i",thismon->montype,droptype);
+    //Log(MSG_INFO,"GetPYDrop, monster %i, droptype %i",thismon->montype,droptype);
 
     if(droptype == 2) // monster is still alive
     {
@@ -423,21 +437,21 @@ CDrop* CWorldServer::GetPYDrop( CMonster* thismon, UINT droptype )
     float leveldif = (float)thismon->thisnpc->level - (float)thisclient->Stats->Level;
     float droprate = (float)GServer->Config.DROP_RATE + charm;  //basic server rate + extra for player charm
     float dropchance = (droprate + (droprate * 0.01 * leveldif));
-    Log(MSG_INFO,"charm %.2f, leveldif %.2f, droprate %.2f, dropchance %.2f",charm,leveldif,droprate,dropchance);
+    //Log(MSG_INFO,"charm %.2f, leveldif %.2f, droprate %.2f, dropchance %.2f",charm,leveldif,droprate,dropchance);
     if(dropchance < 10) dropchance = 10; //always a small chance of a drop even when the mob is more than 20 levels beneath your own
-    Log(MSG_INFO,"dropchance %.2f",dropchance);
+    //Log(MSG_INFO,"dropchance %.2f",dropchance);
     if(thismon->thisnpc->level == 1)
         dropchance = 80;
-    Log(MSG_INFO,"dropchance %.2f",dropchance);
+    //Log(MSG_INFO,"dropchance %.2f",dropchance);
     UINT lma_save_rand=0;
     lma_save_rand=GServer->RandNumber(0, 100);
     if (lma_save_rand>dropchance)
     {
-        Log(MSG_INFO,"no drop, %i > %.2f",lma_save_rand,dropchance);
+        //Log(MSG_INFO,"no drop, %i > %.2f",lma_save_rand,dropchance);
         return NULL; // no drop here. not this time anyway.
     }
 
-    Log(MSG_INFO,"drop possible, %i <= %.2f",lma_save_rand,dropchance);
+    //Log(MSG_INFO,"drop possible, %i <= %.2f",lma_save_rand,dropchance);
 
     CItemType prob[MDropList.size()];
     bool isdrop = false;
@@ -495,14 +509,14 @@ CDrop* CWorldServer::GetPYDrop( CMonster* thismon, UINT droptype )
         {
             newdrop->type = 1; //Drop Zuly
             newdrop->amount = thismon->thisnpc->level * 5 * Config.ZULY_RATE + RandNumber( 1, 10 );
-            Log(MSG_INFO,"zuly drop %i",newdrop->amount);
+            //Log(MSG_INFO,"zuly drop %i",newdrop->amount);
             return  newdrop;
         }
         // Stuff to do if the mob isn't a ghost
 
         int randomdrop = GServer->RandNumber(1, 100);
         //enable the next line for debug purposes if you want to confirm a drop is working.
-        Log(MSG_INFO, "Mob type %i. Map = %i. Level = %i", thismon->montype, thismon->Position->Map,thismon->thisnpc->level);
+        //Log(MSG_INFO, "Mob type %i. Map = %i. Level = %i", thismon->montype, thismon->Position->Map,thismon->thisnpc->level);
 
         for(int i=0; i<MDropList.size( ); i++)
         {
@@ -675,7 +689,7 @@ CDrop* CWorldServer::GetPYDrop( CMonster* thismon, UINT droptype )
         //This probability is now configurable from WorldServer.conf. CHA also has an effect
         if(bluechance1 < bluechance2) // some percentage of drops will be specials or blues whenever one is available.
         {
-            Log( MSG_INFO, "Selected a blue item");
+            //Log( MSG_INFO, "Selected a blue item");
             int p = 1;
             while(alternate[n][p] != 0 && p < 8)
             {
@@ -705,7 +719,7 @@ CDrop* CWorldServer::GetPYDrop( CMonster* thismon, UINT droptype )
     }
     newdrop->item.gem = 0;
 
-    Log(MSG_INFO,"drop %i* (%i:%i)",newdrop->amount,newdrop->type,newdrop->item);
+    //Log(MSG_INFO,"drop %i* (%i:%i)",newdrop->amount,newdrop->type,newdrop->item);
     return newdrop;
 }
 
@@ -717,6 +731,7 @@ CDrop* CWorldServer::GetPYDrop( CMonster* thismon, UINT droptype )
     if(stat > 300)stat = 300;
     return StatLookup[stat].statnumber;
  }
+
 
 UINT CWorldServer::GetColorExp( UINT playerlevel,UINT moblevel, UINT exp )
 {
@@ -938,12 +953,19 @@ bool CWorldServer::LearnSkill( CPlayer* thisclient, UINT skill, bool takeSP)
                 {
                     b=3;
                 }
-                if(thisskill->lskill[i] > thisclient->cskills[rskill].level)
+                else
                 {
-                    b=5;
+                    if(thisskill->lskill[i] > thisclient->cskills[rskill].level)
+                    {
+                        b=5;
+                    }
+
                 }
+
             }
+
         }
+
     }
 
     if(b==1)
@@ -960,7 +982,7 @@ bool CWorldServer::LearnSkill( CPlayer* thisclient, UINT skill, bool takeSP)
             int index=thisclient->FindSkillOffset(family);
             if(index==-1)
             {
-                Log(MSG_WARNING,"Can't find index in family for skill %i",family,skill);
+                Log(MSG_WARNING,"Can't find index in family %i for skill %i",family,skill);
                 b=6;
             }
             else

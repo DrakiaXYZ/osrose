@@ -137,6 +137,31 @@ unsigned long long CMonster::GetMaxHP( )
     return MaxHP;
 }
 
+//LMA: We for the maxHP and HP sometimes
+bool CMonster::ForceMaxHP( )
+{
+    unsigned long long MaxHP = 0;
+    MaxHP = (unsigned long long ) thisnpc->hp;
+    MaxHP = MaxHP * ((unsigned long long) thisnpc->level);
+    if(MaxHP==0)
+    {
+        MaxHP = (unsigned long long) thisnpc->shp;
+    }
+
+    if(MaxHP>MAXHPMOB)
+    {
+        MaxHP=(unsigned long long) MAXHPMOB;
+    }
+
+    Stats->MaxHP=MaxHP;
+    Stats->HP=MaxHP;
+
+
+    return true;
+}
+
+
+
 unsigned int CMonster::GetCritical( )
 {
     return 60;  //60 = 20% of 300 our critical probability

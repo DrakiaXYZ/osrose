@@ -79,6 +79,8 @@ void Log( msg_type flag, char* Format, ... );
 extern FILE *fhSp1;
 void LogSp( enum msg_type flag, char *Format, ... );
 void LogHandleSp(int type);
+void LogDebugPriority(int priority=3, bool warning=false);
+void LogDebug(char *Format, ... );
 
 
 #endif

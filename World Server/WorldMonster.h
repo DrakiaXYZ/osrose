@@ -35,6 +35,7 @@ class CMonster : public CCharacter
      	clock_t lastSighCheck;
      	clock_t lastDegenTime;
 		time_t lastLifeUpdate;
+		UINT life_time; //LMA: life time, for summons mainly...
 
 		//LMA: daynight
 		int daynight;
@@ -43,6 +44,7 @@ class CMonster : public CCharacter
 
         MDrop* MonsterDrop;
 
+        unsigned int team;  //LMA: PVP team or friendly.
     	unsigned int montype;
     	unsigned int owner;
     	unsigned int hitcount;    //LMA: hit count for some monsters (MC and so on...) Arnold.
@@ -57,6 +59,8 @@ class CMonster : public CCharacter
         UINT range;
         int aip_npctype;    //LMA: AIP
         int aip_clientid;   //LMA: AIP
+        bool is_tactical;   //LMA: Is Tactical or basic?
+        bool suicide;   //LMA: did the monster committ suicide?
     	CParty* thisparty;
     	CNPCData* thisnpc;
 
@@ -100,6 +104,7 @@ class CMonster : public CCharacter
 
         //unsigned int GetMaxHP( );
         unsigned long long GetMaxHP( );
+        bool CMonster::ForceMaxHP( );   //LMA: Forcing maxHP
 
         float GetAttackDistance( );
 

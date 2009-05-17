@@ -46,8 +46,9 @@ bool CCharServer::pakMessengerManager ( CCharClient* thisclient, CPacket* P )
                 Log(MSG_ERROR, "Error allocing memory: pakMessengerManager 1" );
                 return false;
             }
+
             memcpy( nick, &P->Buffer[1], P->Size-7 );
-            Log(MSG_INFO,"Trying to invite %s",nick);
+            Log(MSG_INFO,"%s Trying to invite %s",nick,thisclient->charname);
 
             CCharClient* otherclient = (CCharClient*) GetClientByName (nick);
             if(otherclient!=NULL)
@@ -58,7 +59,7 @@ bool CCharServer::pakMessengerManager ( CCharClient* thisclient, CPacket* P )
                 ADDSTRING  ( pak, thisclient->charname );
                 ADDBYTE    ( pak, 0x00 );
                 otherclient->SendPacket(&pak);
-                Log(MSG_INFO,"%s exists, invite sent",nick);
+                Log(MSG_INFO,"%s exists, invite sent to %s",nick,otherclient->charname);
             }
             else
             {//This charname doesnt exist
@@ -92,13 +93,18 @@ bool CCharServer::pakMessengerManager ( CCharClient* thisclient, CPacket* P )
                 ADDSTRING  ( pak, thisclient->charname );
                 ADDBYTE    ( pak, 0x00);
                 otherclient->SendPacket(&pak);
+
                 //Add friend to my friend list(sql)
-                if(!DB->QExecute("INSERT INTO list_friend (id,idfriend,namefriend) VALUES (%i,%i,'%s')",
-                       otherclient->charid,thisclient->charid,thisclient->charname))
+                if(!DB->QExecute("INSERT INTO list_friend (id,idfriend,namefriend) VALUES (%i,%i,'%s')",otherclient->charid,thisclient->charid,thisclient->charname))
+                {
+                    Log(MSG_WARNING,"error addind %s to %s friend list",otherclient->charname,thisclient->charname);
                     return false;
+                }
+
                 CFriendList * newfriend1 = new (nothrow) CFriendList;
                 if(newfriend1==NULL)
                     return false;
+
                 newfriend1->id = otherclient->charid; //friendid
                 strcpy(newfriend1->name, otherclient->charname); //friend name
                 thisclient->FriendList.push_back( newfriend1 );
@@ -110,6 +116,7 @@ bool CCharServer::pakMessengerManager ( CCharClient* thisclient, CPacket* P )
                 ADDSTRING  ( pak, otherclient->charname );
                 ADDBYTE    ( pak, 0x00);
                 thisclient->SendPacket(&pak);
+
                 //Add me to his friend list (sql)
                 if(!DB->QExecute("INSERT INTO list_friend (id,idfriend,namefriend) VALUES (%i,%i,'%s')",
                        thisclient->charid,otherclient->charid,otherclient->charname))
@@ -165,12 +172,17 @@ bool CCharServer::pakMessengerManager ( CCharClient* thisclient, CPacket* P )
             }
         }
         break;
-        case 0x05://freakin later
+        case 0x05://delete user.
         {
             WORD id = GETWORD ((*P),1);
-            if(!DB->QExecute("DELETE FROM list_friend WHERE id=%i and idfriend=%i",
-                       thisclient->charid,id))
+            if(!DB->QExecute("DELETE FROM list_friend WHERE id=%i and idfriend=%i",thisclient->charid,id))
+            {
+                Log(MSG_INFO,"user failed to delete friend slot %i",thisclient->charname,id);
                 return false;
+            }
+
+            Log(MSG_INFO,"user %s deletes friend slot %i",thisclient->charname,id);
+
             CCharClient* otherclient = (CCharClient*) GetClientByID(id);
             if(otherclient!=NULL)
             {

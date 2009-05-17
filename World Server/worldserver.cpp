@@ -328,6 +328,15 @@ bool CWorldServer::OnServerReady( )
 	HIT_DELAY_MODIF = 0;
 	MOVE_SPEED_MODIF = 100000;
 
+	//LMA: We init ObjVar, just in case.
+	for (int k=0;k<MAX_NPC;k++)
+	{
+	    for (int j=0;j<20;j++)
+	    {
+	        ObjVar[k][j]=0;
+	    }
+	}
+
     //Load our Server Info
     LoadConfig( );
     //LoadLTB( );
@@ -351,6 +360,13 @@ bool CWorldServer::OnServerReady( )
     //LoadBreakList( );     // geo edit for disassemble // 22 oct 07
     LoadBreakChestBlueList();   //LMA: loading chests, breaks from STB...
     LoadSkillData( );
+
+    //LMA: Forcing Union Wars.
+    UWForceFrom=0;  //deactivated.
+    UWNbPlayers=0;  //deactivated
+    //In t + 5 minutes (deactivated, use gm command instead).
+    //pakGMForceUW(NULL,5);
+
 
 
     //LMA: for debug (load old skill system and compares to new one).
@@ -596,7 +612,7 @@ void CWorldServer::LoadCommandLevels( void )
     Config.Command_DSpawn = ConfigGetInt    ( "commands.ini", "dspawn", 299 );
     Config.Command_ESpawn = ConfigGetInt    ( "commands.ini", "espawn", 299 );
     Config.Command_Event = ConfigGetInt    ( "commands.ini", "event", 299 );     //Event
-    Config.Command_Event = ConfigGetInt    ( "commands.ini", "eventifo", 299 );     //LMA: Events for IFO Objects
+    Config.Command_EventIfo = ConfigGetInt    ( "commands.ini", "eventifo", 299 );     //LMA: Events for IFO Objects
     Config.Command_Exp = ConfigGetInt    ( "commands.ini", "exp", 299 );
     Config.Command_Face = ConfigGetInt    ( "commands.ini", "face", 299 );
     Config.Command_fskill = ConfigGetInt    ( "commands.ini", "fskill", 299 );     //LMA: Force a skill for a monster.
@@ -639,6 +655,8 @@ void CWorldServer::LoadCommandLevels( void )
     Config.Command_Moveto = ConfigGetInt    ( "commands.ini", "moveto", 299 );
     Config.Command_Mute = ConfigGetInt    ( "commands.ini", "mute", 299 );
     Config.Command_Npc = ConfigGetInt    ( "commands.ini", "npc", 299 );
+    Config.Command_NpcObjVar = ConfigGetInt    ( "commands.ini", "npcobjvar", 299 );
+    Config.Command_NpcSetObjVar = ConfigGetInt    ( "commands.ini", "npcsetobjvar", 299 );
     Config.Command_NpcLtb = ConfigGetInt    ( "commands.ini", "npcltb", 299 );
     Config.Command_Pak = ConfigGetInt    ( "commands.ini", "pak", 299 );
     Config.Command_Pak2 = ConfigGetInt    ( "commands.ini", "pak2", 299 );
@@ -647,6 +665,7 @@ void CWorldServer::LoadCommandLevels( void )
     Config.Command_Pdmg = ConfigGetInt    ( "commands.ini", "pdmg", 299 );
     Config.Command_PlayerInfo = ConfigGetInt    ( "commands.ini", "playerinfo", 299 );
     Config.Command_Pvp = ConfigGetInt    ( "commands.ini", "pvp", 299 );
+    Config.Command_RaiseCG = ConfigGetInt    ( "commands.ini", "raisecg", 299 );
     Config.Command_Rate = ConfigGetInt    ( "commands.ini", "rate", 299 );
     Config.Command_Reborn = ConfigGetInt    ( "commands.ini", "reborn", 299 );  //Reborn by core
     Config.Command_Refine = ConfigGetInt    ( "commands.ini", "refine", 299 );  //Refine by PurpleYouko
@@ -659,6 +678,8 @@ void CWorldServer::LoadCommandLevels( void )
     Config.Command_Setqflag = ConfigGetInt ( "commands.ini", "setqflag", 299 );
     Config.Command_Setqvar = ConfigGetInt ( "commands.ini", "setqvar", 299 );
     Config.Command_Settime = ConfigGetInt    ( "commands.ini", "settime", 299 );
+    Config.Command_SetUW = ConfigGetInt    ( "commands.ini", "setuw", 299 );
+    Config.Command_SetUWnb = ConfigGetInt    ( "commands.ini", "setuwnb", 299 );
     Config.Command_ShopType = ConfigGetInt    ( "commands.ini", "shoptype", 299 );
     Config.Command_Shutdown = ConfigGetInt    ( "commands.ini", "shutdown", 299 );
     Config.Command_SpeedModif = ConfigGetInt    ( "commands.ini", "speedmodif", 299 );

@@ -56,6 +56,9 @@ static int __FOREGROUND = LIGHTGRAY;
 
 //LMA: extra log.
 FILE *fhSp1=NULL;
+FILE *fhSpDebug=NULL;
+int debugd=0;
+int previous_priority=0;
 
 // Change console text color
 void textcolor(int color)
@@ -214,6 +217,81 @@ void LogSp( enum msg_type flag, char *Format, ... )
     return;
 }
 
+//LMA: changing Debug Priority.
+void LogDebugPriority(int priority, bool warning)
+{
+    //By default, no warning and priority is set to 3 (cf. log.h).
+    if(priority<0||priority>4)
+        return;
+
+    if(priority==4)
+    {
+        debugd=previous_priority;
+    }
+    else
+    {
+        previous_priority=debugd;
+        debugd=priority;
+    }
+
+    if (warning)
+        Log(MSG_WARNING,"Debug Priority switched to %i",debugd);
+
+
+    return;
+}
+
+//LMA: Log for debug purposes (in another file).
+void LogDebug(char *Format, ... )
+{
+    //1= on screen
+    //2= on screen + file
+    //3 = on file.
+
+    //no debug output.
+    if(debugd==0)
+        return;
+
+	va_list ap;	      // For arguments
+    va_start( ap, Format );
+
+    //on screen debug?
+    if(debugd<3)
+    {
+        textcolor(LIGHTBLUE);
+        printf("[DEBUG]: ");
+    	vprintf( Format, ap );
+    	printf("\n" );
+    	fflush( stdout );
+    }
+
+    //no file debug.
+    if(debugd<2)
+    {
+        va_end  ( ap );
+        return;
+    }
+
+    if ( fhSpDebug != NULL )
+    {
+        // Timestamp
+        time_t rtime;
+        time(&rtime);
+        char *timestamp = ctime(&rtime);
+        timestamp[ strlen(timestamp)-1 ] = ' ';
+
+        fprintf( fhSpDebug, "%s- ", timestamp );
+        vfprintf( fhSpDebug, Format, ap );
+        fputc( '\n', fhSpDebug );
+    }
+
+    va_end  ( ap );
+    fflush( fhSpDebug );
+
+
+    return;
+}
+
 //LMA: (used for handling export only).
 void LogHandleSp(int type)
 {
@@ -221,11 +299,16 @@ void LogHandleSp(int type)
     {
         if(fhSp1==NULL)
             fhSp1 = fopen(LOG_DIRECTORY "export.log", "w+" );
+
+        if(fhSpDebug==NULL)
+            fhSpDebug = fopen(LOG_DIRECTORY "debug.log", "a+" );
     }
     else
     {
         if(fhSp1!=NULL)
             fclose(fhSp1);
+        if(fhSpDebug!=NULL)
+            fclose(fhSpDebug);
     }
 
 

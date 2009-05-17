@@ -79,27 +79,73 @@ void CMonster::SpawnMonster( CPlayer* player, CMonster* thismon )
     	ADDWORD    ( pak, 0x0000 );
     	ADDWORD    ( pak, 0x0000 );
     }
-	ADDBYTE    ( pak, 0x00 );
+
+    if(IsSummon( ) )
+    {
+        ADDBYTE    ( pak, 0x01 );
+    }
+    else
+    {
+        ADDBYTE    ( pak, 0x00 );
+    }
 
     //LMA: Little check, for now we "only" have a DWORD for monster's HP so there is a limit
     //broken by some monsters (Turak boss)
     if(Stats->HP>MAXHPMOB)
     {
+        LogDebugPriority(3);
+        LogDebug("Too much HP for monster %i (%I64i->%I64i)",thismon->montype,Stats->HP,MAXHPMOB);
+        LogDebugPriority(4);
         Stats->HP=(long long) MAXHPMOB;
     }
 
-	ADDDWORD   ( pak, Stats->HP );
+    ADDDWORD   ( pak, Stats->HP );
+
 	if(thismon->owner != player->clientid)
     {
         CMap* map = GServer->MapList.Index[Position->Map];
 
-        if(IsSummon( ) && map->allowpvp!=0) {ADDDWORD( pak, 0x00000064 );} //Hostil
-        else if (IsSummon( ) && map->allowpvp==0) {ADDDWORD ( pak, 0x00000000 );}//Friendly
-        else if(thismon->montype>=1474&&thismon->montype<=1489) {ADDDWORD ( pak, 0x00000000 );}  //LMA: Xmas trees are friendly.
-        else{ADDDWORD( pak, 0x00000064 );}//Hostil
+        //LMA: adding team...
+        if (thismon->team!=0)
+        {
+            ADDDWORD( pak,thismon->team);
+        }
+        else
+        {
+            if(IsSummon( ) && map->allowpvp!=0)
+            {
+                //Hostil
+                ADDDWORD( pak, 0x00000064 );
+            }
+            else if (IsSummon( ) && map->allowpvp==0)
+            {
+                //Friendly
+                ADDDWORD ( pak, 0x00000000 );
+            }
+            else
+            {
+                //Hostil
+                ADDDWORD( pak, 0x00000064 );
+            }
+
+            //TODO: LMA, test if necessary or not anymore...
+            /*
+            else if(thismon->montype>=1474&&thismon->montype<=1489)
+            {
+                //LMA: Xmas trees are friendly.
+                ADDDWORD ( pak, 0x00000000 );
+            }
+            */
+
+        }
 
     }
-    else {ADDDWORD( pak, 0x00000000 );}//Friendly
+    else
+    {
+        //Friendly
+        ADDDWORD( pak, 0x00000000 );
+    }
+
     ADDDWORD( pak, GServer->BuildBuffs( this ) );
 	ADDWORD   ( pak, montype );
 	ADDWORD   ( pak, 0x0000 );
