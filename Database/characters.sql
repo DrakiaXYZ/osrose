@@ -55,11 +55,11 @@ CREATE TABLE `characters` (
   `shoptype` int(11) NOT NULL DEFAULT '0',
   `timershop` int(11) NOT NULL DEFAULT '0',
   `isgm` tinyint(1) NOT NULL DEFAULT '0',
-  `unique_skills` varchar(255) NOT NULL,
-  `unique_skills_level` varchar(255) NOT NULL,
-  `mileage_skills` varchar(1024) NOT NULL,
-  `mileage_skills_level` varchar(1024) NOT NULL,
-  `driving_skills` varchar(255) NOT NULL,
+  `unique_skills` varchar(1024) NOT NULL DEFAULT '0',
+  `unique_skills_level` varchar(255) NOT NULL DEFAULT '1',
+  `mileage_skills` varchar(1024) NOT NULL DEFAULT '0',
+  `mileage_skills_level` varchar(1024) NOT NULL DEFAULT '1',
+  `driving_skills` varchar(255) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=476 DEFAULT CHARSET=latin1;
 
