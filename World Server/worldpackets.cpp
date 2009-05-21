@@ -3394,7 +3394,7 @@ bool CWorldServer::pakCraft( CPlayer* thisclient, CPacket* P )
                 continue;
             }
 
-            if(thisclient->cskills[k].thisskill->atkpower==craftID&&thisclient->cskills[k].level==craft_level)
+            if(thisclient->cskills[k].thisskill->atkpower==craftID&&thisclient->cskills[k].level>=craft_level)
             {
                 skill_found=true;
                 //LMA: checking MP amount.
