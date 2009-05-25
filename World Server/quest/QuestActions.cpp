@@ -1276,6 +1276,12 @@ QUESTREWD(028){
 	return QUEST_SUCCESS;
 }
 
+//LMA: Execute LUA Script, client side.
+QUESTREWD(029)
+{
+ 	return QUEST_SUCCESS;
+}
+
 //Unspawn a NPC
 //LMA: JUST for a specific player ! More like a hiding !
 //LMA: We changed the way the NPC was used.

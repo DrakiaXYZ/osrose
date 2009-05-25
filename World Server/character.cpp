@@ -166,7 +166,13 @@ int CCharacter::ExecuteQuestTrigger(dword hash)
       if (GServer->TriggerList.at(j)->TriggerHash == hash)
       {
         trigger = GServer->TriggerList.at(j);
-        nexttrigger = GServer->TriggerList.at(j + 1);
+
+        //LMA: bug on next trigger.
+        if(j+1<GServer->TriggerList.size())
+        {
+            nexttrigger = GServer->TriggerList.at(j + 1);
+        }
+
         break;
       }
     }
@@ -197,6 +203,12 @@ int CCharacter::ExecuteQuestTrigger(dword hash)
         else
         {
             LogDebug("EXTC::checknext, FAILURE");
+            if(nexttrigger==NULL)
+            {
+                Log(MSG_WARNING,"CCharacter::ExecuteQuestTrigger, Next trigger but NULL! %u",hash);
+                return QUEST_SUCCESS;
+            }
+
             return ExecuteQuestTrigger(nexttrigger->TriggerHash);
         }
 

@@ -613,6 +613,12 @@ QUESTREWDC(028)
  	return QUEST_SUCCESS;
 }
 
+//LMA: Execute LUA Script, client side.
+QUESTREWDC(029)
+{
+ 	return QUEST_SUCCESS;
+}
+
 //Unspawn a NPC
 QUESTREWDC(034)
 {

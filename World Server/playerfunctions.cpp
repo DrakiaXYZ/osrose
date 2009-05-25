@@ -1816,7 +1816,13 @@ int CPlayer::ExecuteQuestTrigger(dword hash,bool send_packet)
       if (GServer->TriggerList.at(j)->TriggerHash == hash)
       {
         trigger = GServer->TriggerList.at(j);
-        nexttrigger = GServer->TriggerList.at(j + 1);
+
+        //LMA: bug on next trigger.
+        if(j+1<GServer->TriggerList.size())
+        {
+            nexttrigger = GServer->TriggerList.at(j + 1);
+        }
+
         break;
       }
 
@@ -1848,6 +1854,12 @@ int CPlayer::ExecuteQuestTrigger(dword hash,bool send_packet)
         else
         {
             LogDebug("EXTP::checknext because FAILURE");
+            if(nexttrigger==NULL)
+            {
+                Log(MSG_WARNING,"CPLAYER::ExecuteQuestTrigger, Next trigger but NULL! %u",hash);
+                return QUEST_SUCCESS;
+            }
+
             return ExecuteQuestTrigger(nexttrigger->TriggerHash,send_packet);
         }
 

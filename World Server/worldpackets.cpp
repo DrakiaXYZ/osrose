@@ -2706,6 +2706,7 @@ bool CWorldServer::pakGiveQuest( CPlayer* thisclient, CPacket* P )
   }
 
   int success = thisclient->ExecuteQuestTrigger(hash);
+
   BEGINPACKET ( pak, 0x730);
   ADDBYTE ( pak, success);
   ADDBYTE ( pak, 0);
