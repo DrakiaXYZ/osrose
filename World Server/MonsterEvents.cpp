@@ -814,6 +814,12 @@ void CMonster::DoAi(int ainumberorg,char type)//ainumber is monster->AI type is 
     {
         lma_debug=true;
         LogDebugPriority(3);
+    }
+
+    if (Position->Map==2&&ainumber==1805)
+    {
+        lma_debug=true;
+        LogDebugPriority(3);
     }*/
 
     //LMA: findchar and nearchar set to NULL.

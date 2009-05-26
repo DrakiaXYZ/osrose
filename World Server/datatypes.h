@@ -963,6 +963,7 @@ struct CMob {
   UINT mobId;
   bool tactical;
   UINT amount;
+  UINT real_amount; //LMA: real amount (amount is the max amount).
   CNPCData* thisnpc;
     CMDrops* mobdrop;
     CMDrops* mapdrop;

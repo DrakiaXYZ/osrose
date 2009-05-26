@@ -232,6 +232,9 @@ bool CWorldServer::GiveExp( CMonster* thismon, UINT special_lvl, UINT special_ex
     		partyclient->client->SendPacket( &pak );
         }
     }
+
     MapList.Index[thismon->Position->Map]->DeleteMonster( thismon );
+
+
     return true;
 }

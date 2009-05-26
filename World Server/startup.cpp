@@ -1156,9 +1156,18 @@ bool CWorldServer::LoadMobGroups()
         return false;
       }
       thismob->amount = amount;
+      thismob->real_amount=1;
       thismob->tactical = tactical;
       thismob->mobId = mobId;
       thismob->thisnpc = GetNPCDataByID( thismob->mobId );
+
+      //LMA: check
+      if(thisgroup->limit<thismob->amount)
+      {
+          Log(MSG_WARNING,"spawn %i: limit %u < monster amount %u",thisgroup->id,thisgroup->limit,thismob->amount);
+          //overwriting.
+          thismob->amount=thisgroup->limit;
+      }
 
       //LMA: We check here and delete the whole group.
       if (thismob->thisnpc == NULL)
@@ -1843,26 +1852,46 @@ bool CWorldServer::LoadMonsters( )
 
             for (UINT k = 0; k < thisgroup->basicMobs.size(); k++)
             {
+              CMob* thismob = thisgroup->basicMobs.at(thisgroup->curBasic); //LMA
+              thisgroup->curBasic++;
+
               if (thisgroup->curBasic >= thisgroup->basicMobs.size())
               {
                   thisgroup->curBasic = 0;
               }
 
-              CMob* thismob = thisgroup->basicMobs.at(thisgroup->curBasic); //LMA
-              thisgroup->curBasic++;
+              //LMA: Don't spawn all the mobs at once.
+              thismob->real_amount=1;
+              if(thismob->amount!=1)
+              {
+                    thismob->real_amount=RandNumber(1,thismob->amount);
+                    if(thismob->real_amount>thismob->amount)
+                    {
+                        thismob->real_amount=thismob->amount;
+                    }
 
-              for (UINT l = 0; l < thismob->amount; l++)
+              }
+
+              //for (UINT l = 0; l < thismob->amount; l++)
+              for (UINT l = 0; l < thismob->real_amount; l++)
               {
                 fPoint position = RandInCircle( thisgroup->point, thisgroup->range );
                 thismap->AddMonster( thismob->mobId, position, 0, thismob->mobdrop, thismob->mapdrop, thisgroup->id );
 
-                //LMA: enough or just one group at a time.
-                if (thisgroup->active >= thisgroup->limit||nb_groups==1)
+
+                //LMA: enough.
+                if (thisgroup->active >= thisgroup->limit)
                 {
                   GroupFull = true;
                   break;
                 }
 
+              }
+
+              //LMA: One group at a time?
+              if((k+1)>=nb_groups)
+              {
+                  GroupFull=true;
               }
 
               if (GroupFull)

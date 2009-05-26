@@ -486,13 +486,26 @@ AICOND(012)
 	if (data->cWhen == 1)
     {
         if (map->CurrentTime > 2) // night
+        {
+            LogDebug("Night");
             return AI_SUCCESS;
+        }
+
+        LogDebug("Not Night (%u)",map->CurrentTime);
+
     }
     else
     {
         if (map->CurrentTime < 3) // day
+        {
+            LogDebug("Day");
             return AI_SUCCESS;
+        }
+
+        LogDebug("Not Day (%u)",map->CurrentTime);
     }
+
+
     return AI_FAILURE;
 }
 

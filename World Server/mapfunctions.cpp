@@ -358,13 +358,31 @@ void CMap::RespawnMonster( )
     //LMA: daynight
     int last_map=0;
     bool is_night=false;
+
+    bool lma_debug=false;   //LMA: debugging spawn problem
+
     for (UINT j = 0; j < MobGroupList.size(); j++)
     {
        CMobGroup* thisgroup = MobGroupList.at(j);
 
+       //LMA: debugging spawn problem
+       lma_debug=false;
+       /*if(thisgroup->id==4054)
+       {
+           lma_debug=true;
+           Log(MSG_INFO,"Respawn monster spawn %i",thisgroup->id);
+       }*/
+
       clock_t rtime = clock() - thisgroup->lastRespawnTime;
       if (rtime < thisgroup->respawntime*CLOCKS_PER_SEC || thisgroup->active >= thisgroup->limit)
+      {
+          if(lma_debug)
+          {
+              Log(MSG_INFO,"No respawn for group %u (time %u < %u ? or limit %u>=%u ?)",thisgroup->id,rtime,thisgroup->respawntime*CLOCKS_PER_SEC,thisgroup->active,thisgroup->limit);
+          }
+
         continue;
+      }
 
       //LMA: handling day and night this time.
       if(thisgroup->daynight!=0)
@@ -384,8 +402,20 @@ void CMap::RespawnMonster( )
       //calling in tactictal points if needed.
       CMob *thismob;
       bool groupFull=false;
+
+      if(lma_debug)
+      {
+          Log(MSG_INFO,"Tactical? %u>=%u ?",thisgroup->basicKills,thisgroup->tacticalpoints);
+      }
+
       if (thisgroup->tacMobs.size() > 0 && thisgroup->basicKills >= thisgroup->tacticalpoints)
       {
+
+          if(lma_debug)
+          {
+              Log(MSG_INFO,"Tactical yes");
+          }
+
           //adding ALL tacticals.
           for (UINT k=0;k<thisgroup->tacMobs.size();k++)
           {
@@ -428,7 +458,7 @@ void CMap::RespawnMonster( )
 
       }
 
-      //LMA: basic mobs again? we only add only group.
+      //LMA: basic mobs again? we only add one group.
       //we do it only if enough monsters were killed since last time.
       int last_group=thisgroup->curBasic-1;
       if(last_group<0)
@@ -441,36 +471,78 @@ void CMap::RespawnMonster( )
 
       }
 
-      if(thisgroup->lastKills>=thisgroup->basicMobs.at(last_group)->amount)
+      if(lma_debug)
+      {
+          Log(MSG_INFO,"Basic group, this one %u, previous %u, laskills (%u)>=amount(%u) ?",thisgroup->curBasic,last_group,thisgroup->lastKills,thisgroup->basicMobs.at(last_group)->real_amount);
+      }
+
+      //if(thisgroup->lastKills>=thisgroup->basicMobs.at(last_group)->amount)
+      if(thisgroup->lastKills>=thisgroup->basicMobs.at(last_group)->real_amount)
       {
           if(!thisgroup->group_ready)
           {
               //extra loop since it's the last dead monster that triggers the respawn time.
               thisgroup->lastRespawnTime = clock();
               thisgroup->group_ready=true;
+
+              if(lma_debug)
+              {
+                  Log(MSG_INFO,"Group wasn't ready, he will now.");
+              }
+
+
               return;
           }
 
           thisgroup->group_ready=false;
 
+          thismob = thisgroup->basicMobs.at(thisgroup->curBasic);
+          thisgroup->curBasic++;
           if (thisgroup->curBasic >= thisgroup->basicMobs.size())
           {
               thisgroup->curBasic = 0;
           }
 
-          thismob = thisgroup->basicMobs.at(thisgroup->curBasic);
-          thisgroup->curBasic++;
+          if(lma_debug)
+          {
+              Log(MSG_INFO,"new group will be %u, active for now %u",thisgroup->curBasic,thisgroup->active);
+          }
+
 
         //we add the monsters.
-        for (UINT i = 0; i < thismob->amount; i++)
+        //LMA: Don't spawn all the mobs at once.
+        thismob->real_amount=1;
+        if(thismob->amount!=1)
+        {
+            thismob->real_amount=GServer->RandNumber(1,thismob->amount);
+            if(thismob->real_amount>thismob->amount)
+            {
+                thismob->real_amount=thismob->amount;
+            }
+
+        }
+
+        //for (UINT i = 0; i < thismob->amount; i++)
+        for (UINT i = 0; i < thismob->real_amount; i++)
         {
             if (thisgroup->active >= thisgroup->limit)
             {
+                  if(lma_debug)
+                  {
+                      Log(MSG_INFO,"Stop spawning monster %u>=%u",thisgroup->active,thisgroup->limit);
+                  }
+
                 break;
             }
 
             fPoint position = GServer->RandInCircle( thisgroup->point, thisgroup->range );
             AddMonster( thismob->mobId, position, 0, thismob->mobdrop, thismob->mapdrop, thisgroup->id );
+
+              if(lma_debug)
+              {
+                  Log(MSG_INFO,"Spawing monster %u at (%.2f;%.2f) (%u<%u), active now %u",thismob->mobId,position.x,position.y,thismob->mobId,i,thismob->real_amount,thisgroup->active);
+              }
+
         }
 
         thisgroup->lastKills=0;

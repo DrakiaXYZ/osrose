@@ -276,6 +276,7 @@ CMonster* CMap::AddMonster( UINT montype, fPoint position, UINT owner, CMDrops* 
 bool CMap::DeleteMonster( CMonster* monster, bool clearobject, UINT i )
 {
     if(monster==NULL) return false;
+
     GServer->ClearClientID( monster->clientid );
     if(monster->Position->respawn!=0)
     {

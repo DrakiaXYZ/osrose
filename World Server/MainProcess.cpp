@@ -272,6 +272,8 @@ PVOID MapProcess( PVOID TS )
                     }
                     else
                     {
+                        /*
+                        //LMA: Done in summonupdate now.
                         if(monster->IsSummon( ))
                         {// if is summon and is not attacking we reduce his life 1%
                             time_t elapsedTime = time(NULL) - monster->lastLifeUpdate;
@@ -288,6 +290,7 @@ PVOID MapProcess( PVOID TS )
                             }
 
                         }
+                        */
 
                     }
 
