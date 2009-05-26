@@ -70,6 +70,14 @@ unsigned CWorldServer::BuildItemData( CItem thisitem )
 		unsigned part5 = thisitem.durability << 9;
 		unsigned part6 = thisitem.stats;
 		unsigned part7 = thisitem.gem;
+
+		//LMA: fix (we can't have gems and extra stats at the same time).
+		//blue stuff can have stats but they are in their STB, NOT as extra stats!
+		if(part7!=0)
+		{
+		    part6=0;
+		}
+
 		return part1 | part2 | part3 | part4 | part5 | part6 | part7;
 	}
 }
