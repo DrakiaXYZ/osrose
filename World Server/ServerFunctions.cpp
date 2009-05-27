@@ -860,26 +860,31 @@ bool CWorldServer::LearnSkill( CPlayer* thisclient, UINT skill, bool takeSP)
     //LMA: Is it an empty skill?
     if(GServer->SkillList[skill]->skill_tab==0)
     {
-        Log(MSG_WARNING,"Incorrect or empty skill %i",skill);
+        Log(MSG_WARNING,"%s:: Incorrect or empty skill %i",thisclient->CharInfo->charname,skill);
         b=6;
     }
 
-    if( thisclient->CharInfo->SkillPoints<thisskill->sp )
+    if(takeSP&&thisclient->CharInfo->SkillPoints<thisskill->sp )
     {
+        Log(MSG_WARNING,"%s:: not enough skill points (%u<%u) for skill %u",thisclient->CharInfo->charname,thisclient->CharInfo->SkillPoints,thisskill->sp,skill);
         b=7;
     }
     else if( thisskill->clevel>thisclient->Stats->Level )
     {
+        Log(MSG_WARNING,"%s:: incorrect level for skill %u (%u<%u)",thisclient->CharInfo->charname,skill,thisskill->clevel,thisclient->Stats->Level);
         b=4;
     }
+
     if(b==1)
     {
         UINT rclass = 0;
         for(UINT i=0;i<4; i++)
         {
-    if (thisskill->c_class[i] == 0) {
-        continue;
-    }
+            if (thisskill->c_class[i] == 0)
+            {
+                continue;
+            }
+
             if (thisskill->c_class[i] == 41)
             {
                 rclass = 111;
@@ -938,6 +943,7 @@ bool CWorldServer::LearnSkill( CPlayer* thisclient, UINT skill, bool takeSP)
             }
             else
             {
+                Log(MSG_WARNING,"%s:: Incompatible class for skill %u (%u)",thisclient->CharInfo->charname,skill,rclass);
                 b=2;
             }
         }
@@ -951,12 +957,14 @@ bool CWorldServer::LearnSkill( CPlayer* thisclient, UINT skill, bool takeSP)
                 UINT rskill = thisclient->GetPlayerSkill(thisskill->rskill[i]);
                 if(rskill == 0xffff)
                 {
+                    Log(MSG_WARNING,"%s:: Necessary skill %u not found to learn %u",thisclient->CharInfo->charname,thisskill->rskill[i],skill);
                     b=3;
                 }
                 else
                 {
                     if(thisskill->lskill[i] > thisclient->cskills[rskill].level)
                     {
+                        Log(MSG_WARNING,"%s:: Necessary skill (%u) level incorrect (%u>%u) to learn %u",thisclient->CharInfo->charname,thisskill->rskill[i],thisskill->lskill[i],thisclient->cskills[rskill].level,skill);
                         b=5;
                     }
 
@@ -974,7 +982,7 @@ bool CWorldServer::LearnSkill( CPlayer* thisclient, UINT skill, bool takeSP)
         int family=thisclient->GoodSkill(skill);
         if(family==-1)
         {
-            Log(MSG_WARNING,"Can't find family for skill %i",skill);
+            Log(MSG_WARNING,"%s:: Can't find family for skill %i",thisclient->CharInfo->charname,skill);
             b=6;
         }
         else
@@ -982,7 +990,7 @@ bool CWorldServer::LearnSkill( CPlayer* thisclient, UINT skill, bool takeSP)
             int index=thisclient->FindSkillOffset(family);
             if(index==-1)
             {
-                Log(MSG_WARNING,"Can't find index in family %i for skill %i",family,skill);
+                Log(MSG_WARNING,"%s:: Can't find index in family %i for skill %i",thisclient->CharInfo->charname,family,skill);
                 b=6;
             }
             else
@@ -1022,6 +1030,9 @@ bool CWorldServer::LearnSkill( CPlayer* thisclient, UINT skill, bool takeSP)
     ADDWORD    ( pak, skill);
     ADDWORD    ( pak, thisclient->CharInfo->SkillPoints);
     thisclient->client->SendPacket( &pak);
+
+    Log(MSG_WARNING,"%s:: skill %i not learned (error %i)",thisclient->CharInfo->charname,skill,b);
+
 
     return false;
 }

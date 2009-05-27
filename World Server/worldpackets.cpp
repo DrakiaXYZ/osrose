@@ -1762,6 +1762,8 @@ bool CWorldServer::pakNPCBuy ( CPlayer* thisclient, CPacket* P )
      //Clan Shop case...
      //Log(MSG_INFO,"Buying /selling from NPC %i",thisnpc->npctype);
      bool is_clanshop=false;
+     bool is_union=false;
+     UINT nb_union_points=0;
      if (thisnpc->npctype==1752)
      {
         is_clanshop=true;
@@ -1771,6 +1773,49 @@ bool CWorldServer::pakNPCBuy ( CPlayer* thisclient, CPacket* P )
         {
             return true;
         }
+
+     }
+
+     //LMA: Union Shops.
+     if(thisnpc->npctype>=1109&&thisnpc->npctype<=1112)
+     {
+         is_union=true;
+
+         switch (thisclient->CharInfo->unionid)
+         {
+             case 1:
+             {
+                 nb_union_points=thisclient->CharInfo->union01;
+             }
+             break;
+            case 2:
+             {
+                 nb_union_points=thisclient->CharInfo->union02;
+             }
+             break;
+             case 3:
+             {
+                 nb_union_points=thisclient->CharInfo->union03;
+             }
+             break;
+             case 4:
+             {
+                 nb_union_points=thisclient->CharInfo->union04;
+             }
+             break;
+             case 5:
+             {
+                 nb_union_points=thisclient->CharInfo->union05;
+             }
+             break;
+             default:
+             {
+                 //Can't be.
+                 Log(MSG_WARNING,"%s tried to shop in Union shop but isn't in an union (%i)",thisclient->CharInfo->charname,thisclient->CharInfo->unionid);
+                 return true;
+             }
+             break;
+         }
 
      }
 
@@ -1870,16 +1915,42 @@ bool CWorldServer::pakNPCBuy ( CPlayer* thisclient, CPacket* P )
                     price += 0.5;
                     price /= 100;
                     price = (float)round(price);
-                    Log( MSG_WARNING, "Item bought: itemnum %i, itemtype %i, itemcount %i, price %0.0f", thisitem.itemnum, thisitem.itemtype, thisitem.count, price);
 
                     if (is_clanshop)
                     {
+                        if(thisitem.itemtype<10 )
+                        {
+                            price=EquipList[thisitem.itemtype].Index[thisitem.itemnum]->craft_difficult;
+                        }
+                        else
+                        {
+                            price=PatList.Index[thisitem.itemnum]->craft_difficult;
+                        }
+
                         if (thisclient->CharInfo->rewardpoints<(long int) price)
                         {
                           Log(MSG_HACK, "Not enough reward points player %s, have %u, need %u",thisclient->CharInfo->charname,thisclient->CharInfo->rewardpoints,(long int) price);
                           return true;
                         }
                         thisclient->CharInfo->rewardpoints -= (long int) price;
+                    }
+                    else if (is_union)
+                    {
+                        if(thisitem.itemtype<10 )
+                        {
+                            price=EquipList[thisitem.itemtype].Index[thisitem.itemnum]->craft_difficult;
+                        }
+                        else
+                        {
+                            price=PatList.Index[thisitem.itemnum]->craft_difficult;
+                        }
+
+                        if (nb_union_points<(long int) price)
+                        {
+                          Log(MSG_HACK, "Not enough Union points player %s, have %u, need %u",thisclient->CharInfo->charname,nb_union_points,(long int) price);
+                          return true;
+                        }
+                        nb_union_points -= (long int) price;
                     }
                     else
                     {
@@ -1891,6 +1962,7 @@ bool CWorldServer::pakNPCBuy ( CPlayer* thisclient, CPacket* P )
                         thisclient->CharInfo->Zulies -= (long int)price;
                     }
 
+                    Log( MSG_INFO, "%s:: Item bought: itemnum %i, itemtype %i, itemcount %i, price %0.0f",thisclient->CharInfo->charname,thisitem.itemnum, thisitem.itemtype, thisitem.count, price);
                 }
                 break;
                 case 10:
@@ -1949,16 +2021,42 @@ bool CWorldServer::pakNPCBuy ( CPlayer* thisclient, CPacket* P )
                         price *= bprice;
                         price += 0.5;
                         price = (float)floor(price);
-                        Log( MSG_WARNING, "Item bought: itemnum %i, itemtype %i, itemcount %i, price %0.0f", thisitem.itemnum, thisitem.itemtype, thisitem.count, price);
 
                         if (is_clanshop)
                         {
+                            if(thisitem.itemtype==10)
+                            {
+                                price = UseList.Index[thisitem.itemnum]->craft_difficult;
+                            }
+                            else
+                            {
+                                price = 0;
+                            }
+
                             if (thisclient->CharInfo->rewardpoints<(long int) price*count)
                             {
                               Log(MSG_HACK, "Not enough reward points player %s, have %u, need %u",thisclient->CharInfo->charname,thisclient->CharInfo->rewardpoints,(long int) price*count);
                               return true;
                             }
                             thisclient->CharInfo->rewardpoints -= (long int) price*count;
+                        }
+                        else if (is_union)
+                        {
+                            if(thisitem.itemtype==10)
+                            {
+                                price = UseList.Index[thisitem.itemnum]->craft_difficult;
+                            }
+                            else
+                            {
+                                price = 0;
+                            }
+
+                            if (nb_union_points<(long int) price*count)
+                            {
+                              Log(MSG_HACK, "Not enough Union points player %s, have %u, need %u",thisclient->CharInfo->charname,nb_union_points,(long int) price*count);
+                              return true;
+                            }
+                            nb_union_points -= (long int) price*count;
                         }
                         else
                         {
@@ -1970,6 +2068,7 @@ bool CWorldServer::pakNPCBuy ( CPlayer* thisclient, CPacket* P )
                             thisclient->CharInfo->Zulies -= (long int)price*count;
                         }
 
+                        Log( MSG_INFO, "%s:: Item bought: itemnum %i, itemtype %i, itemcount %i, price %0.0f",thisclient->CharInfo->charname,thisitem.itemnum, thisitem.itemtype, thisitem.count, price);
                     }
                     else
                     {
@@ -1981,16 +2080,42 @@ bool CWorldServer::pakNPCBuy ( CPlayer* thisclient, CPacket* P )
                         price *= bprice;
                         price += 0.5;
                         price = (float)floor(price);
-                		Log( MSG_WARNING, "Item bought: itemnum %i, itemtype %i, itemcount %i, price %0.0f", thisitem.itemnum, thisitem.itemtype, thisitem.count, price);
 
                         if (is_clanshop)
                         {
+                            if(thisitem.itemtype==10)
+                            {
+                                price = UseList.Index[thisitem.itemnum]->craft_difficult;
+                            }
+                            else
+                            {
+                                price = 0;
+                            }
+
                             if (thisclient->CharInfo->rewardpoints<(long int) price*count)
                             {
                               Log(MSG_HACK, "Not enough reward points player %s, have %u, need %u",thisclient->CharInfo->charname,thisclient->CharInfo->rewardpoints,(long int) price*count);
                               return true;
                             }
                             thisclient->CharInfo->rewardpoints -= (long int) price*count;
+                        }
+                        else if (is_union)
+                        {
+                            if(thisitem.itemtype==10)
+                            {
+                                price = UseList.Index[thisitem.itemnum]->craft_difficult;
+                            }
+                            else
+                            {
+                                price = 0;
+                            }
+
+                            if (nb_union_points<(long int) price*count)
+                            {
+                              Log(MSG_HACK, "Not enough Union points player %s, have %u, need %u",thisclient->CharInfo->charname,nb_union_points,(long int) price*count);
+                              return true;
+                            }
+                            nb_union_points -= (long int) price*count;
                         }
                         else
                         {
@@ -2002,6 +2127,7 @@ bool CWorldServer::pakNPCBuy ( CPlayer* thisclient, CPacket* P )
                             thisclient->CharInfo->Zulies -= (long int)price*count;
                         }
 
+                        Log( MSG_INFO, "%s:: Item bought: itemnum %i, itemtype %i, itemcount %i, price %0.0f",thisclient->CharInfo->charname,thisitem.itemnum, thisitem.itemtype, thisitem.count, price);
                     }
                 }
                 break;
@@ -2036,16 +2162,42 @@ bool CWorldServer::pakNPCBuy ( CPlayer* thisclient, CPacket* P )
                     price *= bprice;
                     price += 0.5;
                     price = (float)round(price);
-            		Log( MSG_WARNING, "Item bought: itemnum %i, itemtype %i, itemcount %i, price %0.0f", thisitem.itemnum, thisitem.itemtype, thisitem.count, price);
 
                     if (is_clanshop)
                     {
+                        if(thisitem.itemtype==7)
+                        {
+                            price = EquipList[7].Index[thisitem.itemnum]->craft_difficult;
+                        }
+                        else if(thisitem.itemtype==11)
+                        {
+                            price = JemList.Index[thisitem.itemnum]->craft_difficult;
+                        }
+
                         if (thisclient->CharInfo->rewardpoints<(long int) price*count)
                         {
                           Log(MSG_HACK, "Not enough reward points player %s, have %u, need %u",thisclient->CharInfo->charname,thisclient->CharInfo->rewardpoints,(long int) price*count);
                           return true;
                         }
                         thisclient->CharInfo->rewardpoints -= (long int) price*count;
+                    }
+                    else if (is_union)
+                    {
+                        if(thisitem.itemtype==7)
+                        {
+                            price = EquipList[7].Index[thisitem.itemnum]->craft_difficult;
+                        }
+                        else if(thisitem.itemtype==11)
+                        {
+                            price = JemList.Index[thisitem.itemnum]->craft_difficult;
+                        }
+
+                        if (nb_union_points<(long int) price*count)
+                        {
+                          Log(MSG_HACK, "Not enough Union points player %s, have %u, need %u",thisclient->CharInfo->charname,nb_union_points,(long int) price*count);
+                          return true;
+                        }
+                        nb_union_points -= (long int) price*count;
                     }
                     else
                     {
@@ -2058,6 +2210,7 @@ bool CWorldServer::pakNPCBuy ( CPlayer* thisclient, CPacket* P )
                         thisclient->CharInfo->Zulies -= (long int)price*count;
                     }
 
+                    Log( MSG_INFO, "%s:: Item bought: itemnum %i, itemtype %i, itemcount %i, price %0.0f",thisclient->CharInfo->charname,thisitem.itemnum, thisitem.itemtype, thisitem.count, price);
                 }
                 break;
                 default:
@@ -2084,6 +2237,57 @@ bool CWorldServer::pakNPCBuy ( CPlayer* thisclient, CPacket* P )
 	if (is_clanshop&&buycount>0)
 	{
        GServer->pakGMClanRewardPoints(thisclient,thisclient->CharInfo->charname,0);
+    }
+
+    //LMA: refresh Union Points
+    if(is_union&&buycount>0)
+    {
+         switch (thisclient->CharInfo->unionid)
+         {
+             case 1:
+             {
+                 thisclient->CharInfo->union01=nb_union_points;
+             }
+             break;
+            case 2:
+             {
+                 thisclient->CharInfo->union02=nb_union_points;
+             }
+             break;
+             case 3:
+             {
+                 thisclient->CharInfo->union03=nb_union_points;
+             }
+             break;
+             case 4:
+             {
+                 thisclient->CharInfo->union04=nb_union_points;
+             }
+             break;
+             case 5:
+             {
+                 thisclient->CharInfo->union05=nb_union_points;
+             }
+             break;
+             default:
+             {
+                 //Can't be.
+                 Log(MSG_WARNING,"%s tried to shop in Union shop but isn't in an union (%i)",thisclient->CharInfo->charname,thisclient->CharInfo->unionid);
+                 return true;
+             }
+             break;
+         }
+
+        int new_offset=80+thisclient->CharInfo->unionid;
+        BEGINPACKET( pak, 0x721 );
+        ADDWORD( pak, new_offset );
+        ADDWORD( pak, nb_union_points );
+        ADDWORD( pak, 0x0000 );
+        thisclient->client->SendPacket( &pak );
+        RESETPACKET( pak, 0x730 );
+        ADDWORD    ( pak, 0x0005 );
+        ADDDWORD   ( pak, 0x40b3a24d );
+        thisclient->client->SendPacket( &pak );
     }
 
 	for (int i=0; i<sellcount; i++)
@@ -2128,7 +2332,7 @@ bool CWorldServer::pakNPCBuy ( CPlayer* thisclient, CPacket* P )
                 price *= 0xc8 - 0x62; //town rate
                 price *= 1.000000E-06;
                 price = (float)floor(price);
-    			Log( MSG_WARNING, "Item Sold: itemnum %i, itemtype %i, itemcount %i, price %0.0f", thisitem.itemnum, thisitem.itemtype, thisitem.count, price);
+    			Log( MSG_INFO, "%s:: Item Sold: itemnum %i, itemtype %i, itemcount %i, price %0.0f",thisclient->CharInfo->charname,thisitem.itemnum, thisitem.itemtype, thisitem.count, price);
         		thisclient->CharInfo->Zulies += (long int)price*count;
             }
             break;
@@ -2192,7 +2396,7 @@ bool CWorldServer::pakNPCBuy ( CPlayer* thisclient, CPacket* P )
                     value *= (200 - 0x62); //town rate ( 100)
                     price = value * 5.555555555555556E-06;
                     price = (float)floor(price);
-                	Log( MSG_WARNING, "Item Sold: itemnum %i, itemtype %i, itemcount %i, price %0.0f", thisitem.itemnum, thisitem.itemtype, thisitem.count, price);
+                	Log( MSG_INFO, "%s:: Item Sold: itemnum %i, itemtype %i, itemcount %i, price %0.0f",thisclient->CharInfo->charname,thisitem.itemnum, thisitem.itemtype, thisitem.count, price);
                     thisclient->CharInfo->Zulies += (long int)price*count;
                 }
                 else
@@ -2205,7 +2409,7 @@ bool CWorldServer::pakNPCBuy ( CPlayer* thisclient, CPacket* P )
                     price *= (200 - 0x62); //town rate ( 100)
                     price *= 5.555555555555556E-06;
                     price = (float)floor(price);
-                	Log( MSG_WARNING, "Item Sold: itemnum %i, itemtype %i, itemcount %i, price %0.0f", thisitem.itemnum, thisitem.itemtype, thisitem.count, price);
+                	Log( MSG_INFO, "%s:: Item Sold: itemnum %i, itemtype %i, itemcount %i, price %0.0f",thisclient->CharInfo->charname,thisitem.itemnum, thisitem.itemtype, thisitem.count, price);
                     thisclient->CharInfo->Zulies += (long int)price*count;
                 }
             }
@@ -2237,7 +2441,7 @@ bool CWorldServer::pakNPCBuy ( CPlayer* thisclient, CPacket* P )
                 price *= (200 - 0x62); //town rate ( 100)
                 price *= 5.555555555555556E-06;
                 price = (float)floor(price);
-        		Log( MSG_WARNING, "Item Sold: itemnum %i, itemtype %i, itemcount %i, price %0.0f", thisitem.itemnum, thisitem.itemtype, thisitem.count, price);
+        		Log( MSG_INFO, "%s:: Item Sold: itemnum %i, itemtype %i, itemcount %i, price %0.0f",thisclient->CharInfo->charname,thisitem.itemnum, thisitem.itemtype, thisitem.count, price);
             	thisclient->CharInfo->Zulies += (long int)price*count;
             }
             break;
@@ -2261,6 +2465,8 @@ bool CWorldServer::pakNPCBuy ( CPlayer* thisclient, CPacket* P )
 	SETQWORD( pak, 0, thisclient->CharInfo->Zulies );
 	SETBYTE( pak, 8, ncount );
 	thisclient->client->SendPacket( &pak );
+
+
 	return true;
 }
 
@@ -2449,6 +2655,27 @@ bool CWorldServer::pakTradeAction ( CPlayer* thisclient, CPacket* P )
                 //LMA: check before actually giving the items to players...
   				for (unsigned i=0; i<10; i++)
                 {
+                    //LMA: Dupe test.
+                    for (int ii=i+1;ii<10;ii++)
+                    {
+                        if(thisclient->Trade->trade_itemid[i]==thisclient->Trade->trade_itemid[ii])
+                        {
+                          Log(MSG_HACK, "[TRADE] Player %s tried to dupe item in slot %i (%u::%u)",thisclient->CharInfo->charname,thisclient->Trade->trade_itemid[i],thisclient->items[thisclient->Trade->trade_itemid[i]].itemtype,thisclient->items[thisclient->Trade->trade_itemid[i]].itemnum);
+          				  thisclient->CharInfo->Zulies=zulythis;
+        				  otherclient->CharInfo->Zulies=zulyother;
+                          return true;
+                        }
+
+                        if(otherclient->Trade->trade_itemid[i]==otherclient->Trade->trade_itemid[ii])
+                        {
+                          Log(MSG_HACK, "[TRADE] Player %s tried to dupe item in slot %i (%u::%u)",otherclient->CharInfo->charname,otherclient->Trade->trade_itemid[i],otherclient->items[otherclient->Trade->trade_itemid[i]].itemtype,otherclient->items[otherclient->Trade->trade_itemid[i]].itemnum);
+          				  thisclient->CharInfo->Zulies=zulythis;
+        				  otherclient->CharInfo->Zulies=zulyother;
+                          return true;
+                        }
+
+                    }
+
 					if(thisclient->Trade->trade_count[i] > 0)
                     {
 						//LMA: anti hack check.
@@ -2680,7 +2907,7 @@ bool CWorldServer::pakGiveQuest( CPlayer* thisclient, CPacket* P )
 
   LogDebugPriority(3);
   LogDebug("PakGiveQuest %u ([%08x]), action %i slot %i",hash,hash,action,slot);
-  Log(MSG_WARNING,"PakGiveQuest %u ([%08x]), action %i slot %i",hash,hash,action,slot);
+  Log(MSG_INFO,"PakGiveQuest %u ([%08x]), action %i slot %i",hash,hash,action,slot);
   LogDebugPriority(4);
 
   if (action == 2)
@@ -2713,7 +2940,7 @@ bool CWorldServer::pakGiveQuest( CPlayer* thisclient, CPacket* P )
   ADDDWORD( pak, hash);
   thisclient->client->SendPacket(&pak);
 
-  Log(MSG_INFO,"PakGiveQuest %u",hash);
+  Log(MSG_INFO,"PakGiveQuest %u end",hash);
 
   LogDebugPriority(3);
   LogDebug("PakGiveQuest %u ([%08x]), action %i slot %i result %i",hash,hash,action,slot,success);
@@ -4724,8 +4951,10 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
                }
 
                bool is_failed=false;
+               bool not_found=false;
                if(k==BreakList.size())
                {
+                   not_found=true;
                    is_failed=true;
                }
 
@@ -4770,12 +4999,69 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
                 //If me return no packet, it freezes the client anyway ^_^
                 if(is_failed)
                 {
-                   Log(MSG_WARNING,"Player %s tried to disassemble item (%i:%i), it's not in break list or in error!",thisclient->CharInfo->charname,thisclient->items[src].itemtype,thisclient->items[src].itemnum);
+                   Log(MSG_WARNING,"Player %s tried to disassemble item (%i:%i), it's not in break list or in error! (not found %i, failed %i)",thisclient->CharInfo->charname,thisclient->items[src].itemtype,thisclient->items[src].itemnum,is_failed,not_found);
+
                     //let's give him a banana for his trouble ;)
-                  CItem newitem;
-                   newitem.itemnum = 102;
-                   newitem.itemtype = 10;
-                   newitem.count = 1;
+                   CItem newitem;
+
+                    //LMA: we give him other items if item mall, event or unique gear.
+                   if(not_found)
+                   {
+                        int grade=0;
+                        if(thisclient->items[src].itemtype>9)
+                        {
+                            Log(MSG_WARNING,"Weird itemtype for disassemble %i::%i for %s",thisclient->items[src].itemtype,thisclient->items[src].itemnum,thisclient->CharInfo->charname);
+                        }
+                        else
+                        {
+                            if(thisclient->items[src].itemnum>=EquipList[thisclient->items[src].itemtype].max)
+                            {
+                                Log(MSG_WARNING,"Weird itemnum for disassemble %i::%i for %s (>= %u)",thisclient->items[src].itemtype,thisclient->items[src].itemnum,thisclient->CharInfo->charname,EquipList[thisclient->items[src].itemtype].max);
+                            }
+                            else
+                            {
+                                grade=EquipList[thisclient->items[src].itemtype].Index[thisclient->items[src].itemnum]->itemgrade;
+                            }
+
+                        }
+
+                        if(grade==13)
+                        {
+                            //item mall
+                            newitem.itemnum = 449;
+                            newitem.itemtype = 12;
+                            newitem.count = RandNumber(1,4);
+                        }
+                        else if(grade==14)
+                        {
+                            //event
+                            newitem.itemnum = 448;
+                            newitem.itemtype = 12;
+                            newitem.count = RandNumber(1,4);
+                        }
+                        else if(grade==11)
+                        {
+                            //unique
+                            newitem.itemnum = RandNumber(392,394);
+                            newitem.itemtype = 12;
+                            newitem.count = RandNumber(1,4);
+                        }
+                        else
+                        {
+                            //banana
+                            newitem.itemnum = 102;
+                            newitem.itemtype = 10;
+                            newitem.count = 1;
+                        }
+
+                   }
+                   else
+                   {
+                        newitem.itemnum = 102;
+                        newitem.itemtype = 10;
+                        newitem.count = 1;
+                   }
+
                    newitem.refine = 0;
                    newitem.lifespan = 100;
                    newitem.durability = 40;

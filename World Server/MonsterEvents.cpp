@@ -847,6 +847,13 @@ void CMonster::DoAi(int ainumberorg,char type)//ainumber is monster->AI type is 
             success = (*GServer->aiCondFunc[command])(GServer, this, script->Conditions[i]->data);
             if(ainumber == AIWatch)LogDebug( "aiCondition %03u returned %d", command, success);
 
+            //LMA: Special case (quite a stupid one if you're asking me)
+            if(command==20&&type==1&&success==AI_FAILURE)
+            {
+                //they tried to do a check target level on idle... Let's say it went ok...
+                success=AI_SUCCESS;
+            }
+
             if (success == AI_FAILURE)
             {
                 if (lma_debug)

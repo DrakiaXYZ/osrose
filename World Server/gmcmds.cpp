@@ -4267,7 +4267,22 @@ bool CWorldServer::pakGMStat( CPlayer* thisclient, char* statname, int statvalue
 // GM: Teleport using map id  credits to Blackie
 bool CWorldServer::pakGMGotomap( CPlayer* thisclient, int map )
 {
-    CRespawnPoint* thisrespawn = MapList.Index[map]->GetFirstRespawn( );
+    //fix by PY / ScionEyez
+    if(map<=0||map>=MapList.max)
+    {
+        return true;
+    }
+
+    CMap* thismap = GServer->MapList.Index[map];
+    if(thismap == NULL)
+    {
+        SendPM(thisclient,"Invalid map ID %u",map);
+        //SendSysMsg( thisclient, "Invalid map");
+        return true;
+    }
+
+    //CRespawnPoint* thisrespawn = MapList.Index[map]->GetFirstRespawn( );
+    CRespawnPoint* thisrespawn = thismap->GetFirstRespawn( );
     if(thisrespawn==NULL)
     {
         SendSysMsg( thisclient, "This map have no respawn" );
