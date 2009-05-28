@@ -1861,6 +1861,9 @@ bool CWorldServer::pakNPCBuy ( CPlayer* thisclient, CPacket* P )
                 return true;
             }
 
+
+            //LMA: to avoid mem bug.
+            thisitem.count=tmpcount;
             unsigned newslot = thisclient->GetNewItemSlot( thisitem );
 			if ( newslot == 0xffff ) { ncount-=1; break; }
 			int thisslotcount = 999 - thisclient->items[newslot].count;
