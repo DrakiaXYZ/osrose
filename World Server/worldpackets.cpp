@@ -2661,20 +2661,28 @@ bool CWorldServer::pakTradeAction ( CPlayer* thisclient, CPacket* P )
                     //LMA: Dupe test.
                     for (int ii=i+1;ii<10;ii++)
                     {
-                        if(thisclient->Trade->trade_itemid[i]==thisclient->Trade->trade_itemid[ii])
+                        if(thisclient->Trade->trade_count[i] > 0)
                         {
-                          Log(MSG_HACK, "[TRADE] Player %s tried to dupe item in slot %i (%u::%u)",thisclient->CharInfo->charname,thisclient->Trade->trade_itemid[i],thisclient->items[thisclient->Trade->trade_itemid[i]].itemtype,thisclient->items[thisclient->Trade->trade_itemid[i]].itemnum);
-          				  thisclient->CharInfo->Zulies=zulythis;
-        				  otherclient->CharInfo->Zulies=zulyother;
-                          return true;
+                            if(thisclient->Trade->trade_itemid[i]==thisclient->Trade->trade_itemid[ii])
+                            {
+                              Log(MSG_HACK, "[TRADE] Player %s tried to dupe item in slot %i (%u::%u)",thisclient->CharInfo->charname,thisclient->Trade->trade_itemid[i],thisclient->items[thisclient->Trade->trade_itemid[i]].itemtype,thisclient->items[thisclient->Trade->trade_itemid[i]].itemnum);
+                              thisclient->CharInfo->Zulies=zulythis;
+                              otherclient->CharInfo->Zulies=zulyother;
+                              return true;
+                            }
+
                         }
 
-                        if(otherclient->Trade->trade_itemid[i]==otherclient->Trade->trade_itemid[ii])
+                        if(otherclient->Trade->trade_count[i] > 0)
                         {
-                          Log(MSG_HACK, "[TRADE] Player %s tried to dupe item in slot %i (%u::%u)",otherclient->CharInfo->charname,otherclient->Trade->trade_itemid[i],otherclient->items[otherclient->Trade->trade_itemid[i]].itemtype,otherclient->items[otherclient->Trade->trade_itemid[i]].itemnum);
-          				  thisclient->CharInfo->Zulies=zulythis;
-        				  otherclient->CharInfo->Zulies=zulyother;
-                          return true;
+                            if(otherclient->Trade->trade_itemid[i]==otherclient->Trade->trade_itemid[ii])
+                            {
+                              Log(MSG_HACK, "[TRADE] Player %s tried to dupe item in slot %i (%u::%u)",otherclient->CharInfo->charname,otherclient->Trade->trade_itemid[i],otherclient->items[otherclient->Trade->trade_itemid[i]].itemtype,otherclient->items[otherclient->Trade->trade_itemid[i]].itemnum);
+                              thisclient->CharInfo->Zulies=zulythis;
+                              otherclient->CharInfo->Zulies=zulyother;
+                              return true;
+                            }
+
                         }
 
                     }
