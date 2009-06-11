@@ -114,6 +114,8 @@ CPlayer::CPlayer( CClientSocket* CLIENT )
     wait_validation=0;
     once=false;
 
+    attack_fuel=0;
+
     // SESSION
     Session = new SESSION;
     assert(Session);

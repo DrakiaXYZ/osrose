@@ -3089,6 +3089,9 @@ bool CWorldServer::pakGMTele( CPlayer* thisclient, int map, float x, float y )
 bool CWorldServer::pakGMMute( CPlayer* thisclient, char* name, int time)
 {
     CPlayer* otherclient = GetClientByCharName ( name );
+    if(otherclient==NULL)
+        return true;
+
     BEGINPACKET( pak, 0x70d );
     ADDBYTE    ( pak, 0 );
     ADDWORD    ( pak, time );

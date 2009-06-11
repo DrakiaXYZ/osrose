@@ -1068,6 +1068,8 @@ void CPlayer::TakeFuel(int add_fuel)
         conso_fuel+=(float) GServer->PatList.Index[items[k].itemnum]->fuelcons;
     }
 
+    //LMA: We save it for later (normal attacks...)
+    attack_fuel=conso_fuel;
 
     //How much taken in the meantime?
     float current_fuel=((float) save_fuel)*total_fuel/(10*100);

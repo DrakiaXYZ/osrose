@@ -627,6 +627,56 @@ void CCharacter::NormalAttack( CCharacter* Enemy )
     Battle->lastAtkTime = clock( );
     ReduceABC( );
 
+    //LMA: We take fuel.
+    if(IsPlayer()&&Status->Stance==DRIVING)
+    {
+        CPlayer* plkiller=(CPlayer*) this;
+
+        if(plkiller->items[136].itemnum==0||plkiller->items[139].itemnum==0)
+        {
+            Log(MSG_WARNING,"%s should be riding but doesn't have a motor %i or weapon %i (normal_attack)?",plkiller->CharInfo->charname,plkiller->items[136].itemnum,plkiller->items[139].itemnum);
+            return;
+        }
+
+        //We take the fuel amount.
+        //Log(MSG_INFO,"lifespan before %i, sp_value %i",plkiller->items[136].lifespan,plkiller->items[136].sp_value);
+        plkiller->items[136].sp_value-=(int)plkiller->attack_fuel;
+        if(plkiller->items[136].sp_value<0)
+        {
+            plkiller->items[136].sp_value=0;
+        }
+
+        plkiller->items[136].lifespan=(int)(plkiller->items[136].sp_value/10);
+
+        if(plkiller->items[136].lifespan<0)
+        {
+            plkiller->items[136].sp_value=0;
+        }
+
+        //Log(MSG_INFO,"lifespan after %i, sp_value %i, attack fuel %.2f",plkiller->items[136].lifespan,plkiller->items[136].sp_value,plkiller->attack_fuel);
+
+        BEGINPACKET( pak,0x7ce );
+        ADDWORD    ( pak, 0x88 ); //Slot
+        ADDWORD    ( pak, plkiller->items[136].sp_value );
+        plkiller->client->SendPacket( &pak );
+
+        //We stop attack if needed
+        if(plkiller->items[136].lifespan==0)
+        {
+            BEGINPACKET( pak, 0x796 );
+            ADDWORD    ( pak, plkiller->clientid );
+            ADDFLOAT   ( pak, plkiller->Position->current.x*100 );
+            ADDFLOAT   ( pak, plkiller->Position->current.y*100 );
+            ADDWORD    ( pak, 0x0000 );
+            GServer->SendToVisible( &pak, plkiller );
+
+            //clear battle.
+            ClearBattle(Battle);
+            //Log(MSG_INFO,"No more fuel to attack");
+        }
+
+    }
+
 
     return;
 }

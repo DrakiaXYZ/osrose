@@ -459,7 +459,34 @@ bool CWorldServer::pakMoveChar( CPlayer* thisclient, CPacket* P )
     thisclient->Position->destiny.y = GETFLOAT((*P), 0x06 )/100;
     thisclient->Position->lastMoveTime = clock();
 
+    //LMA: Checking if we got fuel.
+    if(thisclient->Status->Stance==DRIVING)
+    {
+        if(thisclient->items[136].itemnum==0)
+        {
+            Log(MSG_WARNING,"%s should be riding but doesn't have a motor?",thisclient->CharInfo->charname);
+            return true;
+        }
 
+        if(thisclient->items[136].lifespan==0)
+        {
+            //No fuel anymore, can't move.
+            return true;
+        }
+
+    }
+
+    //LMA: Overweight player.
+    if(thisclient->Status->Stance==RUNNING)
+    {
+        if(!thisclient->Status->CanRun)
+        {
+            thisclient->Status->Stance=WALKING;
+            thisclient->Stats->Base_Speed=thisclient->GetMoveSpeed();
+            thisclient->Stats->Move_Speed=thisclient->Stats->Base_Speed;
+        }
+
+    }
 
 	BEGINPACKET( pak, 0x79a );
 	ADDWORD    ( pak, thisclient->clientid );		// USER ID
@@ -467,7 +494,7 @@ bool CWorldServer::pakMoveChar( CPlayer* thisclient, CPacket* P )
 
 	//LMA: Base Speed
 	//ADDWORD    ( pak, thisclient->Stats->Move_Speed );	// MSPEED
-	ADDWORD    ( pak, thisclient->Stats->Base_Speed );	// MSPEED
+    ADDWORD    ( pak, thisclient->Stats->Base_Speed );	// MSPEED
 
 	ADDFLOAT   ( pak, GETFLOAT((*P), 0x02 ) );	// POSITION X
 	ADDFLOAT   ( pak, GETFLOAT((*P), 0x06 ) );	// POSITION Y
@@ -1227,6 +1254,9 @@ bool CWorldServer::pakChangeCart( CPlayer* thisclient, CPacket* P )
 	{
 	    ADDWORD    ( pak, thisclient->Stats->Move_Speed );
 	    //ADDWORD    ( pak, thisclient->Stats->Base_Speed );
+
+        //LMA: Used to refresh the fuel and attack_fuel
+        thisclient->TakeFuel();
 	}
 
 	SendToVisible( &pak, thisclient );
@@ -1240,6 +1270,24 @@ bool CWorldServer::pakChangeCart( CPlayer* thisclient, CPacket* P )
 bool CWorldServer::pakStartAttack( CPlayer* thisclient, CPacket* P )
 {
     if(!thisclient->CanAttack( )) return true;
+
+    //LMA: Do we have fuel?
+    if(thisclient->Status->Stance==DRIVING)
+    {
+        if(thisclient->items[136].itemnum==0||thisclient->items[139].itemnum==0)
+        {
+            Log(MSG_WARNING,"%s wants to attack but without motor %i or weapon %i ?",thisclient->CharInfo->charname,thisclient->items[136].itemnum,thisclient->items[139].itemnum);
+            return true;
+        }
+
+        if(thisclient->items[136].lifespan==0)
+        {
+            //No fuel anymore, can't attack.
+            return true;
+        }
+
+    }
+
     WORD clientid = GETWORD((*P),0x00);
     if ( thisclient->Battle->target == clientid ) return true;
 
@@ -1928,7 +1976,16 @@ bool CWorldServer::pakNPCBuy ( CPlayer* thisclient, CPacket* P )
                     price *= bprice;
                     price += 0.5;
                     price /= 100;
-                    price = (float)round(price);
+
+                    //LMA: price tweak.
+                    if(!is_clanshop&&!is_union)
+                    {
+                        price = (float)round(price/1.25);
+                    }
+                    else
+                    {
+                        price = (float)round(price);
+                    }
 
                     if (is_clanshop)
                     {
@@ -2034,7 +2091,16 @@ bool CWorldServer::pakNPCBuy ( CPlayer* thisclient, CPacket* P )
                         price += 1;
                         price *= bprice;
                         price += 0.5;
-                        price = (float)floor(price);
+
+                        //LMA: price tweak.
+                        if(!is_clanshop&&!is_union)
+                        {
+                            price = (float)floor(price/1.25);
+                        }
+                        else
+                        {
+                            price = (float)floor(price);
+                        }
 
                         if (is_clanshop)
                         {
@@ -2093,7 +2159,16 @@ bool CWorldServer::pakNPCBuy ( CPlayer* thisclient, CPacket* P )
                         price += 1;
                         price *= bprice;
                         price += 0.5;
-                        price = (float)floor(price);
+                        //LMA: price tweak.
+
+                        if(!is_clanshop&&!is_union)
+                        {
+                            price = (float)floor(price/1.25);
+                        }
+                        else
+                        {
+                            price = (float)floor(price);
+                        }
 
                         if (is_clanshop)
                         {
@@ -2175,7 +2250,16 @@ bool CWorldServer::pakNPCBuy ( CPlayer* thisclient, CPacket* P )
                     price += 1;
                     price *= bprice;
                     price += 0.5;
-                    price = (float)round(price);
+
+                    //LMA: price tweak.
+                    if(!is_clanshop&&!is_union)
+                    {
+                        price = (float)round(price/1.25);
+                    }
+                    else
+                    {
+                        price = (float)round(price);
+                    }
 
                     if (is_clanshop)
                     {

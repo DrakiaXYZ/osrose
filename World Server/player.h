@@ -93,6 +93,8 @@ class CPlayer: public CCharacter
 
     CItem items[MAX_INVENTORY];
 
+    float attack_fuel;   //LMA: conso fuel.
+
     // skills/quickbar
     SKILLS cskills[MAX_ALL_SKILL];
 
