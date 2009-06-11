@@ -218,6 +218,7 @@ class CWorldServer : public CServerSocket
         bool SaveSlotStorage( CPlayer* thisclient,UINT slotnum);  //LMA: Saving one slot into MySQL storage.
         bool SaveSlotMall( CPlayer* thisclient,UINT slotnum);  //LMA: Saving one slot into MySQL Item Mall.
         bool GetZulyStorage( CPlayer* thisclient);     //LMA: Get Zuly from Storage (from MySQL)
+        bool GetWishlist( CPlayer* thisclient);   //LMA: Getting Wishlist.
         bool SaveZulyStorage( CPlayer* thisclient);    //LMA: Save Zuly to Storage (to MySQL)
         CMonster* LookAOEMonster( CPlayer* thisclient);       //LMA: Trying to get a monster from a location (for AOE_TARGET paket mainly).
         CMonster* LookAOEMonster( class CCharacter* character);       //LMA: Character version.

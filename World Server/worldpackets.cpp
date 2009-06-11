@@ -923,43 +923,53 @@ bool CWorldServer::pakPickDrop( CPlayer* thisclient, CPacket* P )
         else
         if( thisdrop->type == 2 ) // Item
         {
-            unsigned int type = UseList.Index[thisdrop->item.itemnum]->type;
-            if (type == 320 && thisdrop->item.itemtype == 10) {
+            //LMA: drop can be something else than a mere item...
+            unsigned int type=0;
+            if(thisdrop->item.itemtype==10)
+            {
+                type = UseList.Index[thisdrop->item.itemnum]->type;
+            }
+
+            if (type == 320 && thisdrop->item.itemtype == 10)
+            {
                 RESETPACKET( pak,0x7a3 );
                 ADDWORD    ( pak, dropowner->clientid );
                 ADDWORD    ( pak, thisdrop->item.itemnum );
                 SendToVisible( &pak, dropowner );
                 flag = true;
-            } else {
-
-            unsigned int tempslot = dropowner->AddItem( thisdrop->item );
-            if(tempslot!=0xffff)// we have slot
-            {
-                unsigned int slot1 = tempslot;
-                unsigned int slot2 = 0xffff;
-                if(tempslot>MAX_INVENTORY)
-                {
-                    slot1 = tempslot/1000;
-                    slot2 = tempslot%1000;
-                }
-                ADDBYTE    ( pak, 0x00 );
-                ADDBYTE    ( pak, slot1 );
-                ADDBYTE    ( pak, 0x00 );
-                ADDDWORD   ( pak, BuildItemHead( dropowner->items[slot1] ) );
-                ADDDWORD   ( pak, BuildItemData( dropowner->items[slot1] ) );
-                ADDDWORD( pak, 0x00000000 );
-                ADDWORD ( pak, 0x0000 );
-
-                dropowner->client->SendPacket( &pak );
-                dropowner->UpdateInventory( slot1, slot2 );
-                flag = true;
             }
             else
             {
-                ADDBYTE    (pak, 0x03);
-                dropowner->client->SendPacket(&pak);
+                unsigned int tempslot = dropowner->AddItem( thisdrop->item );
+                if(tempslot!=0xffff)// we have slot
+                {
+                    unsigned int slot1 = tempslot;
+                    unsigned int slot2 = 0xffff;
+                    if(tempslot>MAX_INVENTORY)
+                    {
+                        slot1 = tempslot/1000;
+                        slot2 = tempslot%1000;
+                    }
+                    ADDBYTE    ( pak, 0x00 );
+                    ADDBYTE    ( pak, slot1 );
+                    ADDBYTE    ( pak, 0x00 );
+                    ADDDWORD   ( pak, BuildItemHead( dropowner->items[slot1] ) );
+                    ADDDWORD   ( pak, BuildItemData( dropowner->items[slot1] ) );
+                    ADDDWORD( pak, 0x00000000 );
+                    ADDWORD ( pak, 0x0000 );
+
+                    dropowner->client->SendPacket( &pak );
+                    dropowner->UpdateInventory( slot1, slot2 );
+                    flag = true;
+                }
+                else
+                {
+                    ADDBYTE    (pak, 0x03);
+                    dropowner->client->SendPacket(&pak);
+                }
+
             }
-        }
+
         }
     }
 	else
@@ -967,6 +977,7 @@ bool CWorldServer::pakPickDrop( CPlayer* thisclient, CPacket* P )
 		ADDBYTE    (pak, 0x02);
 		thisclient->client->SendPacket(&pak);
     }
+
 	if( flag )
 	{
         if( thisclient->Party->party!=NULL )
@@ -988,8 +999,8 @@ bool CWorldServer::pakPickDrop( CPlayer* thisclient, CPacket* P )
                 {
                     ADDDWORD   ( pak, BuildItemHead( thisdrop->item ) );
                     ADDDWORD   ( pak, BuildItemData( thisdrop->item ) );
-            ADDDWORD( pak, 0x00000000 );
-            ADDWORD ( pak, 0x0000 );
+                    ADDDWORD( pak, 0x00000000 );
+                    ADDWORD ( pak, 0x0000 );
 
                 }
                 thisclient->Party->party->SendToMembers( &pak, dropowner );
@@ -2888,9 +2899,30 @@ void CWorldServer::pakQuestData( CPlayer *thisclient )
     for( unsigned i = 0; i < 0x40; i++ )
         ADDBYTE( pak, thisclient->quest.flags[i] );
 
-    // Wishlist? - Not Implemented
-    for (unsigned i = 0; i < 180; i++)
-        ADDBYTE( pak, 0 );
+    //LMA: new fields:
+    //beginning of clan vars?
+    for( unsigned i = 0; i < 12; i++ )
+        ADDBYTE( pak, 0x00 );
+
+    //clan vars?
+    for( unsigned i = 0; i < 8; i++ )
+        ADDBYTE( pak, 0x00 );
+
+    // Wishlist.
+    /*for (unsigned i = 0; i < 180; i++)
+        ADDBYTE( pak, 0 );*/
+
+    //LMA: Getting wishlist.
+    GetWishlist(thisclient);
+
+    for (unsigned i = 0; i < MAX_WISHLIST; i++)
+    {
+        ADDDWORD( pak, thisclient->wishlistitems[i].head);
+        ADDDWORD( pak, thisclient->wishlistitems[i].data );
+        ADDDWORD( pak, 0x00 );
+        ADDWORD( pak, 0x00 );
+    }
+
 
     thisclient->client->SendPacket( &pak );
 }
@@ -4241,7 +4273,7 @@ bool CWorldServer::pakChangeStorage( CPlayer* thisclient, CPacket* P)
             }
 
             if (storageprice < 0) {
-                Log(MSG_HACK, "pakChangeStorage: crappy persons did try to hack your server");
+                Log(MSG_HACK, "pakChangeStorage: %s tried to hack your server slot %i, price %i",thisclient->CharInfo->charname,itemslot,storageprice);
                 return false;
             }
 
@@ -6069,16 +6101,33 @@ bool CWorldServer::pakAddWishList( CPlayer* thisclient , CPacket* P )
 {
 	if(thisclient==NULL) return false;
 	UINT slot = GETBYTE( (*P), 0 );
-	if(slot>=30) return true;
+	if(slot>=MAX_WISHLIST) return true;
 	UINT head = GETDWORD((*P),1);
 	UINT data = GETDWORD((*P),5);
+
+    //LMA: We delete a slot.
+	if (head==0&&data==0)
+	{
+	    DB->QExecute( "DELETE FROM wishlist WHERE itemowner=%u AND slot=%i",thisclient->CharInfo->charid, slot );
+	    return true;
+	}
+
     CItem testitem = GetItemByHeadAndData( head , data);
 	// check if is a valid item
 	if(testitem.itemtype>14 || testitem.itemtype<1) return false;
 	// save to the database
+	/*
 	DB->QExecute( "DELETE FROM wishlist WHERE itemowner=%u AND slot=%i",
 		thisclient->CharInfo->charid, slot );
 	DB->QExecute( "INSERT INTO wishlist (itemowner,slot,itemhead,itemdata) VALUES (%u,%i,%u,%u)",
 		thisclient->CharInfo->charid, slot, head, data );
+    */
+
+    //LMA: new way:
+    //%I64i
+    DB->QExecute("INSERT INTO wishlist (itemowner,slot,itemhead,itemdata) VALUES(%u,%i,%u,%u) ON DUPLICATE KEY UPDATE itemowner=VALUES(itemowner),slot=VALUES(slot),itemhead=VALUES(itemhead),itemdata=VALUES(itemdata)",
+        thisclient->CharInfo->charid, slot, head, data );
+
+
 	return true;
 }

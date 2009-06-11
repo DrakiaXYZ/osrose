@@ -256,7 +256,7 @@ void CServerSocket::PingClients()
             client->SendPacket( &pak );
 
             client->CxTime=clock();
-            Log(MSG_INFO,"Sending ping to cid %i",client->sock);
+            //Log(MSG_INFO,"Sending ping to cid %i",client->sock);
         }
 
 	}

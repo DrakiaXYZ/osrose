@@ -1846,7 +1846,7 @@ bool CWorldServer::SaveAllStorage( CPlayer* thisclient)
 bool CWorldServer::GetAllStorage( CPlayer* thisclient)
 {
     //resetting array
-    for(int k=0;k<160;k++)
+    for(int k=0;k<MAX_STORAGE;k++)
     {
         thisclient->storageitems[k].itemnum = 0;
         thisclient->storageitems[k].itemtype = 0;
@@ -1871,7 +1871,15 @@ bool CWorldServer::GetAllStorage( CPlayer* thisclient)
             Log(MSG_WARNING, "char %s have a invalid or empty item in storage: %i%i [%i], this item will be deleted", thisclient->CharInfo->charname, atoi(row[1]), atoi(row[0]), atoi(row[6]) );
             continue;
         }
+
         UINT itemnum = atoi(row[5]);
+
+        if(itemnum<0||itemnum>=MAX_STORAGE)
+        {
+            Log(MSG_WARNING,"%s:: Storage, wrong slot (%i)",thisclient->CharInfo->charname,itemnum);
+            continue;
+        }
+
         thisclient->storageitems[itemnum].itemnum = atoi(row[0]);
         thisclient->storageitems[itemnum].itemtype = atoi(row[1]);
         thisclient->storageitems[itemnum].refine = atoi(row[2]);
@@ -1887,6 +1895,50 @@ bool CWorldServer::GetAllStorage( CPlayer* thisclient)
 
 
      return true;
+}
+
+
+//LMA: Loading Wishlist.
+bool CWorldServer::GetWishlist( CPlayer* thisclient)
+{
+    for (int k=0;k<MAX_WISHLIST;k++)
+    {
+        thisclient->wishlistitems[k].count=0;
+        thisclient->wishlistitems[k].data=0;
+        thisclient->wishlistitems[k].head=0;
+        thisclient->wishlistitems[k].price=0;
+        thisclient->wishlistitems[k].slot=0;
+    }
+
+    MYSQL_ROW row;
+	MYSQL_RES *result = DB->QStore("SELECT slot,itemhead,itemdata FROM wishlist WHERE itemowner=%i ORDER BY slot DESC",thisclient->CharInfo->charid);
+    if(result==NULL)
+    {
+        return false;
+    }
+
+    while(row = mysql_fetch_row(result))
+    {
+        int myslot=0;
+        myslot=atoi(row[0]);
+
+        if(myslot<0||myslot>=MAX_WISHLIST)
+        {
+            Log(MSG_WARNING,"%s:: Wishlist, wrong slot (%i)",thisclient->CharInfo->charname,myslot);
+            continue;
+        }
+
+        thisclient->wishlistitems[myslot].slot=myslot;
+        thisclient->wishlistitems[myslot].head=atoi(row[1]);
+        thisclient->wishlistitems[myslot].data=atoi(row[2]);
+        thisclient->wishlistitems[myslot].price=0;
+        thisclient->wishlistitems[myslot].count=0;
+    }
+
+    GServer->DB->QFree( );
+
+
+    return true;
 }
 
 //LMA: Get Zuly from Storage (from MySQL)

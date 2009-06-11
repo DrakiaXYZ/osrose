@@ -198,7 +198,7 @@ void CCharServer::DeleteClientSocket( CClientSocket* thisclient )
         for(UINT i=0;i<ChannelList.size();i++)
         {
             CChanels* thischannel = ChannelList.at( i );
-            if(client->userid = thischannel->id)
+            if(client->userid == thischannel->id)
             {
                 Log( MSG_INFO, "Channel #%i disconnected", thischannel->id );
                 DB->QExecute( "DELETE FROM channels WHERE id=%i and type=2", thischannel->id );

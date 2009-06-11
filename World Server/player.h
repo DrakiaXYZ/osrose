@@ -89,6 +89,7 @@ class CPlayer: public CCharacter
     CItem itemmallitems[MAX_ITEMMALL];
     unsigned int nstorageitems;
     unsigned int nsitemmallitems;
+    BSItem wishlistitems[MAX_WISHLIST];
 
     CItem items[MAX_INVENTORY];
 

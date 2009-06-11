@@ -1616,7 +1616,7 @@ bool CWorldServer::LoadNPCsSpecial( )
     return true;
 }
 
-
+/*
 bool CWorldServer::LoadDropsData( )
 {
 	Log( MSG_LOAD, "Drops Data                  " );
@@ -1709,7 +1709,7 @@ bool CWorldServer::LoadDropsData( )
 	fclose(fh);
 	Log( MSG_LOAD, "Drops Data loaded" );
 	return true;
-}
+}*/
 
 //hidden
 bool CWorldServer::LoadPYDropsData( )
