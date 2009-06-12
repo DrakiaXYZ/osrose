@@ -190,7 +190,7 @@ class CWorldServer : public CServerSocket
         CChest* GetChestByID( UINT id );
     	CNPC* GetNPCByID( UINT id, UINT map=0 );
     	char* GetNPCNameByType(UINT id);    //LMA: getting the npc name.
-    	char* GetSTLObjNameByID(UINT family, UINT idorg);   //LMA: getting the STL name for objects (1-14)
+    	char* GetSTLObjNameByID(UINT family, UINT idorg,bool comment=false);   //LMA: getting the STL name for objects (1-14)
     	char* GetSTLMonsterNameByID(UINT idorg); //LMA: getting the STL name of a monster / NPC by ID.
         char* GetSTLItemPrefix(int family, UINT idorg);  //LMA: to get an item prefix.
         char* GetSTLQuestByID(UINT idorg);  //LMA: getting quest name by STL.
@@ -205,6 +205,7 @@ class CWorldServer : public CServerSocket
         UINT getClanPoints(int clanid);   //LMA: We get the exact Clan Points amount through mysql database
         UINT getClanGrade(int clanid);    //LMA: We get the exact Clan Grade through mysql database
         UINT SummonFormula(CPlayer* thisclient,CMonster* thismonster);    //LMA: Formulas for summons.
+        string EscapeMe(char* texte);  //LMA: Escaping.
     	UINT GetNewClientID( );
     	unsigned GetNewPartyID( );  //LMA: Getting a Party ID.
     	void DisconnectAll();
@@ -354,6 +355,7 @@ class CWorldServer : public CServerSocket
         bool pakGMSetObjVar(CPlayer* thisclient, int npctype, int index, int value);    //LMA: set an ObjVar for a NPC.
         bool pakGMForceUW(CPlayer* thisclient, int time); //LMA: forcing Union Wars.
         bool pakGMForceUWPlayers(CPlayer* thisclient, int nb_players);   //LMA: forcing Union Wars (nb players).
+        bool pakGMExportSTBSTL(CPlayer* thisclient);    //LMA: export STB and STL to a .sql file.
         bool pakGMReborn( CPlayer* thisclient); //Reborn by Core
         bool pakGMLevel( CPlayer* thisclient, int level , char* name);
         bool pakGMTeleToPlayer( CPlayer* thisclient, char* name );
@@ -517,6 +519,7 @@ class CWorldServer : public CServerSocket
         int                     maxZone;                //LMA: max map amount
     	map<int,char*>          NpcNameList;            //LMA: npc name map.
     	map<UINT,char*>         STLNameList;            //LMA: Name for all things taken from STL.
+        map<UINT,char*>         STLCommentList;            //LMA: Comment for all things taken from STL.
     	IfoObject               WarpGate;               //LMA: Warp Gate for Union.
     	word                    UWForceFrom;            //LMA: Forcing Union Wars (test)
     	int                     UWNbPlayers;            //LMA: Forcing Nb players required for UW.

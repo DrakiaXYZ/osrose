@@ -114,6 +114,15 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
         Log( MSG_GMACTION, " %s : /ban %s" , thisclient->CharInfo->charname, name);
         return pakGMBan( thisclient, name );
 	}
+   else if (strcmp(command, "exportstbstl")==0)
+    {
+        if(Config.Command_Ban > thisclient->Session->accesslevel || thisclient->CharInfo->isGM == false)
+        {
+            return true;
+        }
+
+        return pakGMExportSTBSTL(thisclient);
+	}
    else if (strcmp(command, "bonusxp")==0)
 	{
          if(Config.Command_BonusXp > thisclient->Session->accesslevel)
@@ -5216,6 +5225,86 @@ bool CWorldServer::pakGMForceUWPlayers(CPlayer* thisclient, int nb_players)
     UWNbPlayers=nb_players;
     GServer->DB->QExecute("UPDATE list_config SET uwnbplayers=%i",UWNbPlayers);
 
+
+    return true;
+}
+
+
+//LMA: We export the STB and STL to a .sql file.
+bool CWorldServer::pakGMExportSTBSTL(CPlayer* thisclient)
+{
+    if(GServer->Config.massexport==0)
+    {
+        return true;
+    }
+
+    FILE *filestb=NULL;
+    filestb = fopen(LOG_DIRECTORY "stb_stl.sql", "w+" );
+
+    fprintf(filestb,"CREATE TABLE `item_reference` (\r");
+    fprintf(filestb,"`itemID` int(11) NOT NULL auto_increment,\r");
+    fprintf(filestb,"`Type` int(11) NOT NULL,\r");
+    fprintf(filestb,"`ID` int(11) NOT NULL,\r");
+    fprintf(filestb,"`Name` tinytext NOT NULL,\r");
+    fprintf(filestb,"`Comment` text,\r");
+    fprintf(filestb,"PRIMARY KEY (`itemID`)\r");
+    fprintf(filestb,") ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;\r");
+
+    //Go... Items from 1 to 9
+    for (int k=0;k<9;k++)
+    {
+        for (int j=0;j<EquipList[k+1].max;j++)
+        {
+            string name=EscapeMe(GetSTLObjNameByID(k+1,j));
+            string comment=EscapeMe(GetSTLObjNameByID(k+1,j,true));
+            fprintf(filestb,"INSERT INTO `item_reference` VALUES ('%u', '%u', '%u', '%s', '%s');\r",0,k+1,j,name.c_str(),comment.c_str());
+        }
+
+    }
+
+    //Use.
+    for (int j=0;j<JemList.max;j++)
+    {
+        string name=EscapeMe(GetSTLObjNameByID(10,j));
+        string comment=EscapeMe(GetSTLObjNameByID(10,j,true));
+        fprintf(filestb,"INSERT INTO `item_reference` VALUES ('%u', '%u', '%u', '%s', '%s');\r",0,10,j,name.c_str(),comment.c_str());
+    }
+
+    //Jem.
+    for (int j=0;j<JemList.max;j++)
+    {
+        string name=EscapeMe(GetSTLObjNameByID(11,j));
+        string comment=EscapeMe(GetSTLObjNameByID(11,j,true));
+        fprintf(filestb,"INSERT INTO `item_reference` VALUES ('%u', '%u', '%u', '%s', '%s');\r",0,11,j,name.c_str(),comment.c_str());
+    }
+
+
+    //Natural.
+    for (int j=0;j<NaturalList.max;j++)
+    {
+        string name=EscapeMe(GetSTLObjNameByID(12,j));
+        string comment=EscapeMe(GetSTLObjNameByID(12,j,true));
+        fprintf(filestb,"INSERT INTO `item_reference` VALUES ('%u', '%u', '%u', '%s', '%s');\r",0,12,j,name.c_str(),comment.c_str());
+    }
+
+    //Quest items.
+    for (int j=0;j<maxQuestItems;j++)
+    {
+        string name=EscapeMe(GetSTLObjNameByID(13,j));
+        string comment=EscapeMe(GetSTLObjNameByID(13,j,true));
+        fprintf(filestb,"INSERT INTO `item_reference` VALUES ('%u', '%u', '%u', '%s', '%s');\r",0,13,j,name.c_str(),comment.c_str());
+    }
+
+    //PatList.
+    for (int j=0;j<JemList.max;j++)
+    {
+        string name=EscapeMe(GetSTLObjNameByID(14,j));
+        string comment=EscapeMe(GetSTLObjNameByID(14,j,true));
+        fprintf(filestb,"INSERT INTO `item_reference` VALUES ('%u', '%u', '%u', '%s', '%s');\r",0,14,j,name.c_str(),comment.c_str());
+    }
+
+
+    fclose(filestb);
 
     return true;
 }

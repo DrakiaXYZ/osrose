@@ -815,7 +815,7 @@ char* CWorldServer::GetSTLItemPrefix(int family,UINT idorg)
 
 //LMA: getting an object name by STL.
 //We get an ID here, NOT the STL value !
-char* CWorldServer::GetSTLObjNameByID(UINT family, UINT idorg)
+char* CWorldServer::GetSTLObjNameByID(UINT family, UINT idorg,bool comment)
 {
     UINT id=0;
 
@@ -897,10 +897,29 @@ char* CWorldServer::GetSTLObjNameByID(UINT family, UINT idorg)
 
     UINT idu=family*100000+id;
 
-    if(STLNameList.find(idu)==STLNameList.end())
+    if(comment)
     {
-        Log(MSG_INFO,"[STL] object %i:%i not found",family,id);
-        return STLNameList[0];
+        if(GServer->Config.massexport==0)
+        {
+            return STLNameList[0];
+        }
+
+        if(STLCommentList.find(idu)==STLCommentList.end())
+        {
+            Log(MSG_INFO,"[STL COMMENT] object %i:%i not found",family,id);
+            return STLNameList[0];
+        }
+
+        return STLCommentList[idu];
+    }
+    else
+    {
+        if(STLNameList.find(idu)==STLNameList.end())
+        {
+            Log(MSG_INFO,"[STL] object %i:%i not found",family,id);
+            return STLNameList[0];
+        }
+
     }
 
     //Log(MSG_INFO,"[STL] object %i:%i found, %s",family,id,STLNameList[idu]);
@@ -2504,4 +2523,41 @@ UINT CWorldServer::SummonFormula(CPlayer* thisclient,CMonster* thismonster)
 
 
     return res;
+}
+
+
+//LMA: Escaping time.
+string CWorldServer::EscapeMe(char* texte)
+{
+    string s=texte;
+    string t;
+    t.reserve(300);
+    int offset=0;
+
+    for (int k=0;k<s.size();k++)
+    {
+        if(s[k]=='\'')
+        {
+            t[offset]='\\';
+            offset++;
+            t[offset]='\'';
+            offset++;
+        }
+        else if(s[k]==10)
+        {
+            t[offset]=' ';
+            offset++;
+        }
+        else
+        {
+            t[offset]=s[k];
+            offset++;
+        }
+
+    }
+
+    t[offset]=0;
+
+
+    return t;
 }

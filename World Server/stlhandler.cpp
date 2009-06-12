@@ -123,6 +123,24 @@ int STLStoreData(char* filename, int family)
           memcpy(new_text,item->text,temp);
           new_text[temp]=0;
           GServer->STLNameList[mapid]=new_text;
+
+          //LMA: Trying to get the comment now.
+          if(GServer->Config.massexport!=0)
+          {
+            temp=0;
+            fread(&temp,1,1,fh);
+
+            if(temp==0)
+            {
+                continue;
+            }
+
+            char* new_comment=new char[temp+1];
+            fread(new_comment,1,temp,fh);
+            new_comment[temp]=0;
+            GServer->STLCommentList[mapid]=new_comment;
+          }
+
     }
 
     fclose( fh );
