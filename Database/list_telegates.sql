@@ -12,8 +12,7 @@ CREATE TABLE `list_telegates` (
 `desty` float NOT NULL,
 `map` int(11) NOT NULL,
 `x` float NOT NULL,
- `y` float NOT NULL,
-PRIMARY KEY  (`id`)
+ `y` float NOT NULL
  ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 INSERT INTO `list_telegates` VALUES (24, 1, 5038.21, 5260.50, 37, 5002.38, 5384.19, 37, 5002.38, 5384.19);
 INSERT INTO `list_telegates` VALUES (22, 1, 5271.78, 5543.42, 24, 5151.02, 4878.51, 24, 5151.02, 4878.51);

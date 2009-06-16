@@ -874,14 +874,18 @@ bool CWorldServer::LoadTeleGateData( )
     MYSQL_RES *result=NULL;
     if(Config.is_pegasus==1)
     {
-        result = DB->QStore("SELECT id, srcx, srcy, srcmap, destx, desty, destmap FROM list_telegates_p");
+        result = DB->QStore("SELECT id, srcx, srcy, srcmap, destx, desty, destmap FROM list_telegates_p ORDER BY id ASC");
     }
     else
     {
-        result = DB->QStore("SELECT id, srcx, srcy, srcmap, destx, desty, destmap FROM list_telegates");
+        result = DB->QStore("SELECT id, srcx, srcy, srcmap, destx, desty, destmap FROM list_telegates ORDER BY id ASC");
     }
 
 	if(result==NULL) return false;
+
+	int last_id=0;
+	int nb_offset=0;
+
 	while( row = mysql_fetch_row(result) )
     {
 		CTeleGate* thisgate = new (nothrow) CTeleGate;
@@ -891,6 +895,7 @@ bool CWorldServer::LoadTeleGateData( )
             DB->QFree( );
             return false;
         }
+
 		thisgate->id = atoi(row[0]);
 		thisgate->src.x = (float)atof(row[1]);
 		thisgate->src.y = (float)atof(row[2]);
@@ -901,10 +906,26 @@ bool CWorldServer::LoadTeleGateData( )
         //thisgate->dest.x = (float)atof(row[1]);
         //thisgate->dest.y = (float)atof(row[2]);
         //thisgate->destMap = atoi(row[3]);
+
+        if (last_id!=thisgate->id)
+        {
+            last_id=thisgate->id;
+            nb_offset=0;
+        }
+        else
+        {
+            nb_offset++;
+        }
+
+        thisgate->offset=nb_offset;
+
 		TeleGateList.push_back( thisgate );
 	}
+
 	DB->QFree( );
 	Log( MSG_LOAD, "Telegates Data loaded" );
+
+
 	return true;
 }
 

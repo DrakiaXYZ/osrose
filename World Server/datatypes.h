@@ -873,6 +873,7 @@ struct CTeleGate
 	unsigned char srcMap;
 	fPoint dest;
 	unsigned char destMap;
+	UINT offset;
 };
 
 

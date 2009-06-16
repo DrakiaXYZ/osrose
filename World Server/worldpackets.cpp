@@ -1356,9 +1356,11 @@ bool CWorldServer::pakGate( CPlayer* thisclient, CPacket* P )
 {
     thisclient->Session->inGame = false;
     word GateID = GETWORD((*P), 0x00);
-    CTeleGate* thisgate = GetTeleGateByID( GateID );
+
+    /*CTeleGate* thisgate = GetTeleGateByID( GateID );
     fPoint position;
     UINT map = 0;
+
     // I'm setting this at 50 distance from the point of teleport. Increase if you run into
     // broken telegates. We might need to dump the scale and work from that - Drakia
     if( thisgate == NULL ||thisclient->Position->Map != thisgate->srcMap ||distance(thisclient->Position->current, thisgate->src) > 100 )
@@ -1375,10 +1377,66 @@ bool CWorldServer::pakGate( CPlayer* thisclient, CPacket* P )
                      thisclient->CharInfo->charname, thisclient->Position->Map,
                      thisclient->Position->current.x, thisclient->Position->current.y, GateID,distance(thisclient->Position->current, thisgate->src) );
         return true;
+	}*/
+
+
+	//LMA: new way.
+    bool is_hack=true;
+    fPoint position;
+    UINT map = 0;
+    CTeleGate* thisgate=NULL;
+    CTeleGate* lastgate=NULL;
+
+	for (int k=0;k<6;k++)
+	{
+	    thisgate = GetTeleGateByID( GateID,k);
+
+	    if (thisgate==NULL)
+	    {
+	        if(k==0)
+	        {
+                Log( MSG_HACK, "Player %s[Map: %i X: %f Y: %f] - Gate Hacking[ID: %i], Gates doesn't exist!",
+                         thisclient->CharInfo->charname, thisclient->Position->Map,
+                         thisclient->Position->current.x, thisclient->Position->current.y, GateID);
+	        }
+	        else
+	        {
+	            //Hack.
+                Log( MSG_HACK, "Player %s[Map: %i X: %f Y: %f] - Gate Hacking[ID: %i, offset %i], distance %.2f",
+                             thisclient->CharInfo->charname, thisclient->Position->Map,
+                             thisclient->Position->current.x, thisclient->Position->current.y, GateID,lastgate->offset,distance(thisclient->Position->current, lastgate->src) );
+	        }
+
+            return true;
+	    }
+
+	    if(thisclient->Position->Map != thisgate->srcMap ||distance(thisclient->Position->current, thisgate->src) > 100)
+	    {
+            //hack or wrong gate?
+            lastgate=thisgate;
+            continue;
+	    }
+
+	    //good gate :)
+	    is_hack=false;
+	    Log(MSG_INFO,"Gate %i found, offset %i",thisgate->id,k);
+	    break;
 	}
+	//LMA: end new way.
+
+	if(is_hack)
+	{
+        Log( MSG_HACK, "Player %s[Map: %i X: %f Y: %f] - Gate Hacking[ID: %i, offset %i], distance %.2f",
+                     thisclient->CharInfo->charname, thisclient->Position->Map,
+                     thisclient->Position->current.x, thisclient->Position->current.y, GateID,lastgate->offset,distance(thisclient->Position->current, lastgate->src) );
+	    return true;
+	}
+
 	map = thisgate->destMap;
 	position = thisgate->dest;
     MapList.Index[map]->TeleportPlayer( thisclient, position );
+
+
 	return true;
 }
 

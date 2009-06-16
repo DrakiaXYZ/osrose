@@ -929,14 +929,19 @@ char* CWorldServer::GetSTLObjNameByID(UINT family, UINT idorg,bool comment)
 }
 
 // Get Telegate by ID
-CTeleGate* CWorldServer::GetTeleGateByID( unsigned int id )
+//LMA: Sometimes several telegates have the same Id, that's why we're using the offset.
+CTeleGate* CWorldServer::GetTeleGateByID( UINT id, UINT offset)
 {
 	for(unsigned j=0; j<TeleGateList.size(); j++)
     {
 		CTeleGate* thisgate = TeleGateList.at(j);
-		if (thisgate->id==id) return thisgate;
+		//if (thisgate->id==id) return thisgate;
+		if (thisgate->id==id&&thisgate->offset==offset) return thisgate;
 	}
+
 	// Hmm, shit, couldent find it
+
+
 	return NULL;
 }
 

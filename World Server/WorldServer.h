@@ -171,7 +171,8 @@ class CWorldServer : public CServerSocket
     	CPlayer* GetClientByCID( UINT id, UINT map=0 );
     	CPlayer* GetClientByCharName( char* name );
     	CPlayer* GetClientByID( UINT id, UINT map=0 );
-    	CTeleGate* GetTeleGateByID( UINT id );
+    	//CTeleGate* GetTeleGateByID( UINT id );
+    	CTeleGate* GetTeleGateByID( UINT id, UINT offset=0);  //LMA: Telegates, with extra gate.
     	UINT BuildItemHead( CItem thisitem );
     	UINT BuildItemData( CItem thisitem );
     	CMonster* GetMonsterByID( UINT id, UINT map );
