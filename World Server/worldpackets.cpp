@@ -326,6 +326,7 @@ bool CWorldServer::pakDoID( CPlayer* thisclient, CPacket* P )
     //We don't do the qsdzone again if in the UW map...
     dword hash_zone=map->QSDzone;
     //if(hash_zone>0&&((id!=thisclient->Position->Map)||(id!=9)))
+
     if(hash_zone>0)
     {
         //LMA: we set the pvp vars to nothing again.
