@@ -1373,6 +1373,16 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
             itemstats =0;
         else
             itemstats =atoi(tmp);
+// Remove below if you want GM to socket anything but Armor, Jewelery or Weapons - code by lmame           
+        if(itemtype!=3&&itemtype!=7&&itemtype!=8)
+        {
+            itemsocket=0;
+            if (itemstats>=300)
+            {
+                itemstats=0;
+            }
+            
+        }
         Log( MSG_GMACTION, " %s : /item %i,%i,%i,%i,%i,%i" , thisclient->CharInfo->charname, itemid, itemtype, itemamount , itemrefine , itemsocket ,itemstats);
         return pakGMItem( thisclient , itemid , itemtype , itemamount , itemrefine , itemls, itemstats , itemsocket );
     }
