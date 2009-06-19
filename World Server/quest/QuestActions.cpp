@@ -510,12 +510,11 @@ QUESTREWD(003)
             //LMA: do we really have to send it?
             //we don't send it because most of the time the client will check again and if not enough, the check
             //will fail (for example, taking union).
-            /*
+            //it seems that from narose 228 we need it again...
 			// Send zuly update packet
             BEGINPACKET( pak, 0x71d );
             ADDQWORD( pak, client->CharInfo->Zulies );
             client->client->SendPacket( &pak );
-            */
         }
             break;
 		default:

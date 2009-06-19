@@ -638,7 +638,7 @@ QUESTCOND(021)
         return QUEST_FAILURE;
     }
 
-    Log(MSG_INFO,"Player %s is in good distance from NPC %i",client->CharInfo->charname,refNPC);
+    //Log(MSG_INFO,"Player %s is in good distance from NPC %i",client->CharInfo->charname,refNPC);
 
 
     return QUEST_SUCCESS;
