@@ -5564,9 +5564,10 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
             needed_itemtype=gi(ProductList.Index[gradeIndex]->item[0],0);
             needed_itemnum=gi(ProductList.Index[gradeIndex]->item[0],1);
 
-            //LMA: special case venurune
+            //LMA: special case venurune & nepturune
             int extra_offset=0;
             bool venurune=false;
+            bool nepturune=false;
 
             if(thisclient->items[material].itemtype==12&&thisclient->items[material].itemnum==445)
             {
@@ -5576,7 +5577,14 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
                 needed_itemnum=445;
                 needed_itemtype=12;
             }
-
+            if(thisclient->items[material].itemtype==12&&thisclient->items[material].itemnum==456)
+            {
+                nepturune=true;
+                extra_offset=1;//it's an offset, NOT a %!
+                needed_amount=1;
+                needed_itemnum=456;
+                needed_itemtype=12;
+            }
             if(needed_itemtype!=thisclient->items[material].itemtype||needed_itemnum!=thisclient->items[material].itemnum)
             {
                 Log(MSG_HACK,"Player %s uses wrong item (%u::%u instead of %u::%u) to refine %u::%u",thisclient->CharInfo->charname,thisclient->items[material].itemtype,thisclient->items[material].itemnum,needed_itemtype,needed_itemnum,thisclient->items[item].itemtype,thisclient->items[item].itemnum);
@@ -5705,10 +5713,15 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
                 else if (nextlevel<=refine_grade[grade][1])
                 {
                     //Only degrade.
-                    if(nextlevel>1)
+                    if(nepturune)
+                    {
+                        thisclient->items[item].refine = (nextlevel-1) * 16;
+                    }
+                    else if(nextlevel>1)
                     {
                         thisclient->items[item].refine = RandNumber(0,nextlevel-1) * 16;
                     }
+
                     else
                     {
                         thisclient->items[item].refine = 0;
@@ -5718,8 +5731,10 @@ bool CWorldServer::pakModifiedItem( CPlayer* thisclient, CPacket* P )
                 }
                 else
                 {
-                    //Ouch, break time.
-                    ClearItem( thisclient->items[item] );
+                    if(!nepturune) //Ouch, break time.
+                    {
+                        ClearItem( thisclient->items[item] );
+                    }
                     ADDBYTE    ( pak, 0x11 );// 0x11 Fail
                 }
 
