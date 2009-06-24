@@ -4,7 +4,7 @@ Source Host: localhost
 Source Database: osrose
 Target Host: localhost
 Target Database: osrose
-Date: 4/7/2009 12:56:14 PM
+Date: 6/23/2009 3:45:35 PM
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -19,7 +19,7 @@ CREATE TABLE `list_skills` (
   `description` varchar(50) default NULL,
   `isactive` int(11) NOT NULL default '1',
   PRIMARY KEY  (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=404 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=406 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records 
@@ -424,5 +424,8 @@ INSERT INTO `list_skills` VALUES ('397', '1', '4201', '', 'Adamantine Fist-', '0
 INSERT INTO `list_skills` VALUES ('398', '0', '2844', '1', 'Mileage-Summon Leprechaun', '1');
 INSERT INTO `list_skills` VALUES ('399', '0', '2839', '1', 'Metal Moldie (Pre-F2P Unique Skill)', '1');
 INSERT INTO `list_skills` VALUES ('400', '0', '2854', '1', 'Mileage-Weight Training Mastery', '1');
-INSERT INTO `list_skills` VALUES ('401', '221', '6100', '5', 'Restoration', '1');
-INSERT INTO `list_skills` VALUES ('402', '222', '6100', '5', 'Restoration', '1');
+INSERT INTO `list_skills` VALUES ('401', '0', '50', '1', 'Pat Painting', '1');
+INSERT INTO `list_skills` VALUES ('402', '221', '6100', '5', 'Restoration', '1');
+INSERT INTO `list_skills` VALUES ('403', '222', '6100', '5', 'Restoration', '1');
+INSERT INTO `list_skills` VALUES ('404', '0', '2880', '1', 'Unique-Arua\'s Fate', '1');
+INSERT INTO `list_skills` VALUES ('405', '0', '2881', '1', 'Unique-Hebarn\'s Fate', '1');
