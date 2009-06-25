@@ -265,6 +265,7 @@ struct CROSEServerConfig
     int Command_Info;
     int Command_IQuest;
     int Command_Item;
+    int Command_ItemStat;
     int Command_Job;
     int Command_Kick;
     int Command_KillInRange;

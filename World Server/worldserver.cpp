@@ -637,6 +637,7 @@ void CWorldServer::LoadCommandLevels( void )
     Config.Command_Info = ConfigGetInt    ( "commands.ini", "info", 299 );
     Config.Command_IQuest = ConfigGetInt    ( "commands.ini", "iquest", 299 );
     Config.Command_Item = ConfigGetInt    ( "commands.ini", "item", 299 );
+    Config.Command_ItemStat = ConfigGetInt    ( "commands.ini", "itemstat", 299 );
     Config.Command_Job = ConfigGetInt    ( "commands.ini", "job", 299 );
     Config.Command_Kick = ConfigGetInt    ( "commands.ini", "kick", 299 );
     Config.Command_KillInRange = ConfigGetInt    ( "commands.ini", "killinrange", 299 );

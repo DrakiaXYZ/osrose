@@ -133,6 +133,7 @@ class CWorldServer : public CServerSocket
 
     	//------------------ SERVER EXTRAS (extrafunctions.cpp)
         bool IsValidItem(UINT type, UINT id );
+        unsigned BuildItemShow(CItem thisitem);
         UINT GetUIntValue( const char* s , void* var=NULL );
         int GetIntValue( const char* s , void* var=NULL );
         char* GetStrValue( const char* s , void* var=NULL );

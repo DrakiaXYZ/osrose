@@ -123,6 +123,23 @@ CItem CWorldServer::GetItemByHeadAndData( unsigned head, unsigned data )
     return thisitem;
 }
 
+//----Build Item Show
+unsigned CWorldServer::BuildItemShow(CItem thisitem)
+{
+    if (thisitem.gem == 0)
+    {
+        unsigned part1 = thisitem.refine*0x10000;
+        unsigned part2 = thisitem.itemnum;
+        return  part2|part1;
+    }
+    else
+    {
+        unsigned part1 = thisitem.refine*0x10000;
+        unsigned part2 = thisitem.itemnum;
+        unsigned part3 = (0xd0000)+(((thisitem.gem-320)*0x400));
+        return  part3|part2|part1;
+    }
+}
 
 //----Build Item refine
 unsigned CWorldServer::BuildItemRefine(CItem thisitem)

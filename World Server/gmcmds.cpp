@@ -1386,6 +1386,78 @@ bool CWorldServer::pakGMCommand( CPlayer* thisclient, CPacket* P )
         Log( MSG_GMACTION, " %s : /item %i,%i,%i,%i,%i,%i" , thisclient->CharInfo->charname, itemid, itemtype, itemamount , itemrefine , itemsocket ,itemstats);
         return pakGMItem( thisclient , itemid , itemtype , itemamount , itemrefine , itemls, itemstats , itemsocket );
     }
+ 
+else if (strcmp(command, "itemstat")==0)
+    {
+//        if(thisclient->Session->accesslevel < 300)
+        if(Config.Command_ItemStat > thisclient->Session->accesslevel)
+            return true;
+        if ((tmp = strtok(NULL, " "))==NULL)return true;
+        int slot = 7; //defaults to weapon
+        int tipo;
+        int itemstat;
+        if(strcmp(tmp, "mask")==0)
+        {
+            slot=1;
+        }
+        else
+        if(strcmp(tmp, "cap")==0)
+        {
+            slot=2;
+        }
+        else
+        if(strcmp(tmp, "suit")==0)
+        {
+            slot=3;
+        }
+        else
+        if(strcmp(tmp, "back")==0)
+        {
+            slot=4;
+        }
+        else
+        if(strcmp(tmp, "glov")==0)
+        {
+            slot=5;
+        }
+        else
+        if(strcmp(tmp, "shoe")==0)
+        {
+            slot=6;
+        }
+        else
+        if(strcmp(tmp, "weap")==0)
+        {
+            slot=7;
+        }
+        else
+        if(strcmp(tmp, "shield")==0)
+        {
+            slot=8;
+        }
+        if ((tmp = strtok(NULL, " "))==NULL)
+            itemstat = 0;
+        else
+            itemstat = atoi(tmp);
+        thisclient->items[slot].stats= itemstat;
+        if(itemstat > 300)
+            thisclient->items[slot].gem = itemstat;
+        else
+            thisclient->items[slot].gem = 0;
+        thisclient->items[slot].appraised = true;
+        
+        BEGINPACKET( pak,0x7a5 );
+        ADDWORD( pak, thisclient->clientid );
+        ADDWORD( pak, slot );
+        ADDDWORD( pak, BuildItemShow(thisclient->items[slot])); // ITEM
+        ADDWORD ( pak, thisclient->Stats->Move_Speed);
+        SendToVisible( &pak, thisclient );
+ 
+        thisclient->UpdateInventory( slot );
+        thisclient->SetStats( );
+        return true;
+    }
+    
    else if (strcmp(command, "job")==0) // *** Change Job *****
     {
         if(Config.Command_Job > thisclient->Session->accesslevel)
